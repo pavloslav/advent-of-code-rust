@@ -1,0 +1,11 @@
+[package]
+name = "aoc"
+version = "0.1.0"
+authors = ["Pavloslav <pavloslav@ukr.net>"]
+
+[dependencies.hyper]
+version = ">=0.6"
+default-features = false
+
+[dependencies]
+rust-ini = "0.9.12"
