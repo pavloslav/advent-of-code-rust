@@ -1,21 +1,19 @@
-use std::fmt;
-impl fmt::Display for Vec<Vec<char>> {
-	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.iter()
-		             .map(|v|v.iter()
-		             	       .map(|c|c.to_string())
-		             	       .collect::<String>()+"\n")
-		             .collect::<String>()
-        	)
+
+fn print_vec(v:&Vec<Vec<char>>) {
+    for j in 0..v[0].len() {
+        for i in 0..v.len() {
+            print!("{}",v[i][j]);
+        }
+        println!("");
     }
+    println!("");
 }
 
 fn build_lcd(rows:usize, columns:usize, commands:&str) -> Vec<Vec<char>> {
-	let mut lcd: Vec<Vec<char>> = std::iter::repeat(
-			   std::iter::repeat('.').take(columns)
-			 						 .collect()
-			   ).take(rows)
-	            .collect();
+    let mut lcd = Vec::with_capacity(columns);
+    for _ in 0..columns {
+        lcd.push(std::iter::repeat('.').take(rows).collect::<Vec<_>>());
+    }
 	for command in commands.lines() {
 		println!("Executing \"{}\"...",command);		
 		let mut words = command.split(' ');
@@ -28,7 +26,7 @@ fn build_lcd(rows:usize, columns:usize, commands:&str) -> Vec<Vec<char>> {
 				                .collect();
 				for i in 0..size[0] {
 					for j in 0..size[1] {
-						lcd[j][i] = '#';
+						lcd[i][j] = '#';
 					}
 				}
 
@@ -40,23 +38,25 @@ fn build_lcd(rows:usize, columns:usize, commands:&str) -> Vec<Vec<char>> {
 						let shift = words.skip(1).next().unwrap().parse::<usize>().unwrap();
 						println!("Rotating column {} for {}",x,shift);
 						for _ in 0..shift {
-							let temp = lcd[rows-1][x];
+							let temp = lcd[x][rows-1];
 							println!("temp={}",temp);
-							for j in 1..(rows-1) {
-								lcd[rows-j][x]=lcd[rows-j-1][x];
+							for j in 1..rows {
+                                let y = rows-j;
+								lcd[x][y]=lcd[x][y-1];
 							}
-							lcd[0][x] = temp;
+							lcd[x][0] = temp;
 						}
 					},
 					Some("row") => {
 						let y = words.next().unwrap()[2..].parse::<usize>().unwrap();
 						let shift = words.skip(1).next().unwrap().parse::<usize>().unwrap();
 						for _ in 0..shift {
-							let temp = lcd[y][columns-1];
-							for j in 1..(columns-1) {
-								lcd[y][columns-j]=lcd[y][columns-j-1];
+							let temp = lcd[columns-1][y];
+							for j in 1..columns {
+                                let x = columns-j;
+                                lcd[x][y]=lcd[x-1][y];
 							}
-							lcd[y][0] = temp;
+							lcd[0][y] = temp;
 						}
 
 					},
@@ -65,17 +65,9 @@ fn build_lcd(rows:usize, columns:usize, commands:&str) -> Vec<Vec<char>> {
 			},
 			_ => panic!("wrong command"),
 		}
-		println!("{}",lcd.iter()
-		             .map(|v|v.iter()
-		             	       .map(|c|c.to_string())
-		             	       .collect::<String>()+"\n")
-		             .collect::<String>());
+		print_vec(&lcd);
 	}
-	println!("{}",lcd.iter()
-		             .map(|v|v.iter()
-		             	       .map(|c|c.to_string())
-		             	       .collect::<String>()+"\n")
-		             .collect::<String>());
+    print_vec(&lcd);
 	lcd
 }
 
@@ -98,13 +90,12 @@ fn main() {
 #[test]
 fn test_pixels()
 {
-	let pixels:Vec<Vec<char>> = "\
+	let px = "\
 .#..#.#
 #.#....
-.#.....".lines()
-        .map(|line|line.chars()
-        	           .collect())
-        .collect();
+.#.....";
+    
+    
 	let commands = "\
 rect 3x2
 rotate column x=1 by 1
