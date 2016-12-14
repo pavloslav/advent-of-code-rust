@@ -1,0 +1,7 @@
+[package]
+name = "10"
+version = "0.1.0"
+authors = ["Slavynskiy Pavlo <pavloslav@gmail.com>"]
+
+[dependencies]
+aoc = { path = "../aoc" }
