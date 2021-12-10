@@ -50,3 +50,6 @@ Temporary Items
 aoc.ini
 
 .fingerprint
+**\target
+*.txt
+*.lock

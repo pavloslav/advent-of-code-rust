@@ -1,104 +1,78 @@
-extern crate hyper;
+//extern crate reqwest;
 extern crate ini;
+extern crate anyhow;
 
-use std::io::Read;
 use ini::Ini;
+//use reqwest::blocking::*;
+//use reqwest::header::*;
+use std::fs;
 
-#[derive(Debug)]
-pub enum Error {
-    Hyper(hyper::error::Error),
-    NotOk(hyper::status::StatusCode),
-    IO(std::io::Error),
-    Ini(ini::ini::Error), 
-    NoAocSectionInIni,
-} 
+fn format_url(format: &str, year: &str, number: &str) -> String {
+    format.replacen("{}", year, 1).replacen("{}", number, 1)
+}
+/*
+pub fn get_input(url:&str, session:&str) -> anyhow::Result<String> {
+    println!("Session: '{}'",session);
+    println!("Trying url '{}'",url);
+    let client = Client::new();
+    let resp = client.get(url)
+        .header(COOKIE, format!("session={}",session))
+        //.header(USER_AGENT, "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0")
+       // .body("\r\n\r\n")
+        .send()?;
 
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match *self {
-            Error::Hyper(ref err)    => {write!(f,"Advent of Code net error: {}",err)},
-            Error::NotOk(ref code)   => {write!(f,"Advent of Code recieved result {}",code)},
-            Error::IO(ref err)       => {write!(f,"Advent of Code couldn't read because {}",err)},
-            Error::Ini(ref err)      => {write!(f,"Advent of Code failed to read ini because {}",err)},
-            Error::NoAocSectionInIni => {write!(f,"Advent of Code failed to read ini because no [aoc] section in INI file")}, 
+    if resp.status().is_success() {
+        let result = resp.text()?;
+        let len = result.len()-1;
+        Ok(result[..len].to_owned())
+    } else {
+        anyhow::bail!(resp.status())
+    }
+}*/
+
+extern crate minreq;
+
+pub fn get_input(url:&str, session:&str) -> anyhow::Result<String> {
+    println!("Trying url '{}'",url);
+    let resp = minreq::get(url)
+                      .with_header("Cookie", format!("session={}",session))
+                      .send()?;
+
+    if 200 <= resp.status_code && resp.status_code <300 {
+        let result = resp.as_str()?;
+        Ok(result[..result.len()-1].to_owned())
+    } else {
+        anyhow::bail!(resp.reason_phrase)
+    }
+}
+
+pub fn get_input_from_ini(number:&str) -> anyhow::Result<String> {
+    get_input_from_ini_with_year(number, &"2016")
+}
+
+pub fn get_input_from_ini_with_year(number:&str, year:&str) -> anyhow::Result<String> {
+    let filename = format!("cache{}_{}.txt",year, number);
+    fs::read_to_string(&filename).or_else(|file_error|
+    {
+        println!("Cache not found ({})", file_error);
+        let number = match number.find('_') {
+            Some(idx) => &number[idx+1..],
+            _ => number
+        };
+        let ini = Ini::load_from_file("..\\aoc.ini")?;
+        let section = ini.section(Some("aoc"));
+        match section {
+            Some(section) => {
+                let url     = format_url(&section["link_year"], year, number);
+                let session = &section["session"];
+                get_input(&url, session).and_then(|s|{
+                    if let Err(e) = fs::write(filename, &s) {
+                        println!("{:?}",e);
+                    }
+                    Ok(s)
+                })
+            },
+            None => anyhow::bail!("No aoc section in ini")
         }
-    }
-}
-
-impl std::error::Error for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::Hyper(ref err) => err.description(),
-            Error::NotOk(_)       => "Advent of Code recieved wrong result downloading input",
-            Error::IO(ref err)    => err.description(),
-            Error::Ini(ref err)   => err.description(),
-            Error::NoAocSectionInIni => "No [aoc] section in INI file",
-        }
-    }
-
-    fn cause(&self) -> Option<&std::error::Error> {
-        None
-    }    
-}
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Error {
-        Error::IO(err)
-    }
-}
-
-impl From<hyper::error::Error> for Error {
-    fn from(err: hyper::error::Error) -> Error {
-        Error::Hyper(err)
-    }
-}
-
-impl From<ini::ini::Error> for Error {
-    fn from(err: ini::ini::Error) -> Error {
-        Error::Ini(err)
-    }
-}
-
-use hyper::header::{Cookie, CookiePair};
-
-pub fn get_input(url:&str, number:&str, session:&str) -> Result<String, Error> {
-    let url=str::replace(url,"{}", number);
-    println!("{}",url);
-    let cookie = Cookie(
-                        vec![ 
-                            CookiePair::new("session".to_string(),
-                                              session.to_string() ) 
-                            ]
-                    );
-    println!("Trying url {}",url);
-    let mut resp = hyper::Client::new()
-                .get(&url)
-                .header(cookie)
-                .send()?;
-
-    match resp.status {
-        hyper::Ok => {    
-            let mut answ:String = String::new();
-            resp.read_to_string(&mut answ)?;
-            let len = answ.len()-1;
-            answ.truncate(len);
-            Ok(answ)
-        },
-        _ => {
-            Err(Error::NotOk(resp.status))
-        }
-    }
-}
-
-pub fn get_input_from_ini(number:&str) -> Result<String, Error> {
-    let ini = Ini::load_from_file("..\\aoc.ini")?;
-    let section = ini.section(Some("aoc"));
-    match section {
-        Some(section) => {
-            let url     = &section["link".into()];
-            let session = &section["session".into()];
-            get_input(url, number, session)
-        },
-        None => Err(Error::NoAocSectionInIni)
-    }
+    })
 }
