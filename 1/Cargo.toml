@@ -1,9 +1,0 @@
-[package]
-name = "1"
-version = "0.1.0"
-authors = ["Pavloslav <pavloslav@ukr.net>"]
-
-[dependencies]
-aoc = { path = "../aoc" }
-
-
