@@ -9,10 +9,11 @@ verbose = [] #may be "verbose", "err" or none
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rust-ini = "*"
-minreq = {version = "*", features = ["https"] }
-regex = "*"
-lazy_static = "*"
-rust-crypto = "*"
-unicode_categories = "*"
-itertools = "*"
+rust-ini = "*"          #common
+minreq = {version = "*", features = ["https"] } #common
+regex = "*"             #whereever needed
+lazy_static = "*"       #together with regex
+rust-crypto = "*"       #2015/4, 2016/5
+unicode_categories = "*" #2021/12
+itertools = "*"         #whereever needed
+json = "*"              #2015/12
