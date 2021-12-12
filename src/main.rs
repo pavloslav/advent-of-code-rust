@@ -40,7 +40,7 @@ macro_rules! aoc_entry {
 
 fn main() {
     let aoc_map = std::collections::HashMap::from([
-        aoc_entry!(year2015, day1), //????
+        aoc_entry!(year2015, day1), // wrong first answer, dunno
         aoc_entry!(year2015, day2),
         aoc_entry!(year2015, day3),
         aoc_entry!(year2015, day4),
@@ -48,6 +48,7 @@ fn main() {
         aoc_entry!(year2015, day6),
         aoc_entry!(year2015, day7),
         aoc_entry!(year2015, day8),
+        aoc_entry!(year2015, day9),
 
         aoc_entry!(year2016, day1),
         aoc_entry!(year2016, day2),
@@ -93,10 +94,17 @@ fn main() {
         aoc_entry!(year2021, day9),
         aoc_entry!(year2021, day10),
         aoc_entry!(year2021, day11),
+        aoc_entry!(year2021, day12),
 
     ]);
     
-    (aoc_map[&("year2015", "day8")].f)();
+    macro_rules! call {
+        ($year: ident, $day: ident) => {
+            (aoc_map[&(stringify!($year), stringify!($day))].f)();
+        }
+    }
+
+    call!(year2015, day9);
 
 
 }
