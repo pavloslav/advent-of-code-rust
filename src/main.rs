@@ -13,32 +13,43 @@ struct FunctionHolder {
 #[allow(dead_code)]
 macro_rules! aoc_entry_part {
     ($year: ident, $day: ident) => {
-        ((stringify!($year), stringify!($day)), FunctionHolder{ f:|| {
-            let year_str = stringify!($year);
-            let day_str  = stringify!($day);
-            let input = common::get_input_from_ini_with_mod(year_str, day_str).unwrap();
-            let data = $year::$day::parse_input(&input);
-            println!("{} {}",year_str, day_str);
-            println!("Result 1: {}", $year::$day::task1(&data));
-        }})
-    }
+        (
+            (stringify!($year), stringify!($day)),
+            FunctionHolder {
+                f: || {
+                    let year_str = stringify!($year);
+                    let day_str = stringify!($day);
+                    let input = common::get_input_from_ini_with_mod(year_str, day_str).unwrap();
+                    let data = $year::$day::parse_input(&input);
+                    println!("{} {}", year_str, day_str);
+                    println!("Result 1: {}", $year::$day::task1(&data));
+                },
+            },
+        )
+    };
 }
 
 macro_rules! aoc_entry {
     ($year: ident, $day: ident) => {
-        ((stringify!($year), stringify!($day)), FunctionHolder{ f:|| {
-            let year_str = stringify!($year);
-            let day_str  = stringify!($day);
-            let input = common::get_input_from_ini_with_mod(year_str, day_str).unwrap();
-            let data = $year::$day::parse_input(&input);
-            println!("{} {}",year_str, day_str);
-            println!("Result 1: {}", $year::$day::task1(&data));
-            println!("Result 2: {}", $year::$day::task2(&data));
-        }})
-    }
+        (
+            (stringify!($year), stringify!($day)),
+            FunctionHolder {
+                f: || {
+                    let year_str = stringify!($year);
+                    let day_str = stringify!($day);
+                    let input = common::get_input_from_ini_with_mod(year_str, day_str).unwrap();
+                    let data = $year::$day::parse_input(&input);
+                    println!("{} {}", year_str, day_str);
+                    println!("Result 1: {}", $year::$day::task1(&data));
+                    println!("Result 2: {}", $year::$day::task2(&data));
+                },
+            },
+        )
+    };
 }
 
 fn main() {
+    #[rustfmt::skip]
     let aoc_map = std::collections::HashMap::from([
         aoc_entry!(year2015, day1), // wrong first answer, dunno
         aoc_entry!(year2015, day2),
@@ -52,7 +63,7 @@ fn main() {
         aoc_entry!(year2015, day10),
         aoc_entry!(year2015, day11),
         aoc_entry!(year2015, day12),
-
+        
         aoc_entry!(year2016, day1),
         aoc_entry!(year2016, day2),
         aoc_entry!(year2016, day3),
@@ -62,10 +73,9 @@ fn main() {
         aoc_entry!(year2016, day7),
         aoc_entry_part!(year2016, day8),
         aoc_entry!(year2016, day9),
-//        aoc_entry!(year2016, day10),
+        //        aoc_entry!(year2016, day10),
 
         aoc_entry_part!(year2019, day1),
-
         aoc_entry!(year2020, day1a),
         aoc_entry!(year2020, day2),
         aoc_entry!(year2020, day3),
@@ -99,16 +109,14 @@ fn main() {
         aoc_entry!(year2021, day11),
         aoc_entry!(year2021, day12),
         aoc_entry!(year2021, day13),
-
+        aoc_entry!(year2021, day14),
     ]);
-    
+
     macro_rules! call {
         ($year: ident, $day: ident) => {
             (aoc_map[&(stringify!($year), stringify!($day))].f)();
-        }
+        };
     }
 
-    call!(year2021, day13);
-
-
+    call!(year2021, day14);
 }
