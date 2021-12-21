@@ -48,7 +48,6 @@ impl PolymerData {
                     None => [(right, 1)].into(),
                 }
             };
-            //dbg!(&counters);
             self.counters.insert((left, right, steps), counters);
         }
         self.counters.get(&(left, right, steps)).unwrap().clone()
