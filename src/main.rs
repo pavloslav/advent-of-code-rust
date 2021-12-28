@@ -112,6 +112,11 @@ fn main() {
         aoc_entry!(year2021, day14),
         aoc_entry!(year2021, day15),
         aoc_entry!(year2021, day16),
+        aoc_entry!(year2021, day17),
+        aoc_entry!(year2021, day18),
+        aoc_entry!(year2021, day20),
+        aoc_entry!(year2021, day21),
+        aoc_entry_part!(year2021, day25),
     ]);
 
     macro_rules! call {
@@ -120,5 +125,5 @@ fn main() {
         };
     }
 
-    call!(year2021, day16);
+    call!(year2021, day17);
 }
