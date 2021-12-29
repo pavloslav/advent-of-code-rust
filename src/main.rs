@@ -19,7 +19,9 @@ macro_rules! aoc_entry_part {
                 f: || {
                     let year_str = stringify!($year);
                     let day_str = stringify!($day);
-                    let input = common::get_input_from_ini_with_mod(year_str, day_str).unwrap();
+                    let input =
+                        common::get_input_from_ini_with_mod(year_str, day_str)
+                            .unwrap();
                     let data = $year::$day::parse_input(&input);
                     println!("{} {}", year_str, day_str);
                     println!("Result 1: {}", $year::$day::task1(&data));
@@ -37,7 +39,9 @@ macro_rules! aoc_entry {
                 f: || {
                     let year_str = stringify!($year);
                     let day_str = stringify!($day);
-                    let input = common::get_input_from_ini_with_mod(year_str, day_str).unwrap();
+                    let input =
+                        common::get_input_from_ini_with_mod(year_str, day_str)
+                            .unwrap();
                     let data = $year::$day::parse_input(&input);
                     println!("{} {}", year_str, day_str);
                     println!("Result 1: {}", $year::$day::task1(&data));
@@ -63,6 +67,8 @@ fn main() {
         aoc_entry!(year2015, day10),
         aoc_entry!(year2015, day11),
         aoc_entry!(year2015, day12),
+        aoc_entry!(year2015, day13),
+        aoc_entry!(year2015, day14),
         
         aoc_entry!(year2016, day1),
         aoc_entry!(year2016, day2),
@@ -125,5 +131,5 @@ fn main() {
         };
     }
 
-    call!(year2021, day17);
+    call!(year2015, day14);
 }
