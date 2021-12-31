@@ -69,6 +69,7 @@ fn main() {
         aoc_entry!(year2015, day12),
         aoc_entry!(year2015, day13),
         aoc_entry!(year2015, day14),
+        aoc_entry!(year2015, day15),
         
         aoc_entry!(year2016, day1),
         aoc_entry!(year2016, day2),
@@ -131,5 +132,5 @@ fn main() {
         };
     }
 
-    call!(year2015, day14);
+    call!(year2015, day15);
 }
