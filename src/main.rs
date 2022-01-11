@@ -70,6 +70,7 @@ fn main() {
         aoc_entry!(year2015, day13),
         aoc_entry!(year2015, day14),
         aoc_entry!(year2015, day15),
+        aoc_entry!(year2015, day16),
         
         aoc_entry!(year2016, day1),
         aoc_entry!(year2016, day2),
@@ -121,8 +122,11 @@ fn main() {
         aoc_entry!(year2021, day16),
         aoc_entry!(year2021, day17),
         aoc_entry!(year2021, day18),
+        
         aoc_entry!(year2021, day20),
         aoc_entry!(year2021, day21),
+        aoc_entry!(year2021, day21),
+        aoc_entry!(year2021, day22),
         aoc_entry_part!(year2021, day25),
     ]);
 
@@ -131,6 +135,9 @@ fn main() {
             (aoc_map[&(stringify!($year), stringify!($day))].f)();
         };
     }
+    let start = std::time::Instant::now();
 
-    call!(year2015, day15);
+    call!(year2015, day16);
+
+    println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }
