@@ -71,6 +71,8 @@ fn main() {
         aoc_entry!(year2015, day14),
         aoc_entry!(year2015, day15),
         aoc_entry!(year2015, day16),
+        aoc_entry!(year2015, day17),
+        aoc_entry!(year2015, day18), //second wrong!
         
         aoc_entry!(year2016, day1),
         aoc_entry!(year2016, day2),
@@ -137,7 +139,7 @@ fn main() {
     }
     let start = std::time::Instant::now();
 
-    call!(year2015, day16);
+    call!(year2015, day18);
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }
