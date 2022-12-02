@@ -5,6 +5,7 @@ mod year2016;
 mod year2019;
 mod year2020;
 mod year2021;
+mod year2022;
 
 struct FunctionHolder {
     f: fn(),
@@ -130,6 +131,9 @@ fn main() {
         aoc_entry!(year2021, day21),
         aoc_entry!(year2021, day22),
         aoc_entry_part!(year2021, day25),
+
+        aoc_entry!(year2022, day1),
+        aoc_entry!(year2022, day2),
     ]);
 
     macro_rules! call {
@@ -139,7 +143,7 @@ fn main() {
     }
     let start = std::time::Instant::now();
 
-    call!(year2015, day18);
+    call!(year2022, day2);
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }

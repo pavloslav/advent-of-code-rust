@@ -1,14 +1,19 @@
 const AOC_INI_FILE_NAME: &str = "aoc.ini";
 const AOC_INI_SECTION: &str = "aoc";
 
+#[cfg(feature = "verbose")]
 macro_rules! log {
     ($($arg : tt) *) =>
     (
-        if cfg!(feature="verbose") {
-            println!($($arg) *);
-        } else if cfg!(feature="err") {
-            eprintln!($($arg) *);
-        }
+        println!($($arg) *);
+    )
+}
+
+#[cfg(feature = "err")]
+macro_rules! log {
+    ($($arg : tt) *) =>
+    (
+        eprintln!($($arg) *);
     )
 }
 
