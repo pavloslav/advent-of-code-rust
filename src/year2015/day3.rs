@@ -18,13 +18,13 @@ impl Santa {
             _ => panic!("Wrong input"),
         }
     }
-    fn to_pair(&self) -> (i32, i32) {
+    fn to_pair(self) -> (i32, i32) {
         (self.x, self.y)
     }
 }
 
 pub fn task1(input: &str) -> usize {
-    let mut santa = Santa {x:0, y:0};
+    let mut santa = Santa { x: 0, y: 0 };
     let mut visited = std::collections::HashSet::from([santa.to_pair()]);
     for dir in input.chars() {
         santa.step(dir);
@@ -34,11 +34,11 @@ pub fn task1(input: &str) -> usize {
 }
 
 pub fn task2(input: &str) -> usize {
-    let mut santas = [Santa {x:0, y:0}; 2];
+    let mut santas = [Santa { x: 0, y: 0 }; 2];
     let mut visited = std::collections::HashSet::from([santas[0].to_pair()]);
     for (i, dir) in input.chars().enumerate() {
-        santas[i%2].step(dir);
-        visited.insert(santas[i%2].to_pair());
+        santas[i % 2].step(dir);
+        visited.insert(santas[i % 2].to_pair());
     }
     visited.len()
 }

@@ -53,3 +53,5 @@ aoc.ini
 **\target
 *.txt
 *.lock
+cache
+cache/*.*

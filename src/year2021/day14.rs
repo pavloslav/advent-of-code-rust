@@ -24,14 +24,18 @@ impl PolymerData {
             let left = parts.next().unwrap();
             let right = parts.next().unwrap();
             polymer_data.rules.insert(
-                (left.chars().nth(0).unwrap(), left.chars().nth(1).unwrap()),
-                right.chars().nth(0).unwrap(),
+                (left.chars().next().unwrap(), left.chars().nth(1).unwrap()),
+                right.chars().next().unwrap(),
             );
         }
         polymer_data
     }
 
-    fn composition_recursive(&mut self, polymer: (char, char), steps: usize) -> Counter {
+    fn composition_recursive(
+        &mut self,
+        polymer: (char, char),
+        steps: usize,
+    ) -> Counter {
         let (left, right) = polymer;
         if !self.counters.contains_key(&(left, right, steps)) {
             let counters = if steps == 0 {
@@ -39,8 +43,11 @@ impl PolymerData {
             } else {
                 match self.rules.get(&(left, right)) {
                     Some(&v) => {
-                        let mut left = self.composition_recursive((left, v), steps - 1);
-                        for (element, count) in self.composition_recursive((v, right), steps - 1) {
+                        let mut left =
+                            self.composition_recursive((left, v), steps - 1);
+                        for (element, count) in
+                            self.composition_recursive((v, right), steps - 1)
+                        {
                             *left.entry(element).or_insert(0) += count;
                         }
                         left
@@ -56,9 +63,10 @@ impl PolymerData {
     fn composition(&mut self, steps: usize) -> usize {
         let mut counter: Counter = [(self.polymer[0], 1)].into();
         for i in 0..self.polymer.len() - 1 {
-            for (element, count) in
-                self.composition_recursive((self.polymer[i], self.polymer[i + 1]), steps)
-            {
+            for (element, count) in self.composition_recursive(
+                (self.polymer[i], self.polymer[i + 1]),
+                steps,
+            ) {
                 *counter.entry(element).or_insert(0) += count;
             }
         }

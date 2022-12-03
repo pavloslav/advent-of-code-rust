@@ -1,5 +1,4 @@
 use std::boxed::Box;
-use std::str::Chars;
 
 #[derive(Clone)]
 pub enum SnailfishNumber {
@@ -33,7 +32,10 @@ impl SnailfishNumber {
     }
 }
 
-fn read_snailfish_number<'a>(input: &mut Chars<'a>) -> SnailfishNumber {
+fn read_snailfish_number<I>(input: &mut I) -> SnailfishNumber
+where
+    I: Iterator<Item = char>,
+{
     let first = input.next().unwrap();
     if first == '[' {
         let left = read_snailfish_number(input.by_ref());
@@ -56,10 +58,7 @@ enum Explosion {
 
 impl Explosion {
     fn to_bool(&self) -> bool {
-        match self {
-            Explosion::Not => false,
-            _ => true,
-        }
+        !matches!(self, Explosion::Not)
     }
 }
 
@@ -178,7 +177,7 @@ fn add(left: SnailfishNumber, right: SnailfishNumber) -> SnailfishNumber {
     result
 }
 
-fn sum_vec(numbers: &Vec<SnailfishNumber>) -> SnailfishNumber {
+fn sum_vec(numbers: &[SnailfishNumber]) -> SnailfishNumber {
     numbers
         .iter()
         .skip(1)
@@ -192,7 +191,7 @@ pub fn parse_input(input: &str) -> Vec<SnailfishNumber> {
         .collect()
 }
 
-pub fn task1(input: &Vec<SnailfishNumber>) -> u32 {
+pub fn task1(input: &[SnailfishNumber]) -> u32 {
     sum_vec(input).magnitude()
 }
 

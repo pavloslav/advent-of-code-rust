@@ -1,6 +1,6 @@
 pub enum PacketContent {
     Literal(usize),
-    Operator(Box<Vec<Packet>>),
+    Operator(Vec<Packet>),
 }
 
 pub struct Packet {
@@ -57,9 +57,9 @@ fn parse_packet(input: &[u8]) -> Result<(Packet, &[u8]), Error> {
             0 => {
                 let header_end = 7 + BIT_LENGTH_SIZE;
                 let bit_length = get_number(&input[7..header_end]);
-                let mut subpackets = Box::new(vec![]);
+                let mut subpackets = vec![];
                 let mut own_input = &input[header_end..header_end + bit_length];
-                while own_input.len() > 0 {
+                while !own_input.is_empty() {
                     let (packet, rest) = parse_packet(own_input)?;
                     subpackets.push(packet);
                     own_input = rest;
@@ -76,7 +76,7 @@ fn parse_packet(input: &[u8]) -> Result<(Packet, &[u8]), Error> {
             1 => {
                 let header_end = 7 + PACKETS_COUNT_SIZE;
                 let packet_count = get_number(&input[7..header_end]);
-                let mut subpackets = Box::new(Vec::with_capacity(packet_count));
+                let mut subpackets = Vec::with_capacity(packet_count);
                 let mut own_input = &input[header_end..];
                 for _ in 0..packet_count {
                     let (packet, rest) = parse_packet(own_input)?;
@@ -134,27 +134,15 @@ impl Packet {
                 subpackets.iter().map(|p| p.calculate()).max().unwrap()
             }
             (&PacketContent::Literal(value), 4) => value,
-            (PacketContent::Operator(subpackets), 5) => {
-                if subpackets[0].calculate() > subpackets[1].calculate() {
-                    1
-                } else {
-                    0
-                }
-            }
-            (PacketContent::Operator(subpackets), 6) => {
-                if subpackets[0].calculate() < subpackets[1].calculate() {
-                    1
-                } else {
-                    0
-                }
-            }
-            (PacketContent::Operator(subpackets), 7) => {
-                if subpackets[0].calculate() == subpackets[1].calculate() {
-                    1
-                } else {
-                    0
-                }
-            }
+            (PacketContent::Operator(subpackets), 5) => usize::from(
+                subpackets[0].calculate() > subpackets[1].calculate(),
+            ),
+            (PacketContent::Operator(subpackets), 6) => usize::from(
+                subpackets[0].calculate() < subpackets[1].calculate(),
+            ),
+            (PacketContent::Operator(subpackets), 7) => usize::from(
+                subpackets[0].calculate() == subpackets[1].calculate(),
+            ),
             _ => panic!("Wrong type_id: {}", self.type_id),
         }
     }

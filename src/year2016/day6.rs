@@ -4,10 +4,10 @@ pub fn parse_input(input: &str) -> &str {
     input
 }
 
-pub fn task1(lines:&str) -> String {
-    let mut statistics:Vec<HashMap<char,u32>> = Vec::new();
+pub fn task1(lines: &str) -> String {
+    let mut statistics: Vec<HashMap<char, u32>> = Vec::new();
     for line in lines.lines() {
-        if statistics.len() == 0 {
+        if statistics.is_empty() {
             statistics = vec![HashMap::new(); line.len()];
         }
         for (i, c) in line.chars().enumerate() {
@@ -15,18 +15,22 @@ pub fn task1(lines:&str) -> String {
         }
     }
 
-    statistics.iter()
-              .map( |hashmap| hashmap.iter()
-                                     .max_by_key(|tuple|tuple.1)
-                                     .map(|tuple|*tuple.0)
-                                     .unwrap() )
-              .collect()
+    statistics
+        .iter()
+        .map(|hashmap| {
+            hashmap
+                .iter()
+                .max_by_key(|tuple| tuple.1)
+                .map(|tuple| *tuple.0)
+                .unwrap()
+        })
+        .collect()
 }
 
-pub fn task2(lines:&str) -> String {
-    let mut statistics:Vec<HashMap<char,u32>> = Vec::new();
+pub fn task2(lines: &str) -> String {
+    let mut statistics: Vec<HashMap<char, u32>> = Vec::new();
     for line in lines.lines() {
-        if statistics.len() == 0 {
+        if statistics.is_empty() {
             statistics = vec![HashMap::new(); line.len()];
         }
         for (i, c) in line.chars().enumerate() {
@@ -34,12 +38,16 @@ pub fn task2(lines:&str) -> String {
         }
     }
 
-    statistics.iter()
-              .map( |hashmap| hashmap.iter()
-                                     .min_by_key(|tuple|tuple.1)
-                                     .map(|tuple|*tuple.0)
-                                     .unwrap() )
-              .collect()
+    statistics
+        .iter()
+        .map(|hashmap| {
+            hashmap
+                .iter()
+                .min_by_key(|tuple| tuple.1)
+                .map(|tuple| *tuple.0)
+                .unwrap()
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -48,7 +56,7 @@ mod test {
 
     #[test]
     fn test_correct_by_most() {
-        let inp ="\
+        let inp = "\
 eedadn
 drvtee
 eandsr

@@ -1,16 +1,16 @@
 pub fn parse_input(input: &str) -> &str {
-    input
+    input.trim()
 }
 
-use crypto::md5::Md5;
 use crypto::digest::Digest;
+use crypto::md5::Md5;
 
 fn find_hash(init: &str, start_hash: &str) -> usize {
     for i in 0.. {
         let mut md5 = Md5::new();
         md5.input_str(&format!("{}{}", init, i));
         if md5.result_str().starts_with(start_hash) {
-            return i
+            return i;
         }
     }
     0

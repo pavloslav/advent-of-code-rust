@@ -56,7 +56,7 @@ macro_rules! aoc_entry {
 fn main() {
     #[rustfmt::skip]
     let aoc_map = std::collections::HashMap::from([
-        aoc_entry!(year2015, day1), // wrong first answer, dunno
+        aoc_entry!(year2015, day1),
         aoc_entry!(year2015, day2),
         aoc_entry!(year2015, day3),
         aoc_entry!(year2015, day4),
@@ -73,7 +73,7 @@ fn main() {
         aoc_entry!(year2015, day15),
         aoc_entry!(year2015, day16),
         aoc_entry!(year2015, day17),
-        aoc_entry!(year2015, day18), //second wrong!
+        aoc_entry!(year2015, day18),
         
         aoc_entry!(year2016, day1),
         aoc_entry!(year2016, day2),
@@ -82,7 +82,7 @@ fn main() {
         aoc_entry!(year2016, day5),
         aoc_entry!(year2016, day6),
         aoc_entry!(year2016, day7),
-        aoc_entry_part!(year2016, day8),
+        aoc_entry!(year2016, day8),
         aoc_entry!(year2016, day9),
         //        aoc_entry!(year2016, day10),
 
@@ -134,6 +134,7 @@ fn main() {
 
         aoc_entry!(year2022, day1),
         aoc_entry!(year2022, day2),
+        aoc_entry!(year2022, day3),
     ]);
 
     macro_rules! call {
@@ -143,7 +144,7 @@ fn main() {
     }
     let start = std::time::Instant::now();
 
-    call!(year2022, day2);
+    call!(year2016, day9);
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }

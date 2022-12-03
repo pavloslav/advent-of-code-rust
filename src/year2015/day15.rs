@@ -12,24 +12,20 @@ impl Ingridient {
             //Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
             static ref INPUT_REGEX: regex::Regex = regex::Regex::new(r"\w: capacity (?P<capacity>[-\d]+), durability (?P<durability>[-\d]+), flavor (?P<flavor>[-\d]+), texture (?P<texture>[-\d]+), calories (?P<calories>[-\d]+)").unwrap();
         }
-        if let Some(captures) = INPUT_REGEX.captures(input) {
-            Some(Ingridient {
-                properties: ["capacity", "durability", "flavor", "texture"]
-                    .iter()
-                    .map(|name| {
-                        captures.name(name).unwrap().as_str().parse().unwrap()
-                    })
-                    .collect(),
-                calories: captures
-                    .name("calories")
-                    .unwrap()
-                    .as_str()
-                    .parse()
-                    .unwrap(),
-            })
-        } else {
-            None
-        }
+        INPUT_REGEX.captures(input).map(|captures| Ingridient {
+            properties: ["capacity", "durability", "flavor", "texture"]
+                .iter()
+                .map(|name| {
+                    captures.name(name).unwrap().as_str().parse().unwrap()
+                })
+                .collect(),
+            calories: captures
+                .name("calories")
+                .unwrap()
+                .as_str()
+                .parse()
+                .unwrap(),
+        })
     }
 }
 
@@ -39,10 +35,7 @@ pub struct IngridientList {
 
 pub fn parse_input(input: &str) -> IngridientList {
     IngridientList {
-        ingridients: input
-            .lines()
-            .filter_map(|line| Ingridient::try_new(line))
-            .collect(),
+        ingridients: input.lines().filter_map(Ingridient::try_new).collect(),
     }
 }
 

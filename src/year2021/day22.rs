@@ -4,7 +4,7 @@ pub enum State {
     Off,
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Eq, Clone)]
 pub struct Zone {
     limits: [std::ops::RangeInclusive<i32>; 3],
 }
@@ -97,7 +97,7 @@ impl Reactor {
                 Intersection::Intersects(coordinate) => {
                     match self.cubes[idx].limits[coordinate]
                         .start()
-                        .cmp(&command.zone.limits[coordinate].start())
+                        .cmp(command.zone.limits[coordinate].start())
                     {
                         std::cmp::Ordering::Less => {
                             let removed = self.cubes.remove(idx).clone();
@@ -131,7 +131,7 @@ impl Reactor {
                         std::cmp::Ordering::Equal => {
                             match self.cubes[idx].limits[coordinate]
                                 .end()
-                                .cmp(&command.zone.limits[coordinate].end())
+                                .cmp(command.zone.limits[coordinate].end())
                             {
                                 std::cmp::Ordering::Greater => {
                                     let removed = self.cubes.remove(idx);
@@ -197,7 +197,7 @@ impl Reactor {
 }
 
 pub fn parse_input(input: &str) -> Vec<Command> {
-    input.lines().map(|line| Command::new(line)).collect()
+    input.lines().map(Command::new).collect()
 }
 
 pub fn task1(commands: &Vec<Command>) -> usize {

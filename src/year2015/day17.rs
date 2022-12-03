@@ -27,8 +27,8 @@ pub fn task2(input: &Vec<usize>) -> usize {
     let mut best = input.len();
     for i in 0_usize..(1 << input.len()) {
         let count = i.count_ones() as usize;
-        if count <= best {
-            if input
+        if count <= best
+            && input
                 .iter()
                 .enumerate()
                 .filter_map(
@@ -36,13 +36,12 @@ pub fn task2(input: &Vec<usize>) -> usize {
                 )
                 .sum::<usize>()
                 == SIZE
-            {
-                if count == best {
-                    result += 1;
-                } else {
-                    best = count;
-                    result = 1;
-                }
+        {
+            if count == best {
+                result += 1;
+            } else {
+                best = count;
+                result = 1;
             }
         }
     }

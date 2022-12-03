@@ -27,6 +27,9 @@ pub struct Life {
 
 impl Life {
     fn step(&mut self, light_corners: bool) {
+        if light_corners {
+            self.light_up_corners();
+        }
         self.field = (0..self.field.len())
             .map(|row| {
                 (0..self.field[row].len())
@@ -47,14 +50,7 @@ impl Life {
             })
             .collect();
         if light_corners {
-            for (y, x) in [
-                (0, 0),
-                (0, self.field[0].len() - 1),
-                (self.field.len() - 1, 0),
-                (self.field.len() - 1, self.field[0].len() - 1),
-            ] {
-                self.field[y][x] = Cell::Enabled;
-            }
+            self.light_up_corners();
         }
     }
 
@@ -75,6 +71,17 @@ impl Life {
             .iter()
             .map(|line| line.iter().map(|x| x.value()).sum::<usize>())
             .sum()
+    }
+
+    fn light_up_corners(&mut self) {
+        for (y, x) in [
+            (0, 0),
+            (0, self.field[0].len() - 1),
+            (self.field.len() - 1, 0),
+            (self.field.len() - 1, self.field[0].len() - 1),
+        ] {
+            self.field[y][x] = Cell::Enabled;
+        }
     }
 }
 
@@ -109,4 +116,47 @@ pub fn task1(life: &Life) -> usize {
 
 pub fn task2(life: &Life) -> usize {
     task(life, STEPS, true)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_task1() {
+        assert_eq!(
+            task(
+                &parse_input(
+                    ".#.#.#
+...##.
+#....#
+..#...
+#.#..#
+####.."
+                ),
+                5,
+                false
+            ),
+            4
+        );
+    }
+
+    #[test]
+    fn test_task2() {
+        assert_eq!(
+            task(
+                &parse_input(
+                    "##.#.#
+...##.
+#....#
+..#...
+#.#..#
+####.#"
+                ),
+                5,
+                true
+            ),
+            17
+        );
+    }
 }

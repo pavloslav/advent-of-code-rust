@@ -54,7 +54,7 @@ pub fn get_input(
 
     if 200 <= resp.status_code && resp.status_code < 300 {
         let result = resp.as_str()?;
-        Ok(result[..result.len() - 1].to_owned())
+        Ok(result.to_owned())
     } else {
         Err(Error::WrongResponce(resp.reason_phrase))
     }
@@ -67,8 +67,12 @@ pub fn get_input_from_ini_with_mod(
     get_input_from_ini_with_year(&mod_year[4..], &mod_day[3..])
 }
 
+fn cache_file_name(year: &str, day: &str) -> String {
+    format!("cache/cache{}_{}.txt", year, day)
+}
+
 pub fn get_input_from_ini_with_year(year: &str, day: &str) -> Result<String> {
-    let filename = format!("cache{}_{}.txt", year, day);
+    let filename = cache_file_name(year, day);
     std::fs::read_to_string(&filename).or_else(|file_error| {
         log!("Cache not found ({})", file_error);
         let number: String = day.chars().filter(|c| c.is_digit(10)).collect();

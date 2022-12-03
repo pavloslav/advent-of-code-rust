@@ -16,7 +16,8 @@ pub fn dijkstra(cave: &Cave) -> usize {
     let size = cave.len();
     let mut len_cave = vec![vec![None::<usize>; size]; size];
     len_cave[0][0] = Some(0);
-    let mut to_search: BTreeMap<usize, Vec<(usize, usize)>> = [(0, [(0, 0)].into())].into();
+    let mut to_search: BTreeMap<usize, Vec<(usize, usize)>> =
+        [(0, [(0, 0)].into())].into();
     while !to_search.is_empty() {
         let min_key = *to_search.keys().next().unwrap();
         let (x, y) = to_search.get_mut(&min_key).unwrap().pop().unwrap();
@@ -37,7 +38,7 @@ pub fn dijkstra(cave: &Cave) -> usize {
                 if len_cave[x][y] != old {
                     to_search
                         .entry(len_cave[x][y].unwrap())
-                        .or_insert(Vec::new())
+                        .or_default()
                         .push((x, y));
                 }
             }

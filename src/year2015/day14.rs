@@ -41,7 +41,7 @@ impl Reindeer {
     }
 }
 
-pub fn task1(deers: &Vec<Reindeer>) -> usize {
+pub fn task1(deers: &[Reindeer]) -> usize {
     deers
         .iter()
         .map(|deer| deer.distance(RACE_TIME))

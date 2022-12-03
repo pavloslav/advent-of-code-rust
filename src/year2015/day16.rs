@@ -26,7 +26,7 @@ fn satisfy2(data: &Map, filter: &Map) -> bool {
     .collect();
     data.iter().all(|(key, data_val)| match filter.get(key) {
         Some(filter_val) => {
-            data_val.cmp(&filter_val)
+            data_val.cmp(filter_val)
                 == *cmp_filter.get(key).unwrap_or(&std::cmp::Ordering::Equal)
         }
         _ => true,
@@ -37,10 +37,9 @@ pub fn parse_input(input: &str) -> Vec<Map> {
     input
         .lines()
         .map(|line| {
-            line.splitn(2, ": ")
-                .skip(1)
-                .next()
+            line.split_once(": ")
                 .unwrap()
+                .1
                 .split(", ")
                 .map(|value| {
                     let mut parts = value.split(": ");
@@ -54,7 +53,7 @@ pub fn parse_input(input: &str) -> Vec<Map> {
         .collect()
 }
 
-fn task<F>(input: &Vec<Map>, check: &F) -> usize
+fn task<F>(input: &[Map], check: &F) -> usize
 where
     F: Fn(&Map, &Map) -> bool,
 {
@@ -74,7 +73,7 @@ where
         .enumerate()
         .filter_map(
             |(i, data)| {
-                if check(&data, &filter) {
+                if check(data, &filter) {
                     Some(i)
                 } else {
                     None
@@ -86,10 +85,10 @@ where
         + 1
 }
 
-pub fn task1(input: &Vec<Map>) -> usize {
+pub fn task1(input: &[Map]) -> usize {
     task(input, &satisfy)
 }
 
-pub fn task2(input: &Vec<Map>) -> usize {
+pub fn task2(input: &[Map]) -> usize {
     task(input, &satisfy2)
 }

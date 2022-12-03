@@ -10,20 +10,22 @@ pub struct Wires {
 }
 
 pub fn parse_input(input: &str) -> Wires {
-    Wires{ map: input.lines()
-              .map(|line| {
+    Wires {
+        map: input
+            .lines()
+            .map(|line| {
                 let mut parts = line.split(" -> ");
                 let left = parts.next().unwrap().into();
                 let right = parts.next().unwrap().into();
                 (right, Wire::Expression(left))
-             })
-             .collect()
+            })
+            .collect(),
     }
 }
 
 impl Wires {
     fn calculate(&mut self, name: &String) -> u16 {
-        if name.chars().all(|c|c.is_digit(10)) {
+        if name.chars().all(|c| c.is_ascii_digit()) {
             name.parse().unwrap()
         } else {
             let wire = self.map[name].clone();
@@ -31,29 +33,34 @@ impl Wires {
                 Wire::Expression(value) => {
                     let calc_value = if value.contains(" AND ") {
                         let mut ops = value.split(" AND ");
-                        self.calculate(&ops.next().unwrap().into()) & self.calculate(&ops.next().unwrap().into())
+                        self.calculate(&ops.next().unwrap().into())
+                            & self.calculate(&ops.next().unwrap().into())
                     } else if value.contains(" OR ") {
                         let mut ops = value.split(" OR ");
-                        self.calculate(&ops.next().unwrap().into()) | self.calculate(&ops.next().unwrap().into())
-                    } else if value.starts_with("NOT ") {
-                        !self.calculate(&value[4..].into())
+                        self.calculate(&ops.next().unwrap().into())
+                            | self.calculate(&ops.next().unwrap().into())
+                    } else if let Some(expression) = value.strip_prefix("NOT ")
+                    {
+                        !self.calculate(&expression.into())
                     } else if value.contains(" LSHIFT ") {
                         let mut ops = value.split(" LSHIFT ");
-                        self.calculate(&ops.next().unwrap().into()) << ops.next().unwrap().parse::<u16>().unwrap()
+                        self.calculate(&ops.next().unwrap().into())
+                            << ops.next().unwrap().parse::<u16>().unwrap()
                     } else if value.contains(" RSHIFT ") {
                         let mut ops = value.split(" RSHIFT ");
-                        self.calculate(&ops.next().unwrap().into()) >> ops.next().unwrap().parse::<u16>().unwrap()
-                    } else if value.chars().all(|c|c.is_digit(10)) {
+                        self.calculate(&ops.next().unwrap().into())
+                            >> ops.next().unwrap().parse::<u16>().unwrap()
+                    } else if value.chars().all(|c| c.is_ascii_digit()) {
                         value.parse().unwrap()
-                    } else{
+                    } else {
                         self.calculate(&value)
                     };
                     self.map.insert(name.to_owned(), Wire::Value(calc_value));
                     calc_value
-                },
-                Wire::Value(x) => x
+                }
+                Wire::Value(x) => x,
             }
-            }
+        }
     }
 }
 

@@ -1,11 +1,11 @@
 type Password = Vec<u8>;
 
 pub fn parse_input(input: &str) -> Password {
-    input.chars().map(|c|c as u8).rev().collect()
+    input.trim().chars().map(|c| c as u8).rev().collect()
 }
 
 fn is_invalid_symbol(c: u8) -> bool {
-    "iol".chars().filter(|&wrong|wrong as u8==c).next().is_some()
+    "iol".chars().any(|wrong| wrong as u8 == c)
 }
 
 fn next_string(password: &Password) -> Password {
@@ -15,12 +15,12 @@ fn next_string(password: &Password) -> Password {
         if is_invalid_symbol(arr[idx]) {
             arr[idx] += 1;
         }
-        if arr[idx] > 'z' as u8 {
-            arr[idx] = 'a' as u8;
-            if idx+1<arr.len() {
-                arr[idx+1] += 1;
+        if arr[idx] > b'z' {
+            arr[idx] = b'a';
+            if idx + 1 < arr.len() {
+                arr[idx + 1] += 1;
             } else {
-                arr.push('a' as u8);
+                arr.push(b'a');
             }
         } else {
             break;
@@ -30,11 +30,12 @@ fn next_string(password: &Password) -> Password {
 }
 
 fn is_valid_password(password: &Password) -> bool {
-    if password.windows(3).any(|part| part[2] as u8 + 1 == part[1] as u8 
-                                && part[1] as u8 + 1 == part[0] as u8 ) {
+    if password.windows(3).any(|part| {
+        part[2] as u8 + 1 == part[1] as u8 && part[1] as u8 + 1 == part[0] as u8
+    }) {
         let mut found: i32 = -1;
-        for i in 0..password.len()-1 {
-            if password[i]==password[i+1] && found != i as i32 {
+        for i in 0..password.len() - 1 {
+            if password[i] == password[i + 1] && found != i as i32 {
                 if found == -1 {
                     found = i as i32 + 1;
                 } else {
@@ -42,7 +43,7 @@ fn is_valid_password(password: &Password) -> bool {
                 }
             }
         }
-    } 
+    }
     false
 }
 
@@ -57,9 +58,17 @@ fn next_password(password: &Password) -> Password {
 }
 
 pub fn task1(password: &Password) -> String {
-    next_password(password).into_iter().rev().map(|c|c as char).collect()
+    next_password(password)
+        .into_iter()
+        .rev()
+        .map(|c| c as char)
+        .collect()
 }
 
 pub fn task2(password: &Password) -> String {
-    next_password(&next_password(password)).into_iter().rev().map(|c|c as char).collect()
+    next_password(&next_password(password))
+        .into_iter()
+        .rev()
+        .map(|c| c as char)
+        .collect()
 }

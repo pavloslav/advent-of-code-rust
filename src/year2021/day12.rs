@@ -10,9 +10,9 @@ pub struct CaveNode {
 
 impl CaveNode {
     fn new(name: &str, neighbor: &str) -> CaveNode {
-        CaveNode{
+        CaveNode {
             ways_out: vec![neighbor.to_owned()],
-            visited: if name.chars().all(|c|c.is_letter_uppercase())  {
+            visited: if name.chars().all(|c| c.is_letter_uppercase()) {
                 None
             } else {
                 Some(false)
@@ -28,13 +28,13 @@ pub fn parse_input(input: &str) -> CaveMap {
     for line in input.lines() {
         if let Some(dash) = line.find('-') {
             let left = line[..dash].to_string();
-            let right = line[dash+1..].to_string();
+            let right = line[dash + 1..].to_string();
             map.entry(left.to_owned())
-               .and_modify(|node|node.ways_out.push(right.to_owned()))
-               .or_insert(CaveNode::new(&left, &right));
+                .and_modify(|node| node.ways_out.push(right.to_owned()))
+                .or_insert_with(|| CaveNode::new(&left, &right));
             map.entry(right.to_owned())
-               .and_modify(|node|node.ways_out.push(left.to_owned()))
-               .or_insert(CaveNode::new(&right, &left));
+                .and_modify(|node| node.ways_out.push(left.to_owned()))
+                .or_insert_with(|| CaveNode::new(&right, &left));
         }
     }
     map
@@ -45,18 +45,22 @@ fn count_ways(map: &mut CaveMap, start: &str, end: &str) -> usize {
         return 1;
     }
     if map[start].visited == Some(true) {
-            return 0;
+        return 0;
     }
     let start = start.to_string();
     if map[&start].visited.is_some() {
-        map.entry(start.to_owned()).and_modify(|node|node.visited = Some(true));
+        map.entry(start.to_owned())
+            .and_modify(|node| node.visited = Some(true));
     }
-    let result = (0..map[&start].ways_out.len()).map(|i|{
-        let name = map[&start].ways_out[i].to_owned();
-        count_ways(map, &name, end)
-    }).sum();
+    let result = (0..map[&start].ways_out.len())
+        .map(|i| {
+            let name = map[&start].ways_out[i].to_owned();
+            count_ways(map, &name, end)
+        })
+        .sum();
     if map[&start].visited.is_some() {
-        map.entry(start).and_modify(|node|node.visited = Some(false));
+        map.entry(start)
+            .and_modify(|node| node.visited = Some(false));
     }
     result
 }
@@ -66,11 +70,17 @@ pub fn task1(map: &CaveMap) -> usize {
     count_ways(&mut map, "start", "end")
 }
 
-fn count_ways2(map: &mut CaveMap, start: &str, end: &str, start_visited: bool, small_visited_twice: bool) -> usize {
+fn count_ways2(
+    map: &mut CaveMap,
+    start: &str,
+    end: &str,
+    start_visited: bool,
+    small_visited_twice: bool,
+) -> usize {
     if start == end {
         return 1;
     }
-    if start=="start" && start_visited {
+    if start == "start" && start_visited {
         return 0;
     }
     let in_visited_small = map[start].visited.unwrap_or(false);
@@ -79,14 +89,24 @@ fn count_ways2(map: &mut CaveMap, start: &str, end: &str, start_visited: bool, s
     }
     let start = start.to_string();
     if map[&start].visited.is_some() {
-        map.entry(start.to_owned()).and_modify(|node|node.visited = Some(true));
+        map.entry(start.to_owned())
+            .and_modify(|node| node.visited = Some(true));
     }
-    let result = (0..map[&start].ways_out.len()).map(|i|{
-        let name = map[&start].ways_out[i].to_owned();
-        count_ways2(map, &name, end, true, small_visited_twice || in_visited_small)
-    }).sum();
+    let result = (0..map[&start].ways_out.len())
+        .map(|i| {
+            let name = map[&start].ways_out[i].to_owned();
+            count_ways2(
+                map,
+                &name,
+                end,
+                true,
+                small_visited_twice || in_visited_small,
+            )
+        })
+        .sum();
     if !in_visited_small && map[&start].visited.is_some() {
-        map.entry(start).and_modify(|node|node.visited = Some(false));
+        map.entry(start)
+            .and_modify(|node| node.visited = Some(false));
     }
     result
 }

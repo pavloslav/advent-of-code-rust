@@ -21,7 +21,7 @@ pub struct Game {
 pub fn parse_input(input: &str) -> Vec<usize> {
     input
         .lines()
-        .map(|line| line.split(": ").skip(1).next().unwrap().parse().unwrap())
+        .map(|line| line.split(": ").nth(1).unwrap().parse().unwrap())
         .collect()
 }
 
@@ -30,7 +30,7 @@ impl Game {
     const BOARD_SIZE: usize = 10;
     const DICE_SIZE: usize = 100;
 
-    fn new(player_pos: &Vec<usize>) -> Game {
+    fn new(player_pos: &[usize]) -> Game {
         Game {
             players: player_pos.iter().map(|&pos| Player::new(pos)).collect(),
             turn: 0,
@@ -70,7 +70,7 @@ impl Game {
     }
 }
 
-pub fn task1(input: &Vec<usize>) -> usize {
+pub fn task1(input: &[usize]) -> usize {
     let mut game = Game::new(input);
     while !game.ended() {
         game.step();
