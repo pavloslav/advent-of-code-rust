@@ -1,6 +1,5 @@
 #[derive(Debug, Clone)]
-enum Operation
-{
+enum Operation {
     Jmp(i64),
     Acc(i64),
     Nop(i64),
@@ -8,17 +7,14 @@ enum Operation
 
 type Program = Vec<Operation>;
 
-struct Computer
-{
+struct Computer {
     instruction: usize,
     accumulator: i64,
-    program: Program
+    program: Program,
 }
 
-impl Operation
-{
-    fn from_str(line:&str) -> Operation
-    {
+impl Operation {
+    fn from_str(line: &str) -> Operation {
         let mut parts = line.split(' ');
         let operation = parts.next().unwrap();
         let value = parts.next().unwrap().parse().unwrap();
@@ -26,45 +22,41 @@ impl Operation
             "nop" => Operation::Nop(value),
             "acc" => Operation::Acc(value),
             "jmp" => Operation::Jmp(value),
-            _ =>panic!("WTF!!!111")
+            _ => panic!("WTF!!!111"),
         }
     }
 }
 
-impl Computer
-{
-    fn with_program(code:&str) -> Computer
-    {
+impl Computer {
+    fn with_program(code: &str) -> Computer {
         Computer {
             instruction: 0,
             accumulator: 0,
-            program: code.lines()
-                         .map(|line|Operation::from_str(&line))
-                         .collect()
+            program: code.lines().map(Operation::from_str).collect(),
         }
     }
-    fn tick(&mut self)
-    {
+    fn tick(&mut self) {
         match self.program[self.instruction] {
-            Operation::Jmp(offset) => { 
-                self.instruction =
-                    if offset.is_negative() {
-                        self.instruction.checked_sub(offset.abs() as usize)
-                    } else {
-                        self.instruction.checked_add(offset as usize)
-                    }.unwrap();
-            },
-            Operation::Acc(increment) => { self.accumulator += increment; self.instruction += 1; },
-            Operation::Nop(_) => self.instruction += 1
+            Operation::Jmp(offset) => {
+                self.instruction = if offset.is_negative() {
+                    self.instruction.checked_sub(offset.unsigned_abs() as usize)
+                } else {
+                    self.instruction.checked_add(offset as usize)
+                }
+                .unwrap();
+            }
+            Operation::Acc(increment) => {
+                self.accumulator += increment;
+                self.instruction += 1;
+            }
+            Operation::Nop(_) => self.instruction += 1,
         }
     }
-    fn exited(&self) -> bool
-    {
+    fn exited(&self) -> bool {
         self.instruction == self.program.len()
     }
-    fn not_working(&self)->bool
-    {
-        self.instruction>=self.program.len()
+    fn not_working(&self) -> bool {
+        self.instruction >= self.program.len()
     }
 }
 
@@ -72,8 +64,7 @@ pub fn parse_input(input: &str) -> &str {
     input
 }
 
-pub fn task1(s:&str) -> i64
-{
+pub fn task1(s: &str) -> i64 {
     let mut computer = Computer::with_program(s);
     let mut visited = vec![false; computer.program.len()];
     while !visited[computer.instruction] {
@@ -83,8 +74,7 @@ pub fn task1(s:&str) -> i64
     computer.accumulator
 }
 
-pub fn task2(s:&str) -> i64
-{
+pub fn task2(s: &str) -> i64 {
     let mut computer = Computer::with_program(s);
     println!("Read program {} instructions", computer.program.len());
     for i in 0..computer.program.len() {
@@ -93,9 +83,13 @@ pub fn task2(s:&str) -> i64
         match computer.program[i] {
             Operation::Jmp(1) => continue,
             Operation::Nop(1) => continue,
-            Operation::Jmp(offset) => computer.program[i] = Operation::Nop(offset),
-            Operation::Nop(offset) => computer.program[i] = Operation::Jmp(offset),
-            _ => continue
+            Operation::Jmp(offset) => {
+                computer.program[i] = Operation::Nop(offset)
+            }
+            Operation::Nop(offset) => {
+                computer.program[i] = Operation::Jmp(offset)
+            }
+            _ => continue,
         }
         computer.instruction = 0;
         computer.accumulator = 0;
@@ -106,11 +100,14 @@ pub fn task2(s:&str) -> i64
         if computer.exited() {
             break;
         }
-        println!("Change on {} from {:?} to {:?} is {} with {} visited instructions", i, save,
-            computer.program[i], 
-            if computer.exited() {"success"} else {"fail"}, 
-            visited.iter().map(|&x|if x {1} else {0}).sum::<u32>()
-            );
+        println!(
+            "Change on {} from {:?} to {:?} is {} with {} visited instructions",
+            i,
+            save,
+            computer.program[i],
+            if computer.exited() { "success" } else { "fail" },
+            visited.iter().map(|&x| u32::from(x)).sum::<u32>()
+        );
         computer.program[i] = save;
     }
     if computer.exited() {
@@ -122,11 +119,10 @@ pub fn task2(s:&str) -> i64
 
 #[cfg(test)]
 mod tests {
-     use super::*;
+    use super::*;
     #[test]
     fn test_task2() {
-        let input1 = 
-"nop +0
+        let input1 = "nop +0
 acc +1
 jmp +4
 acc +3

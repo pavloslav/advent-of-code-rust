@@ -86,7 +86,9 @@ fn main() {
         aoc_entry!(year2016, day9),
         //        aoc_entry!(year2016, day10),
 
-        aoc_entry_part!(year2019, day1),
+        aoc_entry!(year2019, day1),
+        aoc_entry!(year2019, day2),
+
         aoc_entry!(year2020, day1a),
         aoc_entry!(year2020, day2),
         aoc_entry!(year2020, day3),
@@ -144,7 +146,7 @@ fn main() {
     }
     let start = std::time::Instant::now();
 
-    call!(year2016, day9);
+    call!(year2019, day2);
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }

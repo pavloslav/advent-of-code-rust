@@ -1,15 +1,12 @@
 use std::collections::HashMap;
 
-
-fn is_valid1(passport: &HashMap<&str, &str>) -> bool
-{
+fn is_valid1(passport: &HashMap<&str, &str>) -> bool {
     ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
         .iter()
-        .all(|field|passport.contains_key(field))
+        .all(|field| passport.contains_key(field))
 }
 
-fn check(val: bool) -> Option<()>
-{
+fn check(val: bool) -> Option<()> {
     if val {
         Some(())
     } else {
@@ -17,12 +14,10 @@ fn check(val: bool) -> Option<()>
     }
 }
 
-fn is_valid2_inner(passport: &HashMap<&str, &str>) -> Option<()>
-{
-    let bounded_field = |field, low, high| -> Option<()>
-    {
+fn is_valid2_inner(passport: &HashMap<&str, &str>) -> Option<()> {
+    let bounded_field = |field, low, high| -> Option<()> {
         let &val = passport.get(field)?;
-        check(val.len()==4 && val.chars().all(|c|c.is_digit(10)))?;
+        check(val.len() == 4 && val.chars().all(|c| c.is_ascii_digit()))?;
         let val = val.parse::<i32>().ok()?;
         check(low <= val && val <= high)
     };
@@ -33,33 +28,38 @@ fn is_valid2_inner(passport: &HashMap<&str, &str>) -> Option<()>
 
     let hgt = passport.get("hgt")?;
     let cm = hgt.ends_with("cm");
-    check(cm||hgt.ends_with("in"))?;
-    let hgt = hgt[..hgt.len()-2].parse::<i32>().ok()?;
+    check(cm || hgt.ends_with("in"))?;
+    let hgt = hgt[..hgt.len() - 2].parse::<i32>().ok()?;
     if cm {
-        check(150<=hgt && hgt<=193)?;
+        check((150..=193).contains(&hgt))?;
     } else {
-        check(59<=hgt && hgt<=76)?;
+        check((59..=76).contains(&hgt))?;
     }
 
     let hcl = passport.get("hcl")?;
-    check(hcl.len()==7 && hcl.starts_with("#") && hcl[1..].chars().all(|c|c.is_digit(16)))?;
+    check(
+        hcl.len() == 7
+            && hcl.starts_with('#')
+            && hcl[1..].chars().all(|c| c.is_ascii_hexdigit()),
+    )?;
 
     let ecl = passport.get("ecl")?;
-    check(["amb","blu","brn","gry","grn","hzl", "oth"].contains(ecl))?;
+    check(["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(ecl))?;
 
     let pid = passport.get("pid")?;
-    check(pid.len()==9 && pid.chars().all(|c|c.is_digit(10)))?;
+    check(pid.len() == 9 && pid.chars().all(|c| c.is_ascii_digit()))?;
 
     Some(())
 }
 
-fn is_valid2(passport: &HashMap<&str, &str>) -> bool
-{
+fn is_valid2(passport: &HashMap<&str, &str>) -> bool {
     is_valid2_inner(passport).is_some()
 }
 
-fn valid_passports(s:&str, validator:fn(&HashMap<&str, &str>) -> bool) -> usize
-{
+fn valid_passports(
+    s: &str,
+    validator: fn(&HashMap<&str, &str>) -> bool,
+) -> usize {
     let mut passport = HashMap::new();
     let mut count = 0;
     for line in s.lines() {
@@ -71,7 +71,7 @@ fn valid_passports(s:&str, validator:fn(&HashMap<&str, &str>) -> bool) -> usize
         } else {
             for record in line.split_whitespace() {
                 let mut split = record.split(':');
-                if let Some(field) = split.next(){
+                if let Some(field) = split.next() {
                     if let Some(value) = split.next() {
                         passport.insert(field, value);
                     }
@@ -89,12 +89,10 @@ pub fn parse_input(input: &str) -> &str {
     input
 }
 
-pub fn task1(s:&str) -> usize
-{
+pub fn task1(s: &str) -> usize {
     valid_passports(s, is_valid1)
 }
 
-pub fn task2(s:&str) -> usize
-{
+pub fn task2(s: &str) -> usize {
     valid_passports(s, is_valid2)
 }

@@ -33,24 +33,22 @@ pub fn parse_input(input: &str) -> InvisiblePaper {
     for line in lines {
         if line.is_empty() {
             dots_done = true;
+        } else if !dots_done {
+            let mut dot = line.split(',');
+            data.dots.insert((
+                dot.next().unwrap().parse().unwrap(),
+                dot.next().unwrap().parse().unwrap(),
+            ));
         } else {
-            if !dots_done {
-                let mut dot = line.split(',');
-                data.dots.insert((
-                    dot.next().unwrap().parse().unwrap(),
-                    dot.next().unwrap().parse().unwrap(),
-                ));
+            let mut fold = line.split('=');
+            let fold_type = if fold.next().unwrap().chars().nth(11) == Some('x')
+            {
+                Fold::X
             } else {
-                let mut fold = line.split('=');
-                let fold_type =
-                    if fold.next().unwrap().chars().nth(11) == Some('x') {
-                        Fold::X
-                    } else {
-                        Fold::Y
-                    };
-                data.folds
-                    .push((fold_type, fold.next().unwrap().parse().unwrap()));
-            }
+                Fold::Y
+            };
+            data.folds
+                .push((fold_type, fold.next().unwrap().parse().unwrap()));
         }
     }
     data

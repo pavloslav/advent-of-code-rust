@@ -23,9 +23,9 @@ fn format_url(format: &str, year: &str, number: &str) -> String {
 
 #[derive(Debug)]
 pub enum Error {
-    MinreqError(minreq::Error),
+    Minreq(minreq::Error),
     WrongResponce(String),
-    IniError(ini::Error),
+    Ini(ini::Error),
     WrongIniFormat,
 }
 
@@ -33,13 +33,13 @@ type Result<T> = std::result::Result<T, Error>;
 
 impl From<minreq::Error> for Error {
     fn from(err: minreq::Error) -> Error {
-        Error::MinreqError(err)
+        Error::Minreq(err)
     }
 }
 
 impl From<ini::Error> for Error {
     fn from(err: ini::Error) -> Error {
-        Error::IniError(err)
+        Error::Ini(err)
     }
 }
 
@@ -75,7 +75,8 @@ pub fn get_input_from_ini_with_year(year: &str, day: &str) -> Result<String> {
     let filename = cache_file_name(year, day);
     std::fs::read_to_string(&filename).or_else(|file_error| {
         log!("Cache not found ({})", file_error);
-        let number: String = day.chars().filter(|c| c.is_digit(10)).collect();
+        let number: String =
+            day.chars().filter(|c| c.is_ascii_digit()).collect();
         let ini = ini::Ini::load_from_file(AOC_INI_FILE_NAME)?;
         let section = ini
             .section(Some(AOC_INI_SECTION))
@@ -86,11 +87,11 @@ pub fn get_input_from_ini_with_year(year: &str, day: &str) -> Result<String> {
             &number,
         );
         let session = &section["session"];
-        get_input(&url, session).and_then(|s| {
+        get_input(&url, session).map(|s| {
             if let Err(e) = std::fs::write(filename, &s) {
                 log!("{:?}", e);
             }
-            Ok(s)
+            s
         })
     })
 }

@@ -1,11 +1,12 @@
 pub fn parse_input(input: &str) -> Vec<Vec<u8>> {
-    input.lines()
-         .map(|line| {
-             line.chars()
-                 .map(|digit| digit.to_digit(10).unwrap() as u8)
-                 .collect()
-         })
-         .collect()
+    input
+        .lines()
+        .map(|line| {
+            line.chars()
+                .map(|digit| digit.to_digit(10).unwrap() as u8)
+                .collect()
+        })
+        .collect()
 }
 
 pub fn task1(map: &Vec<Vec<u8>>) -> usize {
@@ -47,8 +48,8 @@ fn floodfill(map: &mut Vec<Vec<u8>>, i: i32, j: i32) -> usize {
     }
 }
 
-pub fn task2(map: &Vec<Vec<u8>>) -> usize {
-    let mut map = map.clone();
+pub fn task2(map: &[Vec<u8>]) -> usize {
+    let mut map = map.to_owned();
     let mut result = Vec::new();
     for i in 0..map.len() {
         for j in 0..map[i].len() {
