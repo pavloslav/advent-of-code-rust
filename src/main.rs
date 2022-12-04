@@ -88,6 +88,8 @@ fn main() {
 
         aoc_entry!(year2019, day1),
         aoc_entry!(year2019, day2),
+        aoc_entry!(year2019, day3),
+        aoc_entry!(year2019, day4),
 
         aoc_entry!(year2020, day1a),
         aoc_entry!(year2020, day2),
@@ -137,6 +139,7 @@ fn main() {
         aoc_entry!(year2022, day1),
         aoc_entry!(year2022, day2),
         aoc_entry!(year2022, day3),
+        aoc_entry!(year2022, day4),
     ]);
 
     macro_rules! call {
@@ -146,7 +149,7 @@ fn main() {
     }
     let start = std::time::Instant::now();
 
-    call!(year2019, day2);
+    call!(year2019, day4);
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }
