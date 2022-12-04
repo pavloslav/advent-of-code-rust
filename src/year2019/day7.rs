@@ -1,11 +1,7 @@
 use super::computer::Computer;
 
 pub fn parse_input(input: &str) -> Vec<isize> {
-    input
-        .trim()
-        .split(',')
-        .map(|x| x.parse().unwrap())
-        .collect()
+    Computer::prepare_code(input)
 }
 
 use itertools::Itertools;

@@ -118,8 +118,8 @@ macro_rules! mod_list {
                                     .unwrap();
                             let data = $day::parse_input(&input);
                             println!("{} {}", year_str, day_str);
-                            println!("Result 1:\n {}", $day::task1(&data));
-                            println!("Result 2:\n {}", $day::task2(&data));
+                            println!("Result 1:\n{}", $day::task1(&data));
+                            println!("Result 2:\n{}", $day::task2(&data));
                         },
                     }),)*
                 ]));

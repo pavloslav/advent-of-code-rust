@@ -1,57 +1,49 @@
-#[derive(Clone, PartialEq, Eq)]
-pub enum ComputerState {
-    Normal,
-    Halt,
-    Input,
-}
-
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
 #[derive(Clone)]
 pub struct Computer {
-    pub memory: Vec<isize>,
-    pub ip: usize,
+    pub memory: HashMap<isize, isize>,
+    ip: isize,
     input: VecDeque<isize>,
     output: VecDeque<isize>,
-    pub state: ComputerState,
+    relative_base: isize,
 }
 
 impl Computer {
-    pub fn is_halted(&self) -> bool {
-        self.state == ComputerState::Halt
+    fn is_halted(&self) -> bool {
+        self.memory[&self.ip] == 99
     }
-    pub fn is_input_blocked(&self) -> bool {
-        self.state == ComputerState::Input && self.input.is_empty()
+    fn is_input_blocked(&self) -> bool {
+        self.memory[&self.ip] == 3 && self.input.is_empty()
     }
 
-    pub fn step(&mut self) {
+    fn step(&mut self) {
         if self.is_halted() || self.is_input_blocked() {
             return;
         }
-        self.state = ComputerState::Normal;
-        let opcode = self.memory[self.ip] % 100;
+        let opcode = self.memory[&self.ip] % 100;
         match opcode {
             1 => {
                 let src1 = self.get_value(1);
                 let src2 = self.get_value(2);
-                let tgt = self.memory[self.ip + 3];
-                self.memory[tgt as usize] = src1 + src2;
+                let tgt = self.get_target(3);
+                *self.memory.entry(tgt).or_default() = src1 + src2;
                 self.ip += 4;
             }
             2 => {
                 let src1 = self.get_value(1);
                 let src2 = self.get_value(2);
-                let tgt = self.memory[self.ip + 3];
-                self.memory[tgt as usize] = src1 * src2;
+                let tgt = self.get_target(3);
+                *self.memory.entry(tgt).or_default() = src1 * src2;
                 self.ip += 4;
             }
             3 => {
                 if self.input.is_empty() {
-                    self.state = ComputerState::Input;
                     return;
                 }
-                let tgt = self.memory[self.ip + 1];
-                self.memory[tgt as usize] = self.input.pop_front().unwrap();
+                let tgt = self.get_target(1);
+                *self.memory.entry(tgt).or_default() =
+                    self.input.pop_front().unwrap();
                 self.ip += 2;
             }
             4 => {
@@ -62,51 +54,78 @@ impl Computer {
             5 => {
                 let test = self.get_value(1);
                 let tgt = self.get_value(2);
-                self.ip = if test != 0 { tgt as usize } else { self.ip + 3 };
+                self.ip = if test != 0 { tgt } else { self.ip + 3 };
             }
             6 => {
                 let test = self.get_value(1);
                 let tgt = self.get_value(2);
-                self.ip = if test == 0 { tgt as usize } else { self.ip + 3 };
+                self.ip = if test == 0 { tgt } else { self.ip + 3 };
             }
             7 => {
                 let test1 = self.get_value(1);
                 let test2 = self.get_value(2);
-                let tgt = self.memory[self.ip + 3];
-                self.memory[tgt as usize] = isize::from(test1 < test2);
+                let tgt = self.get_target(3);
+                *self.memory.entry(tgt).or_default() =
+                    isize::from(test1 < test2);
                 self.ip += 4;
             }
             8 => {
                 let test1 = self.get_value(1);
                 let test2 = self.get_value(2);
-                let tgt = self.memory[self.ip + 3];
-                self.memory[tgt as usize] = isize::from(test1 == test2);
+                let tgt = self.get_target(3);
+                *self.memory.entry(tgt).or_default() =
+                    isize::from(test1 == test2);
                 self.ip += 4;
             }
+            9 => {
+                let src = self.get_value(1);
+                self.relative_base += src;
+                self.ip += 2;
+            }
             99 => {
-                self.state = ComputerState::Halt;
+                return;
             }
             _ => unimplemented!(),
         }
     }
     pub fn new(code: &[isize]) -> Computer {
         Computer {
-            memory: code.into(),
+            memory: code
+                .iter()
+                .enumerate()
+                .map(|(u, i)| (u as isize, *i))
+                .collect(),
             ip: 0,
             input: VecDeque::new(),
             output: VecDeque::new(),
-            state: ComputerState::Normal,
+            relative_base: 0,
         }
     }
 
-    fn get_value(&self, index: usize) -> isize {
-        let mut mode = self.memory[self.ip] / 100;
+    fn get_value(&self, index: isize) -> isize {
+        let mut mode = self.memory[&self.ip] / 100;
         for _ in 1..index {
             mode /= 10;
         }
         match mode % 10 {
-            0 => self.memory[self.memory[self.ip + index] as usize],
-            1 => self.memory[self.ip + index],
+            0 => self.memory[&self.memory[&(self.ip + index)]],
+            1 => self.memory[&(self.ip + index)],
+            2 => {
+                self.memory
+                    [&(self.relative_base + self.memory[&(self.ip + index)])]
+            }
+            _ => unimplemented!(),
+        }
+    }
+    fn get_target(&self, index: isize) -> isize {
+        let mut mode = self.memory[&self.ip] / 100;
+        for _ in 1..index {
+            mode /= 10;
+        }
+        match mode % 10 {
+            0 => self.memory[&(self.ip + index)],
+            1 => panic!("Target doesn't support immediate mode"),
+            2 => self.relative_base + self.memory[&(self.ip + index)],
             _ => unimplemented!(),
         }
     }
@@ -121,6 +140,13 @@ impl Computer {
     pub fn read(&mut self) -> Option<isize> {
         self.output.pop_front()
     }
+    pub fn prepare_code(input: &str) -> Vec<isize> {
+        input
+            .trim()
+            .split(',')
+            .map(|x| x.parse().unwrap())
+            .collect()
+    }
 }
 
 #[cfg(test)]
@@ -130,7 +156,10 @@ mod test {
     fn test_memory(before: &[isize], after: &[isize]) {
         let mut comp = Computer::new(before);
         comp.run();
-        assert_eq!(comp.memory, after);
+        assert_eq!(comp.memory.len(), after.len(), "Memory sizes differ");
+        assert!(
+            (0..after.len()).all(|i| comp.memory[&(i as isize)] == after[i])
+        );
     }
 
     #[test]
@@ -248,5 +277,26 @@ mod test {
         test_io(larger_example, &[5], &[999], "Large - less than");
         test_io(larger_example, &[8], &[1000], "Large - equal");
         test_io(larger_example, &[42], &[1001], "Large - greater");
+    }
+
+    #[test]
+    fn test_day9() {
+        let quine = &[
+            109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101,
+            0, 99,
+        ];
+        test_io(quine, &[], quine, "Quine");
+        test_io(
+            &[1102, 34915192, 34915192, 7, 4, 7, 99, 0],
+            &[],
+            &[1219070632396864],
+            "16-digit number",
+        );
+        test_io(
+            &[104, 1125899906842624, 99],
+            &[],
+            &[1125899906842624],
+            "Immediate output",
+        );
     }
 }
