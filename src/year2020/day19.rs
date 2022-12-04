@@ -139,3 +139,7 @@ pub fn task1(s: &str) -> usize {
     let (rules, strings) = process(s);
     rules.validate(strings)
 }
+
+pub fn task2(_s: &str) -> usize {
+    unimplemented!()
+}

@@ -2,13 +2,15 @@ pub struct Table {
     scores: Vec<Vec<i32>>,
 }
 
+use once_cell::sync::Lazy;
+
 pub fn parse_input(input: &str) -> Table {
     let mut names = std::collections::HashMap::new();
     let mut scores = vec![];
     for line in input.lines() {
-        lazy_static::lazy_static! {
-            static ref INPUT_REGEX: regex::Regex = regex::Regex::new(r"(?P<first>\w+) would (?P<gain>gain|lose) (?P<score>\d+) happiness units by sitting next to (?P<second>\w+)\.").unwrap();
-        }
+        static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
+            regex::Regex::new(r"(?P<first>\w+) would (?P<gain>gain|lose) (?P<score>\d+) happiness units by sitting next to (?P<second>\w+)\.").unwrap()
+        });
         if let Some(captures) = INPUT_REGEX.captures(line) {
             if let Some(first) = captures.name("first") {
                 if let Some(gain) = captures.name("gain") {

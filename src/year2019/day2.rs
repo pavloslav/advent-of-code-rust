@@ -1,41 +1,6 @@
-#[derive(Clone)]
-pub struct Computer {
-    memory: Vec<usize>,
-    ip: usize,
-}
+use super::computer::Computer;
 
-impl Computer {
-    fn is_halted(&self) -> bool {
-        self.memory[self.ip] == 99
-    }
-    fn step(&mut self) {
-        match self.memory[self.ip] {
-            1 => {
-                let src1 = self.memory[self.ip + 1];
-                let src2 = self.memory[self.ip + 2];
-                let tgt = self.memory[self.ip + 3];
-                self.memory[tgt] = self.memory[src1] + self.memory[src2];
-                self.ip += 4;
-            }
-            2 => {
-                let src1 = self.memory[self.ip + 1];
-                let src2 = self.memory[self.ip + 2];
-                let tgt = self.memory[self.ip + 3];
-                self.memory[tgt] = self.memory[src1] * self.memory[src2];
-                self.ip += 4;
-            }
-            _ => (),
-        }
-    }
-    fn new(input: &[usize]) -> Computer {
-        Computer {
-            memory: input.into(),
-            ip: 0,
-        }
-    }
-}
-
-pub fn parse_input(input: &str) -> Vec<usize> {
+pub fn parse_input(input: &str) -> Vec<isize> {
     input
         .trim()
         .split(',')
@@ -43,7 +8,7 @@ pub fn parse_input(input: &str) -> Vec<usize> {
         .collect()
 }
 
-pub fn task1(input: &[usize]) -> usize {
+pub fn task1(input: &[isize]) -> isize {
     let mut computer = Computer::new(input);
     computer.memory[1] = 12;
     computer.memory[2] = 2;
@@ -53,7 +18,7 @@ pub fn task1(input: &[usize]) -> usize {
     computer.memory[0]
 }
 
-pub fn task2(input: &[usize]) -> usize {
+pub fn task2(input: &[isize]) -> isize {
     for noun in 0..99 {
         for verb in 0..99 {
             let mut computer = Computer::new(input);
@@ -67,5 +32,5 @@ pub fn task2(input: &[usize]) -> usize {
             }
         }
     }
-    usize::MAX
+    unreachable!()
 }

@@ -19,13 +19,11 @@ impl Field {
     }
 }
 
-use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 fn find_error_rate(s: &str) -> u64 {
-    lazy_static! {
-        static ref DELIM: Regex = Regex::new(r": | or |-").unwrap();
-    }
+    static DELIM: Lazy<Regex> = Lazy::new(|| Regex::new(r": | or |-").unwrap());
     let mut state = ScanType::Class;
     let mut fields: Vec<Field> = Vec::new();
     let mut error_rate = 0;
@@ -68,9 +66,7 @@ fn find_error_rate(s: &str) -> u64 {
 }
 
 fn process_tickets(s: &str) -> u64 {
-    lazy_static! {
-        static ref DELIM: Regex = Regex::new(r": | or |-").unwrap();
-    }
+    static DELIM: Lazy<Regex> = Lazy::new(|| Regex::new(r": | or |-").unwrap());
     let mut state = ScanType::Class;
     let mut fields: Vec<Field> = Vec::new();
     let mut your_ticket: Vec<u64> = Vec::new();

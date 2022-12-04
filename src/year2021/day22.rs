@@ -48,12 +48,14 @@ pub struct Command {
     zone: Zone,
 }
 
+use once_cell::sync::Lazy;
+
 impl Command {
     fn new(input: &str) -> Command {
-        lazy_static::lazy_static! {
-            //on x=-20..26,y=-36..17,z=-47..7
-            static ref INPUT_REGEX: regex::Regex = regex::Regex::new(r"(on|off) x=(-?[\d]+)..(-?[\d]+),y=(-?[\d]+)..(-?[\d]+),z=(-?[\d]+)..(-?[\d]+)").unwrap();
-        }
+        //on x=-20..26,y=-36..17,z=-47..7
+        static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
+            regex::Regex::new(r"(on|off) x=(-?[\d]+)..(-?[\d]+),y=(-?[\d]+)..(-?[\d]+),z=(-?[\d]+)..(-?[\d]+)").unwrap()
+        });
         let captures = INPUT_REGEX.captures(input).unwrap();
         let mut iter = captures.iter().skip(1);
         let mut result = Command {

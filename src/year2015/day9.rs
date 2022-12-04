@@ -1,8 +1,9 @@
 type Distances = Vec<Vec<usize>>;
 
-lazy_static::lazy_static! {
-    static ref SPLIT_REGEX: regex::Regex = regex::Regex::new(r" to | = ").unwrap();
-}
+use once_cell::sync::Lazy;
+
+static SPLIT_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r" to | = ").unwrap());
 
 pub fn parse_input(input: &str) -> Distances {
     let mut dist = Vec::new();
@@ -10,11 +11,9 @@ pub fn parse_input(input: &str) -> Distances {
     for line in input.lines() {
         let mut fields = SPLIT_REGEX.split(line);
         let size = name_map.len();
-        let from = *name_map.entry(fields.next().unwrap())
-                            .or_insert(size);
+        let from = *name_map.entry(fields.next().unwrap()).or_insert(size);
         let size = name_map.len();
-        let to   = *name_map.entry(fields.next().unwrap())
-                            .or_insert(size);
+        let to = *name_map.entry(fields.next().unwrap()).or_insert(size);
         let distance = fields.next().unwrap().parse().unwrap();
         let size = name_map.len();
         if dist.len() < size {
@@ -36,14 +35,22 @@ use itertools::Itertools; //for permutations
 
 macro_rules! task {
     ($distances: expr, $func: ident) => {
-    (0..$distances.len()).permutations($distances.len())
-                        .map(|comb|comb.windows(2)
-                                       .map(|pair|if let &[i,j] = pair {
-                                            $distances[i][j]
-                                        } else { 0 })
-                                       .sum())
-                        .$func().unwrap()
-    }
+        (0..$distances.len())
+            .permutations($distances.len())
+            .map(|comb| {
+                comb.windows(2)
+                    .map(|pair| {
+                        if let &[i, j] = pair {
+                            $distances[i][j]
+                        } else {
+                            0
+                        }
+                    })
+                    .sum()
+            })
+            .$func()
+            .unwrap()
+    };
 }
 
 pub fn task1(distances: &Distances) -> usize {

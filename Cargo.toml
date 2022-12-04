@@ -14,7 +14,7 @@ default = ["verbose"]
 rust-ini = "*"                                      #common
 minreq = {version = "*", features = ["https"] }     #common
 regex = "*"                                         #whereever needed
-lazy_static = "*"                                   #together with regex
+once_cell = "*"                                     #lazy_static is depricated
 rust-crypto = "*"                                   #2015/4, 2016/5
 unicode_categories = "*"                            #2021/12
 itertools = "*"                                     #whereever needed

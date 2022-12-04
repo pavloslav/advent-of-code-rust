@@ -1,155 +1,22 @@
-mod common;
-
-mod year2015;
-mod year2016;
-mod year2019;
-mod year2020;
-mod year2021;
-mod year2022;
-
-struct FunctionHolder {
-    f: fn(),
-}
+pub mod common;
 
 #[allow(dead_code)]
-macro_rules! aoc_entry_part {
-    ($year: ident, $day: ident) => {
-        (
-            (stringify!($year), stringify!($day)),
-            FunctionHolder {
-                f: || {
-                    let year_str = stringify!($year);
-                    let day_str = stringify!($day);
-                    let input =
-                        common::get_input_from_ini_with_mod(year_str, day_str)
-                            .unwrap();
-                    let data = $year::$day::parse_input(&input);
-                    println!("{} {}", year_str, day_str);
-                    println!("Result 1: {}", $year::$day::task1(&data));
-                },
-            },
-        )
-    };
-}
-
-macro_rules! aoc_entry {
-    ($year: ident, $day: ident) => {
-        (
-            (stringify!($year), stringify!($day)),
-            FunctionHolder {
-                f: || {
-                    let year_str = stringify!($year);
-                    let day_str = stringify!($day);
-                    let input =
-                        common::get_input_from_ini_with_mod(year_str, day_str)
-                            .unwrap();
-                    let data = $year::$day::parse_input(&input);
-                    println!("{} {}", year_str, day_str);
-                    println!("Result 1: {}", $year::$day::task1(&data));
-                    println!("Result 2: {}", $year::$day::task2(&data));
-                },
-            },
-        )
-    };
-}
+mod year2015;
+#[allow(dead_code)]
+mod year2016;
+#[allow(dead_code)]
+mod year2019;
+#[allow(dead_code)]
+mod year2020;
+#[allow(dead_code)]
+mod year2021;
+#[allow(dead_code)]
+mod year2022;
 
 fn main() {
-    #[rustfmt::skip]
-    let aoc_map = std::collections::HashMap::from([
-        aoc_entry!(year2015, day1),
-        aoc_entry!(year2015, day2),
-        aoc_entry!(year2015, day3),
-        aoc_entry!(year2015, day4),
-        aoc_entry!(year2015, day5),
-        aoc_entry!(year2015, day6),
-        aoc_entry!(year2015, day7),
-        aoc_entry!(year2015, day8),
-        aoc_entry!(year2015, day9),
-        aoc_entry!(year2015, day10),
-        aoc_entry!(year2015, day11),
-        aoc_entry!(year2015, day12),
-        aoc_entry!(year2015, day13),
-        aoc_entry!(year2015, day14),
-        aoc_entry!(year2015, day15),
-        aoc_entry!(year2015, day16),
-        aoc_entry!(year2015, day17),
-        aoc_entry!(year2015, day18),
-        
-        aoc_entry!(year2016, day1),
-        aoc_entry!(year2016, day2),
-        aoc_entry!(year2016, day3),
-        aoc_entry!(year2016, day4),
-        aoc_entry!(year2016, day5),
-        aoc_entry!(year2016, day6),
-        aoc_entry!(year2016, day7),
-        aoc_entry!(year2016, day8),
-        aoc_entry!(year2016, day9),
-        //        aoc_entry!(year2016, day10),
-
-        aoc_entry!(year2019, day1),
-        aoc_entry!(year2019, day2),
-        aoc_entry!(year2019, day3),
-        aoc_entry!(year2019, day4),
-
-        aoc_entry!(year2020, day1a),
-        aoc_entry!(year2020, day2),
-        aoc_entry!(year2020, day3),
-        aoc_entry!(year2020, day4),
-        aoc_entry!(year2020, day5),
-        aoc_entry!(year2020, day6),
-        aoc_entry!(year2020, day7),
-        aoc_entry!(year2020, day8),
-        aoc_entry!(year2020, day9),
-        aoc_entry!(year2020, day10),
-        aoc_entry!(year2020, day11),
-        aoc_entry!(year2020, day12),
-        aoc_entry!(year2020, day13),
-        aoc_entry!(year2020, day14),
-        aoc_entry!(year2020, day15),
-        aoc_entry!(year2020, day16),
-        aoc_entry!(year2020, day17),
-        aoc_entry!(year2020, day18),
-        aoc_entry_part!(year2020, day19),
-
-        aoc_entry!(year2021, day1),
-        aoc_entry!(year2021, day2),
-        aoc_entry!(year2021, day3),
-        aoc_entry!(year2021, day4),
-        aoc_entry!(year2021, day5),
-        aoc_entry!(year2021, day5a),
-        aoc_entry!(year2021, day6),
-        aoc_entry!(year2021, day7),
-        aoc_entry!(year2021, day9),
-        aoc_entry!(year2021, day10),
-        aoc_entry!(year2021, day11),
-        aoc_entry!(year2021, day12),
-        aoc_entry!(year2021, day13),
-        aoc_entry!(year2021, day14),
-        aoc_entry!(year2021, day15),
-        aoc_entry!(year2021, day16),
-        aoc_entry!(year2021, day17),
-        aoc_entry!(year2021, day18),
-        
-        aoc_entry!(year2021, day20),
-        aoc_entry!(year2021, day21),
-        aoc_entry!(year2021, day21),
-        aoc_entry!(year2021, day22),
-        aoc_entry_part!(year2021, day25),
-
-        aoc_entry!(year2022, day1),
-        aoc_entry!(year2022, day2),
-        aoc_entry!(year2022, day3),
-        aoc_entry!(year2022, day4),
-    ]);
-
-    macro_rules! call {
-        ($year: ident, $day: ident) => {
-            (aoc_map[&(stringify!($year), stringify!($day))].f)();
-        };
-    }
     let start = std::time::Instant::now();
 
-    call!(year2019, day4);
+    year2019::task("day5");
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }

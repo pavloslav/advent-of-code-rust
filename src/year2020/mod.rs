@@ -1,20 +1,28 @@
-pub mod day1a;
-pub mod day2;
-pub mod day3;
-pub mod day4;
-pub mod day5;
-pub mod day6;
-pub mod day7;
-pub mod day8;
-pub mod day9;
-pub mod day10;
-pub mod day11;
-pub mod day12;
-pub mod day13;
-pub mod day14;
-pub mod day15;
-pub mod day16;
-pub mod day17;
-pub mod day18;
-pub mod day19;
-
+#[rustfmt::skip]
+super::mod_list!(year2020
+    , day1a
+    , day2 
+    , day3 
+    , day4 
+    , day5 
+    , day6 
+    , day7 
+    , day8 
+    , day9 
+    , day10
+    , day11 
+    , day12 
+    , day13 
+    , day14 
+    , day15 
+    , day16
+    , day17 
+    , day18 
+    , day19 
+    //, day20 
+    //, day21 
+    //, day22
+    //, day23 
+    //, day24 
+    //, day25
+    );

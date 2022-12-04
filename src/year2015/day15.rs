@@ -6,12 +6,14 @@ pub struct Ingridient {
     calories: i32,
 }
 
+use once_cell::sync::Lazy;
+
 impl Ingridient {
     fn try_new(input: &str) -> Option<Ingridient> {
-        lazy_static::lazy_static! {
-            //Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
-            static ref INPUT_REGEX: regex::Regex = regex::Regex::new(r"\w: capacity (?P<capacity>[-\d]+), durability (?P<durability>[-\d]+), flavor (?P<flavor>[-\d]+), texture (?P<texture>[-\d]+), calories (?P<calories>[-\d]+)").unwrap();
-        }
+        //Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
+        static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
+            regex::Regex::new(r"\w: capacity (?P<capacity>[-\d]+), durability (?P<durability>[-\d]+), flavor (?P<flavor>[-\d]+), texture (?P<texture>[-\d]+), calories (?P<calories>[-\d]+)").unwrap()
+        });
         INPUT_REGEX.captures(input).map(|captures| Ingridient {
             properties: ["capacity", "durability", "flavor", "texture"]
                 .iter()

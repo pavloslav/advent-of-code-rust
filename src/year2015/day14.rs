@@ -4,10 +4,12 @@ pub struct Reindeer {
     rest: usize,
 }
 
+use once_cell::sync::Lazy;
+
 pub fn parse_input(input: &str) -> Vec<Reindeer> {
-    lazy_static::lazy_static! {
-        static ref INPUT_REGEX: regex::Regex = regex::Regex::new(r"\w+ can fly (?P<speed>\d+) km/s for (?P<burst>\d+) seconds, but then must rest for (?P<rest>\d+) seconds\.").unwrap();
-    }
+    static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
+        regex::Regex::new(r"\w+ can fly (?P<speed>\d+) km/s for (?P<burst>\d+) seconds, but then must rest for (?P<rest>\d+) seconds\.").unwrap()
+    });
     input
         .lines()
         .filter_map(|line| {

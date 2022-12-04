@@ -25,10 +25,12 @@ pub struct Instruction {
     bottom_right: Point,
 }
 
+use once_cell::sync::Lazy;
+
 pub fn parse_input(input: &str) -> Vec<Instruction> {
-    lazy_static::lazy_static! {
-        static ref INPUT_REGEX: regex::Regex = regex::Regex::new(r"(?P<op>turn on|turn off|toggle) (?P<left>\d+),(?P<top>\d+) through (?P<right>\d+),(?P<bottom>\d+)").unwrap();
-    }
+    static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
+        regex::Regex::new(r"(?P<op>turn on|turn off|toggle) (?P<left>\d+),(?P<top>\d+) through (?P<right>\d+),(?P<bottom>\d+)").unwrap()
+    });
     let mut result = Vec::new();
     for line in input.lines() {
         if let Some(captures) = INPUT_REGEX.captures(line) {

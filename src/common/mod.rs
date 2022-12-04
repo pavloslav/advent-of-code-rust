@@ -95,3 +95,39 @@ pub fn get_input_from_ini_with_year(year: &str, day: &str) -> Result<String> {
         })
     })
 }
+
+#[derive(Clone, Copy)]
+pub struct FunctionHolder {
+    pub f: fn(),
+}
+
+#[macro_export]
+#[allow(clippy::crate_in_macro_def)]
+macro_rules! mod_list {
+    ($year: ident, $($day: ident),+) => {
+        use once_cell::sync::OnceCell;
+        $(pub mod $day;)*
+        pub fn task(day: &str) {
+            let fn_map = FN_MAP.get_or_init(||std::collections::HashMap::from ([
+                $((stringify!($day), crate::common::FunctionHolder {
+                        f: || {
+                            let year_str = stringify!($year);
+                            let day_str = stringify!($day);
+                            let input =
+                                crate::common::get_input_from_ini_with_mod(year_str, day_str)
+                                    .unwrap();
+                            let data = $day::parse_input(&input);
+                            println!("{} {}", year_str, day_str);
+                            println!("Result 1:\n {}", $day::task1(&data));
+                            println!("Result 2:\n {}", $day::task2(&data));
+                        },
+                    }),)*
+                ]));
+            (fn_map[day].f)()
+
+        }
+        #[allow(dead_code)]
+        static FN_MAP : OnceCell<std::collections::HashMap<&'static str, crate::common::FunctionHolder>> = OnceCell::new();
+
+    }
+}

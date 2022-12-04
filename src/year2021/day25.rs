@@ -113,6 +113,10 @@ pub fn task1(seafloor: &Seafloor) -> usize {
     seafloor.turn
 }
 
+pub fn task2(_seafloor: &Seafloor) -> usize {
+    unimplemented!()
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
