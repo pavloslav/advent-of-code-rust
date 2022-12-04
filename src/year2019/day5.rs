@@ -9,17 +9,20 @@ pub fn parse_input(input: &str) -> Vec<isize> {
 }
 
 pub fn task1(code: &[isize]) -> isize {
-    let mut computer = Computer::new_with_input(code, &[1]);
-    while !computer.is_halted() {
-        computer.step();
+    let mut computer = Computer::new(code);
+    computer.write(1);
+    computer.run();
+    loop {
+        let result = computer.read().unwrap();
+        if result != 0 {
+            return result;
+        }
     }
-    *computer.output.last().unwrap()
 }
 
 pub fn task2(code: &[isize]) -> isize {
-    let mut computer = Computer::new_with_input(code, &[5]);
-    while !computer.is_halted() {
-        computer.step();
-    }
-    *computer.output.last().unwrap()
+    let mut computer = Computer::new(code);
+    computer.write(5);
+    computer.run();
+    computer.read().unwrap()
 }

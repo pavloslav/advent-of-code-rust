@@ -12,9 +12,7 @@ pub fn task1(input: &[isize]) -> isize {
     let mut computer = Computer::new(input);
     computer.memory[1] = 12;
     computer.memory[2] = 2;
-    while !computer.is_halted() {
-        computer.step();
-    }
+    computer.run();
     computer.memory[0]
 }
 
@@ -24,9 +22,7 @@ pub fn task2(input: &[isize]) -> isize {
             let mut computer = Computer::new(input);
             computer.memory[1] = noun;
             computer.memory[2] = verb;
-            while !computer.is_halted() {
-                computer.step();
-            }
+            computer.run();
             if computer.memory[0] == 19690720 {
                 return 100 * noun + verb;
             }
