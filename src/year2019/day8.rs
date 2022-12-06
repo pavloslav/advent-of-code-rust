@@ -32,15 +32,12 @@ fn decode(c: char) -> char {
 pub fn task2(input: &str) -> String {
     let result = (0..input.len() / PIXELS)
         .map(|i| &input[i * PIXELS..(i + 1) * PIXELS])
-        .fold(
-            std::iter::repeat('-').take(PIXELS).collect::<String>(),
-            |acc, image| {
-                acc.chars()
-                    .zip(image.chars())
-                    .map(|(a, i)| if a == '-' { decode(i) } else { a })
-                    .collect()
-            },
-        );
+        .fold("-".repeat(PIXELS), |acc, image| {
+            acc.chars()
+                .zip(image.chars())
+                .map(|(a, i)| if a == '-' { decode(i) } else { a })
+                .collect()
+        });
     (0..HEIGHT)
         .map(|i| result[WIDTH * i..WIDTH * (i + 1)].to_string() + "\n")
         .collect()

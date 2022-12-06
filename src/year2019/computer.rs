@@ -10,7 +10,7 @@ pub struct Computer {
 }
 
 impl Computer {
-    fn is_halted(&self) -> bool {
+    pub fn is_halted(&self) -> bool {
         self.memory[&self.ip] == 99
     }
     fn is_input_blocked(&self) -> bool {
@@ -82,9 +82,7 @@ impl Computer {
                 self.relative_base += src;
                 self.ip += 2;
             }
-            99 => {
-                return;
-            }
+            99 => {}
             _ => unimplemented!(),
         }
     }
@@ -108,12 +106,15 @@ impl Computer {
             mode /= 10;
         }
         match mode % 10 {
-            0 => self.memory[&self.memory[&(self.ip + index)]],
+            0 => *self
+                .memory
+                .get(&self.memory[&(self.ip + index)])
+                .unwrap_or(&0),
             1 => self.memory[&(self.ip + index)],
-            2 => {
-                self.memory
-                    [&(self.relative_base + self.memory[&(self.ip + index)])]
-            }
+            2 => *self
+                .memory
+                .get(&(self.relative_base + self.memory[&(self.ip + index)]))
+                .unwrap_or(&0),
             _ => unimplemented!(),
         }
     }
