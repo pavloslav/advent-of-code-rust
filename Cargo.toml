@@ -19,3 +19,4 @@ rust-crypto = "*"                                   #2015/4, 2016/5
 unicode_categories = "*"                            #2021/12
 itertools = "*"                                     #whereever needed
 json = "*"                                          #2015/12
+text_io = "*"                                       #2019/12, but it should grow
