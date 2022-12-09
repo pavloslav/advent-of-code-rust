@@ -20,3 +20,4 @@ unicode_categories = "*"                            #2021/12
 itertools = "*"                                     #whereever needed
 json = "*"                                          #2015/12
 text_io = "*"                                       #2019/12, but it should grow
+num = "*"                                           #2019/10, 2019/12 - gcd, lcm

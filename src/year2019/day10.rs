@@ -14,24 +14,7 @@ pub fn parse_input(input: &str) -> Vec<(i16, i16)> {
         .collect()
 }
 
-use std::collections::HashSet;
-
-fn gcd(a: i16, b: i16) -> i16 {
-    let mut a = a.abs();
-    let mut b = b.abs();
-    if a == 0 {
-        b
-    } else if b == 0 {
-        a
-    } else if a == 1 || b == 1 {
-        1
-    } else {
-        while a != 0 {
-            (a, b) = (b % a, a);
-        }
-        b
-    }
-}
+use num::integer::gcd;
 
 fn normalized(coord: (i16, i16)) -> (i16, i16) {
     if coord.0 == 0 && coord.1 == 0 {
@@ -45,6 +28,8 @@ fn normalized(coord: (i16, i16)) -> (i16, i16) {
         (coord.0 / gcd, coord.1 / gcd)
     }
 }
+
+use std::collections::HashSet;
 
 fn visible_from(station: (i16, i16), asteroids: &[(i16, i16)]) -> usize {
     asteroids
