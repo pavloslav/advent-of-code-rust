@@ -6,6 +6,12 @@ pub fn parse_input(input: &str) -> Vec<isize> {
 
 use std::collections::HashMap;
 
+const EMPTY: isize = 0;
+const WALL: isize = 1;
+const BLOCK: isize = 2;
+const PADDLE: isize = 3;
+const BALL: isize = 4;
+
 pub fn task1(code: &[isize]) -> usize {
     let mut computer = Computer::new(code);
     computer.run();
@@ -15,48 +21,61 @@ pub fn task1(code: &[isize]) -> usize {
     {
         grid.insert((x, y), t);
     }
-    grid.values().filter(|&&v| v == 2).count()
-}
-
-fn image(tile: isize) -> char {
-    [' ', '#', 'x', '-', 'o'][tile as usize]
+    grid.values().filter(|&&v| v == BLOCK).count()
 }
 
 pub fn task2(code: &[isize]) -> isize {
+    //pre-run to calculate parameters of field
     let mut computer = Computer::new(code);
-    *computer.memory.get_mut(&0).unwrap() = 2;
+    computer.run();
+    let mut grid = HashMap::new();
+    while let (Some(x), Some(y), Some(t)) =
+        (computer.read(), computer.read(), computer.read())
+    {
+        grid.insert((x, y), t);
+    }
+    let width = grid.keys().map(|&p| p.0).max().unwrap() + 1;
+    //let height = grid.keys().map(|&p| p.1).max().unwrap();
+    let last_row = code
+        .windows(width as usize)
+        .enumerate()
+        .fold(None, |last, (i, wnd)| {
+            if wnd[0] == WALL
+                && wnd[1..wnd.len() - 1].iter().all(|&x| x == EMPTY)
+                && wnd[wnd.len() - 1] == WALL
+            {
+                Some(i)
+            } else {
+                last
+            }
+        })
+        .unwrap();
+    let mut blocks: HashMap<_, _> =
+        grid.iter().filter(|(_, &t)| t == BLOCK).collect();
+
+    let mut code = code.to_vec();
+    code[0] = 2;
+    for i in 1..width - 1 {
+        code[last_row + i as usize] = WALL;
+    }
+    let mut computer = Computer::new(&code);
     let mut score = 0;
-    //let mut grid = vec![vec![0; 44]; 20];
-    let window = pancurses::initscr();
-    pancurses::noecho();
-    //window.nodelay(true);
     loop {
         computer.run();
         while let (Some(x), Some(y), Some(t)) =
             (computer.read(), computer.read(), computer.read())
         {
             if x >= 0 {
-                window.mvprintw(y as i32, x as i32, String::from(image(t)));
-                //grid[y as usize][x as usize] = t;
+                if t != BLOCK {
+                    blocks.remove(&(x, y));
+                }
             } else {
                 score = t;
             }
         }
-        /*
-        println!("score: {}", score);
-        for line in &grid {
-            for &tile in line {
-                print!("{}", image(tile))
-            }
-            println!();
-        }*/
-        window.mvprintw(20, 0, format!("score: {}", score));
-        window.refresh();
-        std::thread::sleep(std::time::Duration::from_millis(500));
-        match window.getch() {
-            Some(pancurses::Input::Character('a')) => computer.write(-1),
-            Some(pancurses::Input::Character('d')) => computer.write(1),
-            _ => computer.write(0),
+        computer.write(0);
+        if blocks.is_empty() {
+            break;
         }
     }
     score
