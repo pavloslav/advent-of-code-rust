@@ -60,7 +60,7 @@ pub fn task2(code: &[isize]) -> isize {
     }
     let mut computer = Computer::new(&code);
     let mut score = 0;
-    loop {
+    while !blocks.is_empty() {
         computer.run();
         while let (Some(x), Some(y), Some(t)) =
             (computer.read(), computer.read(), computer.read())
@@ -74,9 +74,6 @@ pub fn task2(code: &[isize]) -> isize {
             }
         }
         computer.write(0);
-        if blocks.is_empty() {
-            break;
-        }
     }
     score
 }
