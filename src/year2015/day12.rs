@@ -19,7 +19,7 @@ pub fn task2(json: &Value) -> i64 {
     let red = Value::String("red".to_string());
     match json {
         Value::Null | Value::String(_) | Value::Bool(_) => 0,
-        Value::Number(number) => number.as_i64().unwrap_or(0) as i64,
+        Value::Number(number) => number.as_i64().unwrap_or(0),
         Value::Object(object) => object
             .iter()
             .map(|member| Some(member.1).filter(|&r| r != &red).map(task2))

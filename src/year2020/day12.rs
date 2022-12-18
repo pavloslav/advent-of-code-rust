@@ -16,15 +16,14 @@ impl Ship {
             'W' => self.lon -= parameter,
             'S' => self.lat -= parameter,
             'N' => self.lat += parameter,
-            'L' => self.dir = (self.dir as i32 + parameter / 90).rem_euclid(4),
-            'R' => self.dir = (self.dir as i32 - parameter / 90).rem_euclid(4),
+            'L' => self.dir = (self.dir + parameter / 90).rem_euclid(4),
+            'R' => self.dir = (self.dir - parameter / 90).rem_euclid(4),
             'F' => {
                 self.lon += DIRECTIONS[self.dir as usize].0 * parameter;
                 self.lat += DIRECTIONS[self.dir as usize].1 * parameter;
             }
-            _ => panic!(),
+            _ => unreachable!(),
         }
-        //dbg!(self);
     }
     fn new() -> Ship {
         Ship {

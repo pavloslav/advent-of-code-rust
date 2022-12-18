@@ -1,6 +1,6 @@
 fn seat_id(code: &str) -> usize {
     code.chars()
-        .map(|c| if c == 'F' || c == 'L' { 0 } else { 1 })
+        .map(|c| usize::from(!(c == 'F' || c == 'L')))
         .fold(0, |acc, n| acc * 2 + n)
 }
 

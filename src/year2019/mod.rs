@@ -15,7 +15,7 @@ super::mod_list!(year2019
     , day11 
     , day12 
     , day13 
-    //, day14 
+    , day14 
     //, day15 
     //, day16
     //, day17 

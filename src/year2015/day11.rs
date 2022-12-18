@@ -30,9 +30,10 @@ fn next_string(password: &Password) -> Password {
 }
 
 fn is_valid_password(password: &Password) -> bool {
-    if password.windows(3).any(|part| {
-        part[2] as u8 + 1 == part[1] as u8 && part[1] as u8 + 1 == part[0] as u8
-    }) {
+    if password
+        .windows(3)
+        .any(|part| part[2] + 1 == part[1] && part[1] + 1 == part[0])
+    {
         let mut found: i32 = -1;
         for i in 0..password.len() - 1 {
             if password[i] == password[i + 1] && found != i as i32 {
