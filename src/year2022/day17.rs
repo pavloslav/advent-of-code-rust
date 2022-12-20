@@ -27,108 +27,179 @@ const FIGURES: &[&[&[u8]]] = &[
 
 const EMPTY_LINE: &[u8] = ".......".as_bytes();
 
-struct Tetris {
-    tube: Vec<Vec<u8>>,
-    figure: &'static [&'static [u8]],
-    x: i32,
-    y: i32,
-    count: usize,
+struct Tetris<'commands> {
+    tube: std::collections::VecDeque<Vec<u8>>,
+    figure_idx: usize,
+    commands: &'commands [u8],
+    commands_idx: usize,
+    skipped: usize,
 }
 
-impl Tetris {
-    fn new() -> Tetris {
+impl<'commands> Tetris<'commands> {
+    fn new(commands: &str) -> Tetris {
         Tetris {
-            tube: vec![EMPTY_LINE.to_vec(); 4],
-            figure: FIGURES[0],
-            x: 2,
-            y: 3,
-            count: 0,
+            tube: std::collections::VecDeque::new(),
+            figure_idx: 0,
+            commands: commands.as_bytes(),
+            commands_idx: 0,
+            skipped: 0,
         }
     }
-    fn add_figure(&mut self) {
-        self.count += 1;
-        self.figure = FIGURES[self.count % 5];
-        self.x = 2;
-        let free_lines = self.tube.len() - self.tower_height();
-        if free_lines < 3 + self.figure.len() {
-            self.tube.resize(
-                self.tube.len() + 3 + self.figure.len() - free_lines,
-                EMPTY_LINE.to_vec(),
-            );
-        }
-        self.y = (self.tower_height() + 3).try_into().unwrap();
-    }
-    fn move_figure(&mut self, dir: u8) {
-        let x = self.x
-            + match dir {
+    fn play(&mut self) {
+        let mut x = 2;
+        let mut y = -4;
+        loop {
+            let next_x = x + match self.commands[self.commands_idx] {
                 b'>' => 1,
                 b'<' => -1,
-                _ => unimplemented!("Invalid move {}", dir),
+                dir => unimplemented!("Invalid move {}", dir),
             };
-        if (0..=(TUBE_WIDTH - self.figure[0].len()) as i32).contains(&x)
-            && self.fits(x as usize, self.y as usize)
+            self.commands_idx += 1;
+            if self.commands_idx == self.commands.len() {
+                self.commands_idx = 0;
+            }
+            if self.fits(next_x, y) {
+                x = next_x;
+            }
+            let next_y = y + 1;
+            if self.fits(x, next_y) {
+                y = next_y;
+            } else {
+                break;
+            }
+        }
+        self.fix_figure(x, y);
+        self.figure_idx += 1;
+        if self.figure_idx == FIGURES.len() {
+            self.figure_idx = 0;
+        }
+    }
+    fn fits(&self, x: i32, y: i32) -> bool {
+        if x < 0 || x as usize + FIGURES[self.figure_idx][0].len() > TUBE_WIDTH
         {
-            self.x = x;
+            return false;
         }
-        if self.y > 0 && self.fits(self.x as usize, (self.y - 1) as usize) {
-            self.y -= 1;
-        } else {
-            self.fix_figure();
-            self.add_figure();
+        if y < 0 {
+            return true;
         }
-    }
-    fn fits(&self, x: usize, y: usize) -> bool {
-        self.figure.iter().enumerate().all(|(fy, fline)| {
-            fline.iter().enumerate().all(|(fx, &fchar)| {
-                fchar != b'#' || self.tube[y + fy][x + fx] != b'#'
+        if y >= self.tube.len() as i32 {
+            return false;
+        }
+        FIGURES[self.figure_idx]
+            .iter()
+            .enumerate()
+            .all(|(fy, fline)| {
+                fline.iter().enumerate().all(|(fx, &fchar)| {
+                    fchar != b'#'
+                        || y - (fy as i32) < 0
+                        || self.tube[(y - fy as i32) as usize]
+                            [(x + fx as i32) as usize]
+                            != b'#'
+                })
             })
-        })
     }
-    fn fix_figure(&mut self) {
-        for f_y in 0..self.figure.len() {
-            for f_x in 0..self.figure[f_y].len() {
-                if self.figure[f_y][f_x] == b'#' {
-                    self.tube[self.y as usize + f_y][self.x as usize + f_x] =
-                        b'#';
+    fn fix_figure(&mut self, x: i32, y: i32) {
+        for f_y in 0..FIGURES[self.figure_idx].len() {
+            if (y - f_y as i32) < 0 || self.tube.is_empty() {
+                self.tube.push_front(EMPTY_LINE.to_vec());
+            }
+            for f_x in 0..FIGURES[self.figure_idx][f_y].len() {
+                if FIGURES[self.figure_idx][f_y][f_x] == b'#' {
+                    self.tube[(y - f_y as i32).max(0) as usize]
+                        [(x as usize + f_x) as usize] = b'#';
                 }
             }
         }
     }
     fn tower_height(&self) -> usize {
-        self.tube.len()
-            - self
-                .tube
-                .iter()
-                .rev()
-                .take_while(|row| !row.contains(&b'#'))
-                .count()
-    }
-    fn play(&mut self, moves: &str, limit: usize) -> usize {
-        for &mov in moves.as_bytes().iter().cycle() {
-            self.move_figure(mov);
-            if self.count >= limit {
-                break;
-            }
-        }
-        self.tower_height()
+        self.skipped + self.tube.len()
     }
     fn print_top_n(&self, n: usize) {
         println!("-----------------");
-        for i in 0..n.min(self.tube.len()) {
-            let line = std::str::from_utf8(&self.tube[self.tube.len() - 1 - i])
-                .unwrap();
-            println!("{}", line);
+        for line in self.tube.iter().take(n) {
+            println!("{}", std::str::from_utf8(line).unwrap());
         }
+    }
+    fn gaps(&self) -> impl Iterator<Item = usize> + '_ {
+        (0..TUBE_WIDTH).map(|i| {
+            self.tube
+                .iter()
+                .map(|line| line[i])
+                .take_while(|&x| x != b'#')
+                .count()
+        })
+    }
+}
+
+impl PartialEq for Tetris<'_> {
+    fn eq(&self, other: &Self) -> bool {
+        self.figure_idx == other.figure_idx
+            && self.commands_idx == other.commands_idx
+            && self.gaps().cmp(other.gaps()) == std::cmp::Ordering::Equal
     }
 }
 
 pub fn task1(input: &str) -> usize {
-    let mut tetris = Tetris::new();
-    tetris.play(input, 2022)
+    let mut tetris = Tetris::new(input);
+    for _ in 0..2022 {
+        tetris.play();
+    }
+    tetris.tower_height()
 }
 
-pub fn task2(_input: &str) -> usize {
-    unimplemented!();
+pub fn task2(input: &str) -> usize {
+    let mut hare = Tetris::new(input);
+    let mut tortoise = Tetris::new(input);
+
+    //Floyd's algorithm
+    //First meet
+    for _ in 0.. {
+        hare.play();
+        hare.play();
+        tortoise.play();
+        if hare == tortoise {
+            break;
+        }
+    }
+    //Find the interval until looping starts
+    let mut start = 0;
+    hare = Tetris::new(input);
+    for i in 0.. {
+        hare.play();
+        tortoise.play();
+        if hare == tortoise {
+            start = i;
+            break;
+        }
+    }
+    //Find the period
+    let mut period = 0;
+    for i in 0.. {
+        hare.play();
+        if hare == tortoise {
+            period = i + 1;
+            break;
+        }
+    }
+
+    //Let hare run one last time
+    hare = Tetris::new(input);
+    for _ in 0..start {
+        hare.play();
+    }
+    let start_height = hare.tower_height();
+    for _ in 0..period {
+        hare.play();
+    }
+    let period_height = hare.tower_height() - start_height;
+    let remains = (1_000_000_000_000 - start) % period;
+    for _ in 0..remains {
+        hare.play();
+    }
+    let remains_height = hare.tower_height() - start_height - period_height;
+    start_height
+        + (1_000_000_000_000 - start - remains) / period * period_height
+        + remains_height
 }
 
 #[cfg(test)]
@@ -143,9 +214,12 @@ mod test {
 
     /*#[test]
     fn test_temp() {
-        let mut tetris = Tetris::new();
-        tetris.play(EXAMPLE, 10);
-        tetris.print_top_n(20);
+        let mut tetris = Tetris::new(EXAMPLE);
+        for _ in 0..40 {
+            tetris.play();
+            //tetris.print_top_n(20);
+        }
+
         assert!(false);
     }*/
 }

@@ -16,7 +16,7 @@ mod year2022;
 fn main() {
     let start = std::time::Instant::now();
 
-    year2022::task("day18");
+    year2022::task("day17");
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }
