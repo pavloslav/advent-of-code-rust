@@ -106,7 +106,7 @@ impl<'commands> Tetris<'commands> {
             for f_x in 0..FIGURES[self.figure_idx][f_y].len() {
                 if FIGURES[self.figure_idx][f_y][f_x] == b'#' {
                     self.tube[(y - f_y as i32).max(0) as usize]
-                        [(x as usize + f_x) as usize] = b'#';
+                        [x as usize + f_x] = b'#';
                 }
             }
         }
