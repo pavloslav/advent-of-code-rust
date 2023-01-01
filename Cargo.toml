@@ -21,3 +21,4 @@ itertools = "*"                                     #whereever needed
 serde_json = "*"                                     #2015/12, 2022/13
 text_io = "*"                                       #2019/12, but it should grow
 num = "*"                                           #2019/10, 2019/12 - gcd, lcm
+clap = { version = "4.0.32", features = ["derive"] }

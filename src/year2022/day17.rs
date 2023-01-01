@@ -114,7 +114,7 @@ impl<'commands> Tetris<'commands> {
     fn tower_height(&self) -> usize {
         self.skipped + self.tube.len()
     }
-    fn print_top_n(&self, n: usize) {
+    fn _print_top_n(&self, n: usize) {
         println!("-----------------");
         for line in self.tube.iter().take(n) {
             println!("{}", std::str::from_utf8(line).unwrap());

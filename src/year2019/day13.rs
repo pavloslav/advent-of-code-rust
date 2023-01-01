@@ -9,8 +9,8 @@ use std::collections::HashMap;
 const EMPTY: isize = 0;
 const WALL: isize = 1;
 const BLOCK: isize = 2;
-const PADDLE: isize = 3;
-const BALL: isize = 4;
+const _PADDLE: isize = 3;
+const _BALL: isize = 4;
 
 pub fn task1(code: &[isize]) -> usize {
     let mut computer = Computer::new(code);
