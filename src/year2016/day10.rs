@@ -25,9 +25,11 @@ impl Target {
     }
     fn give(&self, value: usize, bots: &mut Robots, output: &mut Output) {
         match &self {
-            Target::Bot(tgt) => {
-                bots.entry(*tgt).or_insert(Robot::new()).hands.push(value)
-            }
+            Target::Bot(tgt) => bots
+                .entry(*tgt)
+                .or_insert_with(Robot::new)
+                .hands
+                .push(value),
             Target::Output(tgt) => {
                 output.insert(*tgt, value);
             }
@@ -53,13 +55,17 @@ pub fn parse_input(input: &str) -> Robots {
     let mut robots = HashMap::new();
     for line in input.lines() {
         if let Ok((value, bot)) = parse_value(line) {
-            robots.entry(bot).or_insert(Robot::new()).hands.push(value);
+            robots
+                .entry(bot)
+                .or_insert_with(Robot::new)
+                .hands
+                .push(value);
         } else if let Ok((bot, type_lo, tgt_lo, type_hi, tgt_hi)) =
             parse_bot(line)
         {
-            robots.entry(bot).or_insert(Robot::new()).target_lo =
+            robots.entry(bot).or_insert_with(Robot::new).target_lo =
                 Some(Target::new(&type_lo, tgt_lo));
-            robots.entry(bot).or_insert(Robot::new()).target_hi =
+            robots.entry(bot).or_insert_with(Robot::new).target_hi =
                 Some(Target::new(&type_hi, tgt_hi));
         }
     }

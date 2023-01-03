@@ -10,7 +10,7 @@ fn reg_to_n(reg: &str) -> Option<usize> {
 impl Operand {
     fn new(s: &str) -> Operand {
         reg_to_n(s)
-            .map(|index| Operand::Register(index))
+            .map(Operand::Register)
             .unwrap_or_else(|| Operand::Value(s.parse().unwrap()))
     }
 

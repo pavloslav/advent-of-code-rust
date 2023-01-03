@@ -126,7 +126,6 @@ macro_rules! mod_list {
             (fn_map[day].f)()
 
         }
-        //#[allow(dead_code)]
         static FN_MAP : OnceCell<std::collections::HashMap<&'static str, crate::common::FunctionHolder>> = OnceCell::new();
 
     }
