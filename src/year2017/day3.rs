@@ -2,7 +2,7 @@ pub fn parse_input(input: &str) -> u32 {
     input
         .trim()
         .parse()
-        .expect(&format!("Should be a number, got '{}'", input))
+        .unwrap_or_else(|_| panic!("Should be a number, got '{}'", input))
 }
 
 pub fn task1(&input: &u32) -> u32 {

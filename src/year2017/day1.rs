@@ -1,8 +1,7 @@
 pub fn parse_input(input: &str) -> Vec<u32> {
     input
         .lines()
-        .skip_while(|s| s.starts_with("//") || s.is_empty())
-        .next()
+        .find(|s| !s.starts_with("//") && !s.is_empty())
         .expect("There should be non-comment and non-empty line")
         .chars()
         .map(|c| c.to_digit(10).unwrap())

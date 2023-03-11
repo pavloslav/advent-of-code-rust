@@ -37,10 +37,9 @@ fn main() {
 
     tasks
         .get(&args.year)
-        .expect(&format!("Year {} is incorrect!", args.year))(&format!(
-        "day{}",
-        args.day
-    ));
+        .unwrap_or_else(|| panic!("Year {} is incorrect!", args.year))(
+        &format!("day{}", args.day),
+    );
 
     println!("Time elapsed: {:?}ms", start.elapsed().as_millis());
 }
