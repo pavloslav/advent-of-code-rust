@@ -1,3 +1,5 @@
+pub mod knots_hash;
+
 #[rustfmt::skip]
 super::mod_list!(year2017
     , day1
@@ -9,11 +11,11 @@ super::mod_list!(year2017
     , day7 
     , day8 
     , day9 
-    //, day10
-    //, day11 
-    //, day12 
-    //, day13 
-    //, day14 
+    , day10
+    , day11 
+    , day12 
+    , day13 
+    , day14 
     //, day15 
     //, day16
     //, day17 
