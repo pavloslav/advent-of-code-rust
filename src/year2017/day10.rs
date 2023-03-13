@@ -6,7 +6,7 @@ pub fn task1(input: &str) -> usize {
     let knots = super::knots_hash::knots_hash(
         1,
         super::knots_hash::SIZE,
-        input.trim().split(",").map(|x| x.parse().unwrap()),
+        input.trim().split(',').map(|x| x.parse().unwrap()),
     );
     knots[0] * knots[1]
 }

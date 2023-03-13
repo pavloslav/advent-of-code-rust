@@ -40,43 +40,20 @@ impl From<&[usize]> for Memory {
     }
 }
 
-pub fn floyd(input: &[usize]) -> (usize, usize) {
-    let mut hare = Memory::from(input);
-    let mut tortoise = Memory::from(input);
-    loop {
-        hare.redist();
-        hare.redist();
-        tortoise.redist();
-        if hare == tortoise {
-            break;
-        }
-    }
-    let mut mu = 0;
-    let mut tortoise = Memory::from(input);
-    while tortoise != hare {
-        hare.redist();
-        tortoise.redist();
-        mu += 1;
-    }
-    let mut lam = 1;
-    let mut hare = tortoise.clone();
-    loop {
-        hare.redist();
-        if hare == tortoise {
-            break;
-        }
-        lam += 1;
-    }
-    (lam, mu)
-}
-
 pub fn task1(input: &[usize]) -> usize {
-    let (lam, mu) = floyd(input);
+    let (lam, mu) = super::super::common::floyd_hare_tortoise(
+        || Memory::from(input),
+        |mem| mem.redist(),
+    );
     mu + lam
 }
 
 pub fn task2(input: &[usize]) -> usize {
-    floyd(input).0
+    super::super::common::floyd_hare_tortoise(
+        || Memory::from(input),
+        |mem| mem.redist(),
+    )
+    .0
 }
 
 #[cfg(test)]

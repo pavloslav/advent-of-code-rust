@@ -16,9 +16,9 @@ pub fn task1(input: &str) -> usize {
 }
 
 fn find_start(map: &[Vec<bool>]) -> Option<(usize, usize)> {
-    for x in 0..map.len() {
-        for y in 0..map[x].len() {
-            if map[x][y] {
+    for (x, line) in map.iter().enumerate() {
+        for (y, &v) in line.iter().enumerate() {
+            if v {
                 return Some((x, y));
             }
         }

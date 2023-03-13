@@ -16,8 +16,8 @@ super::mod_list!(year2017
     , day12 
     , day13 
     , day14 
-    //, day15 
-    //, day16
+    , day15 
+    , day16
     //, day17 
     //, day18 
     //, day19 

@@ -1,7 +1,7 @@
 pub fn parse_input(input: &str) -> Vec<(i32, i32)> {
     input
         .trim()
-        .split(",")
+        .split(',')
         .map(|s| match s {
             "nw" => (-1, 0),
             "n" => (0, -1),

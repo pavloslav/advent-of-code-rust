@@ -42,10 +42,11 @@ pub fn task2(input: &str) -> usize {
     let mut garbage = 0;
     for c in input.chars() {
         match state {
-            State::Normal => match c {
-                '<' => state = State::Garbage,
-                _ => (),
-            },
+            State::Normal => {
+                if c == '<' {
+                    state = State::Garbage
+                }
+            }
             State::Garbage => match c {
                 '>' => state = State::Normal,
                 '!' => state = State::Escape,
