@@ -10,7 +10,7 @@ impl FromStr for Dance {
     type Err = ();
     fn from_str(s: &str) -> Result<Dance, <Dance as FromStr>::Err> {
         match s.chars().next() {
-            Some('s') => s[1..].parse().map(|x| Dance::Spin(x)).or(Err(())),
+            Some('s') => s[1..].parse().map(Dance::Spin).or(Err(())),
             Some('x') => {
                 let first;
                 let second;
@@ -33,14 +33,14 @@ type Line = std::collections::VecDeque<char>;
 impl Dance {
     fn step(&self, line: &mut Line) {
         match self {
-            &Dance::Spin(spin) => line.rotate_right(spin),
-            &Dance::SwapPlace(a, b) => line.swap(a, b),
-            &Dance::SwapDancer(a, b) => {
+            Dance::Spin(spin) => line.rotate_right(*spin),
+            Dance::SwapPlace(a, b) => line.swap(*a, *b),
+            Dance::SwapDancer(a, b) => {
                 for e in line {
-                    if *e == a {
-                        *e = b;
-                    } else if *e == b {
-                        *e = a;
+                    if e == a {
+                        *e = *b;
+                    } else if *e == *b {
+                        *e = *a;
                     }
                 }
             }

@@ -40,6 +40,8 @@ pub fn task2(input: &[(i32, i32)]) -> i32 {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
     fn test_task1() {
         for (inp, res) in [
             ("ne,ne,ne", 3),
