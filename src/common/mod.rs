@@ -54,14 +54,14 @@ pub fn get_input(year: &str, day: &str) -> Result<String> {
         let settings = settings::read_setting(AOC_SETTINGS_FILE_NAME)?;
         let url = settings.format_url(year, day);
         log!("Trying url '{}'", url);
-        Ok(
-            network::get_input_from_url(&url, &settings.session).map(|s| {
+        network::get_input_from_url(&url, &settings.session)
+            .map(|s| {
                 if let Err(e) = std::fs::write(filename, &s) {
                     log!("{:?}", e);
                 }
                 s
-            })?,
-        )
+            })
+            .map_err(Error::from)
     })
 }
 
