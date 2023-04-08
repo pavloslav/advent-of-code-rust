@@ -1,4 +1,5 @@
 mod settings;
+mod network;
 
 const AOC_SETTINGS_FILE_NAME: &str = "aoc.ini";
 
@@ -20,39 +21,21 @@ macro_rules! log {
 
 #[derive(Debug)]
 pub enum Error {
-    Minreq(minreq::Error),
-    WrongResponce(String),
+    Network(network::Error),
     Settings(settings::Error),
 }
 
 type Result<T> = std::result::Result<T, Error>;
 
-impl From<minreq::Error> for Error {
-    fn from(err: minreq::Error) -> Error {
-        Error::Minreq(err)
+impl From<network::Error> for Error {
+    fn from(err: network::Error) -> Error {
+        Error::Network(err)
     }
 }
 
 impl From<settings::Error> for Error {
     fn from(err: settings::Error) -> Error {
         Error::Settings(err)
-    }
-}
-
-pub fn get_input_from_url(
-    url: &str,
-    session: &str,
-) -> std::result::Result<String, Error> {
-    log!("Trying url '{}'", url);
-    let resp = minreq::get(url)
-        .with_header("Cookie", format!("session={}", session))
-        .send()?;
-
-    if 200 <= resp.status_code && resp.status_code < 300 {
-        let result = resp.as_str()?;
-        Ok(result.to_owned())
-    } else {
-        Err(Error::WrongResponce(resp.reason_phrase))
     }
 }
 
@@ -66,16 +49,19 @@ fn cache_file_name(year: &str, day: &str) -> String {
 
 pub fn get_input(year: &str, day: &str) -> Result<String> {
     let filename = cache_file_name(year, day);
-    std::fs::read_to_string(&filename).or_else(|file_error| {
+    std::fs::read_to_string(&filename).or_else(|file_error| -> Result<String> {
         log!("Cache not found ({})", file_error);
         let settings = settings::read_setting(AOC_SETTINGS_FILE_NAME)?;
         let url = settings.format_url(year, day);
-        get_input_from_url(&url, &settings.session).map(|s| {
-            if let Err(e) = std::fs::write(filename, &s) {
-                log!("{:?}", e);
-            }
-            s
-        })
+        log!("Trying url '{}'", url);
+        Ok(
+            network::get_input_from_url(&url, &settings.session).map(|s| {
+                if let Err(e) = std::fs::write(filename, &s) {
+                    log!("{:?}", e);
+                }
+                s
+            })?,
+        )
     })
 }
 
