@@ -1,5 +1,6 @@
-const AOC_INI_FILE_NAME: &str = "aoc.ini";
-const AOC_INI_SECTION: &str = "aoc";
+mod settings;
+
+const AOC_SETTINGS_FILE_NAME: &str = "aoc.ini";
 
 #[cfg(feature = "verbose")]
 macro_rules! log {
@@ -17,16 +18,11 @@ macro_rules! log {
     )
 }
 
-fn format_url(format: &str, year: &str, number: &str) -> String {
-    format.replacen("{}", year, 1).replacen("{}", number, 1)
-}
-
 #[derive(Debug)]
 pub enum Error {
     Minreq(minreq::Error),
     WrongResponce(String),
-    Ini(ini::Error),
-    WrongIniFormat,
+    Settings(settings::Error),
 }
 
 type Result<T> = std::result::Result<T, Error>;
@@ -37,13 +33,13 @@ impl From<minreq::Error> for Error {
     }
 }
 
-impl From<ini::Error> for Error {
-    fn from(err: ini::Error) -> Error {
-        Error::Ini(err)
+impl From<settings::Error> for Error {
+    fn from(err: settings::Error) -> Error {
+        Error::Settings(err)
     }
 }
 
-pub fn get_input(
+pub fn get_input_from_url(
     url: &str,
     session: &str,
 ) -> std::result::Result<String, Error> {
@@ -60,34 +56,21 @@ pub fn get_input(
     }
 }
 
-pub fn get_input_from_ini_with_mod(
-    mod_year: &str,
-    mod_day: &str,
-) -> Result<String> {
-    get_input_from_ini_with_year(&mod_year[4..], &mod_day[3..])
+pub fn get_input_with_mod(mod_year: &str, mod_day: &str) -> Result<String> {
+    get_input(&mod_year[4..], &mod_day[3..])
 }
 
 fn cache_file_name(year: &str, day: &str) -> String {
     format!("cache/cache{}_{}.txt", year, day)
 }
 
-pub fn get_input_from_ini_with_year(year: &str, day: &str) -> Result<String> {
+pub fn get_input(year: &str, day: &str) -> Result<String> {
     let filename = cache_file_name(year, day);
     std::fs::read_to_string(&filename).or_else(|file_error| {
         log!("Cache not found ({})", file_error);
-        let number: String =
-            day.chars().filter(|c| c.is_ascii_digit()).collect();
-        let ini = ini::Ini::load_from_file(AOC_INI_FILE_NAME)?;
-        let section = ini
-            .section(Some(AOC_INI_SECTION))
-            .ok_or(Error::WrongIniFormat)?;
-        let url = format_url(
-            section.get("link_year").ok_or(Error::WrongIniFormat)?,
-            year,
-            &number,
-        );
-        let session = &section["session"];
-        get_input(&url, session).map(|s| {
+        let settings = settings::read_setting(AOC_SETTINGS_FILE_NAME)?;
+        let url = settings.format_url(year, day);
+        get_input_from_url(&url, &settings.session).map(|s| {
             if let Err(e) = std::fs::write(filename, &s) {
                 log!("{:?}", e);
             }
@@ -114,7 +97,7 @@ macro_rules! mod_list {
                             let year_str = stringify!($year);
                             let day_str = stringify!($day);
                             let input =
-                                crate::common::get_input_from_ini_with_mod(year_str, day_str)
+                                crate::common::get_input_with_mod(year_str, day_str)
                                     .unwrap();
                             let data = $day::parse_input(&input);
                             println!("{} {}", year_str, day_str);
