@@ -1,5 +1,4 @@
-use crypto::digest::Digest;
-use crypto::md5::Md5;
+use super::super::common::Md5Hasher;
 use itertools::Itertools;
 
 fn successive(s: &str, n: usize) -> Vec<char> {
@@ -12,11 +11,8 @@ fn successive(s: &str, n: usize) -> Vec<char> {
 
 fn stretched_hash(src: &str, additional: usize) -> String {
     let mut src = src.to_string();
-    let mut md5 = Md5::new();
     for _ in 0..=additional {
-        md5.input_str(&src);
-        src = md5.result_str();
-        md5.reset();
+        src = Md5Hasher::from_str(&src).as_str();
     }
     src
 }

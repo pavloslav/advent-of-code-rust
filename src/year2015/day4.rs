@@ -2,24 +2,22 @@ pub fn parse_input(input: &str) -> &str {
     input.trim()
 }
 
-use crypto::digest::Digest;
-use crypto::md5::Md5;
+use super::super::common::Md5Hasher;
 
-fn find_hash(init: &str, start_hash: &str) -> usize {
-    for i in 0.. {
-        let mut md5 = Md5::new();
-        md5.input_str(&format!("{}{}", init, i));
-        if md5.result_str().starts_with(start_hash) {
-            return i;
-        }
-    }
-    0
+fn find_hash(init: &str, zeroes: usize) -> usize {
+    (0..)
+        .find(|i| {
+            Md5Hasher::from_str(init)
+                .add_str(&i.to_string())
+                .has_zeroes(zeroes)
+        })
+        .unwrap()
 }
 
 pub fn task1(input: &str) -> usize {
-    find_hash(input, "00000")
+    find_hash(input, 5)
 }
 
 pub fn task2(input: &str) -> usize {
-    find_hash(input, "000000")
+    find_hash(input, 6)
 }
