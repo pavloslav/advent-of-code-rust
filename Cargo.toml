@@ -16,8 +16,7 @@ minreq = {version = "*", features = ["https"] }     #common::network
 
 regex = "*"                                         #whereever needed
 itertools = "*"                                     #whereever needed
-
-text_io = "*"                                       #2019/12, but it should grow
+scan_fmt = "*"                                      #wherever needed
 
 once_cell = "*"                                     #will move to std
 

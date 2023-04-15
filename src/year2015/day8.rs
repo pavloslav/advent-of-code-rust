@@ -1,5 +1,9 @@
-pub fn parse_input(input: &str) -> &str {
-    input
+use super::super::common::Result;
+
+type Data<'a> = &'a str;
+
+pub fn parse_input(input: &str) -> Result<Data> {
+    Ok(input)
 }
 
 enum State {
@@ -9,8 +13,8 @@ enum State {
     X2,
 }
 
-pub fn task1(input: &str) -> usize {
-    input
+pub fn task1(input: &Data) -> Result<usize> {
+    Ok(input
         .lines()
         .map(|line| {
             let mut count = 0;
@@ -25,7 +29,8 @@ pub fn task1(input: &str) -> usize {
                     }
                     State::Slash => {
                         count += 1;
-                        state = if ch == 'x' { State::X1 } else { State::Normal };
+                        state =
+                            if ch == 'x' { State::X1 } else { State::Normal };
                     }
                     State::X1 => {
                         count += 1;
@@ -39,14 +44,14 @@ pub fn task1(input: &str) -> usize {
             }
             count + 2
         })
-        .sum()
+        .sum())
 }
 
-pub fn task2(input: &str) -> usize {
-    input
+pub fn task2(input: &Data) -> Result<usize> {
+    Ok(input
         .lines()
         .map(|line| line.chars().filter(|&c| c == '\\' || c == '"').count() + 2)
-        .sum()
+        .sum())
 }
 
 #[cfg(test)]

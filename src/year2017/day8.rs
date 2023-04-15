@@ -72,22 +72,24 @@ pub fn parse_input(input: &str) -> Vec<Instruction> {
     input
         .lines()
         .map(|line| {
-            let target_reg;
-            let operation: String;
-            let operand: i32;
-            let check_reg;
-            let comparison: String;
-            let compare: i32;
-            text_io::scan!(
-                line.bytes() =>
-                "{} {} {} if {} {} {}",
+            let (
                 target_reg,
                 operation,
                 operand,
                 check_reg,
                 comparison,
-                compare
-            );
+                compare,
+            ) = scan_fmt::scan_fmt!(
+                line,
+                "{} {} {} if {} {} {}",
+                String,
+                String,
+                i32,
+                String,
+                String,
+                i32
+            )
+            .unwrap();
             Instruction {
                 target_reg,
                 operation: Operation::from_str(&operation).unwrap(),

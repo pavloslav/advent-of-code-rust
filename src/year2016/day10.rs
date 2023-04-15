@@ -37,18 +37,22 @@ impl Target {
     }
 }
 
-fn parse_value(input: &str) -> Result<(usize, usize), text_io::Error> {
-    let (value, bot);
-    text_io::try_scan!(input.bytes()=>"value {} goes to bot {}", value, bot);
-    Ok((value, bot))
+fn parse_value(input: &str) -> Result<(usize, usize), ()> {
+    scan_fmt::scan_fmt!(input, "value {} goes to bot {}", usize, usize)
+        .map_err(|_| ())
 }
 
-fn parse_bot(
-    input: &str,
-) -> Result<(usize, String, usize, String, usize), text_io::Error> {
-    let (bot, type_lo, tgt_lo, type_hi, tgt_hi);
-    text_io::try_scan!(input.bytes()=>"bot {} gives low to {} {} and high to {} {}", bot, type_lo, tgt_lo, type_hi, tgt_hi);
-    Ok((bot, type_lo, tgt_lo, type_hi, tgt_hi))
+fn parse_bot(input: &str) -> Result<(usize, String, usize, String, usize), ()> {
+    scan_fmt::scan_fmt!(
+        input,
+        "bot {} gives low to {} {} and high to {} {}",
+        usize,
+        String,
+        usize,
+        String,
+        usize
+    )
+    .map_err(|_| ())
 }
 
 pub fn parse_input(input: &str) -> Robots {

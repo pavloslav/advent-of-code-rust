@@ -37,8 +37,14 @@ pub fn parse_input(input: &str) -> Vec<[isize; 3]> {
     input
         .lines()
         .map(|line| {
-            let (x, y, z): (isize, isize, isize);
-            text_io::scan!(line.bytes() => "<x={}, y={}, z={}>", x, y, z);
+            let (x, y, z) = scan_fmt::scan_fmt!(
+                line,
+                "<x={}, y={}, z={}>",
+                isize,
+                isize,
+                isize
+            )
+            .unwrap();
             [x, y, z]
         })
         .collect()

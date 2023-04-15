@@ -17,9 +17,15 @@ pub fn parse_input(input: &str) -> Vec<Particle> {
                 acc: [0; 3],
             };
             for part in line.split(", ") {
-                let typ: char;
-                let (x, y, z): (i64, i64, i64);
-                text_io::scan!(part.bytes()=>"{}=<{},{},{}>", typ, x, y, z);
+                let (typ, x, y, z) = scan_fmt::scan_fmt!(
+                    part,
+                    "{}=<{},{},{}>",
+                    char,
+                    i64,
+                    i64,
+                    i64
+                )
+                .unwrap();
                 match typ {
                     'p' => {
                         p.pos[0] = x;

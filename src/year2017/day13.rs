@@ -3,12 +3,7 @@ type Firewall = Vec<(i32, i32)>;
 pub fn parse_input(input: &str) -> Firewall {
     input
         .lines()
-        .map(|line| {
-            let depth;
-            let range;
-            text_io::scan!(line.bytes()=>"{}: {}", depth, range);
-            (depth, range)
-        })
+        .map(|line| scan_fmt::scan_fmt!(line, "{}: {}", i32, i32).unwrap())
         .collect()
 }
 

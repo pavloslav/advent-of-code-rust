@@ -4,7 +4,7 @@
 
 use super::super::common::Result;
 use super::Error::TaskError;
-type Data = &str;
+type Data<'a> = &'a str;
 
 pub fn parse_input(input: &str) -> Result<Data> {
     input

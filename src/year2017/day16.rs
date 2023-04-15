@@ -12,15 +12,14 @@ impl FromStr for Dance {
         match s.chars().next() {
             Some('s') => s[1..].parse().map(Dance::Spin).or(Err(())),
             Some('x') => {
-                let first;
-                let second;
-                text_io::scan!(s[1..].bytes()=>"{}/{}", first, second);
+                let (first, second) =
+                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", usize, usize)
+                        .unwrap();
                 Ok(Dance::SwapPlace(first, second))
             }
             Some('p') => {
-                let first;
-                let second;
-                text_io::scan!(s[1..].bytes()=>"{}/{}", first, second);
+                let (first, second) =
+                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char).unwrap();
                 Ok(Dance::SwapDancer(first, second))
             }
             _ => Err(()),

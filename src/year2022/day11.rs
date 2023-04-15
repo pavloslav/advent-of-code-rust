@@ -40,14 +40,13 @@ pub fn parse_input(input: &str) -> Vec<Monkey> {
             .map(|item| item.parse().unwrap())
             .collect();
 
-        let operator: String;
-        let operand: String;
-        text_io::scan!(
-            input.next().unwrap().bytes() =>
+        let (operator, operand) = scan_fmt::scan_fmt!(
+            input.next().unwrap(),
             "  Operation: new = old {} {}",
-            operator,
-            operand
-        );
+            String,
+            String
+        )
+        .unwrap();
         let operation = if operator == "+" {
             Operation::Add(operand.parse().unwrap())
         } else if operand == "old" {
@@ -56,18 +55,26 @@ pub fn parse_input(input: &str) -> Vec<Monkey> {
             Operation::Mult(operand.parse().unwrap())
         };
 
-        let test;
-        text_io::scan!(input.next().unwrap().bytes() => "  Test: divisible by {}", test);
+        let test = scan_fmt::scan_fmt!(
+            input.next().unwrap(),
+            "  Test: divisible by {}",
+            usize
+        )
+        .unwrap();
 
-        let if_true;
-        text_io::scan!(input.next().unwrap().bytes() => "    If true: throw to monkey {}", if_true);
+        let if_true = scan_fmt::scan_fmt!(
+            input.next().unwrap(),
+            "    If true: throw to monkey {}",
+            usize
+        )
+        .unwrap();
 
-        let if_false;
-        text_io::scan!(
-            input.next().unwrap().bytes() =>
+        let if_false = scan_fmt::scan_fmt!(
+            input.next().unwrap(),
             "    If false: throw to monkey {}",
-            if_false
-        );
+            usize
+        )
+        .unwrap();
 
         monkeys.push(Monkey {
             items,

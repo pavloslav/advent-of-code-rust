@@ -1,20 +1,19 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 type Distances = Vec<Vec<usize>>;
 
-use once_cell::sync::Lazy;
-
-static SPLIT_REGEX: Lazy<regex::Regex> =
-    Lazy::new(|| regex::Regex::new(r" to | = ").unwrap());
-
-pub fn parse_input(input: &str) -> Distances {
+pub fn parse_input(input: &str) -> Result<Distances> {
     let mut dist = Vec::new();
     let mut name_map = std::collections::HashMap::new();
     for line in input.lines() {
-        let mut fields = SPLIT_REGEX.split(line);
+        let (from, to, distance) =
+            scan_fmt::scan_fmt!(line, "{} to {} = {}", String, String, usize)
+                .map_err(|_| TaskError(format!("Wrong input line: {line}")))?;
         let size = name_map.len();
-        let from = *name_map.entry(fields.next().unwrap()).or_insert(size);
+        let from = *name_map.entry(from).or_insert(size);
         let size = name_map.len();
-        let to = *name_map.entry(fields.next().unwrap()).or_insert(size);
-        let distance = fields.next().unwrap().parse().unwrap();
+        let to = *name_map.entry(to).or_insert(size);
         let size = name_map.len();
         if dist.len() < size {
             dist.resize(size, Vec::new());
@@ -28,10 +27,10 @@ pub fn parse_input(input: &str) -> Distances {
         }
         dist[to][from] = distance;
     }
-    dist
+    Ok(dist)
 }
 
-use itertools::Itertools; //for permutations
+use itertools::Itertools; //permutations
 
 macro_rules! task {
     ($distances: expr, $func: ident) => {
@@ -43,20 +42,40 @@ macro_rules! task {
                         if let &[i, j] = pair {
                             $distances[i][j]
                         } else {
-                            0
+                            unreachable!()
                         }
                     })
                     .sum()
             })
             .$func()
-            .unwrap()
+            .ok_or_else(|| TaskError("No distances provided!".to_string()))
     };
 }
 
-pub fn task1(distances: &Distances) -> usize {
+/*fn task<F>(distances: &Distances)
+where
+    F: FnOnce(&dyn Iterator<Item = usize>) -> Option<usize>,
+{
+    F((0..distances.len())
+        .permutations(distances.len())
+        .map(|comb| {
+            comb.windows(2)
+                .map(|pair| {
+                    if let &[i, j] = pair {
+                        distances[i][j]
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .sum()
+        }))
+    .ok_or_else(|| TaskError("No distances provided!".to_string()))
+}*/
+
+pub fn task1(distances: &Distances) -> Result<usize> {
     task!(distances, min)
 }
 
-pub fn task2(distances: &Distances) -> usize {
+pub fn task2(distances: &Distances) -> Result<usize> {
     task!(distances, max)
 }

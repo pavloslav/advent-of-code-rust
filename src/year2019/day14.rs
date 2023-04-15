@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 fn scan_chem(element: &str) -> (String, usize) {
-    let (num, chemical): (usize, String);
-    text_io::scan!(element.bytes()=>"{} {}", num, chemical);
-    (chemical, num)
+    let (chemical, amount) =
+        scan_fmt::scan_fmt!(element, "{} {}", usize, String).unwrap();
+    (amount, chemical)
 }
 
 type Formulas = HashMap<String, (usize, HashMap<String, usize>)>;

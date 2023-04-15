@@ -12,8 +12,9 @@ impl Monkey {
         if let Ok(value) = input.parse() {
             Monkey::Value(value)
         } else {
-            let (left, op, right): (String, char, String);
-            text_io::scan!(input.bytes()=>"{} {} {}",left, op, right);
+            let (left, op, right) =
+                scan_fmt::scan_fmt!(input, "{} {} {}", String, char, String)
+                    .unwrap();
             Monkey::Operation(left, op, right)
         }
     }

@@ -4,8 +4,8 @@ pub fn parse_input(input: &str) -> Vec<Vec<u8>> {
         .map(|line| {
             line.split(" -> ")
                 .map(|pair| {
-                    let (x, y);
-                    text_io::scan!(pair.bytes()=>"{},{}", x, y);
+                    let (x, y) =
+                        scan_fmt::scan_fmt!(pair, "{},{}", i32, i32).unwrap();
                     (x, y)
                 })
                 .collect::<Vec<_>>()

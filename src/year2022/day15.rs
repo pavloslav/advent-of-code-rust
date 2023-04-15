@@ -2,11 +2,21 @@ type Point = (i32, i32);
 type SensorData = (Point, Point);
 
 pub fn parse_input(input: &str) -> Vec<SensorData> {
-    input.lines()
-         .map(|line|{let (x,y,bx,by);
-            text_io::scan!(line.bytes()=>"Sensor at x={}, y={}: closest beacon is at x={}, y={}",x,y,bx,by);
-            ((x,y),(bx,by))
-     }).collect()
+    input
+        .lines()
+        .map(|line| {
+            let (x, y, bx, by) = scan_fmt::scan_fmt!(
+                line,
+                "Sensor at x={}, y={}: closest beacon is at x={}, y={}",
+                i32,
+                i32,
+                i32,
+                i32
+            )
+            .unwrap();
+            ((x, y), (bx, by))
+        })
+        .collect()
 }
 
 fn generate_row(sensors: &[SensorData], row_y: i32) -> Vec<(i32, i32)> {

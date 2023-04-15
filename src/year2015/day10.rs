@@ -1,5 +1,8 @@
 use itertools::Itertools;
 
+use super::super::common::Result;
+type Data<'a> = &'a str;
+
 fn look_and_say(input: &str) -> String {
     input
         .trim()
@@ -10,8 +13,8 @@ fn look_and_say(input: &str) -> String {
         .collect()
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input
+pub fn parse_input(input: &str) -> Result<Data> {
+    Ok(input)
 }
 
 fn task(input: &str, count: usize) -> usize {
@@ -20,10 +23,10 @@ fn task(input: &str, count: usize) -> usize {
         .len()
 }
 
-pub fn task1(input: &str) -> usize {
-    task(input, 40)
+pub fn task1(input: &Data) -> Result<usize> {
+    Ok(task(input, 40))
 }
 
-pub fn task2(input: &str) -> usize {
-    task(input, 50)
+pub fn task2(input: &Data) -> Result<usize> {
+    Ok(task(input, 50))
 }
