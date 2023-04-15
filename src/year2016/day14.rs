@@ -12,7 +12,7 @@ fn successive(s: &str, n: usize) -> Vec<char> {
 fn stretched_hash(src: &str, additional: usize) -> String {
     let mut src = src.to_string();
     for _ in 0..=additional {
-        src = Md5Hasher::from_str(&src).as_str();
+        src = Md5Hasher::new_from_str(&src).as_str();
     }
     src
 }

@@ -1,5 +1,5 @@
 #[rustfmt::skip]
-super::mod_list!(year2020
+super::mod_list_panic!(year2020
     , day1a
     , day2 
     , day3 

@@ -1,5 +1,10 @@
-pub fn parse_input(input: &str) -> &str {
-    input
+use super::super::common::Result;
+use super::Error::TaskError;
+
+type Data<'a> = &'a str;
+
+pub fn parse_input(input: &str) -> Result<Data> {
+    Ok(input)
 }
 
 #[derive(Clone, Copy)]
@@ -9,36 +14,39 @@ struct Santa {
 }
 
 impl Santa {
-    fn step(&mut self, dir: char) {
+    fn step(&mut self, dir: char) -> Result<()> {
         match dir {
             '^' => self.y += 1,
             'v' => self.y -= 1,
             '>' => self.x += 1,
             '<' => self.x -= 1,
-            _ => panic!("Wrong input"),
+            _ => {
+                return Err(TaskError(format!("Wrong symbol '{dir}' in input")))
+            }
         }
+        Ok(())
     }
     fn to_pair(self) -> (i32, i32) {
         (self.x, self.y)
     }
 }
 
-pub fn task1(input: &str) -> usize {
+pub fn task1(input: &Data) -> Result<usize> {
     let mut santa = Santa { x: 0, y: 0 };
     let mut visited = std::collections::HashSet::from([santa.to_pair()]);
     for dir in input.chars() {
-        santa.step(dir);
+        santa.step(dir)?;
         visited.insert(santa.to_pair());
     }
-    visited.len()
+    Ok(visited.len())
 }
 
-pub fn task2(input: &str) -> usize {
+pub fn task2(input: &Data) -> Result<usize> {
     let mut santas = [Santa { x: 0, y: 0 }; 2];
     let mut visited = std::collections::HashSet::from([santas[0].to_pair()]);
     for (i, dir) in input.chars().enumerate() {
-        santas[i % 2].step(dir);
+        santas[i % 2].step(dir)?;
         visited.insert(santas[i % 2].to_pair());
     }
-    visited.len()
+    Ok(visited.len())
 }

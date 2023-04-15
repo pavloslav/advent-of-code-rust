@@ -1,7 +1,7 @@
 pub mod computer;
 
 #[rustfmt::skip]
-super::mod_list!(year2019
+super::mod_list_panic!(year2019
     , day1
     , day2 
     , day3 

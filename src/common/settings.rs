@@ -33,10 +33,7 @@ impl From<ini::Error> for Error {
 
 type Result<T> = std::result::Result<T, Error>;
 
-fn read_value<'a, 'b>(
-    section: &'a ini::Properties,
-    name: &'b str,
-) -> Result<&'a str> {
+fn read_value<'a>(section: &'a ini::Properties, name: &str) -> Result<&'a str> {
     section
         .get(name)
         .ok_or(Error::Aoc(format!("Value {} not found in ini file", name)))

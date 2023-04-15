@@ -7,7 +7,7 @@ pub fn parse_input(input: &str) -> &str {
 pub fn task1(input: &str) -> String {
     let mut result = String::with_capacity(8);
     for i in 0.. {
-        let mut hasher = Md5Hasher::from_str(input);
+        let mut hasher = Md5Hasher::new_from_str(input);
         if hasher.add_str(&i.to_string()).has_zeroes(5) {
             result.push_str(&hasher.as_str()[5..6]);
         }
@@ -22,7 +22,7 @@ pub fn task2(input: &str) -> String {
     let mut result = ['X'; 8];
     let mut count = 0;
     for i in 0.. {
-        let mut hasher = Md5Hasher::from_str(input);
+        let mut hasher = Md5Hasher::new_from_str(input);
         if hasher.add_str(&i.to_string()).has_zeroes(5) {
             let md5 = hasher.as_u8();
             let pos = (md5[2] & 0b1111) as usize;
