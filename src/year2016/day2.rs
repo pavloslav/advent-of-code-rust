@@ -1,4 +1,7 @@
-fn code(lines: &str, map: &[&str], initial: (usize, usize)) -> String {
+use super::super::common::Result;
+use super::Error::TaskError;
+
+fn code(lines: &str, map: &[&str], initial: (usize, usize)) -> Result<String> {
     let mut pos = initial;
     let mut result = String::with_capacity(4);
     for line in lines.split('\n') {
@@ -9,7 +12,9 @@ fn code(lines: &str, map: &[&str], initial: (usize, usize)) -> String {
                 'R' => pos.0 += 1,
                 'D' => pos.1 += 1,
                 'L' => pos.0 -= 1,
-                _ => panic!("Wrong input!"),
+                _ => {
+                    return Err(TaskError(format!("Wrong move '{mov}'")));
+                }
             }
             if map[pos.1].chars().nth(pos.0) == Some('X') {
                 pos = old_pos;
@@ -17,11 +22,11 @@ fn code(lines: &str, map: &[&str], initial: (usize, usize)) -> String {
         }
         result.push(map[pos.1].chars().nth(pos.0).unwrap());
     }
-    result
+    Ok(result)
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input.trim()
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input.trim())
 }
 
 #[rustfmt::skip]
@@ -43,11 +48,11 @@ const BIG_MAP: [&str; 7] = [
     "XXXXXXX",
 ];
 
-pub fn task1(input: &str) -> String {
+pub fn task1(input: &str) -> Result<String> {
     code(input, &SMALL_MAP, (2, 2))
 }
 
-pub fn task2(input: &str) -> String {
+pub fn task2(input: &str) -> Result<String> {
     code(input, &BIG_MAP, (1, 3))
 }
 
@@ -65,7 +70,8 @@ LURDL
 UUUUD",
                 &SMALL_MAP,
                 (2, 2)
-            ),
+            )
+            .unwrap(),
             "1985"
         );
         assert_eq!(
@@ -76,7 +82,8 @@ LURDL
 UUUUD",
                 &BIG_MAP,
                 (1, 3)
-            ),
+            )
+            .unwrap(),
             "5DB3"
         );
     }

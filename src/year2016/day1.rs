@@ -1,3 +1,6 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 #[derive(Debug)]
 enum Direction {
     North,
@@ -36,7 +39,7 @@ impl Pos {
     }
 }
 
-pub fn task1(way: &str) -> i32 {
+pub fn task1(way: &str) -> Result<i32> {
     let mut position = Pos { x: 0, y: 0 };
     let mut dir = Direction::North;
     for step in way.split(", ") {
@@ -45,7 +48,9 @@ pub fn task1(way: &str) -> i32 {
         dir = match d {
             'R' => dir.right(),
             'L' => dir.left(),
-            _ => panic!("wrong input!"),
+            other => {
+                return Err(TaskError(format!("wrong input '{other}'")));
+            }
         };
         match dir {
             Direction::North => position.x += l,
@@ -54,12 +59,12 @@ pub fn task1(way: &str) -> i32 {
             Direction::East => position.y += l,
         }
     }
-    position.manhattan_distance()
+    Ok(position.manhattan_distance())
 }
 
 use std::collections::HashSet;
 
-pub fn task2(way: &str) -> i32 {
+pub fn task2(way: &str) -> Result<i32> {
     let mut position = Pos { x: 0, y: 0 };
     let mut dir = Direction::North;
     let mut visited: HashSet<Pos> = HashSet::new();
@@ -70,13 +75,13 @@ pub fn task2(way: &str) -> i32 {
             'R' => dir = dir.right(),
             'L' => dir = dir.left(),
             _ => {
-                panic!("wrong input!")
+                return Err(TaskError("wrong input!".to_string()));
             }
         }
 
         for _ in 0..l {
             if visited.contains(&position) {
-                return position.manhattan_distance();
+                return Ok(position.manhattan_distance());
             }
             visited.insert(position);
             match dir {
@@ -87,11 +92,11 @@ pub fn task2(way: &str) -> i32 {
             }
         }
     }
-    position.manhattan_distance()
+    Ok(position.manhattan_distance())
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input)
 }
 
 #[cfg(test)]
@@ -99,13 +104,13 @@ mod test {
     use super::*;
     #[test]
     fn test_path_length() {
-        assert_eq!(task1(&"R2, L3".to_string()), 5);
-        assert_eq!(task1(&"R2, R2, R2".to_string()), 2);
-        assert_eq!(task1(&"R5, L5, R5, R3".to_string()), 12);
+        assert_eq!(task1(&"R2, L3".to_string()).unwrap(), 5);
+        assert_eq!(task1(&"R2, R2, R2".to_string()).unwrap(), 2);
+        assert_eq!(task1(&"R5, L5, R5, R3".to_string()).unwrap(), 12);
     }
 
     #[test]
     fn test_path_to_intersection() {
-        assert_eq!(task2(&"R8, R4, R4, R8".to_string()), 4);
+        assert_eq!(task2(&"R8, R4, R4, R8".to_string()).unwrap(), 4);
     }
 }

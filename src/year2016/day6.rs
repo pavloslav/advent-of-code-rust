@@ -1,12 +1,10 @@
+use super::super::common::Result;
+use super::Error::TaskError;
 use std::collections::HashMap;
 
-pub fn parse_input(input: &str) -> &str {
-    input
-}
-
-pub fn task1(lines: &str) -> String {
+pub fn parse_input(input: &str) -> Result<Vec<HashMap<char, u32>>> {
     let mut statistics: Vec<HashMap<char, u32>> = Vec::new();
-    for line in lines.lines() {
+    for line in input.lines() {
         if statistics.is_empty() {
             statistics = vec![HashMap::new(); line.len()];
         }
@@ -15,6 +13,10 @@ pub fn task1(lines: &str) -> String {
         }
     }
 
+    Ok(statistics)
+}
+
+pub fn task1(statistics: &[HashMap<char, u32>]) -> Result<String> {
     statistics
         .iter()
         .map(|hashmap| {
@@ -22,22 +24,14 @@ pub fn task1(lines: &str) -> String {
                 .iter()
                 .max_by_key(|tuple| tuple.1)
                 .map(|tuple| *tuple.0)
-                .unwrap()
+                .ok_or_else(|| {
+                    TaskError("No elements in statistics".to_string())
+                })
         })
         .collect()
 }
 
-pub fn task2(lines: &str) -> String {
-    let mut statistics: Vec<HashMap<char, u32>> = Vec::new();
-    for line in lines.lines() {
-        if statistics.is_empty() {
-            statistics = vec![HashMap::new(); line.len()];
-        }
-        for (i, c) in line.chars().enumerate() {
-            *statistics[i].entry(c).or_insert(0) += 1;
-        }
-    }
-
+pub fn task2(statistics: &[HashMap<char, u32>]) -> Result<String> {
     statistics
         .iter()
         .map(|hashmap| {
@@ -45,7 +39,9 @@ pub fn task2(lines: &str) -> String {
                 .iter()
                 .min_by_key(|tuple| tuple.1)
                 .map(|tuple| *tuple.0)
-                .unwrap()
+                .ok_or_else(|| {
+                    TaskError("No elements in statistics".to_string())
+                })
         })
         .collect()
 }
@@ -73,7 +69,8 @@ vntsnd
 vrdear
 dvrsen
 enarar";
-        assert_eq!(task1(&inp), "easter");
-        assert_eq!(task2(&inp), "advent");
+        let inp = parse_input(inp).unwrap();
+        assert_eq!(task1(&inp).unwrap(), "easter");
+        assert_eq!(task2(&inp).unwrap(), "advent");
     }
 }

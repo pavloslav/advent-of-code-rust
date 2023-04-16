@@ -1,5 +1,7 @@
-pub fn parse_input(input: &str) -> &str {
-    input
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input)
 }
 
 fn is_abba(s: &str) -> bool {
@@ -17,8 +19,8 @@ fn has_abba(ip: &str) -> bool {
     parts.0.iter().any(|x| x.1) && parts.1.iter().all(|x| !x.1)
 }
 
-pub fn task1(lines: &str) -> usize {
-    lines.lines().filter(|line| has_abba(line)).count()
+pub fn task1(lines: &str) -> Result<usize> {
+    Ok(lines.lines().filter(|line| has_abba(line)).count())
 }
 
 use std::collections::HashSet;
@@ -59,8 +61,8 @@ fn has_aba(ip: &str) -> bool {
     !abs.is_disjoint(&bas)
 }
 
-pub fn task2(lines: &str) -> usize {
-    lines.lines().filter(|line| has_aba(line)).count()
+pub fn task2(lines: &str) -> Result<usize> {
+    Ok(lines.lines().filter(|line| has_aba(line)).count())
 }
 
 #[cfg(test)]

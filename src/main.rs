@@ -28,7 +28,7 @@ fn main_unsafe() -> common::Result<()> {
     type Fun = fn(&str) -> common::Result<()>;
     let tasks: HashMap<String, Fun> = [
         ("2015".to_owned(), year2015::task as Fun),
-        //("2016".to_owned(), year2016::task),
+        ("2016".to_owned(), year2016::task),
         //("2017".to_owned(), year2017::task),
         //("2019".to_owned(), year2019::task),
         //("2020".to_owned(), year2020::task),
@@ -40,13 +40,11 @@ fn main_unsafe() -> common::Result<()> {
 
     type FunPanic = fn(&str);
     let _tasks_panic: HashMap<String, FunPanic> = [
-        //("2015".to_owned(), year2015::task as Fun),
-        ("2016".to_owned(), year2016::task as FunPanic),
-        ("2017".to_owned(), year2017::task),
-        ("2019".to_owned(), year2019::task),
-        ("2020".to_owned(), year2020::task),
-        ("2021".to_owned(), year2021::task),
-        ("2022".to_owned(), year2022::task),
+        ("2017".to_owned(), year2017::task as FunPanic),
+        ("2019".to_owned(), year2019::task as FunPanic),
+        ("2020".to_owned(), year2020::task as FunPanic),
+        ("2021".to_owned(), year2021::task as FunPanic),
+        ("2022".to_owned(), year2022::task as FunPanic),
     ]
     .into_iter()
     .collect();

@@ -1,10 +1,12 @@
+use super::super::common::Result;
+
 use super::super::common::Md5Hasher;
 
-pub fn parse_input(input: &str) -> &str {
-    input.trim()
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> String {
+pub fn task1(input: &str) -> Result<String> {
     let mut result = String::with_capacity(8);
     for i in 0.. {
         let mut hasher = Md5Hasher::new_from_str(input);
@@ -15,10 +17,10 @@ pub fn task1(input: &str) -> String {
             break;
         }
     }
-    result
+    Ok(result)
 }
 
-pub fn task2(input: &str) -> String {
+pub fn task2(input: &str) -> Result<String> {
     let mut result = ['X'; 8];
     let mut count = 0;
     for i in 0.. {
@@ -36,7 +38,7 @@ pub fn task2(input: &str) -> String {
             break;
         }
     }
-    result.iter().cloned().collect::<String>()
+    Ok(result.iter().cloned().collect::<String>())
 }
 
 #[cfg(test)]
@@ -46,7 +48,7 @@ mod test {
     #[test]
     #[ignore]
     fn test_password() {
-        assert_eq!(task1("abc"), "18f47a30");
-        assert_eq!(task2("abc"), "05ace8e3");
+        assert_eq!(task1("abc").unwrap(), "18f47a30");
+        assert_eq!(task2("abc").unwrap(), "05ace8e3");
     }
 }
