@@ -1,3 +1,6 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 use itertools::Itertools;
 
 #[derive(Clone, Copy)]
@@ -7,13 +10,16 @@ pub struct Character {
     armor: i16,
 }
 
-pub fn parse_input(input: &str) -> Character {
-    let mut input = input.lines();
-    let (hp, damage, armor);
-    text_io::scan!(input.next().unwrap().bytes() => "Hit Points: {}", hp);
-    text_io::scan!(input.next().unwrap().bytes() => "Damage: {}", damage);
-    text_io::scan!(input.next().unwrap().bytes() => "Armor: {}", armor);
-    Character { hp, damage, armor }
+pub fn parse_input(input: &str) -> Result<Character> {
+    let (hp, damage, armor) = scan_fmt::scan_fmt!(
+        input,
+        "Hit Points: {}\nDamage: {}\nArmor: {}",
+        i16,
+        i16,
+        i16
+    )
+    .map_err(|_| TaskError("Can't read input!".to_string()))?;
+    Ok(Character { hp, damage, armor })
 }
 
 const WEAPONS: &[(usize, i16)] = &[(8, 4), (10, 5), (25, 6), (40, 7), (74, 8)];
@@ -47,7 +53,7 @@ impl Character {
     }
 }
 
-fn search(boss: &Character, need_min: bool) -> usize {
+fn search(boss: &Character, need_min: bool) -> Result<usize> {
     let iter = WEAPONS.iter().flat_map(|weapon| {
         ARMORS.iter().flat_map(|armor| {
             (0..=2).flat_map(|count| {
@@ -77,16 +83,18 @@ fn search(boss: &Character, need_min: bool) -> usize {
         })
     });
     if need_min {
-        iter.min().unwrap()
+        iter.min()
+            .ok_or(TaskError("Empty iterator on min".to_string()))
     } else {
-        iter.max().unwrap()
+        iter.max()
+            .ok_or(TaskError("Empty iterator on min".to_string()))
     }
 }
 
-pub fn task1(boss: &Character) -> usize {
+pub fn task1(boss: &Character) -> Result<usize> {
     search(boss, true)
 }
 
-pub fn task2(boss: &Character) -> usize {
+pub fn task2(boss: &Character) -> Result<usize> {
     search(boss, false)
 }

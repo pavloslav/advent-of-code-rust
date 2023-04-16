@@ -32,31 +32,8 @@ pub fn parse_input(input: &str) -> Result<Distances> {
 
 use itertools::Itertools; //permutations
 
-macro_rules! task {
-    ($distances: expr, $func: ident) => {
-        (0..$distances.len())
-            .permutations($distances.len())
-            .map(|comb| {
-                comb.windows(2)
-                    .map(|pair| {
-                        if let &[i, j] = pair {
-                            $distances[i][j]
-                        } else {
-                            unreachable!()
-                        }
-                    })
-                    .sum()
-            })
-            .$func()
-            .ok_or_else(|| TaskError("No distances provided!".to_string()))
-    };
-}
-
-/*fn task<F>(distances: &Distances)
-where
-    F: FnOnce(&dyn Iterator<Item = usize>) -> Option<usize>,
-{
-    F((0..distances.len())
+fn task(distances: &Distances) -> impl Iterator<Item = usize> + '_ {
+    (0..distances.len())
         .permutations(distances.len())
         .map(|comb| {
             comb.windows(2)
@@ -68,14 +45,17 @@ where
                     }
                 })
                 .sum()
-        }))
-    .ok_or_else(|| TaskError("No distances provided!".to_string()))
-}*/
+        })
+}
 
 pub fn task1(distances: &Distances) -> Result<usize> {
-    task!(distances, min)
+    task(distances)
+        .min()
+        .ok_or_else(|| TaskError("No distances provided!".to_string()))
 }
 
 pub fn task2(distances: &Distances) -> Result<usize> {
-    task!(distances, max)
+    task(distances)
+        .max()
+        .ok_or_else(|| TaskError("No distances provided!".to_string()))
 }

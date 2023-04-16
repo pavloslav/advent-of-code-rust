@@ -1,7 +1,6 @@
 use super::super::common::Result;
-type Data<'a> = &'a str;
 
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input)
 }
 
@@ -18,7 +17,7 @@ fn has_vowels(line: &str, count: usize) -> bool {
     line.chars().filter(|&c| "aeiou".contains(c)).count() >= count
 }
 
-pub fn task1(input: &Data) -> Result<usize> {
+pub fn task1(input: &str) -> Result<usize> {
     Ok(input
         .lines()
         .filter(|&line| !has_bad(line) && has_pair(line) && has_vowels(line, 3))
@@ -33,7 +32,7 @@ fn has_middle(line: &str) -> bool {
     (0..line.len() - 2).any(|i| line[i..i + 1] == line[i + 2..i + 3])
 }
 
-pub fn task2(input: &Data) -> Result<usize> {
+pub fn task2(input: &str) -> Result<usize> {
     Ok(input
         .lines()
         .filter(|&line| has_two_pairs(line) && has_middle(line))

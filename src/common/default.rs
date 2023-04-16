@@ -4,17 +4,16 @@
 
 use super::super::common::Result;
 use super::Error::TaskError;
-type Data<'a> = &'a str;
 
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> Result<&str> {
     input
 }
 
-pub fn task1(input: &Data) -> Result<usize> {
+pub fn task1(input: &str) -> Result<usize> {
     unimplemented!();
 }
 
-pub fn task2(input: &Data) -> Result<usize> {
+pub fn task2(input: &str) -> Result<usize> {
     unimplemented!();
 }
 

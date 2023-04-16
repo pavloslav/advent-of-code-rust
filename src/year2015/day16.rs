@@ -1,3 +1,6 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 type Map = std::collections::HashMap<String, usize>;
 
 const FILTER: &str = "children: 3
@@ -33,7 +36,7 @@ fn satisfy2(data: &Map, filter: &Map) -> bool {
     })
 }
 
-pub fn parse_input(input: &str) -> Vec<Map> {
+pub fn parse_input(input: &str) -> Result<Vec<Map>> {
     input
         .lines()
         .map(|line| {
@@ -42,53 +45,39 @@ pub fn parse_input(input: &str) -> Vec<Map> {
                 .1
                 .split(", ")
                 .map(|value| {
-                    let mut parts = value.split(": ");
-                    (
-                        parts.next().unwrap().to_owned(),
-                        parts.next().unwrap().parse().unwrap(),
-                    )
+                    scan_fmt::scan_fmt!(value, "{}: {}", String, usize)
+                        .map_err(|_| TaskError(format!("Cant parse {value}")))
                 })
-                .collect()
+                .collect::<Result<Map>>()
         })
         .collect()
 }
 
-fn task<F>(input: &[Map], check: &F) -> usize
+fn task<F>(input: &[Map], check: &F) -> Result<usize>
 where
     F: Fn(&Map, &Map) -> bool,
 {
     let filter: Map = FILTER
         .lines()
         .map(|line| {
-            let mut parts = line.split(": ");
-            (
-                parts.next().unwrap().to_owned(),
-                parts.next().unwrap().parse().unwrap(),
-            )
+            scan_fmt::scan_fmt!(line, "{}: {}", String, usize)
+                .map_err(|_| TaskError(format!("Cant parse {line}")))
         })
-        .collect();
+        .collect::<Result<_>>()?;
 
-    input
+    Ok(input
         .iter()
         .enumerate()
-        .filter_map(
-            |(i, data)| {
-                if check(data, &filter) {
-                    Some(i)
-                } else {
-                    None
-                }
-            },
-        )
-        .next()
-        .unwrap()
-        + 1
+        .find(|(_i, data)| check(data, &filter))
+        .ok_or_else(|| TaskError("No suitable answer".to_string()))?
+        .0
+        + 1)
 }
 
-pub fn task1(input: &[Map]) -> usize {
+pub fn task1(input: &[Map]) -> Result<usize> {
     task(input, &satisfy)
 }
 
-pub fn task2(input: &[Map]) -> usize {
+pub fn task2(input: &[Map]) -> Result<usize> {
     task(input, &satisfy2)
 }

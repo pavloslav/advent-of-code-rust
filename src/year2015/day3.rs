@@ -1,9 +1,7 @@
 use super::super::common::Result;
 use super::Error::TaskError;
 
-type Data<'a> = &'a str;
-
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input)
 }
 
@@ -31,7 +29,7 @@ impl Santa {
     }
 }
 
-pub fn task1(input: &Data) -> Result<usize> {
+pub fn task1(input: &str) -> Result<usize> {
     let mut santa = Santa { x: 0, y: 0 };
     let mut visited = std::collections::HashSet::from([santa.to_pair()]);
     for dir in input.chars() {
@@ -41,7 +39,7 @@ pub fn task1(input: &Data) -> Result<usize> {
     Ok(visited.len())
 }
 
-pub fn task2(input: &Data) -> Result<usize> {
+pub fn task2(input: &str) -> Result<usize> {
     let mut santas = [Santa { x: 0, y: 0 }; 2];
     let mut visited = std::collections::HashSet::from([santas[0].to_pair()]);
     for (i, dir) in input.chars().enumerate() {

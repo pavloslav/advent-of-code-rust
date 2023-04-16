@@ -1,8 +1,6 @@
 use super::super::common::Result;
 
-type Data<'a> = &'a str;
-
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input.trim())
 }
 
@@ -18,10 +16,10 @@ fn find_hash(init: &str, zeroes: usize) -> Result<usize> {
         .expect("Find can't fail on open range"))
 }
 
-pub fn task1(input: &Data) -> Result<usize> {
+pub fn task1(input: &str) -> Result<usize> {
     find_hash(input, 5)
 }
 
-pub fn task2(input: &Data) -> Result<usize> {
+pub fn task2(input: &str) -> Result<usize> {
     find_hash(input, 6)
 }

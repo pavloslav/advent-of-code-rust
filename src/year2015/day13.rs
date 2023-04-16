@@ -1,57 +1,46 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 pub struct Table {
     scores: Vec<Vec<i32>>,
 }
 
-use once_cell::sync::Lazy;
-
-pub fn parse_input(input: &str) -> Table {
+pub fn parse_input(input: &str) -> Result<Table> {
+    todo!("Make it dynamic programming");
     let mut names = std::collections::HashMap::new();
     let mut scores = vec![];
     for line in input.lines() {
-        static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
-            regex::Regex::new(r"(?P<first>\w+) would (?P<gain>gain|lose) (?P<score>\d+) happiness units by sitting next to (?P<second>\w+)\.").unwrap()
-        });
-        if let Some(captures) = INPUT_REGEX.captures(line) {
-            if let Some(first) = captures.name("first") {
-                if let Some(gain) = captures.name("gain") {
-                    if let Some(score) = captures.name("score") {
-                        if let Ok(score) = score.as_str().parse::<i32>() {
-                            if let Some(second) = captures.name("second") {
-                                let score = (if gain.as_str() == "gain" {
-                                    1
-                                } else {
-                                    -1
-                                }) * score;
-                                let first = first.as_str().to_owned();
-                                let second = second.as_str().to_owned();
-                                let names_size = names.len();
-                                let first =
-                                    *names.entry(first).or_insert(names_size);
-                                let names_size = names.len();
-                                let second =
-                                    *names.entry(second).or_insert(names_size);
-                                if scores.len() < names.len() {
-                                    scores.resize(
-                                        names.len(),
-                                        vec![0; names.len()],
-                                    );
-                                }
-                                if scores[first].len() < names.len() {
-                                    scores[first].resize(names.len(), 0);
-                                }
-                                if scores[second].len() < names.len() {
-                                    scores[second].resize(names.len(), 0);
-                                }
-                                scores[first][second] += score;
-                                scores[second][first] += score;
-                            }
-                        }
-                    }
-                }
+        let (first, gain, score, second) = scan_fmt::scan_fmt!(
+            line,
+            "{} would {} {} happiness units by sitting next to {}",
+            String,
+            String,
+            i32,
+            String
+        )
+        .map_err(|_| {
+            TaskError(format!("Unable to process the line '{line}'"))
+        })?;
+        let score = match gain.as_str() {
+            "gain" => score,
+            "lose" => -score,
+            other => return Err(TaskError(format!("Units can not '{other}'"))),
+        };
+
+        let names_size = names.len();
+        let first = *names.entry(first).or_insert(names_size);
+        let names_size = names.len();
+        let second = *names.entry(second).or_insert(names_size);
+        if scores.len() < names.len() {
+            scores.resize(names.len(), vec![0; names.len()]);
+            for line in scores.iter_mut() {
+                line.resize(names.len(), 0);
             }
         }
+        scores[first][second] += score;
+        scores[second][first] += score;
     }
-    Table { scores }
+    Ok(Table { scores })
 }
 
 impl Table {
@@ -75,18 +64,18 @@ impl Table {
 
 use itertools::Itertools;
 
-pub fn task1(input: &Table) -> i32 {
+pub fn task1(input: &Table) -> Result<i32> {
     (0..input.scores.len())
         .permutations(input.scores.len())
         .map(|permutation| input.round_score(permutation.into_iter()))
         .max()
-        .unwrap()
+        .ok_or_else(|| TaskError("No options to consider".to_string()))
 }
 
-pub fn task2(input: &Table) -> i32 {
+pub fn task2(input: &Table) -> Result<i32> {
     (0..input.scores.len())
         .permutations(input.scores.len())
         .map(|permutation| input.line_score(permutation.into_iter()))
         .max()
-        .unwrap()
+        .ok_or_else(|| TaskError("No options to consider".to_string()))
 }

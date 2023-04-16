@@ -1,7 +1,8 @@
+use super::super::common::Result;
 type Password = Vec<u8>;
 
-pub fn parse_input(input: &str) -> Password {
-    input.trim().chars().map(|c| c as u8).rev().collect()
+pub fn parse_input(input: &str) -> Result<Password> {
+    Ok(input.trim().chars().map(|c| c as u8).rev().collect())
 }
 
 fn is_invalid_symbol(c: u8) -> bool {
@@ -58,18 +59,18 @@ fn next_password(password: &Password) -> Password {
     }
 }
 
-pub fn task1(password: &Password) -> String {
-    next_password(password)
+pub fn task1(password: &Password) -> Result<String> {
+    Ok(next_password(password)
         .into_iter()
         .rev()
         .map(|c| c as char)
-        .collect()
+        .collect())
 }
 
-pub fn task2(password: &Password) -> String {
-    next_password(&next_password(password))
+pub fn task2(password: &Password) -> Result<String> {
+    Ok(next_password(&next_password(password))
         .into_iter()
         .rev()
         .map(|c| c as char)
-        .collect()
+        .collect())
 }

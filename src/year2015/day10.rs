@@ -1,7 +1,6 @@
 use itertools::Itertools;
 
 use super::super::common::Result;
-type Data<'a> = &'a str;
 
 fn look_and_say(input: &str) -> String {
     input
@@ -13,7 +12,7 @@ fn look_and_say(input: &str) -> String {
         .collect()
 }
 
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input)
 }
 
@@ -23,10 +22,10 @@ fn task(input: &str, count: usize) -> usize {
         .len()
 }
 
-pub fn task1(input: &Data) -> Result<usize> {
+pub fn task1(input: &str) -> Result<usize> {
     Ok(task(input, 40))
 }
 
-pub fn task2(input: &Data) -> Result<usize> {
+pub fn task2(input: &str) -> Result<usize> {
     Ok(task(input, 50))
 }

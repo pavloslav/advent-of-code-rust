@@ -1,3 +1,6 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 const STEPS: usize = 100;
 
 #[rustfmt::skip]
@@ -85,21 +88,23 @@ impl Life {
     }
 }
 
-pub fn parse_input(input: &str) -> Life {
-    Life {
+pub fn parse_input(input: &str) -> Result<Life> {
+    Ok(Life {
         field: input
             .lines()
             .map(|line| {
                 line.chars()
                     .map(|ch| match ch {
-                        '.' => Cell::Disabled,
-                        '#' => Cell::Enabled,
-                        _ => panic!("Unexpected character: {}", ch),
+                        '.' => Ok(Cell::Disabled),
+                        '#' => Ok(Cell::Enabled),
+                        _ => Err(TaskError(format!(
+                            "Unexpected character: {ch}"
+                        ))),
                     })
-                    .collect()
+                    .collect::<Result<Vec<Cell>>>()
             })
-            .collect(),
-    }
+            .collect::<Result<_>>()?,
+    })
 }
 
 fn task(life: &Life, steps: usize, light_corners: bool) -> usize {
@@ -110,12 +115,12 @@ fn task(life: &Life, steps: usize, light_corners: bool) -> usize {
     life.count_on()
 }
 
-pub fn task1(life: &Life) -> usize {
-    task(life, STEPS, false)
+pub fn task1(life: &Life) -> Result<usize> {
+    Ok(task(life, STEPS, false))
 }
 
-pub fn task2(life: &Life) -> usize {
-    task(life, STEPS, true)
+pub fn task2(life: &Life) -> Result<usize> {
+    Ok(task(life, STEPS, true))
 }
 
 #[cfg(test)]
@@ -133,7 +138,8 @@ mod test {
 ..#...
 #.#..#
 ####.."
-                ),
+                )
+                .unwrap(),
                 5,
                 false
             ),
@@ -152,7 +158,8 @@ mod test {
 ..#...
 #.#..#
 ####.#"
-                ),
+                )
+                .unwrap(),
                 5,
                 true
             ),

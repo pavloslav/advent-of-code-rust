@@ -1,3 +1,6 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 const TOTAL_SPOONS: usize = 100;
 const TOTAL_CALORIES: i32 = 500;
 
@@ -6,27 +9,15 @@ pub struct Ingridient {
     calories: i32,
 }
 
-use once_cell::sync::Lazy;
-
 impl Ingridient {
-    fn try_new(input: &str) -> Option<Ingridient> {
+    fn try_new(input: &str) -> Result<Ingridient> {
         //Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
-        static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
-            regex::Regex::new(r"\w: capacity (?P<capacity>[-\d]+), durability (?P<durability>[-\d]+), flavor (?P<flavor>[-\d]+), texture (?P<texture>[-\d]+), calories (?P<calories>[-\d]+)").unwrap()
-        });
-        INPUT_REGEX.captures(input).map(|captures| Ingridient {
-            properties: ["capacity", "durability", "flavor", "texture"]
-                .iter()
-                .map(|name| {
-                    captures.name(name).unwrap().as_str().parse().unwrap()
-                })
-                .collect(),
-            calories: captures
-                .name("calories")
-                .unwrap()
-                .as_str()
-                .parse()
-                .unwrap(),
+
+        let (capacity, durability, flavor, texture, calories) = scan_fmt::scan_fmt!(input, "{*}: capacity {}, durability {}, flavor {}, texture {}, calories {}", i32, i32, i32, i32, i32)
+        .map_err(|_|TaskError(format!("Incorrect line: {input}")))?;
+        Ok(Ingridient {
+            properties: vec![capacity, durability, flavor, texture],
+            calories,
         })
     }
 }
@@ -35,10 +26,13 @@ pub struct IngridientList {
     ingridients: Vec<Ingridient>,
 }
 
-pub fn parse_input(input: &str) -> IngridientList {
-    IngridientList {
-        ingridients: input.lines().filter_map(Ingridient::try_new).collect(),
-    }
+pub fn parse_input(input: &str) -> Result<IngridientList> {
+    Ok(IngridientList {
+        ingridients: (input
+            .lines()
+            .map(Ingridient::try_new)
+            .collect::<Result<_>>())?,
+    })
 }
 
 impl IngridientList {
@@ -69,7 +63,7 @@ impl IngridientList {
     }
 }
 
-pub fn task1(ingridients: &IngridientList) -> i32 {
+pub fn task1(ingridients: &IngridientList) -> Result<i32> {
     let mut stack: Vec<usize> = vec![];
     let mut max = 0;
     'search: loop {
@@ -78,12 +72,16 @@ pub fn task1(ingridients: &IngridientList) -> i32 {
             if stack.is_empty() {
                 break 'search;
             }
-            *stack.last_mut().unwrap() += 1;
+            *stack.last_mut().ok_or_else(|| {
+                TaskError("Stack became empty".to_string())
+            })? += 1;
         }
         if stack.len() < ingridients.ingridients.len() - 1 {
             stack.resize(ingridients.ingridients.len() - 1, 0);
         } else {
-            *stack.last_mut().unwrap() += 1;
+            *stack.last_mut().ok_or_else(|| {
+                TaskError("Stack became empty".to_string())
+            })? += 1;
         }
         if stack.iter().sum::<usize>() <= TOTAL_SPOONS {
             stack.push(TOTAL_SPOONS - stack.iter().sum::<usize>());
@@ -91,10 +89,10 @@ pub fn task1(ingridients: &IngridientList) -> i32 {
             stack.pop();
         }
     }
-    max
+    Ok(max)
 }
 
-pub fn task2(ingridients: &IngridientList) -> i32 {
+pub fn task2(ingridients: &IngridientList) -> Result<i32> {
     let mut stack: Vec<usize> = vec![];
     let mut max = 0;
     'search: loop {
@@ -103,12 +101,16 @@ pub fn task2(ingridients: &IngridientList) -> i32 {
             if stack.is_empty() {
                 break 'search;
             }
-            *stack.last_mut().unwrap() += 1;
+            *stack.last_mut().ok_or_else(|| {
+                TaskError("Stack became empty".to_string())
+            })? += 1;
         }
         if stack.len() < ingridients.ingridients.len() - 1 {
             stack.resize(ingridients.ingridients.len() - 1, 0);
         } else {
-            *stack.last_mut().unwrap() += 1;
+            *stack.last_mut().ok_or_else(|| {
+                TaskError("Stack became empty".to_string())
+            })? += 1;
         }
         if stack.iter().sum::<usize>() <= TOTAL_SPOONS {
             stack.push(TOTAL_SPOONS - stack.iter().sum::<usize>());
@@ -118,5 +120,5 @@ pub fn task2(ingridients: &IngridientList) -> i32 {
             stack.pop();
         }
     }
-    max
+    Ok(max)
 }

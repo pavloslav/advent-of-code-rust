@@ -1,34 +1,19 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 pub struct Reindeer {
     speed: usize,
     burst: usize,
     rest: usize,
 }
 
-use once_cell::sync::Lazy;
-
-pub fn parse_input(input: &str) -> Vec<Reindeer> {
-    static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
-        regex::Regex::new(r"\w+ can fly (?P<speed>\d+) km/s for (?P<burst>\d+) seconds, but then must rest for (?P<rest>\d+) seconds\.").unwrap()
-    });
+pub fn parse_input(input: &str) -> Result<Vec<Reindeer>> {
     input
         .lines()
-        .filter_map(|line| {
-            if let Some(captures) = INPUT_REGEX.captures(line) {
-                if let (Some(speed), Some(burst), Some(rest)) = (
-                    captures.name("speed"),
-                    captures.name("burst"),
-                    captures.name("rest"),
-                ) {
-                    if let (Ok(speed), Ok(burst), Ok(rest)) = (
-                        speed.as_str().parse(),
-                        burst.as_str().parse(),
-                        rest.as_str().parse(),
-                    ) {
-                        return Some(Reindeer { speed, burst, rest });
-                    }
-                }
-            }
-            None
+        .map(|line| {
+            let (speed, burst, rest) = scan_fmt::scan_fmt!(line, "{*} can fly {} km/s for {} seconds, but then must rest for {} seconds.", usize, usize, usize)
+            .map_err(|_|TaskError(format!("Wrong Reindeer: {line}")))?;
+            Ok(Reindeer { speed, burst, rest })
         })
         .collect()
 }
@@ -43,25 +28,31 @@ impl Reindeer {
     }
 }
 
-pub fn task1(deers: &[Reindeer]) -> usize {
+pub fn task1(deers: &[Reindeer]) -> Result<usize> {
     deers
         .iter()
         .map(|deer| deer.distance(RACE_TIME))
         .max()
-        .unwrap()
+        .ok_or(TaskError("No deers to find the result!".to_string()))
 }
 
-pub fn task2(deers: &Vec<Reindeer>) -> usize {
+pub fn task2(deers: &Vec<Reindeer>) -> Result<usize> {
     let mut results = vec![0; deers.len()];
     for t in 1..RACE_TIME {
         let distances: Vec<_> =
             deers.iter().map(|deer| deer.distance(t)).collect();
-        let &best = distances.iter().max().unwrap();
+        let &best = distances
+            .iter()
+            .max()
+            .ok_or(TaskError("No deers to find the result!".to_string()))?;
         for i in 0..deers.len() {
             if distances[i] == best {
                 results[i] += 1;
             }
         }
     }
-    results.into_iter().max().unwrap()
+    results
+        .into_iter()
+        .max()
+        .ok_or(TaskError("No deers to find the result!".to_string()))
 }

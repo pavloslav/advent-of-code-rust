@@ -1,8 +1,6 @@
 use super::super::common::Result;
 
-type Data<'a> = &'a str;
-
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input)
 }
 
@@ -13,7 +11,7 @@ enum State {
     X2,
 }
 
-pub fn task1(input: &Data) -> Result<usize> {
+pub fn task1(input: &str) -> Result<usize> {
     Ok(input
         .lines()
         .map(|line| {
@@ -47,7 +45,7 @@ pub fn task1(input: &Data) -> Result<usize> {
         .sum())
 }
 
-pub fn task2(input: &Data) -> Result<usize> {
+pub fn task2(input: &str) -> Result<usize> {
     Ok(input
         .lines()
         .map(|line| line.chars().filter(|&c| c == '\\' || c == '"').count() + 2)
@@ -65,10 +63,10 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(EXAMPLE), 12);
+        assert_eq!(task1(EXAMPLE).unwrap(), 12);
     }
     #[test]
     fn test_task2() {
-        assert_eq!(task2(EXAMPLE), 18);
+        assert_eq!(task2(EXAMPLE).unwrap(), 18);
     }
 }
