@@ -1,19 +1,22 @@
-pub fn parse_input(input: &str) -> u32 {
+use super::super::common::Result;
+use super::Error::TaskError;
+
+pub fn parse_input(input: &str) -> Result<u32> {
     input
         .trim()
         .parse()
-        .unwrap_or_else(|_| panic!("Should be a number, got '{}'", input))
+        .map_err(|_| TaskError(format!("Should be a number, got '{input}'")))
 }
 
-pub fn task1(&input: &u32) -> u32 {
+pub fn task1(&input: &u32) -> Result<u32> {
     let inner = (((input - 1) as f64).sqrt() as i32 + 1) / 2;
     let start = (2 * inner - 1).pow(2);
     let step = 2 * inner;
     let location_in_side = (input as i32 - start - 1) % step;
-    (inner + (1 + location_in_side - inner).abs()) as u32
+    Ok((inner + (1 + location_in_side - inner).abs()) as u32)
 }
 
-pub fn task2(&input: &u32) -> u32 {
+pub fn task2(&input: &u32) -> Result<u32> {
     let mut values =
         std::collections::HashMap::<(i32, i32), u32>::from([((0, 0), 1)]);
     #[rustfmt::skip]
@@ -39,13 +42,13 @@ pub fn task2(&input: &u32) -> u32 {
                     .map(|(dx, dy)| values.get(&(x + dx, y + dy)).unwrap_or(&0))
                     .sum();
                 if new_value > input {
-                    return new_value;
+                    return Ok(new_value);
                 }
                 values.insert((x, y), new_value);
             }
         }
     }
-    unreachable!()
+    Err(TaskError("Failed to find the answer".to_string()))
 }
 
 #[cfg(test)]
@@ -54,13 +57,13 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(&2), 1);
-        assert_eq!(task1(&3), 2);
-        assert_eq!(task1(&4), 1);
-        assert_eq!(task1(&5), 2);
-        assert_eq!(task1(&6), 1);
-        assert_eq!(task1(&7), 2);
-        assert_eq!(task1(&8), 1);
-        assert_eq!(task1(&9), 2);
+        assert_eq!(task1(&2).unwrap(), 1);
+        assert_eq!(task1(&3).unwrap(), 2);
+        assert_eq!(task1(&4).unwrap(), 1);
+        assert_eq!(task1(&5).unwrap(), 2);
+        assert_eq!(task1(&6).unwrap(), 1);
+        assert_eq!(task1(&7).unwrap(), 2);
+        assert_eq!(task1(&8).unwrap(), 1);
+        assert_eq!(task1(&9).unwrap(), 2);
     }
 }

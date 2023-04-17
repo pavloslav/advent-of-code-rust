@@ -1,19 +1,21 @@
-pub fn parse_input(input: &str) -> Vec<Vec<&str>> {
-    input
+use super::super::common::Result;
+use std::collections::HashSet;
+
+pub fn parse_input(input: &str) -> Result<Vec<Vec<&str>>> {
+    Ok(input
         .lines()
         .map(|line| line.split_whitespace().collect())
-        .collect()
+        .collect())
 }
 
-pub fn task1(input: &[Vec<&str>]) -> usize {
-    input
+pub fn task1(input: &[Vec<&str>]) -> Result<usize> {
+    Ok(input
         .iter()
         .filter(|passphrase| {
-            std::collections::HashSet::<&&str>::from_iter(passphrase.iter())
-                .len()
+            HashSet::<_>::from_iter(passphrase.into_iter()).len()
                 == passphrase.len()
         })
-        .count()
+        .count())
 }
 
 fn sorted_str(&s: &&str) -> String {
@@ -22,15 +24,13 @@ fn sorted_str(&s: &&str) -> String {
     chars.iter().collect()
 }
 
-pub fn task2(input: &[Vec<&str>]) -> usize {
-    input
+pub fn task2(input: &[Vec<&str>]) -> Result<usize> {
+    Ok(input
         .iter()
         .filter(|passphrase| {
-            std::collections::HashSet::<String>::from_iter(
-                passphrase.iter().map(sorted_str),
-            )
-            .len()
+            HashSet::<String>::from_iter(passphrase.iter().map(sorted_str))
+                .len()
                 == passphrase.len()
         })
-        .count()
+        .count())
 }

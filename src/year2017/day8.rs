@@ -1,3 +1,7 @@
+use super::super::common::Result;
+use super::Error;
+use super::Error::TaskError;
+
 #[derive(Debug)]
 pub enum Operation {
     Inc,
@@ -7,12 +11,14 @@ pub enum Operation {
 use std::str::FromStr;
 
 impl FromStr for Operation {
-    type Err = ();
-    fn from_str(s: &str) -> Result<Operation, <Operation as FromStr>::Err> {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Operation> {
         match s {
             "inc" => Ok(Operation::Inc),
             "dec" => Ok(Operation::Dec),
-            _ => Err(()),
+            other => {
+                Err(TaskError(format!("Parsing operation '{other}' failed")))
+            }
         }
     }
 }
@@ -28,10 +34,8 @@ pub enum Comparison {
 }
 
 impl FromStr for Comparison {
-    type Err = ();
-    fn from_str(
-        item: &str,
-    ) -> Result<Comparison, <Comparison as FromStr>::Err> {
+    type Err = Error;
+    fn from_str(item: &str) -> Result<Comparison> {
         use Comparison::*;
         match item {
             ">" => Ok(Gt),
@@ -40,7 +44,9 @@ impl FromStr for Comparison {
             "<=" => Ok(Le),
             "==" => Ok(Eq),
             "!=" => Ok(Ne),
-            _ => Err(()),
+            other => {
+                Err(TaskError(format!("Parsing comparison '{other}' failed")))
+            }
         }
     }
 }
@@ -68,7 +74,7 @@ pub struct Instruction {
     compare: i32,
 }
 
-pub fn parse_input(input: &str) -> Vec<Instruction> {
+pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
     input
         .lines()
         .map(|line| {
@@ -89,20 +95,20 @@ pub fn parse_input(input: &str) -> Vec<Instruction> {
                 String,
                 i32
             )
-            .unwrap();
-            Instruction {
+            .map_err(|e| TaskError(format!("Parsing failed: {e}")))?;
+            Ok(Instruction {
                 target_reg,
-                operation: Operation::from_str(&operation).unwrap(),
+                operation: operation.parse()?,
                 operand,
                 check_reg,
-                comparison: Comparison::from_str(&comparison).unwrap(),
+                comparison: comparison.parse()?,
                 compare,
-            }
+            })
         })
         .collect()
 }
 
-pub fn task1(input: &[Instruction]) -> i32 {
+pub fn task1(input: &[Instruction]) -> Result<i32> {
     let mut registers = std::collections::HashMap::<String, i32>::new();
     for instr in input {
         if instr.comparison.exec(
@@ -116,10 +122,14 @@ pub fn task1(input: &[Instruction]) -> i32 {
                 }
         }
     }
-    *registers.values().max().unwrap()
+    registers
+        .values()
+        .max()
+        .copied()
+        .ok_or_else(|| TaskError("No registers present".to_string()))
 }
 
-pub fn task2(input: &[Instruction]) -> i32 {
+pub fn task2(input: &[Instruction]) -> Result<i32> {
     let mut registers = std::collections::HashMap::<String, i32>::new();
     let mut max = 0;
     for instr in input {
@@ -132,8 +142,8 @@ pub fn task2(input: &[Instruction]) -> i32 {
                     Operation::Inc => instr.operand,
                     Operation::Dec => -instr.operand,
                 };
-            max = std::cmp::max(max, registers[&instr.target_reg]);
+            max = max.max(registers[&instr.target_reg]);
         }
     }
-    max
+    Ok(max)
 }

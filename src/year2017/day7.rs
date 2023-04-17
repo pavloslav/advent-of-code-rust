@@ -1,8 +1,11 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 use once_cell::sync::Lazy;
 
 type Tower = std::collections::HashMap<String, (usize, Vec<String>)>;
 
-pub fn parse_input(input: &str) -> Tower {
+pub fn parse_input(input: &str) -> Result<Tower> {
     static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
         regex::Regex::new(
             r"(?P<name>\w+) \((?P<weight>\d+)\)( -> (?P<child>.*))?",
@@ -27,18 +30,20 @@ pub fn parse_input(input: &str) -> Tower {
                         } else {
                             vec![]
                         };
-                    (name.as_str().to_owned(), (weight, children))
+                    Ok((name.as_str().to_owned(), (weight, children)))
                 } else {
-                    panic!("No name and weight found in '{line}'")
+                    Err(TaskError(format!(
+                        "No name and weight found in '{line}'"
+                    )))
                 }
             } else {
-                panic!("Failed to parse the line '{line}'")
+                Err(TaskError(format!("Failed to parse the line '{line}'")))
             }
         })
         .collect()
 }
 
-fn get_root(tower: &Tower) -> String {
+fn get_root(tower: &Tower) -> Result<String> {
     let children: std::collections::HashSet<_> = tower
         .values()
         .flat_map(|(_, children)| children.iter())
@@ -46,11 +51,11 @@ fn get_root(tower: &Tower) -> String {
     tower
         .keys()
         .find(|k| !children.contains(k))
-        .unwrap()
-        .clone()
+        .ok_or_else(|| TaskError("No root found!".to_string()))
+        .cloned()
 }
 
-pub fn task1(tower: &Tower) -> String {
+pub fn task1(tower: &Tower) -> Result<String> {
     get_root(tower)
 }
 
@@ -63,7 +68,7 @@ fn get_weight(tower: &Tower, node: &str) -> usize {
             .sum::<usize>()
 }
 
-fn get_correct_weight(tower: &Tower, root: &str) -> Option<usize> {
+fn get_correct_weight(tower: &Tower, root: &str) -> Result<usize> {
     let mut weights = std::collections::HashMap::<usize, Vec<String>>::new();
     for child in &tower[root].1 {
         let weight = get_weight(tower, child);
@@ -79,13 +84,14 @@ fn get_correct_weight(tower: &Tower, root: &str) -> Option<usize> {
                 correct = w;
             }
         }
+
         get_correct_weight(tower, &weights[&wrong][0])
-            .or(Some(tower[&weights[&wrong][0]].0 + correct - wrong))
+            .or_else(|_| Ok(tower[&weights[&wrong][0]].0 + correct - wrong))
     } else {
-        None
+        Err(TaskError("Can't find answer".to_string()))
     }
 }
 
-pub fn task2(tower: &Tower) -> usize {
-    get_correct_weight(tower, &get_root(tower)).unwrap()
+pub fn task2(tower: &Tower) -> Result<usize> {
+    get_correct_weight(tower, &get_root(tower)?)
 }

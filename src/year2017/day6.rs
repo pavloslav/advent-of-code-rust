@@ -1,7 +1,14 @@
-pub fn parse_input(input: &str) -> Vec<usize> {
+use super::super::common::floyd_hare_tortoise;
+use super::super::common::Result;
+use super::Error::TaskError;
+
+pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input
         .split_whitespace()
-        .map(|s| s.parse().unwrap())
+        .map(|s| {
+            s.parse()
+                .map_err(|e| TaskError(format!("Can't parse input: {e}")))
+        })
         .collect()
 }
 
@@ -40,20 +47,14 @@ impl From<&[usize]> for Memory {
     }
 }
 
-pub fn task1(input: &[usize]) -> usize {
-    let (lam, mu) = super::super::common::floyd_hare_tortoise(
-        || Memory::from(input),
-        |mem| mem.redist(),
-    );
-    mu + lam
+pub fn task1(input: &[usize]) -> Result<usize> {
+    let (lam, mu) =
+        floyd_hare_tortoise(|| Memory::from(input), |mem| mem.redist());
+    Ok(mu + lam)
 }
 
-pub fn task2(input: &[usize]) -> usize {
-    super::super::common::floyd_hare_tortoise(
-        || Memory::from(input),
-        |mem| mem.redist(),
-    )
-    .0
+pub fn task2(input: &[usize]) -> Result<usize> {
+    Ok(floyd_hare_tortoise(|| Memory::from(input), |mem| mem.redist()).0)
 }
 
 #[cfg(test)]
@@ -62,11 +63,11 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(&[0, 2, 7, 0]), 5);
+        assert_eq!(task1(&[0, 2, 7, 0]).unwrap(), 5);
     }
 
     #[test]
     fn test_task2() {
-        assert_eq!(task2(&[0, 2, 7, 0]), 4);
+        assert_eq!(task2(&[0, 2, 7, 0]).unwrap(), 4);
     }
 }

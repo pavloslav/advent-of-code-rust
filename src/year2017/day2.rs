@@ -1,23 +1,36 @@
-pub fn parse_input(input: &str) -> Vec<Vec<u32>> {
+use super::super::common::Result;
+use super::Error::TaskError;
+
+pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
     input
         .lines()
         .map(|line| {
             line.split_whitespace()
-                .map(|s| s.parse().unwrap())
+                .map(|s| {
+                    s.parse().map_err(|e| {
+                        TaskError(format!("Error parsing input: {e}"))
+                    })
+                })
                 .collect()
         })
-        .collect()
+        .collect::<Result<_>>()
 }
 
-pub fn task1(input: &[Vec<u32>]) -> u32 {
+pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
     input
         .iter()
-        .map(|line| line.iter().max().unwrap() - line.iter().min().unwrap())
+        .map(|line| {
+            Ok(line.iter().max().ok_or_else(|| {
+                TaskError("Empty data unacceptable!".to_string())
+            })? - line.iter().min().ok_or_else(|| {
+                TaskError("Empty data unacceptable!".to_string())
+            })?)
+        })
         .sum()
 }
 
-pub fn task2(input: &[Vec<u32>]) -> u32 {
-    input
+pub fn task2(input: &[Vec<u32>]) -> Result<u32> {
+    Ok(input
         .iter()
         .map(|line| {
             for x in line {
@@ -29,5 +42,5 @@ pub fn task2(input: &[Vec<u32>]) -> u32 {
             }
             0
         })
-        .sum()
+        .sum())
 }

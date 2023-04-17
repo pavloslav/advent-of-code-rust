@@ -1,11 +1,18 @@
-pub fn parse_input(input: &str) -> Vec<u32> {
-    input
+use super::super::common::Result;
+use super::Error::TaskError;
+
+pub fn parse_input(input: &str) -> Result<Vec<u32>> {
+    Ok(input
         .lines()
         .find(|s| !s.starts_with("//") && !s.is_empty())
-        .expect("There should be non-comment and non-empty line")
+        .ok_or_else(|| {
+            TaskError(
+                "There should be non-comment and non-empty line".to_string(),
+            )
+        })?
         .chars()
         .map(|c| c.to_digit(10).unwrap())
-        .collect()
+        .collect())
 }
 
 fn solve(input: &[u32], step: usize) -> u32 {
@@ -13,19 +20,15 @@ fn solve(input: &[u32], step: usize) -> u32 {
         .iter()
         .enumerate()
         .filter_map(|(i, &x)| {
-            if x == input[(i + step) % input.len()] {
-                Some(x)
-            } else {
-                None
-            }
+            Some(x).filter(|&x| x == input[(i + step) % input.len()])
         })
         .sum()
 }
 
-pub fn task1(input: &[u32]) -> u32 {
-    solve(input, 1)
+pub fn task1(input: &[u32]) -> Result<u32> {
+    Ok(solve(input, 1))
 }
 
-pub fn task2(input: &[u32]) -> u32 {
-    solve(input, input.len() / 2)
+pub fn task2(input: &[u32]) -> Result<u32> {
+    Ok(solve(input, input.len() / 2))
 }

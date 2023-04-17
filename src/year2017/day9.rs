@@ -1,5 +1,7 @@
-pub fn parse_input(input: &str) -> &str {
-    input
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input)
 }
 
 enum State {
@@ -8,7 +10,7 @@ enum State {
     Escape,
 }
 
-pub fn task1(input: &str) -> usize {
+pub fn task1(input: &str) -> Result<usize> {
     let mut state = State::Normal;
     let mut level = 0;
     let mut sum = 0;
@@ -34,10 +36,10 @@ pub fn task1(input: &str) -> usize {
             State::Escape => state = State::Garbage,
         }
     }
-    sum
+    Ok(sum)
 }
 
-pub fn task2(input: &str) -> usize {
+pub fn task2(input: &str) -> Result<usize> {
     let mut state = State::Normal;
     let mut garbage = 0;
     for c in input.chars() {
@@ -55,5 +57,5 @@ pub fn task2(input: &str) -> usize {
             State::Escape => state = State::Garbage,
         }
     }
-    garbage
+    Ok(garbage)
 }
