@@ -1,5 +1,11 @@
-pub fn parse_input(input: &str) -> usize {
-    input.trim().parse().unwrap()
+use super::super::common::Result;
+use super::Error::TaskError;
+
+pub fn parse_input(input: &str) -> Result<usize> {
+    input
+        .trim()
+        .parse()
+        .map_err(|_| TaskError(format!("Can't parse '{input}'")))
 }
 
 fn is_open(x: usize, y: usize, fav: usize) -> bool {
@@ -93,12 +99,12 @@ impl LookUp {
     }
 }
 
-pub fn task1(&input: &usize) -> usize {
-    LookUp::new(input).find_way_len((1, 1), (31, 39))
+pub fn task1(&input: &usize) -> Result<usize> {
+    Ok(LookUp::new(input).find_way_len((1, 1), (31, 39)))
 }
 
-pub fn task2(&input: &usize) -> usize {
-    LookUp::new(input).count_visited(50, (1, 1))
+pub fn task2(&input: &usize) -> Result<usize> {
+    Ok(LookUp::new(input).count_visited(50, (1, 1)))
 }
 
 #[cfg(test)]

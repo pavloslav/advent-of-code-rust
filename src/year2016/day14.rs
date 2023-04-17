@@ -1,3 +1,5 @@
+use super::super::common::Result;
+
 use super::super::common::Md5Hasher;
 use itertools::Itertools;
 
@@ -43,14 +45,14 @@ fn find_key(init: &str, n: usize, hash_deep: usize) -> usize {
     unreachable!()
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input.trim()
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> usize {
-    find_key(input, 64, 0)
+pub fn task1(input: &str) -> Result<usize> {
+    Ok(find_key(input, 64, 0))
 }
 
-pub fn task2(input: &str) -> usize {
-    find_key(input, 64, 2016)
+pub fn task2(input: &str) -> Result<usize> {
+    Ok(find_key(input, 64, 2016))
 }
