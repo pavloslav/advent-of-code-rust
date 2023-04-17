@@ -1,8 +1,11 @@
-pub fn parse_input(input: &str) -> Vec<Vec<char>> {
+use super::super::common::Result;
+use super::Error::TaskError;
+
+pub fn parse_input(input: &str) -> Result<Vec<Vec<char>>> {
     build_lcd(6, 50, input)
 }
 
-fn collect_lcd(lcd: &[Vec<char>]) -> String {
+fn collect_lcd(lcd: &[Vec<char>]) -> Result<String> {
     let mut result = String::from("\n");
     for j in 0..lcd[0].len() {
         for line in lcd {
@@ -10,70 +13,107 @@ fn collect_lcd(lcd: &[Vec<char>]) -> String {
         }
         result.push('\n');
     }
-    result
+    Ok(result)
 }
 
-fn build_lcd(rows: usize, columns: usize, commands: &str) -> Vec<Vec<char>> {
+fn build_lcd(
+    rows: usize,
+    columns: usize,
+    commands: &str,
+) -> Result<Vec<Vec<char>>> {
     let mut lcd = Vec::with_capacity(columns);
     for _ in 0..columns {
         lcd.push(std::iter::repeat('.').take(rows).collect::<Vec<_>>());
     }
+    static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
+        once_cell::sync::Lazy::new(|| {
+            regex::Regex::new(
+    r"(rect (?P<rect_x>\d+)x(?P<rect_y>\d+))|(rotate row y=(?P<row_y>\d+) by (?P<row_shift>\d+))|(rotate column x=(?P<col_x>\d+) by (?P<col_shift>\d+))"
+    ).unwrap()
+        });
+
     for command in commands.lines() {
-        let mut words = command.split(' ');
-        match words.next() {
-            Some("rect") => {
-                let size: Vec<_> = words
-                    .next()
-                    .unwrap()
-                    .split('x')
-                    .map(|s| s.parse::<usize>().unwrap())
-                    .collect();
-                for line in &mut lcd[..size[0]] {
-                    line[..size[1]].fill('#');
+        if let Some(cap) = INPUT_REGEX.captures(command) {
+            if let (Some(x), Some(y)) = (cap.name("rect_x"), cap.name("rect_y"))
+            {
+                let x = x.as_str().parse().map_err(|_| {
+                    TaskError(format!("Can't parse x='{}' in rect", x.as_str()))
+                })?;
+                let y = y.as_str().parse().map_err(|_| {
+                    TaskError(format!("Can't parse y='{}' in rect", y.as_str()))
+                })?;
+                for line in &mut lcd[..x] {
+                    line[..y].fill('#');
                 }
+            } else if let (Some(y), Some(shift)) =
+                (cap.name("row_y"), cap.name("row_shift"))
+            {
+                let y = y.as_str().parse::<usize>().map_err(|_| {
+                    TaskError(format!(
+                        "Can't parse y='{}' in rotate row",
+                        y.as_str()
+                    ))
+                })?;
+                let shift = shift.as_str().parse().map_err(|_| {
+                    TaskError(format!(
+                        "Can't parse shift='{}' in rotate row",
+                        shift.as_str()
+                    ))
+                })?;
+                for _ in 0..shift {
+                    let temp = lcd[columns - 1][y];
+                    for j in 1..columns {
+                        let x = columns - j;
+                        lcd[x][y] = lcd[x - 1][y];
+                    }
+                    lcd[0][y] = temp;
+                }
+            } else if let (Some(x), Some(shift)) =
+                (cap.name("col_x"), cap.name("col_shift"))
+            {
+                let x = x.as_str().parse::<usize>().map_err(|_| {
+                    TaskError(format!(
+                        "Can't parse x='{}' in rotate column",
+                        x.as_str()
+                    ))
+                })?;
+                let shift = shift.as_str().parse().map_err(|_| {
+                    TaskError(format!(
+                        "Can't parse shift='{}' in rotate column",
+                        shift.as_str()
+                    ))
+                })?;
+
+                for _ in 0..shift {
+                    let temp = lcd[x][rows - 1];
+                    for j in 1..rows {
+                        let y = rows - j;
+                        lcd[x][y] = lcd[x][y - 1];
+                    }
+                    lcd[x][0] = temp;
+                }
+            } else {
+                return Err(TaskError(format!(
+                    "Can't find all data in command {command}"
+                )));
             }
-            Some("rotate") => match words.next() {
-                Some("column") => {
-                    let x =
-                        words.next().unwrap()[2..].parse::<usize>().unwrap();
-                    let shift = words.nth(1).unwrap().parse::<usize>().unwrap();
-                    for _ in 0..shift {
-                        let temp = lcd[x][rows - 1];
-                        for j in 1..rows {
-                            let y = rows - j;
-                            lcd[x][y] = lcd[x][y - 1];
-                        }
-                        lcd[x][0] = temp;
-                    }
-                }
-                Some("row") => {
-                    let y =
-                        words.next().unwrap()[2..].parse::<usize>().unwrap();
-                    let shift = words.nth(1).unwrap().parse::<usize>().unwrap();
-                    for _ in 0..shift {
-                        let temp = lcd[columns - 1][y];
-                        for j in 1..columns {
-                            let x = columns - j;
-                            lcd[x][y] = lcd[x - 1][y];
-                        }
-                        lcd[0][y] = temp;
-                    }
-                }
-                _ => panic!("wrong command afrer rotate"),
-            },
-            _ => panic!("wrong command"),
+        } else {
+            return Err(TaskError(format!(
+                "Failed to parse command {command}"
+            )));
         }
     }
-    lcd
+    Ok(lcd)
 }
 
-pub fn task1(lcd: &[Vec<char>]) -> usize {
-    lcd.iter()
+pub fn task1(lcd: &[Vec<char>]) -> Result<usize> {
+    Ok(lcd
+        .iter()
         .map(|line| line.iter().filter(|c| **c == '#').count())
-        .sum()
+        .sum())
 }
 
-pub fn task2(lcd: &[Vec<char>]) -> String {
+pub fn task2(lcd: &[Vec<char>]) -> Result<String> {
     collect_lcd(lcd)
 }
 

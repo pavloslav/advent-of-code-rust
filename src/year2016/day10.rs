@@ -1,3 +1,6 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 #[derive(Copy, Clone)]
 pub enum Target {
     Bot(usize),
@@ -37,12 +40,12 @@ impl Target {
     }
 }
 
-fn parse_value(input: &str) -> Result<(usize, usize), ()> {
+fn parse_value(input: &str) -> Result<(usize, usize)> {
     scan_fmt::scan_fmt!(input, "value {} goes to bot {}", usize, usize)
-        .map_err(|_| ())
+        .map_err(|_| TaskError("Failed to parse value".to_string()))
 }
 
-fn parse_bot(input: &str) -> Result<(usize, String, usize, String, usize), ()> {
+fn parse_bot(input: &str) -> Result<(usize, String, usize, String, usize)> {
     scan_fmt::scan_fmt!(
         input,
         "bot {} gives low to {} {} and high to {} {}",
@@ -52,10 +55,10 @@ fn parse_bot(input: &str) -> Result<(usize, String, usize, String, usize), ()> {
         String,
         usize
     )
-    .map_err(|_| ())
+    .map_err(|_| TaskError("Failed to parse gives bot".to_string()))
 }
 
-pub fn parse_input(input: &str) -> Robots {
+pub fn parse_input(input: &str) -> Result<Robots> {
     let mut robots = HashMap::new();
     for line in input.lines() {
         if let Ok((value, bot)) = parse_value(line) {
@@ -71,9 +74,11 @@ pub fn parse_input(input: &str) -> Robots {
                 Some(Target::new(&type_lo, tgt_lo));
             robots.entry(bot).or_insert_with(Robot::new).target_hi =
                 Some(Target::new(&type_hi, tgt_hi));
+        } else {
+            return Err(TaskError(format!("Failed to parse '{line}'")));
         }
     }
-    robots
+    Ok(robots)
 }
 
 impl Robot {
@@ -111,22 +116,37 @@ impl Robot {
             && self.hands.iter().max() == Some(&61)
     }
 
-    fn process(&mut self, bots: &mut Robots, output: &mut Output) {
-        self.target_lo.as_ref().unwrap().give(
-            *self.hands.iter().min().unwrap(),
-            bots,
-            output,
-        );
-        self.target_hi.as_ref().unwrap().give(
-            *self.hands.iter().max().unwrap(),
-            bots,
-            output,
-        );
+    fn process(
+        &mut self,
+        bots: &mut Robots,
+        output: &mut Output,
+    ) -> Result<()> {
+        self.target_lo
+            .as_ref()
+            .ok_or_else(|| TaskError("Failed to get low target".to_string()))?
+            .give(
+                *self.hands.iter().min().ok_or_else(|| {
+                    TaskError("Hands can't be empty!".to_string())
+                })?,
+                bots,
+                output,
+            );
+        self.target_hi
+            .as_ref()
+            .ok_or_else(|| TaskError("Failed to get hi target".to_string()))?
+            .give(
+                *self.hands.iter().max().ok_or_else(|| {
+                    TaskError("Hands can't be empty!".to_string())
+                })?,
+                bots,
+                output,
+            );
         self.hands.clear();
+        Ok(())
     }
 }
 
-pub fn task1(robots: &Robots) -> usize {
+pub fn task1(robots: &Robots) -> Result<usize> {
     let mut robots = robots.clone();
     let mut output = Output::new();
     let mut changed = true;
@@ -134,21 +154,21 @@ pub fn task1(robots: &Robots) -> usize {
         changed = false;
         for &i in robots.keys() {
             if robots[&i].looking_for() {
-                return i;
+                return Ok(i);
             }
             if robots[&i].can_process(&robots) {
                 let mut robot = robots[&i].clone();
-                robot.process(&mut robots, &mut output);
+                robot.process(&mut robots, &mut output)?;
                 robots.insert(i, robot);
                 changed = true;
                 break;
             }
         }
     }
-    usize::MAX
+    Err(TaskError("Not found".to_string()))
 }
 
-pub fn task2(robots: &Robots) -> usize {
+pub fn task2(robots: &Robots) -> Result<usize> {
     let mut robots = robots.clone();
     let mut output = Output::new();
     let mut changed = true;
@@ -157,12 +177,12 @@ pub fn task2(robots: &Robots) -> usize {
         for &i in robots.keys() {
             if robots[&i].can_process(&robots) {
                 let mut robot = robots[&i].clone();
-                robot.process(&mut robots, &mut output);
+                robot.process(&mut robots, &mut output)?;
                 robots.insert(i, robot);
                 changed = true;
                 break;
             }
         }
     }
-    output[&0] * output[&1] * output[&2]
+    Ok(output[&0] * output[&1] * output[&2])
 }

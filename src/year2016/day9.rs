@@ -1,11 +1,13 @@
-pub fn parse_input(input: &str) -> &str {
-    input.trim()
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input.trim())
 }
 
-fn decode2_len(input: &str) -> f64 {
+fn decode2_len(input: &str) -> u64 {
     let array: Vec<_> = input.chars().collect();
     let mut i = 0;
-    let mut res = 0f64;
+    let mut res = 0u64;
     while i < array.len() {
         res += match array[i] {
             '(' => {
@@ -19,13 +21,13 @@ fn decode2_len(input: &str) -> f64 {
                     i += 1;
                 }
                 let end = i + 1;
-                let times: f64 = input[x + 1..i].parse().unwrap();
+                let times: u64 = input[x + 1..i].parse().unwrap();
                 i += len + 1;
                 times * decode2_len(&input[end..end + len])
             }
             _ => {
                 i += 1;
-                1f64
+                1u64
             }
         }
     }
@@ -62,13 +64,13 @@ fn decode(input: &str) -> String {
     res
 }
 
-pub fn task1(input: &str) -> usize {
+pub fn task1(input: &str) -> Result<usize> {
     let res = decode(input);
-    res.len()
+    Ok(res.len())
 }
 
-pub fn task2(input: &str) -> f64 {
-    decode2_len(input)
+pub fn task2(input: &str) -> Result<u64> {
+    Ok(decode2_len(input))
 }
 
 #[cfg(test)]
@@ -87,17 +89,17 @@ mod test {
 
     #[test]
     fn test_decode2_len() {
-        assert_eq!(decode2_len("(3x3)XYZ"), 9f64);
-        assert_eq!(decode2_len("X(8x2)(3x3)ABCY"), 20f64);
+        assert_eq!(decode2_len("(3x3)XYZ"), 9u64);
+        assert_eq!(decode2_len("X(8x2)(3x3)ABCY"), 20u64);
         assert_eq!(
             decode2_len("(27x12)(20x12)(13x14)(7x10)(1x12)A"),
-            241920f64
+            241920u64
         );
         assert_eq!(
             decode2_len(
                 "(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"
             ),
-            445f64
+            445u64
         );
     }
 }
