@@ -1,9 +1,11 @@
-pub fn parse_input(input: &str) -> &str {
-    input.trim()
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> usize {
-    (0..128)
+pub fn task1(input: &str) -> Result<usize> {
+    Ok((0..128)
         .map(|i| {
             super::knots_hash::dense_hash(
                 format!("{input}-{i}").bytes().map(|c| c.into()),
@@ -12,7 +14,7 @@ pub fn task1(input: &str) -> usize {
             .map(|x| x.count_ones() as usize)
             .sum::<usize>()
         })
-        .sum()
+        .sum())
 }
 
 fn find_start(map: &[Vec<bool>]) -> Option<(usize, usize)> {
@@ -44,7 +46,7 @@ fn floodfill(map: &mut [Vec<bool>], (x, y): (usize, usize)) {
     }
 }
 
-pub fn task2(input: &str) -> usize {
+pub fn task2(input: &str) -> Result<usize> {
     let mut map: Vec<Vec<bool>> = (0..128)
         .map(|i| {
             super::knots_hash::dense_hash(
@@ -59,7 +61,7 @@ pub fn task2(input: &str) -> usize {
         if let Some(pos) = find_start(&map) {
             floodfill(&mut map, pos);
         } else {
-            return i;
+            return Ok(i);
         }
     }
     unreachable!()

@@ -1,27 +1,43 @@
+use super::super::common::Result;
+use super::Error::TaskError;
+
 type Connections = std::collections::HashMap<usize, Vec<usize>>;
 
-pub fn parse_input(input: &str) -> Connections {
-    static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
-        once_cell::sync::Lazy::new(|| {
-            regex::Regex::new(r"(?P<index>\d+) <-> (?P<connected>.*)$").unwrap()
-        });
+pub fn parse_input(input: &str) -> Result<Connections> {
+    use once_cell::sync::Lazy;
+    static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
+        regex::Regex::new(r"^(?P<index>\d+) <-> (?P<connected>.*)$").unwrap()
+    });
     input
         .lines()
         .map(|line| {
-            if let Some(captures) = INPUT_REGEX.captures(line) {
-                (
-                    captures.name("index").unwrap().as_str().parse().unwrap(),
-                    captures
-                        .name("connected")
-                        .unwrap()
-                        .as_str()
-                        .split(", ")
-                        .map(|s| s.parse().unwrap())
-                        .collect(),
-                )
-            } else {
-                panic!()
-            }
+            INPUT_REGEX
+                .captures(line)
+                .ok_or_else(|| TaskError("Can't parse input".to_string()))
+                .map(|captures| {
+                    if let (Some(index), Some(connected)) =
+                        (captures.name("index"), captures.name("connected"))
+                    {
+                        Ok((
+                            index.as_str().parse().map_err(|e| {
+                                TaskError(format!("Can't parse: {e}"))
+                            })?,
+                            connected
+                                .as_str()
+                                .split(", ")
+                                .map(|s| {
+                                    s.parse().map_err(|e| {
+                                        TaskError(format!("Can't parse: {e}"))
+                                    })
+                                })
+                                .collect::<Result<_>>()?,
+                        ))
+                    } else {
+                        Err(TaskError(
+                            "Can't find all elements in line".to_string(),
+                        ))
+                    }
+                })?
         })
         .collect()
 }
@@ -41,13 +57,13 @@ fn floodfill(
     }
 }
 
-pub fn task1(input: &Connections) -> usize {
+pub fn task1(input: &Connections) -> Result<usize> {
     let mut zero_connected = vec![-1; input.len()];
     floodfill(input, 0, 0, &mut zero_connected);
-    zero_connected.iter().filter(|&&x| x == 0).count()
+    Ok(zero_connected.iter().filter(|&&x| x == 0).count())
 }
 
-pub fn task2(input: &Connections) -> i32 {
+pub fn task2(input: &Connections) -> Result<i32> {
     let mut connect: Vec<i32> = vec![-1; input.len()];
     let mut group_index = 0;
     while let Some((first, _x)) =
@@ -56,5 +72,5 @@ pub fn task2(input: &Connections) -> i32 {
         floodfill(input, first, group_index, &mut connect);
         group_index += 1;
     }
-    group_index
+    Ok(group_index)
 }

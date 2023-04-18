@@ -1,7 +1,16 @@
-pub fn parse_input(input: &str) -> Vec<usize> {
+use super::super::common::Result;
+use super::Error::TaskError;
+
+pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input
         .lines()
-        .map(|s| s.split_whitespace().last().unwrap().parse().unwrap())
+        .map(|s| {
+            s.split_whitespace()
+                .last()
+                .ok_or_else(|| TaskError("Empty input!".to_string()))?
+                .parse()
+                .map_err(|e| TaskError(format!("Can't parse: {e}")))
+        })
         .collect()
 }
 
@@ -22,34 +31,27 @@ impl Generator {
     }
 }
 
-pub fn task1(input: &[usize]) -> usize {
-    let mut gen_a = Generator {
-        value: input[0],
-        factor: 16807,
-        filter: 1,
-    };
-    let mut gen_b = Generator {
-        value: input[1],
-        factor: 48271,
-        filter: 1,
-    };
-    (0..40_000_000)
-        .filter(|_| gen_a.generate() & 0xFFFF == gen_b.generate() & 0xFFFF)
+fn task(input: &[usize], filters: &[usize], limit: usize) -> usize {
+    let factors = [16807, 48271];
+    let mut generators: Vec<_> = (0..=1)
+        .map(|i| Generator {
+            value: input[i],
+            factor: factors[i],
+            filter: filters[i],
+        })
+        .collect();
+    (0..limit)
+        .filter(|_| {
+            generators[0].generate() & 0xFFFF
+                == generators[1].generate() & 0xFFFF
+        })
         .count()
 }
 
-pub fn task2(input: &[usize]) -> usize {
-    let mut gen_a = Generator {
-        value: input[0],
-        factor: 16807,
-        filter: 4,
-    };
-    let mut gen_b = Generator {
-        value: input[1],
-        factor: 48271,
-        filter: 8,
-    };
-    (0..5_000_000)
-        .filter(|_| gen_a.generate() & 0xFFFF == gen_b.generate() & 0xFFFF)
-        .count()
+pub fn task1(input: &[usize]) -> Result<usize> {
+    Ok(task(input, &[1, 1], 40_000_000))
+}
+
+pub fn task2(input: &[usize]) -> Result<usize> {
+    Ok(task(input, &[4, 8], 5_000_000))
 }
