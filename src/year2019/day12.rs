@@ -1,3 +1,5 @@
+use super::super::common::Result;
+
 #[derive(Clone, PartialEq, Eq)]
 pub struct Moon {
     pos: [isize; 3],
@@ -33,7 +35,7 @@ impl Moon {
     }
 }
 
-pub fn parse_input(input: &str) -> Vec<[isize; 3]> {
+pub fn parse_input(input: &str) -> Result<Vec<[isize; 3]>> {
     input
         .lines()
         .map(|line| {
@@ -43,9 +45,8 @@ pub fn parse_input(input: &str) -> Vec<[isize; 3]> {
                 isize,
                 isize,
                 isize
-            )
-            .unwrap();
-            [x, y, z]
+            )?;
+            Ok([x, y, z])
         })
         .collect()
 }
@@ -60,22 +61,22 @@ fn step_model(moons: &mut [Moon]) {
         }
         moons[i] = moon;
     }
-    for moon in moons.iter_mut() {
+    for moon in moons {
         moon.apply_velocity();
     }
 }
 
-pub fn task1(input: &[[isize; 3]]) -> isize {
+pub fn task1(input: &[[isize; 3]]) -> Result<isize> {
     let mut moons: Vec<Moon> = input.iter().map(Moon::new).collect();
     for _ in 0..1000 {
         step_model(&mut moons);
     }
-    moons.iter().map(Moon::energy).sum()
+    Ok(moons.iter().map(Moon::energy).sum())
 }
 
 use num::integer::lcm;
 
-pub fn task2(input: &[[isize; 3]]) -> usize {
+pub fn task2(input: &[[isize; 3]]) -> Result<usize> {
     let mut periods = [0usize; 3];
     for (i, period) in periods.iter_mut().enumerate() {
         let mut tortoise: Vec<Moon> = input.iter().map(Moon::new).collect();
@@ -115,5 +116,5 @@ pub fn task2(input: &[[isize; 3]]) -> usize {
         }
         *period = mu + lambda;
     }
-    lcm(lcm(periods[0], periods[1]), periods[2])
+    Ok(lcm(lcm(periods[0], periods[1]), periods[2]))
 }

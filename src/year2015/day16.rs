@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 type Map = std::collections::HashMap<String, usize>;
 
@@ -45,8 +45,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Map>> {
                 .1
                 .split(", ")
                 .map(|value| {
-                    scan_fmt::scan_fmt!(value, "{}: {}", String, usize)
-                        .map_err(|_| TaskError(format!("Cant parse {value}")))
+                    Ok(scan_fmt::scan_fmt!(value, "{}: {}", String, usize)?)
                 })
                 .collect::<Result<Map>>()
         })
@@ -59,10 +58,7 @@ where
 {
     let filter: Map = FILTER
         .lines()
-        .map(|line| {
-            scan_fmt::scan_fmt!(line, "{}: {}", String, usize)
-                .map_err(|_| TaskError(format!("Cant parse {line}")))
-        })
+        .map(|line| Ok(scan_fmt::scan_fmt!(line, "{}: {}", String, usize)?))
         .collect::<Result<_>>()?;
 
     Ok(input

@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 #[derive(Copy, Clone)]
 pub enum Target {
@@ -19,11 +19,11 @@ type Robots = HashMap<usize, Robot>;
 type Output = HashMap<usize, usize>;
 
 impl Target {
-    fn new(typ: &str, target: usize) -> Target {
+    fn new(typ: &str, target: usize) -> Result<Target> {
         match typ {
-            "bot" => Target::Bot(target),
-            "output" => Target::Output(target),
-            _ => unimplemented!(),
+            "bot" => Ok(Target::Bot(target)),
+            "output" => Ok(Target::Output(target)),
+            other => Err(TaskError(format!("Unknown target type '{other}'"))),
         }
     }
     fn give(&self, value: usize, bots: &mut Robots, output: &mut Output) {
@@ -40,42 +40,31 @@ impl Target {
     }
 }
 
-fn parse_value(input: &str) -> Result<(usize, usize)> {
-    scan_fmt::scan_fmt!(input, "value {} goes to bot {}", usize, usize)
-        .map_err(|_| TaskError("Failed to parse value".to_string()))
-}
-
-fn parse_bot(input: &str) -> Result<(usize, String, usize, String, usize)> {
-    scan_fmt::scan_fmt!(
-        input,
-        "bot {} gives low to {} {} and high to {} {}",
-        usize,
-        String,
-        usize,
-        String,
-        usize
-    )
-    .map_err(|_| TaskError("Failed to parse gives bot".to_string()))
-}
-
 pub fn parse_input(input: &str) -> Result<Robots> {
     let mut robots = HashMap::new();
     for line in input.lines() {
-        if let Ok((value, bot)) = parse_value(line) {
+        if let Ok((value, bot)) =
+            scan_fmt::scan_fmt!(line, "value {d} goes to bot {d}", usize, usize)
+        {
             robots
                 .entry(bot)
                 .or_insert_with(Robot::new)
                 .hands
                 .push(value);
-        } else if let Ok((bot, type_lo, tgt_lo, type_hi, tgt_hi)) =
-            parse_bot(line)
-        {
-            robots.entry(bot).or_insert_with(Robot::new).target_lo =
-                Some(Target::new(&type_lo, tgt_lo));
-            robots.entry(bot).or_insert_with(Robot::new).target_hi =
-                Some(Target::new(&type_hi, tgt_hi));
         } else {
-            return Err(TaskError(format!("Failed to parse '{line}'")));
+            let (bot, type_lo, tgt_lo, type_hi, tgt_hi) = scan_fmt::scan_fmt!(
+                line,
+                "bot {} gives low to {} {} and high to {} {}",
+                usize,
+                String,
+                usize,
+                String,
+                usize
+            )?;
+            robots.entry(bot).or_insert_with(Robot::new).target_lo =
+                Some(Target::new(&type_lo, tgt_lo)?);
+            robots.entry(bot).or_insert_with(Robot::new).target_hi =
+                Some(Target::new(&type_hi, tgt_hi)?);
         }
     }
     Ok(robots)

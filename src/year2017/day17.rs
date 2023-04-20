@@ -1,8 +1,10 @@
-pub fn parse_input(input: &str) -> usize {
-    input.trim().parse().unwrap()
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<usize> {
+    Ok(input.trim().parse()?)
 }
 
-pub fn task1(input: &usize) -> usize {
+pub fn task1(input: &usize) -> Result<usize> {
     const SIZE: usize = 2018;
     let mut buffer = Vec::with_capacity(SIZE);
     buffer.push(0);
@@ -12,10 +14,10 @@ pub fn task1(input: &usize) -> usize {
         buffer.insert(position, i);
     }
 
-    buffer[(position + 1) % buffer.len()]
+    Ok(buffer[(position + 1) % buffer.len()])
 }
 
-pub fn task2(input: &usize) -> usize {
+pub fn task2(input: &usize) -> Result<usize> {
     const SIZE: usize = 50_000_000;
     let mut zero_position = 0;
     let mut value_after_zero = 0;
@@ -29,5 +31,5 @@ pub fn task2(input: &usize) -> usize {
             Greater => zero_position += 1,
         }
     }
-    value_after_zero
+    Ok(value_after_zero)
 }

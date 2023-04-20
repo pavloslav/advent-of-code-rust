@@ -1,15 +1,12 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 type Firewall = Vec<(i32, i32)>;
 
 pub fn parse_input(input: &str) -> Result<Firewall> {
     input
         .lines()
-        .map(|line| {
-            scan_fmt::scan_fmt!(line, "{}: {}", i32, i32)
-                .map_err(|e| TaskError(format!("Can't parse: {e}")))
-        })
+        .map(|line| Ok(scan_fmt::scan_fmt!(line, "{}: {}", i32, i32)?))
         .collect()
 }
 

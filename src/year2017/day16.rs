@@ -1,4 +1,6 @@
-use core::str::FromStr;
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
 
 pub enum Dance {
     Spin(usize),
@@ -6,24 +8,24 @@ pub enum Dance {
     SwapDancer(char, char),
 }
 
+use core::str::FromStr;
 impl FromStr for Dance {
-    type Err = ();
-    fn from_str(s: &str) -> Result<Dance, <Dance as FromStr>::Err> {
-        match s.chars().next() {
-            Some('s') => s[1..].parse().map(Dance::Spin).or(Err(())),
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Dance> {
+        Ok(match s.chars().next() {
+            Some('s') => s[1..].parse().map(Dance::Spin)?,
             Some('x') => {
                 let (first, second) =
-                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", usize, usize)
-                        .unwrap();
-                Ok(Dance::SwapPlace(first, second))
+                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", usize, usize)?;
+                Dance::SwapPlace(first, second)
             }
             Some('p') => {
                 let (first, second) =
-                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char).unwrap();
-                Ok(Dance::SwapDancer(first, second))
+                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char)?;
+                Dance::SwapDancer(first, second)
             }
-            _ => Err(()),
-        }
+            _ => return Err(TaskError(format!("Unknown command {s}"))),
+        })
     }
 }
 
@@ -37,9 +39,9 @@ impl Dance {
             Dance::SwapDancer(a, b) => {
                 for e in line {
                     if e == a {
-                        *e = *b;
-                    } else if *e == *b {
-                        *e = *a;
+                        *e = *b
+                    } else if e == b {
+                        *e = *a
                     }
                 }
             }
@@ -47,12 +49,8 @@ impl Dance {
     }
 }
 
-pub fn parse_input(input: &str) -> Vec<Dance> {
-    input
-        .trim()
-        .split(',')
-        .map(|d| d.parse().unwrap())
-        .collect()
+pub fn parse_input(input: &str) -> Result<Vec<Dance>> {
+    input.trim().split(',').map(|d| d.parse()).collect()
 }
 
 fn make_dance(start: impl Iterator<Item = char>, moves: &[Dance]) -> String {
@@ -63,13 +61,13 @@ fn make_dance(start: impl Iterator<Item = char>, moves: &[Dance]) -> String {
     line.iter().collect()
 }
 
-pub fn task1(input: &[Dance]) -> String {
-    make_dance('a'..='p', input)
+pub fn task1(input: &[Dance]) -> Result<String> {
+    Ok(make_dance('a'..='p', input))
 }
 
 const DANCES_COUNT: usize = 1_000_000_000;
 
-pub fn task2(input: &[Dance]) -> String {
+pub fn task2(input: &[Dance]) -> Result<String> {
     let gen = || -> String { ('a'..='p').collect() };
     let step = |s: &mut String| *s = make_dance(s.chars(), input);
 
@@ -79,5 +77,5 @@ pub fn task2(input: &[Dance]) -> String {
     for _ in 0..index {
         step(&mut s);
     }
-    s
+    Ok(s)
 }

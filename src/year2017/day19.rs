@@ -1,3 +1,6 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 pub enum Direction {
     Down,
     Left,
@@ -54,47 +57,47 @@ impl Packet {
         result
     }
     fn turn(&mut self, field: &[Vec<u8>]) -> bool {
-        //self.distance += 1;
         match self.dir {
             Direction::Down | Direction::Up => {
                 self.dir = Direction::Left;
                 if !self.step(field) {
                     self.dir = Direction::Right;
                 }
-                self.step(field)
             }
             Direction::Left | Direction::Right => {
                 self.dir = Direction::Up;
                 if !self.step(field) {
                     self.dir = Direction::Down;
                 }
-                self.step(field)
             }
         }
+        self.step(field)
     }
 
-    fn new(field: &[Vec<u8>]) -> Packet {
-        Packet {
+    fn new(field: &[Vec<u8>]) -> Result<Packet> {
+        Ok(Packet {
             x: field[0]
                 .iter()
                 .enumerate()
                 .find(|&(_, &b)| b == b'|')
-                .unwrap()
+                .ok_or_else(|| {
+                    TaskError("First line should contain '|'!".to_string())
+                })?
                 .0,
             y: 0,
             dir: Direction::Down,
             letters: String::new(),
             distance: 1,
-        }
+        })
     }
-    fn travel(field: &[Vec<u8>]) -> Packet {
-        let mut packet = Packet::new(field);
+    fn travel(field: &[Vec<u8>]) -> Result<Packet> {
+        let mut packet = Packet::new(field)?;
         while packet.step(field) || packet.turn(field) {}
-        packet
+        Ok(packet)
     }
 }
 
-pub fn parse_input(input: &str) -> Packet {
+pub fn parse_input(input: &str) -> Result<Packet> {
     Packet::travel(
         &input
             .lines()
@@ -103,12 +106,12 @@ pub fn parse_input(input: &str) -> Packet {
     )
 }
 
-pub fn task1(input: &Packet) -> String {
-    input.letters.clone()
+pub fn task1(input: &Packet) -> Result<String> {
+    Ok(input.letters.clone())
 }
 
-pub fn task2(input: &Packet) -> usize {
-    input.distance
+pub fn task2(input: &Packet) -> Result<usize> {
+    Ok(input.distance)
 }
 
 #[cfg(test)]
@@ -123,10 +126,10 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(&parse_input(FIELD)), "ABCDEF");
+        assert_eq!(task1(&parse_input(FIELD).unwrap()).unwrap(), "ABCDEF");
     }
     #[test]
     fn test_task2() {
-        assert_eq!(task2(&parse_input(FIELD)), 38);
+        assert_eq!(task2(&parse_input(FIELD).unwrap()).unwrap(), 38);
     }
 }

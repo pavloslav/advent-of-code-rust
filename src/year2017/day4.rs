@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::Result;
 use std::collections::HashSet;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<&str>>> {
@@ -12,8 +12,7 @@ pub fn task1(input: &[Vec<&str>]) -> Result<usize> {
     Ok(input
         .iter()
         .filter(|passphrase| {
-            HashSet::<_>::from_iter(passphrase.into_iter()).len()
-                == passphrase.len()
+            HashSet::<_>::from_iter(passphrase.iter()).len() == passphrase.len()
         })
         .count())
 }

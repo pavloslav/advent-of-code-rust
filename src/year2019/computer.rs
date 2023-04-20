@@ -1,97 +1,118 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 use std::collections::{HashMap, VecDeque};
+
+type Word = isize;
 
 #[derive(Clone)]
 pub struct Computer {
-    pub memory: HashMap<isize, isize>,
-    ip: isize,
-    input: VecDeque<isize>,
-    output: VecDeque<isize>,
-    relative_base: isize,
+    pub memory: HashMap<Word, Word>,
+    ip: Word,
+    input: VecDeque<Word>,
+    output: VecDeque<Word>,
+    relative_base: Word,
 }
 
 impl Computer {
+    const ADD: Word = 1;
+    const MUL: Word = 2;
+    const IN: Word = 3;
+    const OUT: Word = 4;
+    const JNZ: Word = 5;
+    const JZ: Word = 6;
+    const LS: Word = 7;
+    const EQ: Word = 8;
+    const ARB: Word = 9;
+    const HLT: Word = 99;
+
     pub fn is_halted(&self) -> bool {
-        self.memory[&self.ip] == 99
+        self.memory[&self.ip] == Computer::HLT
     }
     fn is_input_blocked(&self) -> bool {
-        self.memory[&self.ip] == 3 && self.input.is_empty()
+        self.memory[&self.ip] == Computer::IN && self.input.is_empty()
     }
 
-    fn step(&mut self) {
+    fn step(&mut self) -> Result<()> {
         if self.is_halted() || self.is_input_blocked() {
-            return;
+            return Ok(());
         }
         let opcode = self.memory[&self.ip] % 100;
         match opcode {
-            1 => {
-                let src1 = self.get_value(1);
-                let src2 = self.get_value(2);
-                let tgt = self.get_target(3);
-                *self.memory.entry(tgt).or_default() = src1 + src2;
+            Computer::ADD => {
+                let src1 = self.get_value(1)?;
+                let src2 = self.get_value(2)?;
+                let tgt = self.get_target(3)?;
+                self.memory.insert(tgt, src1 + src2);
                 self.ip += 4;
             }
-            2 => {
-                let src1 = self.get_value(1);
-                let src2 = self.get_value(2);
-                let tgt = self.get_target(3);
-                *self.memory.entry(tgt).or_default() = src1 * src2;
+            Computer::MUL => {
+                let src1 = self.get_value(1)?;
+                let src2 = self.get_value(2)?;
+                let tgt = self.get_target(3)?;
+                self.memory.insert(tgt, src1 * src2);
                 self.ip += 4;
             }
-            3 => {
+            Computer::IN => {
                 if self.input.is_empty() {
-                    return;
+                    return Ok(());
                 }
-                let tgt = self.get_target(1);
-                *self.memory.entry(tgt).or_default() =
-                    self.input.pop_front().unwrap();
+                let tgt = self.get_target(1)?;
+                self.memory.insert(
+                    tgt,
+                    self.input.pop_front().ok_or_else(|| {
+                        TaskError("Input is empty!".to_string())
+                    })?,
+                );
                 self.ip += 2;
             }
-            4 => {
-                let src = self.get_value(1);
+            Computer::OUT => {
+                let src = self.get_value(1)?;
                 self.output.push_back(src);
                 self.ip += 2;
             }
-            5 => {
-                let test = self.get_value(1);
-                let tgt = self.get_value(2);
+            Computer::JNZ => {
+                let test = self.get_value(1)?;
+                let tgt = self.get_value(2)?;
                 self.ip = if test != 0 { tgt } else { self.ip + 3 };
             }
-            6 => {
-                let test = self.get_value(1);
-                let tgt = self.get_value(2);
+            Computer::JZ => {
+                let test = self.get_value(1)?;
+                let tgt = self.get_value(2)?;
                 self.ip = if test == 0 { tgt } else { self.ip + 3 };
             }
-            7 => {
-                let test1 = self.get_value(1);
-                let test2 = self.get_value(2);
-                let tgt = self.get_target(3);
-                *self.memory.entry(tgt).or_default() =
-                    isize::from(test1 < test2);
+            Computer::LS => {
+                let test1 = self.get_value(1)?;
+                let test2 = self.get_value(2)?;
+                let tgt = self.get_target(3)?;
+                self.memory.insert(tgt, Word::from(test1 < test2));
                 self.ip += 4;
             }
-            8 => {
-                let test1 = self.get_value(1);
-                let test2 = self.get_value(2);
-                let tgt = self.get_target(3);
-                *self.memory.entry(tgt).or_default() =
-                    isize::from(test1 == test2);
+            Computer::EQ => {
+                let test1 = self.get_value(1)?;
+                let test2 = self.get_value(2)?;
+                let tgt = self.get_target(3)?;
+                self.memory.insert(tgt, Word::from(test1 == test2));
                 self.ip += 4;
             }
-            9 => {
-                let src = self.get_value(1);
+            Computer::ARB => {
+                let src = self.get_value(1)?;
                 self.relative_base += src;
                 self.ip += 2;
             }
-            99 => {}
-            _ => unimplemented!(),
+            Computer::HLT => {}
+            opcode => {
+                return Err(TaskError(format!("Unknown opcode: {opcode}")))
+            }
         }
+        Ok(())
     }
-    pub fn new(code: &[isize]) -> Computer {
+    pub fn new(code: &[Word]) -> Computer {
         Computer {
             memory: code
                 .iter()
                 .enumerate()
-                .map(|(u, i)| (u as isize, *i))
+                .map(|(u, &i)| (u as Word, i))
                 .collect(),
             ip: 0,
             input: VecDeque::new(),
@@ -100,12 +121,12 @@ impl Computer {
         }
     }
 
-    fn get_value(&self, index: isize) -> isize {
+    fn get_value(&self, index: Word) -> Result<Word> {
         let mut mode = self.memory[&self.ip] / 100;
         for _ in 1..index {
             mode /= 10;
         }
-        match mode % 10 {
+        Ok(match mode % 10 {
             0 => *self
                 .memory
                 .get(&self.memory[&(self.ip + index)])
@@ -115,38 +136,40 @@ impl Computer {
                 .memory
                 .get(&(self.relative_base + self.memory[&(self.ip + index)]))
                 .unwrap_or(&0),
-            _ => unimplemented!(),
-        }
+            other => Err(TaskError(format!(
+                "Unknown source mode {other} in instruction {}",
+                self.memory[&self.ip]
+            )))?,
+        })
     }
-    fn get_target(&self, index: isize) -> isize {
+    fn get_target(&self, index: Word) -> Result<Word> {
         let mut mode = self.memory[&self.ip] / 100;
         for _ in 1..index {
             mode /= 10;
         }
-        match mode % 10 {
+        Ok(match mode % 10 {
             0 => self.memory[&(self.ip + index)],
-            1 => panic!("Target doesn't support immediate mode"),
             2 => self.relative_base + self.memory[&(self.ip + index)],
-            _ => unimplemented!(),
-        }
+            other => Err(TaskError(format!(
+                "Unknown target mode {other} in instruction {} on ip {}",
+                self.memory[&self.ip], self.ip
+            )))?,
+        })
     }
-    pub fn run(&mut self) {
+    pub fn run(&mut self) -> Result<()> {
         while !self.is_halted() && !self.is_input_blocked() {
-            self.step();
+            self.step()?;
         }
+        Ok(())
     }
-    pub fn write(&mut self, value: isize) {
+    pub fn write(&mut self, value: Word) {
         self.input.push_back(value);
     }
-    pub fn read(&mut self) -> Option<isize> {
+    pub fn read(&mut self) -> Option<Word> {
         self.output.pop_front()
     }
-    pub fn prepare_code(input: &str) -> Vec<isize> {
-        input
-            .trim()
-            .split(',')
-            .map(|x| x.parse().unwrap())
-            .collect()
+    pub fn prepare_code(input: &str) -> Result<Vec<Word>> {
+        input.trim().split(',').map(|x| Ok(x.parse()?)).collect()
     }
 }
 
@@ -154,13 +177,11 @@ impl Computer {
 mod test {
     use super::*;
 
-    fn test_memory(before: &[isize], after: &[isize]) {
+    fn test_memory(before: &[Word], after: &[Word]) {
         let mut comp = Computer::new(before);
-        comp.run();
+        comp.run().unwrap();
         assert_eq!(comp.memory.len(), after.len(), "Memory sizes differ");
-        assert!(
-            (0..after.len()).all(|i| comp.memory[&(i as isize)] == after[i])
-        );
+        assert!((0..after.len()).all(|i| comp.memory[&(i as Word)] == after[i]));
     }
 
     #[test]
@@ -178,10 +199,10 @@ mod test {
         );
     }
 
-    fn test_io(code: &[isize], input: &[isize], output: &[isize], msg: &str) {
+    fn test_io(code: &[Word], input: &[Word], output: &[Word], msg: &str) {
         let mut comp = Computer::new(code);
         comp.input.extend(input.iter().copied());
-        comp.run();
+        comp.run().unwrap();
         assert_eq!(comp.output, output, "{msg}");
     }
 

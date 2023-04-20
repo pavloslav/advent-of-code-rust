@@ -1,7 +1,6 @@
-use std::fmt::Display;
+use super::error::Result;
 use std::time::Duration;
 use std::time::SystemTime;
-use std::time::SystemTimeError;
 
 use super::network;
 use super::settings;
@@ -24,48 +23,6 @@ macro_rules! log {
     )
 }
 
-#[derive(Debug)]
-pub enum Error {
-    Network(network::Error),
-    Settings(settings::Error),
-    TimeError(SystemTimeError),
-    WrongTask,
-    TaskError(String),
-    Clap(clap::error::Error),
-}
-
-pub type Result<T> = std::result::Result<T, Error>;
-
-impl From<network::Error> for Error {
-    fn from(err: network::Error) -> Error {
-        Error::Network(err)
-    }
-}
-
-impl From<settings::Error> for Error {
-    fn from(err: settings::Error) -> Error {
-        Error::Settings(err)
-    }
-}
-
-impl From<SystemTimeError> for Error {
-    fn from(err: SystemTimeError) -> Error {
-        Error::TimeError(err)
-    }
-}
-
-impl From<clap::error::Error> for Error {
-    fn from(err: clap::error::Error) -> Error {
-        Error::Clap(err)
-    }
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self:?}")
-    }
-}
-
 pub fn get_input_with_mod(mod_year: &str, mod_day: &str) -> Result<String> {
     get_input(&mod_year[4..], &mod_day[3..])
 }
@@ -81,14 +38,14 @@ pub fn get_input(year: &str, day: &str) -> Result<String> {
         let settings = settings::read_setting(AOC_SETTINGS_FILE_NAME)?;
         let url = settings.format_url(year, day);
         log!("Trying url '{}'", url);
-        network::get_input_from_url(&url, &settings.session)
-            .map(|s| {
+        Ok(
+            network::get_input_from_url(&url, &settings.session).map(|s| {
                 if let Err(e) = std::fs::write(filename, &s) {
                     log!("{:?}", e);
                 }
                 s
-            })
-            .map_err(Error::from)
+            })?,
+        )
     })
 }
 
@@ -147,8 +104,8 @@ where
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
         use once_cell::sync::Lazy;
-        use super::common::aoc::Result;
-        use super::common::aoc::Error;
+        use super::common::Result;
+        use super::common::Error;
         use super::common::aoc::measure;
 
         $(pub mod $day;)*

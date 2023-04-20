@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 type Connections = std::collections::HashMap<usize, Vec<usize>>;
 
@@ -19,17 +19,11 @@ pub fn parse_input(input: &str) -> Result<Connections> {
                         (captures.name("index"), captures.name("connected"))
                     {
                         Ok((
-                            index.as_str().parse().map_err(|e| {
-                                TaskError(format!("Can't parse: {e}"))
-                            })?,
+                            index.as_str().parse()?,
                             connected
                                 .as_str()
                                 .split(", ")
-                                .map(|s| {
-                                    s.parse().map_err(|e| {
-                                        TaskError(format!("Can't parse: {e}"))
-                                    })
-                                })
+                                .map(|s| Ok(s.parse()?))
                                 .collect::<Result<_>>()?,
                         ))
                     } else {

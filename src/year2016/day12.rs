@@ -1,30 +1,44 @@
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
+
+pub struct Register {
+    reg: usize,
+}
+
+impl std::str::FromStr for Register {
+    type Err = Error;
+    fn from_str(reg: &str) -> Result<Register> {
+        let reg = ["a", "b", "c", "d"]
+            .iter()
+            .position(|&r| r == reg)
+            .ok_or_else(|| {
+                TaskError(format!("'{reg}' is not a register name"))
+            })?;
+        Ok(Register { reg })
+    }
+}
 
 pub enum Operand {
-    Register(usize),
+    Register(Register),
     Value(i32),
 }
 
-fn reg_to_n(reg: &str) -> Option<usize> {
-    ["a", "b", "c", "d"].iter().position(|r| r == &reg)
+impl std::str::FromStr for Operand {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Operand> {
+        match input.parse::<i32>() {
+            Ok(value) => Ok(Operand::Value(value)),
+            _ => Ok(Operand::Register(input.parse::<Register>()?)),
+        }
+    }
 }
 
 impl Operand {
-    fn new(s: &str) -> Result<Operand> {
-        if let Some(reg) = reg_to_n(s) {
-            Ok(Operand::Register(reg))
-        } else {
-            Ok(Operand::Value(s.parse().map_err(|_| {
-                TaskError(format!("Can't parse value {s}"))
-            })?))
-        }
-    }
-
     fn get(&self, regs: &[i32; 4]) -> i32 {
         match self {
             Operand::Value(x) => *x,
-            Operand::Register(r) => regs[*r],
+            Operand::Register(r) => regs[r.reg],
         }
     }
 }
@@ -52,38 +66,19 @@ pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
                     (cap.name("cpy_x"), cap.name("cpy_y"))
                 {
                     Ok(Instruction::Cpy {
-                        from: Operand::new(x.as_str())?,
-                        reg: reg_to_n(y.as_str()).ok_or_else(|| {
-                            TaskError(format!(
-                                "Cpy target '{}' not found",
-                                y.as_str()
-                            ))
-                        })?,
+                        from: x.as_str().parse()?,
+                        reg: y.as_str().parse()?,
                     })
                 } else if let Some(x) = cap.name("inc_x") {
-                    Ok(Instruction::Inc(reg_to_n(x.as_str()).ok_or_else(
-                        || {
-                            TaskError(format!(
-                                "Inc target '{}' not found",
-                                x.as_str()
-                            ))
-                        },
-                    )?))
+                    Ok(Instruction::Inc(x.as_str().parse()?))
                 } else if let Some(x) = cap.name("dec_x") {
-                    Ok(Instruction::Dec(reg_to_n(x.as_str()).ok_or_else(
-                        || {
-                            TaskError(format!(
-                                "Decc target '{}' not found",
-                                x.as_str()
-                            ))
-                        },
-                    )?))
+                    Ok(Instruction::Dec(x.as_str().parse()?))
                 } else if let (Some(x), Some(y)) =
                     (cap.name("jnz_x"), cap.name("jnz_y"))
                 {
                     Ok(Instruction::Jnz {
-                        value: Operand::new(x.as_str())?,
-                        shift: Operand::new(y.as_str())?,
+                        value: x.as_str().parse()?,
+                        shift: y.as_str().parse()?,
                     })
                 } else {
                     Err(TaskError(format!("Can't find parts in '{line}'")))

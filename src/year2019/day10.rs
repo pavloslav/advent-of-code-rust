@@ -1,31 +1,27 @@
-pub fn parse_input(input: &str) -> Vec<(i16, i16)> {
-    input
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<(i16, i16)>> {
+    Ok(input
         .lines()
         .enumerate()
         .flat_map(|(y, line)| {
             line.chars().enumerate().filter_map(move |(x, c)| {
-                if c == '#' {
-                    Some((x as i16, y as i16))
-                } else {
-                    None
-                }
+                Some((x as i16, y as i16)).filter(|_| c == '#')
             })
         })
-        .collect()
+        .collect())
 }
 
 use num::integer::gcd;
+use num::signum;
 
-fn normalized(coord: (i16, i16)) -> (i16, i16) {
-    if coord.0 == 0 && coord.1 == 0 {
-        (0, 0)
-    } else if coord.0 == 0 {
-        (0, if coord.1 > 0 { 1 } else { -1 })
-    } else if coord.1 == 0 {
-        (if coord.0 > 0 { 1 } else { -1 }, 0)
+fn normalized((x, y): (i16, i16)) -> (i16, i16) {
+    let gcd = gcd(x, y);
+    if gcd != 0 {
+        (x / gcd, y / gcd)
     } else {
-        let gcd = gcd(coord.0, coord.1);
-        (coord.0 / gcd, coord.1 / gcd)
+        (signum(x), signum(y))
     }
 }
 
@@ -48,36 +44,39 @@ fn visible_from(station: (i16, i16), asteroids: &[(i16, i16)]) -> usize {
         .len()
 }
 
-fn station_position(asteroids: &[(i16, i16)]) -> (i16, i16) {
-    *asteroids
+fn station_position(asteroids: &[(i16, i16)]) -> Result<(i16, i16)> {
+    asteroids
         .iter()
         .max_by_key(|&&station| visible_from(station, asteroids))
-        .unwrap()
+        .copied()
+        .ok_or_else(|| TaskError("Asteroids shouldn't be empty!".to_string()))
 }
 
-pub fn task1(asteroids: &[(i16, i16)]) -> usize {
-    visible_from(station_position(asteroids), asteroids)
+pub fn task1(asteroids: &[(i16, i16)]) -> Result<usize> {
+    Ok(visible_from(station_position(asteroids)?, asteroids))
 }
 
 fn atan((x, y): (i16, i16)) -> f64 {
     (x as f64).atan2(y as f64)
 }
 
-pub fn task2(asteroids: &[(i16, i16)]) -> i16 {
-    assert!(asteroids.len() > 200);
-    let station = station_position(asteroids);
+const ASTEROID_NEEDED: usize = 200;
+
+pub fn task2(asteroids: &[(i16, i16)]) -> Result<i16> {
+    if asteroids.len() <= ASTEROID_NEEDED {
+        return Err(TaskError(format!(
+            "There should be at least {ASTEROID_NEEDED} asteroids!"
+        )));
+    }
+    let station = station_position(asteroids)?;
     let mut asteroids: Vec<_> = asteroids
         .iter()
-        .filter_map(|&a| {
-            if a != station {
-                Some((a.0 - station.0, a.1 - station.1))
-            } else {
-                None
-            }
-        })
+        .filter(|&&asteroid| asteroid != (0, 0))
+        .map(|&a| (a.0 - station.0, a.1 - station.1))
         .collect();
     asteroids.sort_by(|&a, &b| atan(b).total_cmp(&atan(a)));
     let mut sorted_asteroids: Vec<Vec<_>> = Vec::new();
+    /* REFACTOR */
     for a in asteroids {
         if !sorted_asteroids.is_empty()
             && normalized(a)
@@ -100,7 +99,7 @@ pub fn task2(asteroids: &[(i16, i16)]) -> i16 {
                 if count == 0 {
                     let x_r = stack[level].0 + station.0;
                     let y_r = stack[level].1 + station.1;
-                    return x_r * 100 + y_r;
+                    return Ok(x_r * 100 + y_r);
                 }
             }
         }
@@ -140,21 +139,21 @@ mod test {
 
     #[test]
     fn test_task1_small() {
-        let input = parse_input(SMALL_FIELD);
-        assert_eq!(station_position(&input), (3, 4));
-        assert_eq!(task1(&input), 8);
+        let input = parse_input(SMALL_FIELD).unwrap();
+        assert_eq!(station_position(&input).unwrap(), (3, 4));
+        assert_eq!(task1(&input).unwrap(), 8);
     }
 
     #[test]
     fn test_task1() {
-        let input = parse_input(BIG_FIELD);
-        assert_eq!(station_position(&input), (11, 13));
-        assert_eq!(task1(&input), 210);
+        let input = parse_input(BIG_FIELD).unwrap();
+        assert_eq!(station_position(&input).unwrap(), (11, 13));
+        assert_eq!(task1(&input).unwrap(), 210);
     }
 
     #[test]
     fn test_task2() {
-        let input = parse_input(BIG_FIELD);
-        assert_eq!(task2(&input), 802);
+        let input = parse_input(BIG_FIELD).unwrap();
+        assert_eq!(task2(&input).unwrap(), 802);
     }
 }

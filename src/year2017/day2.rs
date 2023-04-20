@@ -1,19 +1,11 @@
-use super::super::common::Result;
 use super::Error::TaskError;
+use super::Result;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
     input
         .lines()
-        .map(|line| {
-            line.split_whitespace()
-                .map(|s| {
-                    s.parse().map_err(|e| {
-                        TaskError(format!("Error parsing input: {e}"))
-                    })
-                })
-                .collect()
-        })
-        .collect::<Result<_>>()
+        .map(|line| line.split_whitespace().map(|s| Ok(s.parse()?)).collect())
+        .collect()
 }
 
 pub fn task1(input: &[Vec<u32>]) -> Result<u32> {

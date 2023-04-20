@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub struct Reindeer {
     speed: usize,
@@ -12,7 +12,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Reindeer>> {
         .lines()
         .map(|line| {
             let (speed, burst, rest) = scan_fmt::scan_fmt!(line, "{*} can fly {} km/s for {} seconds, but then must rest for {} seconds.", usize, usize, usize)
-            .map_err(|_|TaskError(format!("Wrong Reindeer: {line}")))?;
+            ?;
             Ok(Reindeer { speed, burst, rest })
         })
         .collect()

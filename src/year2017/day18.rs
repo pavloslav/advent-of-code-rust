@@ -1,3 +1,7 @@
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
@@ -12,14 +16,15 @@ pub enum Operand {
 }
 
 impl std::str::FromStr for Operand {
-    type Err = ();
-    fn from_str(s: &str) -> Result<Operand, ()> {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Operand> {
         if let Ok(value) = s.parse() {
             Ok(Operand::Val(value))
-        } else if s.len() == 1 {
-            Ok(Operand::Reg(s.chars().next().unwrap()))
         } else {
-            Err(())
+            match s.chars().next() {
+                Some(c) if s.len() == 1 => Ok(Operand::Reg(c)),
+                _ => Err(TaskError(format!("Can't parse operand '{s}'"))),
+            }
         }
     }
 }
@@ -45,41 +50,67 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = ();
-    fn from_str(s: &str) -> Result<Instruction, ()> {
-        let mut s = s.split_whitespace();
-        match s.next() {
-            Some("snd") => Ok(Instruction::Snd(s.next().ok_or(())?.parse()?)),
-            Some("set") => Ok(Instruction::Set(
-                s.next().ok_or(())?.chars().next().ok_or(())?,
-                s.next().ok_or(())?.parse()?,
-            )),
-            Some("add") => Ok(Instruction::Add(
-                s.next().ok_or(())?.chars().next().ok_or(())?,
-                s.next().ok_or(())?.parse()?,
-            )),
-            Some("mul") => Ok(Instruction::Mul(
-                s.next().ok_or(())?.chars().next().ok_or(())?,
-                s.next().ok_or(())?.parse()?,
-            )),
-            Some("mod") => Ok(Instruction::Mod(
-                s.next().ok_or(())?.chars().next().ok_or(())?,
-                s.next().ok_or(())?.parse()?,
-            )),
-            Some("rcv") => Ok(Instruction::Rcv(
-                s.next().and_then(|s| s.chars().next()).ok_or(())?,
-            )),
-            Some("jgz") => Ok(Instruction::Jgz(
-                s.next().ok_or(())?.parse()?,
-                s.next().ok_or(())?.parse()?,
-            )),
-            _ => Err(()),
-        }
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Instruction> {
+        use once_cell::sync::Lazy;
+        static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
+            regex::Regex::new(
+                r"^(snd (?P<snd>.+))|(set (?P<set_x>.+) (?P<set_y>.+))|(add (?P<add_x>.+) (?P<add_y>.+))|(mul (?P<mul_x>.+) (?P<mul_y>.+))|(mod (?P<mod_x>.+) (?P<mod_y>.+))|(rcv (?P<rcv>.+))|(jgz (?P<jgz_x>.+) (?P<jgz_y>.+))$",
+            )
+            .unwrap()
+        });
+        INPUT_REGEX
+            .captures(s)
+            .ok_or_else(|| TaskError(format!("Can't parse instruction: '{s}'")))
+            .and_then(|cap| {
+                if let Some(x) = cap.name("snd") {
+                    Ok(Instruction::Snd(x.as_str().parse()?))
+                } else if let (Some(x), Some(y)) =
+                    (cap.name("set_x"), cap.name("set_y"))
+                {
+                    Ok(Instruction::Set(
+                        x.as_str().parse()?,
+                        y.as_str().parse()?,
+                    ))
+                } else if let (Some(x), Some(y)) =
+                    (cap.name("add_x"), cap.name("add_y"))
+                {
+                    Ok(Instruction::Add(
+                        x.as_str().parse()?,
+                        y.as_str().parse()?,
+                    ))
+                } else if let (Some(x), Some(y)) =
+                    (cap.name("mul_x"), cap.name("mul_y"))
+                {
+                    Ok(Instruction::Mul(
+                        x.as_str().parse()?,
+                        y.as_str().parse()?,
+                    ))
+                } else if let (Some(x), Some(y)) =
+                    (cap.name("mod_x"), cap.name("mod_y"))
+                {
+                    Ok(Instruction::Mod(
+                        x.as_str().parse()?,
+                        y.as_str().parse()?,
+                    ))
+                } else if let Some(x) = cap.name("rcv") {
+                    Ok(Instruction::Rcv(x.as_str().parse()?))
+                } else if let (Some(x), Some(y)) =
+                    (cap.name("jgz_x"), cap.name("jgz_y"))
+                {
+                    Ok(Instruction::Jgz(
+                        x.as_str().parse()?,
+                        y.as_str().parse()?,
+                    ))
+                } else {
+                    Err(TaskError(format!("Unknown instruction: '{s}'")))
+                }
+            })
     }
 }
 
-pub fn parse_input(input: &str) -> Vec<Instruction> {
-    input.lines().map(|line| line.parse().unwrap()).collect()
+pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
+    input.lines().map(|line| line.parse()).collect()
 }
 
 type Buffer = std::collections::VecDeque<RegValue>;
@@ -100,35 +131,35 @@ struct Computer {
 }
 
 impl Computer {
-    fn step(&mut self) -> bool {
-        if !(0..self.program.len() as RegValue).contains(&self.ip) {
-            panic!();
-        }
-        match self.program[self.ip as usize] {
+    fn step(&mut self) -> Result<bool> {
+        let instr = self.program.get(self.ip as usize).ok_or_else(|| {
+            TaskError(format!("Wrong IP {}, stopping execution", self.ip))
+        })?;
+        match instr {
             Instruction::Snd(val) => {
                 self.output.borrow_mut().push_back(val.get(&self.registers));
                 self.output_counter += 1;
             }
             Instruction::Set(tgt, val) => {
-                self.registers.insert(tgt, val.get(&self.registers));
+                self.registers.insert(*tgt, val.get(&self.registers));
             }
             Instruction::Add(tgt, val) => {
-                *self.registers.entry(tgt).or_insert(0) +=
+                *self.registers.entry(*tgt).or_insert(0) +=
                     val.get(&self.registers)
             }
             Instruction::Mul(tgt, val) => {
-                *self.registers.entry(tgt).or_insert(0) *=
+                *self.registers.entry(*tgt).or_insert(0) *=
                     val.get(&self.registers)
             }
             Instruction::Mod(tgt, val) => {
-                *self.registers.entry(tgt).or_insert(0) %=
+                *self.registers.entry(*tgt).or_insert(0) %=
                     val.get(&self.registers)
             }
             Instruction::Rcv(reg) => match self.kind {
                 ComputerKind::SoundRecover => {
-                    if let Some(&x) = self.registers.get(&reg) {
+                    if let Some(&x) = self.registers.get(reg) {
                         if x != 0 {
-                            return false;
+                            return Ok(false);
                         }
                     }
                 }
@@ -141,24 +172,28 @@ impl Computer {
                                 .and_then(|mut buffer| buffer.pop_front())
                         })
                     {
-                        self.registers.insert(reg, data);
+                        self.registers.insert(*reg, data);
                     } else {
-                        return false;
+                        return Ok(false);
                     }
                 }
             },
             Instruction::Jgz(check, offset) => {
                 if check.get(&self.registers) > 0 {
                     self.ip += offset.get(&self.registers);
-                    return true;
+                    return Ok(true);
                 }
             }
         }
         self.ip += 1;
-        true
+        Ok(true)
     }
-    fn last_sound(&self) -> Option<RegValue> {
-        self.output.borrow_mut().back().copied()
+    fn last_sound(&self) -> Result<RegValue> {
+        self.output
+            .borrow_mut()
+            .back()
+            .copied()
+            .ok_or_else(|| TaskError("No last sound played".to_string()))
     }
     fn new(program: &[Instruction], kind: ComputerKind) -> Computer {
         Computer {
@@ -173,13 +208,13 @@ impl Computer {
     }
 }
 
-pub fn task1(input: &[Instruction]) -> RegValue {
+pub fn task1(input: &[Instruction]) -> Result<RegValue> {
     let mut computer = Computer::new(input, ComputerKind::SoundRecover);
-    while computer.step() {}
-    computer.last_sound().unwrap()
+    while computer.step()? {}
+    computer.last_sound()
 }
 
-pub fn task2(input: &[Instruction]) -> usize {
+pub fn task2(input: &[Instruction]) -> Result<usize> {
     let mut computer0 = Computer::new(input, ComputerKind::SendRecieve);
     computer0.registers.insert('p', 0);
     let mut computer1 = Computer::new(input, ComputerKind::SendRecieve);
@@ -188,8 +223,8 @@ pub fn task2(input: &[Instruction]) -> usize {
     computer0.input = Rc::downgrade(&computer1.output);
     computer1.input = Rc::downgrade(&computer0.output);
 
-    while computer0.step() || computer1.step() {}
-    computer1.output_counter
+    while computer0.step()? || computer1.step()? {}
+    Ok(computer1.output_counter)
 }
 
 #[cfg(test)]
@@ -208,6 +243,6 @@ rcv a
 jgz a -1
 set a 1
 jgz a -2";
-        assert_eq!(task1(&parse_input(src)), 4);
+        assert_eq!(task1(&parse_input(src).unwrap()).unwrap(), 4);
     }
 }

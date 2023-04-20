@@ -1,5 +1,5 @@
 use super::super::common::Result;
-use super::Error::TaskError;
+use super::super::common::Error::TaskError;
 
 const TOTAL_SPOONS: usize = 100;
 const TOTAL_CALORIES: i32 = 500;
@@ -13,8 +13,8 @@ impl Ingridient {
     fn try_new(input: &str) -> Result<Ingridient> {
         //Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
 
-        let (capacity, durability, flavor, texture, calories) = scan_fmt::scan_fmt!(input, "{*}: capacity {}, durability {}, flavor {}, texture {}, calories {}", i32, i32, i32, i32, i32)
-        .map_err(|_|TaskError(format!("Incorrect line: {input}")))?;
+        let (capacity, durability, flavor, texture, calories) 
+            = scan_fmt::scan_fmt!(input, "{*}: capacity {}, durability {}, flavor {}, texture {}, calories {}", i32, i32, i32, i32, i32)     ?;
         Ok(Ingridient {
             properties: vec![capacity, durability, flavor, texture],
             calories,

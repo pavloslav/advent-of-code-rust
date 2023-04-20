@@ -1,11 +1,8 @@
-use super::super::common::Result;
 use super::Error::TaskError;
+use super::Result;
 
 pub fn parse_input(input: &str) -> Result<u32> {
-    input
-        .trim()
-        .parse()
-        .map_err(|_| TaskError(format!("Should be a number, got '{input}'")))
+    Ok(input.trim().parse()?)
 }
 
 pub fn task1(&input: &u32) -> Result<u32> {

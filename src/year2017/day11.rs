@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<Vec<(i32, i32)>> {
     input
@@ -57,7 +57,7 @@ mod test {
             ("ne,ne,s,s", 2),
             ("se,sw,se,sw,sw", 3),
         ] {
-            assert_eq!(task1(&parse_input(inp)).unwrap(), res)
+            assert_eq!(task1(&parse_input(inp).unwrap()).unwrap(), res)
         }
     }
 }

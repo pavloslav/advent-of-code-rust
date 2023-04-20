@@ -1,14 +1,7 @@
-use super::super::common::Result;
-use super::Error::TaskError;
+use super::Result;
 
 pub fn parse_input(input: &str) -> Result<Vec<i32>> {
-    input
-        .lines()
-        .map(|s| {
-            s.parse()
-                .map_err(|e| TaskError(format!("Can't parse input: {e}")))
-        })
-        .collect()
+    input.lines().map(|s| Ok(s.parse()?)).collect()
 }
 
 pub fn task<F>(input: &[i32], f: F) -> Result<usize>

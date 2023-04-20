@@ -1,5 +1,6 @@
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -9,6 +10,33 @@ pub struct Room {
     name: String,
     id: usize,
     check_sum: String,
+}
+
+impl std::str::FromStr for Room {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Room> {
+        static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
+            once_cell::sync::Lazy::new(|| {
+                regex::Regex::new(
+                    r"^(?P<name>.+)-(?P<id>\d+)\[(?P<check_sum>\w+)\]$",
+                )
+                .unwrap()
+            });
+        let cap = INPUT_REGEX.captures(input).ok_or_else(|| {
+            TaskError(format!("Can't parse the input '{input}'"))
+        })?;
+        if let (Some(name), Some(id), Some(check_sum)) =
+            (cap.name("name"), cap.name("id"), cap.name("check_sum"))
+        {
+            Ok(Room {
+                name: name.as_str().to_string(),
+                id: id.as_str().parse()?,
+                check_sum: check_sum.as_str().to_string(),
+            })
+        } else {
+            Err(TaskError("Can't find all fields in input".to_string()))
+        }
+    }
 }
 
 impl Room {
@@ -27,31 +55,6 @@ impl Room {
         });
         String::from_iter(calc.iter().take(5).map(|x| *x.0)) == self.check_sum
     }
-    fn new(input: &str) -> Result<Room> {
-        static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
-            once_cell::sync::Lazy::new(|| {
-                regex::Regex::new(
-                    r"^(?P<name>.+)-(?P<id>\d+)\[(?P<check_sum>\w+)\]$",
-                )
-                .unwrap()
-            });
-        let cap = INPUT_REGEX.captures(input).ok_or_else(|| {
-            TaskError(format!("Can't parse the input '{input}'"))
-        })?;
-        if let (Some(name), Some(id), Some(check_sum)) =
-            (cap.name("name"), cap.name("id"), cap.name("check_sum"))
-        {
-            Ok(Room {
-                name: name.as_str().to_string(),
-                id: id.as_str().parse().map_err(|_| {
-                    TaskError(format!("Can't parse the id '{}'", id.as_str()))
-                })?,
-                check_sum: check_sum.as_str().to_string(),
-            })
-        } else {
-            Err(TaskError("Can't find all fields in input".to_string()))
-        }
-    }
     fn decrypt(&self) -> String {
         const A_CODE: usize = b'a' as usize;
         self.name
@@ -68,7 +71,7 @@ impl Room {
 }
 
 pub fn parse_input(input: &str) -> Result<Vec<Room>> {
-    input.lines().map(|line| Room::new(line)).collect()
+    input.lines().map(|line| line.parse()).collect()
 }
 
 pub fn task1(input: &[Room]) -> Result<usize> {
@@ -105,7 +108,7 @@ totally-real-room-200[decoy]",
         )
         .unwrap();
         assert_eq!(task1(&inp).unwrap(), 1514);
-        let room = Room::new("qzmt-zixmtkozy-ivhz-343[xxxxx]").unwrap();
+        let room: Room = "qzmt-zixmtkozy-ivhz-343[xxxxx]".parse().unwrap();
         assert_eq!(room.decrypt(), "very encrypted name");
     }
 }

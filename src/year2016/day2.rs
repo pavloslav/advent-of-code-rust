@@ -1,9 +1,9 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
-fn code(lines: &str, map: &[&str], initial: (usize, usize)) -> Result<String> {
+fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
     let mut pos = initial;
-    let mut result = String::with_capacity(4);
+    let mut result = String::new();
     for line in lines.split('\n') {
         for mov in line.chars() {
             let old_pos = pos;
@@ -16,11 +16,22 @@ fn code(lines: &str, map: &[&str], initial: (usize, usize)) -> Result<String> {
                     return Err(TaskError(format!("Wrong move '{mov}'")));
                 }
             }
-            if map[pos.1].chars().nth(pos.0) == Some('X') {
+            if map.get(pos.1).and_then(|line| line.get(pos.0)) == Some(&b'X') {
                 pos = old_pos;
             }
         }
-        result.push(map[pos.1].chars().nth(pos.0).unwrap());
+        result.push(
+            map.get(pos.1)
+                .and_then(|line| line.get(pos.0))
+                .ok_or_else(|| {
+                    TaskError(format!(
+                        "Coordinates {}:{} are out of bounds!",
+                        pos.0, pos.1
+                    ))
+                })?
+                .to_owned()
+                .into(),
+        );
     }
     Ok(result)
 }
@@ -30,22 +41,22 @@ pub fn parse_input(input: &str) -> Result<&str> {
 }
 
 #[rustfmt::skip]
-const SMALL_MAP: [&str; 5] = [
-    "XXXXX", 
-    "X123X", 
-    "X456X", 
-    "X789X", 
-    "XXXXX"];
+const SMALL_MAP: [&[u8]; 5] = [
+    b"XXXXX", 
+    b"X123X", 
+    b"X456X", 
+    b"X789X", 
+    b"XXXXX"];
 
 #[rustfmt::skip]
-const BIG_MAP: [&str; 7] = [
-    "XXXXXXX", 
-    "XXX1XXX", 
-    "XX234XX", 
-    "X56789X", 
-    "XXABCXX", 
-    "XXXDXXX", 
-    "XXXXXXX",
+const BIG_MAP: [&[u8]; 7] = [
+    b"XXXXXXX", 
+    b"XXX1XXX", 
+    b"XX234XX", 
+    b"X56789X", 
+    b"XXABCXX", 
+    b"XXXDXXX", 
+    b"XXXXXXX",
 ];
 
 pub fn task1(input: &str) -> Result<String> {

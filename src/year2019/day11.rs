@@ -1,3 +1,4 @@
+use super::super::common::Result;
 use super::computer::Computer;
 use std::collections::HashMap;
 
@@ -20,7 +21,7 @@ impl Robot {
         }
     }
     fn turn(&mut self, dir: u8) {
-        self.direction = (self.direction + 3 - 2 * dir) % 4;
+        self.direction = (self.direction + 3 - 2 * dir) % 4; /* MAAAGIC */
     }
     fn walk(&mut self) {
         match self.direction {
@@ -28,24 +29,25 @@ impl Robot {
             1 => self.x += 1,
             2 => self.y -= 1,
             3 => self.x -= 1,
-            _ => unimplemented!(),
+            _ => unreachable!(),
         }
     }
     fn paint(&mut self, color: u8) {
         self.painted.insert((self.x, self.y), color);
     }
-    fn work(&mut self) {
+    fn work(&mut self) -> Result<()> {
         while !self.brain.is_halted() {
             self.brain.write(
                 *self.painted.get(&(self.x, self.y)).unwrap_or(&0) as isize,
             );
-            self.brain.run();
+            self.brain.run()?;
             let color = self.brain.read().unwrap() as u8;
             self.paint(color);
             let dir = self.brain.read().unwrap() as u8;
             self.turn(dir);
             self.walk();
         }
+        Ok(())
     }
     fn painted_string(&self) -> String {
         let mut left = 0;
@@ -73,19 +75,19 @@ impl Robot {
     }
 }
 
-pub fn parse_input(input: &str) -> Vec<isize> {
+pub fn parse_input(input: &str) -> Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
-pub fn task1(code: &[isize]) -> usize {
+pub fn task1(code: &[isize]) -> Result<usize> {
     let mut robot = Robot::new(code);
-    robot.work();
-    robot.painted.len()
+    robot.work()?;
+    Ok(robot.painted.len())
 }
 
-pub fn task2(code: &[isize]) -> String {
+pub fn task2(code: &[isize]) -> Result<String> {
     let mut robot = Robot::new(code);
     robot.painted.insert((0, 0), 1);
-    robot.work();
-    robot.painted_string()
+    robot.work()?;
+    Ok(robot.painted_string())
 }

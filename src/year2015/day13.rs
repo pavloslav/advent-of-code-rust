@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub struct Table {
     scores: Vec<Vec<i32>>,
@@ -17,10 +17,7 @@ pub fn parse_input(input: &str) -> Result<Table> {
             String,
             i32,
             String
-        )
-        .map_err(|_| {
-            TaskError(format!("Unable to process the line '{line}'"))
-        })?;
+        )?;
         let score = match gain.as_str() {
             "gain" => score,
             "lose" => -score,

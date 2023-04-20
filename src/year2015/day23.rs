@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 const REG_A: usize = 0;
 const REG_B: usize = 1;
@@ -29,7 +29,7 @@ impl Instruction {
         static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
             once_cell::sync::Lazy::new(|| {
                 regex::Regex::new(
-                    r"(hlf (?P<hlf>\w))|(tpl (?P<tpl>\w))|(inc (?P<inc>\w))|(jmp (?P<jmp>[+-]?\d+))|(jie (?P<jie_reg>\w), (?P<jie_off>[+-]?\d+))|(jio (?P<jio_reg>\w), (?P<jio_off>[+-]?\d+))",
+                    r"^(hlf (?P<hlf>\w))|(tpl (?P<tpl>\w))|(inc (?P<inc>\w))|(jmp (?P<jmp>[+-]?\d+))|(jie (?P<jie_reg>\w), (?P<jie_off>[+-]?\d+))|(jio (?P<jio_reg>\w), (?P<jio_off>[+-]?\d+))$",
                 )
                 .unwrap()
             });
@@ -46,35 +46,20 @@ impl Instruction {
                 } else if let Some(inc) = captures.name("inc") {
                     Instruction::Inc(reg_num(inc.as_str())?)
                 } else if let Some(jmp) = captures.name("jmp") {
-                    Instruction::Jmp(jmp.as_str().parse().map_err(|_| {
-                        TaskError(format!(
-                            "Can't parse jump by '{}'",
-                            jmp.as_str()
-                        ))
-                    })?)
+                    Instruction::Jmp(jmp.as_str().parse()?)
                 } else if let (Some(jie_reg), Some(jie_off)) =
                     (captures.name("jie_reg"), captures.name("jie_off"))
                 {
                     Instruction::Jie(
                         reg_num(jie_reg.as_str())?,
-                        jie_off.as_str().parse().map_err(|_| {
-                            TaskError(format!(
-                                "Can't parse jie by '{}'",
-                                jie_off.as_str()
-                            ))
-                        })?,
+                        jie_off.as_str().parse()?,
                     )
                 } else if let (Some(jio_reg), Some(jio_off)) =
                     (captures.name("jio_reg"), captures.name("jio_off"))
                 {
                     Instruction::Jio(
                         reg_num(jio_reg.as_str())?,
-                        jio_off.as_str().parse().map_err(|_| {
-                            TaskError(format!(
-                                "Can't parse jio by '{}'",
-                                jio_off.as_str()
-                            ))
-                        })?,
+                        jio_off.as_str().parse()?,
                     )
                 } else {
                     return Err(TaskError(format!(

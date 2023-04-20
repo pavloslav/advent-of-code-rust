@@ -1,6 +1,6 @@
-use super::super::common::Result;
 use super::Error;
 use super::Error::TaskError;
+use super::Result;
 
 #[derive(Debug)]
 pub enum Operation {
@@ -94,8 +94,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
                 String,
                 String,
                 i32
-            )
-            .map_err(|e| TaskError(format!("Parsing failed: {e}")))?;
+            )?;
             Ok(Instruction {
                 target_reg,
                 operation: operation.parse()?,

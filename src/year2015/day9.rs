@@ -1,5 +1,5 @@
-use super::super::common::Result;
 use super::Error::TaskError;
+use super::Result;
 
 type Distances = Vec<Vec<usize>>;
 
@@ -8,8 +8,7 @@ pub fn parse_input(input: &str) -> Result<Distances> {
     let mut name_map = std::collections::HashMap::new();
     for line in input.lines() {
         let (from, to, distance) =
-            scan_fmt::scan_fmt!(line, "{} to {} = {}", String, String, usize)
-                .map_err(|_| TaskError(format!("Wrong input line: {line}")))?;
+            scan_fmt::scan_fmt!(line, "{} to {} = {}", String, String, usize)?;
         let size = name_map.len();
         let from = *name_map.entry(from).or_insert(size);
         let size = name_map.len();

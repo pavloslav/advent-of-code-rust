@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 type Presents = Vec<Vec<usize>>;
 
@@ -8,9 +8,7 @@ pub fn parse_input(input: &str) -> Result<Presents> {
         .lines()
         .map(|line| {
             line.split('x')
-                .map(|x| {
-                    x.parse().map_err(|_| TaskError(format!("Can't parse {x}")))
-                })
+                .map(|x| Ok(x.parse()?))
                 .collect::<Result<Vec<usize>>>()
         })
         .collect::<Result<Presents>>()?;

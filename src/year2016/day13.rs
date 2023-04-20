@@ -1,11 +1,8 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<usize> {
-    input
-        .trim()
-        .parse()
-        .map_err(|_| TaskError(format!("Can't parse '{input}'")))
+    Ok(input.trim().parse()?)
 }
 
 fn is_open(x: usize, y: usize, fav: usize) -> bool {
@@ -43,13 +40,13 @@ impl LookUp {
         &mut self,
         from: (usize, usize),
         to: (usize, usize),
-    ) -> usize {
+    ) -> Result<usize> {
         let mut to_visit = [from].into();
         for step in 0.. {
             let mut to_visit_next = HashSet::new();
             for (x, y) in to_visit {
                 if (x, y) == to {
-                    return step;
+                    return Ok(step);
                 }
                 for (px, py) in [
                     (x.saturating_sub(1), y),
@@ -64,14 +61,18 @@ impl LookUp {
                 }
             }
             if to_visit_next.is_empty() {
-                panic!("No way!");
+                return Err(TaskError("No way!".to_string()));
             }
             to_visit = to_visit_next;
         }
-        unimplemented!()
+        unreachable!()
     }
 
-    fn count_visited(&mut self, steps: usize, start: (usize, usize)) -> usize {
+    fn count_visited(
+        &mut self,
+        steps: usize,
+        start: (usize, usize),
+    ) -> Result<usize> {
         let mut to_visit = [start].into();
         let mut all_visited: HashSet<(usize, usize)> = HashSet::new();
         for _ in 0..=steps {
@@ -91,20 +92,20 @@ impl LookUp {
                 }
             }
             if to_visit_next.is_empty() {
-                panic!("No way!");
+                return Err(TaskError("No way!".to_string()));
             }
             to_visit = to_visit_next;
         }
-        all_visited.len()
+        Ok(all_visited.len())
     }
 }
 
 pub fn task1(&input: &usize) -> Result<usize> {
-    Ok(LookUp::new(input).find_way_len((1, 1), (31, 39)))
+    LookUp::new(input).find_way_len((1, 1), (31, 39))
 }
 
 pub fn task2(&input: &usize) -> Result<usize> {
-    Ok(LookUp::new(input).count_visited(50, (1, 1)))
+    LookUp::new(input).count_visited(50, (1, 1))
 }
 
 #[cfg(test)]
@@ -113,6 +114,6 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(LookUp::new(10).find_way_len((1, 1), (7, 4)), 11)
+        assert_eq!(LookUp::new(10).find_way_len((1, 1), (7, 4)).unwrap(), 11)
     }
 }

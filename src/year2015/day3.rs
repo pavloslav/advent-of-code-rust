@@ -1,5 +1,5 @@
-use super::super::common::Result;
 use super::Error::TaskError;
+use super::Result;
 
 pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input)

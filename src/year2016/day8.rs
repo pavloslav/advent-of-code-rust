@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<char>>> {
     build_lcd(6, 50, input)
@@ -36,30 +36,16 @@ fn build_lcd(
         if let Some(cap) = INPUT_REGEX.captures(command) {
             if let (Some(x), Some(y)) = (cap.name("rect_x"), cap.name("rect_y"))
             {
-                let x = x.as_str().parse().map_err(|_| {
-                    TaskError(format!("Can't parse x='{}' in rect", x.as_str()))
-                })?;
-                let y = y.as_str().parse().map_err(|_| {
-                    TaskError(format!("Can't parse y='{}' in rect", y.as_str()))
-                })?;
+                let x = x.as_str().parse()?;
+                let y = y.as_str().parse()?;
                 for line in &mut lcd[..x] {
                     line[..y].fill('#');
                 }
             } else if let (Some(y), Some(shift)) =
                 (cap.name("row_y"), cap.name("row_shift"))
             {
-                let y = y.as_str().parse::<usize>().map_err(|_| {
-                    TaskError(format!(
-                        "Can't parse y='{}' in rotate row",
-                        y.as_str()
-                    ))
-                })?;
-                let shift = shift.as_str().parse().map_err(|_| {
-                    TaskError(format!(
-                        "Can't parse shift='{}' in rotate row",
-                        shift.as_str()
-                    ))
-                })?;
+                let y = y.as_str().parse::<usize>()?;
+                let shift = shift.as_str().parse()?;
                 for _ in 0..shift {
                     let temp = lcd[columns - 1][y];
                     for j in 1..columns {
@@ -71,18 +57,8 @@ fn build_lcd(
             } else if let (Some(x), Some(shift)) =
                 (cap.name("col_x"), cap.name("col_shift"))
             {
-                let x = x.as_str().parse::<usize>().map_err(|_| {
-                    TaskError(format!(
-                        "Can't parse x='{}' in rotate column",
-                        x.as_str()
-                    ))
-                })?;
-                let shift = shift.as_str().parse().map_err(|_| {
-                    TaskError(format!(
-                        "Can't parse shift='{}' in rotate column",
-                        shift.as_str()
-                    ))
-                })?;
+                let x = x.as_str().parse::<usize>()?;
+                let shift = shift.as_str().parse()?;
 
                 for _ in 0..shift {
                     let temp = lcd[x][rows - 1];
@@ -137,6 +113,6 @@ rect 3x2
 rotate column x=1 by 1
 rotate row y=0 by 4
 rotate column x=1 by 1";
-        assert_eq!(build_lcd(3, 7, commands), lcd);
+        assert_eq!(build_lcd(3, 7, commands).unwrap(), lcd);
     }
 }

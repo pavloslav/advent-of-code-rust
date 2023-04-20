@@ -1,5 +1,6 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
+
 type Data = Vec<i32>;
 
 pub fn parse_input(input: &str) -> Result<Data> {

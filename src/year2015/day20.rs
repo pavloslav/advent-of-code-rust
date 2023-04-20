@@ -1,11 +1,7 @@
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<usize> {
-    input
-        .trim()
-        .parse()
-        .map_err(|_| TaskError("Wrong input").to_string())
+    Ok(input.trim().parse()?)
 }
 
 const SIEVE_SIZE: usize = 10_000_000;

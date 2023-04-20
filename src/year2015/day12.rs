@@ -1,11 +1,9 @@
 use super::super::common::Result;
-use super::Error::TaskError;
 
 use serde_json::Value;
 
 pub fn parse_input(input: &str) -> Result<Value> {
-    serde_json::from_str(input)
-        .map_err(|_| TaskError("Incorrect json".to_string()))
+    Ok(serde_json::from_str(input)?)
 }
 
 fn sum_all(json: &Value) -> i64 {

@@ -1,15 +1,14 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input
         .lines()
         .map(|s| {
-            s.split_whitespace()
+            Ok(s.split_whitespace()
                 .last()
                 .ok_or_else(|| TaskError("Empty input!".to_string()))?
-                .parse()
-                .map_err(|e| TaskError(format!("Can't parse: {e}")))
+                .parse()?)
         })
         .collect()
 }

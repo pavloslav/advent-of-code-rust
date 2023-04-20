@@ -1,5 +1,6 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
+
 use std::collections::HashMap;
 
 pub fn parse_input(input: &str) -> Result<Vec<HashMap<char, u32>>> {

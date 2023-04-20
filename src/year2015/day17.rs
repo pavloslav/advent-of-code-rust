@@ -1,14 +1,7 @@
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<Vec<usize>> {
-    input
-        .lines()
-        .map(|line| {
-            line.parse()
-                .map_err(|_| TaskError(format!("'{line}' isn't a number!")))
-        })
-        .collect()
+    input.lines().map(|line| Ok(line.parse()?)).collect()
 }
 
 const SIZE: usize = 150;

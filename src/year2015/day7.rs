@@ -1,5 +1,5 @@
-use super::super::common::Result;
 use super::Error::TaskError;
+use super::Result;
 
 #[derive(Clone, Debug)]
 pub enum Wire {

@@ -1,13 +1,14 @@
-pub fn parse_input(input: &str) -> (usize, usize) {
-    let mut input = input.trim().split('-');
-    (
-        input.next().unwrap().parse().unwrap(),
-        input.next().unwrap().parse().unwrap(),
-    )
+use super::super::common::Result;
+use std::ops::RangeInclusive;
+
+pub fn parse_input(input: &str) -> Result<RangeInclusive<usize>> {
+    let (start, end) = scan_fmt::scan_fmt!(input, "{}-{}", usize, usize)?;
+    Ok(start..=end)
 }
 
-pub fn task1(input: &(usize, usize)) -> usize {
-    (input.0..=input.1)
+pub fn task1(input: &RangeInclusive<usize>) -> Result<usize> {
+    Ok(input
+        .clone()
         .filter(|&x| {
             let mut x = x;
             let mut prev = 10;
@@ -25,11 +26,12 @@ pub fn task1(input: &(usize, usize)) -> usize {
             }
             repeat
         })
-        .count()
+        .count())
 }
 
-pub fn task2(input: &(usize, usize)) -> usize {
-    (input.0..=input.1)
+pub fn task2(input: &RangeInclusive<usize>) -> Result<usize> {
+    Ok(input
+        .clone()
         .filter(|&x| {
             let mut x = x;
             let mut prev = 10;
@@ -53,5 +55,5 @@ pub fn task2(input: &(usize, usize)) -> usize {
             }
             repeat == 2 || has_2_repeated
         })
-        .count()
+        .count())
 }

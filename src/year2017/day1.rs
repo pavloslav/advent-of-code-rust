@@ -1,8 +1,8 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<Vec<u32>> {
-    Ok(input
+    input
         .lines()
         .find(|s| !s.starts_with("//") && !s.is_empty())
         .ok_or_else(|| {
@@ -11,8 +11,11 @@ pub fn parse_input(input: &str) -> Result<Vec<u32>> {
             )
         })?
         .chars()
-        .map(|c| c.to_digit(10).unwrap())
-        .collect())
+        .map(|c| {
+            c.to_digit(10)
+                .ok_or_else(|| TaskError(format!("Can't parse digit '{c}'")))
+        })
+        .collect()
 }
 
 fn solve(input: &[u32], step: usize) -> u32 {

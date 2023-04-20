@@ -1,5 +1,5 @@
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 use itertools::Itertools;
 
@@ -17,8 +17,7 @@ pub fn parse_input(input: &str) -> Result<Character> {
         i16,
         i16,
         i16
-    )
-    .map_err(|_| TaskError("Can't read input!".to_string()))?;
+    )?;
     Ok(Character { hp, damage, armor })
 }
 

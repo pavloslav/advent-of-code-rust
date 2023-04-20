@@ -2,8 +2,9 @@
  * New definitions with common::Result
  */
 
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
 use super::super::common::Result;
-use super::Error::TaskError;
 
 pub fn parse_input(input: &str) -> Result<&str> {
     input

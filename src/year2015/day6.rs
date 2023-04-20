@@ -1,5 +1,5 @@
-use super::super::common::Result;
 use super::Error::TaskError;
+use super::Result;
 type Data = Vec<Instruction>;
 
 struct Point {
@@ -10,12 +10,8 @@ struct Point {
 impl Point {
     fn try_new(x: &str, y: &str) -> Result<Self> {
         Ok(Point {
-            x: x.parse().map_err(|_| {
-                TaskError(format!("Incorrect value for x: {x}"))
-            })?,
-            y: y.parse().map_err(|_| {
-                TaskError(format!("Incorrect value for x: {x}"))
-            })?,
+            x: x.parse()?,
+            y: y.parse()?,
         })
     }
 }
@@ -63,7 +59,7 @@ pub fn parse_input(input: &str) -> Result<Data> {
                     "toggle" => Command::Toggle,
                     other => {
                         return Err(TaskError(format!(
-                            "Wrong command: {other}"
+                            "Wrong command: '{other}'"
                         )))
                     }
                 };
@@ -73,6 +69,8 @@ pub fn parse_input(input: &str) -> Result<Data> {
                     bottom_right,
                 });
             }
+        } else {
+            return Err(TaskError(format!("Wrong input line: '{line}'")));
         }
     }
     Ok(result)
