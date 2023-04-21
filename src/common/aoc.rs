@@ -38,6 +38,7 @@ pub fn get_input(year: &str, day: &str) -> Result<String> {
         let settings = settings::read_setting(AOC_SETTINGS_FILE_NAME)?;
         let url = settings.format_url(year, day);
         log!("Trying url '{}'", url);
+
         Ok(
             network::get_input_from_url(&url, &settings.session).map(|s| {
                 if let Err(e) = std::fs::write(filename, &s) {
@@ -121,8 +122,7 @@ macro_rules! mod_list {
                             let year_str = stringify!($year);
                             let day_str = stringify!($day);
                             let input =
-                                crate::common::get_input_with_mod(year_str, day_str)
-                                    .unwrap();
+                                crate::common::get_input_with_mod(year_str, day_str)?;
                             println!("{} {}", year_str, day_str);
 
                             let (data, time_parse) = measure(||$day::parse_input(&input));

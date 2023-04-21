@@ -156,17 +156,19 @@ impl Computer {
             )))?,
         })
     }
-    pub fn run(&mut self) -> Result<()> {
+    pub fn run(&mut self) -> Result<&mut Self> {
         while !self.is_halted() && !self.is_input_blocked() {
             self.step()?;
         }
-        Ok(())
+        Ok(self)
     }
     pub fn write(&mut self, value: Word) {
         self.input.push_back(value);
     }
-    pub fn read(&mut self) -> Option<Word> {
-        self.output.pop_front()
+    pub fn read(&mut self) -> Result<Word> {
+        self.output
+            .pop_front()
+            .ok_or_else(|| TaskError("Output is empty!".to_string()))
     }
     pub fn prepare_code(input: &str) -> Result<Vec<Word>> {
         input.trim().split(',').map(|x| Ok(x.parse()?)).collect()

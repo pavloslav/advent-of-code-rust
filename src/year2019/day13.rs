@@ -1,6 +1,8 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
 use super::computer::Computer;
 
-pub fn parse_input(input: &str) -> Vec<isize> {
+pub fn parse_input(input: &str) -> Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
@@ -12,24 +14,24 @@ const BLOCK: isize = 2;
 const _PADDLE: isize = 3;
 const _BALL: isize = 4;
 
-pub fn task1(code: &[isize]) -> usize {
+pub fn task1(code: &[isize]) -> Result<usize> {
     let mut computer = Computer::new(code);
-    computer.run();
+    computer.run()?;
     let mut grid = HashMap::new();
-    while let (Some(x), Some(y), Some(t)) =
+    while let (Ok(x), Ok(y), Ok(t)) =
         (computer.read(), computer.read(), computer.read())
     {
         grid.insert((x, y), t);
     }
-    grid.values().filter(|&&v| v == BLOCK).count()
+    Ok(grid.values().filter(|&&v| v == BLOCK).count())
 }
 
-pub fn task2(code: &[isize]) -> isize {
+pub fn task2(code: &[isize]) -> Result<isize> {
     //pre-run to calculate parameters of field
     let mut computer = Computer::new(code);
-    computer.run();
+    computer.run()?;
     let mut grid = HashMap::new();
-    while let (Some(x), Some(y), Some(t)) =
+    while let (Ok(x), Ok(y), Ok(t)) =
         (computer.read(), computer.read(), computer.read())
     {
         grid.insert((x, y), t);
@@ -49,7 +51,7 @@ pub fn task2(code: &[isize]) -> isize {
                 last
             }
         })
-        .unwrap();
+        .ok_or_else(|| TaskError("Impossible!".to_string()))?;
     let mut blocks: HashMap<_, _> =
         grid.iter().filter(|(_, &t)| t == BLOCK).collect();
 
@@ -61,8 +63,8 @@ pub fn task2(code: &[isize]) -> isize {
     let mut computer = Computer::new(&code);
     let mut score = 0;
     while !blocks.is_empty() {
-        computer.run();
-        while let (Some(x), Some(y), Some(t)) =
+        computer.run()?;
+        while let (Ok(x), Ok(y), Ok(t)) =
             (computer.read(), computer.read(), computer.read())
         {
             if x >= 0 {
@@ -75,5 +77,5 @@ pub fn task2(code: &[isize]) -> isize {
         }
         computer.write(0);
     }
-    score
+    Ok(score)
 }

@@ -1,12 +1,15 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 use super::computer::Computer;
 
-pub fn parse_input(input: &str) -> Vec<isize> {
+pub fn parse_input(input: &str) -> Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
 use itertools::Itertools;
 
-pub fn task1(code: &[isize]) -> isize {
+pub fn task1(code: &[isize]) -> Result<isize> {
     (0..5)
         .permutations(5)
         .map(|perm| {
@@ -15,16 +18,17 @@ pub fn task1(code: &[isize]) -> isize {
                 let mut amplifier = Computer::new(code);
                 amplifier.write(phase);
                 amplifier.write(data);
-                amplifier.run();
-                data = amplifier.read().unwrap();
+                data = amplifier.run()?.read()?;
             }
-            data
+            Ok(data)
         })
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
         .max()
-        .unwrap()
+        .ok_or_else(|| TaskError("Should not be empty!".to_string()))
 }
 
-pub fn task2(code: &[isize]) -> isize {
+pub fn task2(code: &[isize]) -> Result<isize> {
     (5..10)
         .permutations(5)
         .map(|perm| {
@@ -40,8 +44,8 @@ pub fn task2(code: &[isize]) -> isize {
             while changes {
                 changes = false;
                 for i in 0..5 {
-                    amplifiers[i].run();
-                    while let Some(data) = amplifiers[i].read() {
+                    amplifiers[i].run()?;
+                    while let Ok(data) = amplifiers[i].read() {
                         if i == 4 {
                             last_data = data;
                         }
@@ -50,8 +54,11 @@ pub fn task2(code: &[isize]) -> isize {
                     }
                 }
             }
-            last_data
+            Ok(last_data)
         })
+        .collect::<Result<Vec<_>>>()?
+        .iter()
         .max()
-        .unwrap()
+        .ok_or_else(|| TaskError("Should not be empty!".to_string()))
+        .copied()
 }

@@ -19,7 +19,7 @@ pub fn get_input_from_url(
     session: &str,
 ) -> std::result::Result<String, Error> {
     let resp = minreq::get(url)
-        .with_header("Cookie", format!("session={}", session))
+        .with_header("Cookie", format!("session={session}",))
         .send()?;
 
     if 200 <= resp.status_code && resp.status_code < 300 {

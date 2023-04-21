@@ -1,3 +1,4 @@
+use super::super::common::floyd_hare_tortoise::floyd_hare_tortoise_with_cmp;
 use super::super::common::Result;
 
 #[derive(Clone, PartialEq, Eq)]
@@ -13,19 +14,15 @@ impl Moon {
             vel: [0; 3],
         }
     }
-    fn apply_gravity(&mut self, other: &Moon) {
-        for i in 0..3 {
-            self.vel[i] += match self.pos[i].cmp(&other.pos[i]) {
-                std::cmp::Ordering::Greater => -1,
-                std::cmp::Ordering::Less => 1,
-                std::cmp::Ordering::Equal => 0,
-            }
+    fn apply_gravity(&mut self, other: &Moon, coord: usize) {
+        self.vel[coord] += match self.pos[coord].cmp(&other.pos[coord]) {
+            std::cmp::Ordering::Greater => -1,
+            std::cmp::Ordering::Less => 1,
+            std::cmp::Ordering::Equal => 0,
         }
     }
-    fn apply_velocity(&mut self) {
-        for i in 0..3 {
-            self.pos[i] += self.vel[i];
-        }
+    fn apply_velocity(&mut self, coord: usize) {
+        self.pos[coord] += self.vel[coord];
     }
     fn energy(&self) -> isize {
         Moon::part_energy(&self.pos) * Moon::part_energy(&self.vel)
@@ -51,18 +48,24 @@ pub fn parse_input(input: &str) -> Result<Vec<[isize; 3]>> {
         .collect()
 }
 
-fn step_model(moons: &mut [Moon]) {
+fn step_model(moons: &mut Vec<Moon>) {
+    for coord in 0..3 {
+        step_model_coord(moons, coord)
+    }
+}
+
+fn step_model_coord(moons: &mut Vec<Moon>, coord: usize) {
     for i in 0..moons.len() {
         let mut moon = moons[i].clone();
         for (j, other) in moons.iter().enumerate() {
             if i != j {
-                moon.apply_gravity(other);
+                moon.apply_gravity(other, coord);
             }
         }
         moons[i] = moon;
     }
     for moon in moons {
-        moon.apply_velocity();
+        moon.apply_velocity(coord);
     }
 }
 
@@ -77,44 +80,20 @@ pub fn task1(input: &[[isize; 3]]) -> Result<isize> {
 use num::integer::lcm;
 
 pub fn task2(input: &[[isize; 3]]) -> Result<usize> {
-    let mut periods = [0usize; 3];
-    for (i, period) in periods.iter_mut().enumerate() {
-        let mut tortoise: Vec<Moon> = input.iter().map(Moon::new).collect();
-        let mut hare = tortoise.clone();
-        step_model(&mut tortoise);
-        step_model(&mut hare);
-        step_model(&mut hare);
-        while tortoise
-            .iter()
-            .zip(hare.iter())
-            .any(|(t, h)| t.pos[i] != h.pos[i] || t.vel[i] != h.vel[i])
-        {
-            step_model(&mut tortoise);
-            step_model(&mut hare);
-            step_model(&mut hare);
-        }
-        tortoise = input.iter().map(Moon::new).collect();
-        let mut mu = 0usize;
-        while tortoise
-            .iter()
-            .zip(hare.iter())
-            .any(|(t, h)| t.pos[i] != h.pos[i] || t.vel[i] != h.vel[i])
-        {
-            step_model(&mut tortoise);
-            step_model(&mut hare);
-            mu += 1;
-        }
-        let mut lambda = 1usize;
-        step_model(&mut hare);
-        while tortoise
-            .iter()
-            .zip(hare.iter())
-            .any(|(t, h)| t.pos[i] != h.pos[i] || t.vel[i] != h.vel[i])
-        {
-            step_model(&mut hare);
-            lambda += 1;
-        }
-        *period = mu + lambda;
-    }
-    Ok(lcm(lcm(periods[0], periods[1]), periods[2]))
+    Ok((0..3)
+        .map(|i| {
+            let (lambda, mu) = floyd_hare_tortoise_with_cmp(
+                /*gen*/
+                || input.iter().map(Moon::new).collect::<Vec<Moon>>(),
+                /*step*/ |moons| step_model_coord(moons, i),
+                /* eq */
+                |hare, tortoise| {
+                    hare.iter().zip(tortoise.iter()).all(|(h, t)| {
+                        h.pos[i] == t.pos[i] && h.vel[i] == t.vel[i]
+                    })
+                },
+            );
+            mu + lambda
+        })
+        .fold(1, lcm))
 }

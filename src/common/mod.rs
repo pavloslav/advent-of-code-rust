@@ -1,5 +1,6 @@
 pub mod floyd_hare_tortoise;
 pub use floyd_hare_tortoise::floyd_hare_tortoise;
+pub use floyd_hare_tortoise::floyd_hare_tortoise_with_cmp;
 
 pub mod md5;
 pub use md5::Md5Hasher;

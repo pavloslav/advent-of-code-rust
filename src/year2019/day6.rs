@@ -1,24 +1,33 @@
-pub fn parse_input(input: &str) -> Vec<(String, String)> {
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<[String; 2]>> {
     input
         .lines()
         .map(|line| {
-            let mut line = line.split(')');
-            (
-                line.next().unwrap().to_string(),
-                line.next().unwrap().to_string(),
-            )
+            line.split(')')
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>()
+                .try_into()
+                .map_err(|_| {
+                    TaskError("Wrong number of elements in input!".to_string())
+                })
         })
         .collect()
 }
 
 use std::collections::HashMap;
 
-pub fn task1(input: &[(String, String)]) -> usize {
+const CENTER_OF_MASS: &str = "COM";
+const YOU: &str = "YOU";
+const SANTA: &str = "SAN";
+
+pub fn task1(input: &[[String; 2]]) -> Result<usize> {
     let mut orbits = HashMap::<&str, Vec<&str>>::new();
-    for (center, satelite) in input {
+    for [center, satelite] in input {
         orbits.entry(center).or_default().push(satelite);
     }
-    let mut to_visit = vec!["COM"];
+    let mut to_visit = vec![CENTER_OF_MASS];
     let mut sum = 0;
     for level in 0.. {
         let mut next_level = vec![];
@@ -29,7 +38,7 @@ pub fn task1(input: &[(String, String)]) -> usize {
             }
         }
         if next_level.is_empty() {
-            return sum;
+            return Ok(sum);
         }
         to_visit = next_level;
     }
@@ -38,23 +47,23 @@ pub fn task1(input: &[(String, String)]) -> usize {
 
 use std::collections::HashSet;
 
-pub fn task2(input: &[(String, String)]) -> usize {
+pub fn task2(input: &[[String; 2]]) -> Result<usize> {
     let mut orbits = HashMap::<&str, Vec<&str>>::new();
     let mut back_orbits = HashMap::<&str, &str>::new();
     let mut visited = HashSet::<&str>::new();
-    for (center, satelite) in input {
+    for [center, satelite] in input {
         orbits.entry(center).or_default().push(satelite);
         back_orbits.insert(satelite, center);
     }
-    let mut to_visit = vec![&"YOU"];
+    let mut to_visit = vec![&YOU];
     for transferes in 0.. {
         let mut next_level = vec![];
         for object in to_visit {
             visited.insert(object);
             if orbits.contains_key(object) {
-                for next in &orbits[*object] {
-                    if next == &"SAN" {
-                        return transferes - 1;
+                for next in &orbits[object] {
+                    if next == &SANTA {
+                        return Ok(transferes - 1);
                     }
                     if !visited.contains(next) {
                         next_level.push(next);
@@ -62,10 +71,10 @@ pub fn task2(input: &[(String, String)]) -> usize {
                 }
             }
             if back_orbits.contains_key(object) {
-                if back_orbits[*object] == "SAN" {
-                    return transferes - 1;
+                if back_orbits[object] == SANTA {
+                    return Ok(transferes - 1);
                 }
-                next_level.push(&back_orbits[*object]);
+                next_level.push(&back_orbits[object]);
             }
         }
         to_visit = next_level;

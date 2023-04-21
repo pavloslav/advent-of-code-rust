@@ -34,7 +34,7 @@ pub fn parse_input(input: &str) -> Result<[Vec<Step>; 2]> {
         .map(|line| line.split(',').map(|step| step.parse()).collect())
         .collect::<Result<Vec<_>>>()?
         .try_into()
-        .map_err(|_| TaskError(format!("Wrong size")))
+        .map_err(|_| TaskError("Wrong size".to_string()))
 }
 
 use std::collections::HashSet;

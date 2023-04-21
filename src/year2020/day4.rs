@@ -1,98 +1,90 @@
+use super::super::common::Result;
+use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
-fn is_valid1(passport: &HashMap<&str, &str>) -> bool {
+type Passport<'a> = HashMap<&'a str, &'a str>;
+
+pub fn parse_input(input: &str) -> Result<Vec<Passport>> {
+    let mut passports = Vec::new();
+    let mut passport = Passport::new();
+    for line in input.lines() {
+        if line.is_empty() {
+            passports.push(passport.clone());
+            passport.clear();
+        } else {
+            for record in line.split_whitespace() {
+                let mut split = record.split(':');
+                if let (Some(field), Some(value)) = (split.next(), split.next())
+                {
+                    passport.insert(field, value);
+                }
+            }
+        }
+    }
+    if !passport.is_empty() {
+        passports.push(passport);
+    }
+    Ok(passports)
+}
+
+fn is_valid1(passport: &Passport) -> bool {
     ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
         .iter()
         .all(|field| passport.contains_key(field))
 }
 
-fn check(val: bool) -> Option<()> {
-    if val {
-        Some(())
-    } else {
-        None
-    }
+pub fn task1(pass: &[Passport]) -> Result<usize> {
+    Ok(pass.iter().filter(|p| is_valid1(p)).count())
 }
 
-fn is_valid2_inner(passport: &HashMap<&str, &str>) -> Option<()> {
-    let bounded_field = |field, low, high| -> Option<()> {
-        let &val = passport.get(field)?;
-        check(val.len() == 4 && val.chars().all(|c| c.is_ascii_digit()))?;
-        let val = val.parse::<i32>().ok()?;
-        check(low <= val && val <= high)
+static HCL_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r"^#[[:xdigit:]]{6}$").unwrap());
+
+static ECL_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r"^amb|blu|brn|gry|grn|hzl|oth$").unwrap());
+
+static PID_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r"^\d{9}$").unwrap());
+
+fn is_valid2(passport: &Passport) -> bool {
+    let bounded_field =
+        |field, range: std::ops::RangeInclusive<usize>| -> bool {
+            matches!(
+                passport.get(&field).map(|val_str| val_str
+                    .parse()
+                    .map(|val| range.contains(&val))),
+                Some(Ok(true))
+            )
+        };
+
+    let height = || {
+        matches!(
+            passport.get("hgt").map(|hgt_str| {
+                hgt_str[..hgt_str.len() - 2].parse().map(|hgt: usize| {
+                    match &hgt_str[hgt_str.len() - 2..] {
+                        "cm" => (150..=193).contains(&hgt),
+                        "in" => (59..=76).contains(&hgt),
+                        _other => false,
+                    }
+                })
+            }),
+            Some(Ok(true))
+        )
     };
 
-    bounded_field("byr", 1920, 2002)?;
-    bounded_field("iyr", 2010, 2020)?;
-    bounded_field("eyr", 2020, 2030)?;
+    let regex_check = |field, regex: &Lazy<regex::Regex>| {
+        passport.get(&field).map(|value| regex.is_match(value)) == Some(true)
+    };
 
-    let hgt = passport.get("hgt")?;
-    let cm = hgt.ends_with("cm");
-    check(cm || hgt.ends_with("in"))?;
-    let hgt = hgt[..hgt.len() - 2].parse::<i32>().ok()?;
-    if cm {
-        check((150..=193).contains(&hgt))?;
-    } else {
-        check((59..=76).contains(&hgt))?;
-    }
-
-    let hcl = passport.get("hcl")?;
-    check(
-        hcl.len() == 7
-            && hcl.starts_with('#')
-            && hcl[1..].chars().all(|c| c.is_ascii_hexdigit()),
-    )?;
-
-    let ecl = passport.get("ecl")?;
-    check(["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(ecl))?;
-
-    let pid = passport.get("pid")?;
-    check(pid.len() == 9 && pid.chars().all(|c| c.is_ascii_digit()))?;
-
-    Some(())
+    bounded_field("byr", 1920..=2002)
+        && bounded_field("iyr", 2010..=2020)
+        && bounded_field("eyr", 2020..=2030)
+        && height()
+        && regex_check("hcl", &HCL_REGEX)
+        && regex_check("ecl", &ECL_REGEX)
+        && regex_check("pid", &PID_REGEX)
 }
 
-fn is_valid2(passport: &HashMap<&str, &str>) -> bool {
-    is_valid2_inner(passport).is_some()
-}
-
-fn valid_passports(
-    s: &str,
-    validator: fn(&HashMap<&str, &str>) -> bool,
-) -> usize {
-    let mut passport = HashMap::new();
-    let mut count = 0;
-    for line in s.lines() {
-        if line.is_empty() {
-            if validator(&passport) {
-                count += 1;
-            }
-            passport.clear();
-        } else {
-            for record in line.split_whitespace() {
-                let mut split = record.split(':');
-                if let Some(field) = split.next() {
-                    if let Some(value) = split.next() {
-                        passport.insert(field, value);
-                    }
-                }
-            }
-        }
-    }
-    if is_valid1(&passport) {
-        count += 1;
-    }
-    count
-}
-
-pub fn parse_input(input: &str) -> &str {
-    input
-}
-
-pub fn task1(s: &str) -> usize {
-    valid_passports(s, is_valid1)
-}
-
-pub fn task2(s: &str) -> usize {
-    valid_passports(s, is_valid2)
+pub fn task2(pass: &[Passport]) -> Result<usize> {
+    Ok(pass.iter().filter(|p| is_valid2(p)).count())
 }
