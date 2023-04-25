@@ -6,13 +6,11 @@ super::mod_list!(year2021
     , day4 
     , day5 
 
-    //, day5a
-
-    //, day6
-    //, day7
+    , day6
+    , day7
     ////, day8 
-    //, day9 
-    //, day10
+    , day9 
+    , day10
     //, day11 
     //, day12 
     //, day13 

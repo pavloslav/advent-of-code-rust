@@ -1,7 +1,7 @@
 use super::super::common::Error::TaskError;
 use super::super::common::Result;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Point {
     x: i32,
     y: i32,
@@ -37,14 +37,6 @@ pub fn parse_input(lines: &str) -> Result<Vec<Line>> {
 fn is_diagonal(line: &Line) -> bool {
     line.pt1.x != line.pt2.x && line.pt1.y != line.pt2.y
 }
-
-/*fn ordering_to_i32(order: std::cmp::Ordering) -> i32 {
-    match order {
-        std::cmp::Ordering::Greater => 1,
-        std::cmp::Ordering::Equal => 0,
-        std::cmp::Ordering::Less => -1,
-    }
-}*/
 
 fn task(vents: &[Line], is_diagonals_needed: bool) -> Result<i32> {
     let mut field: Vec<Vec<i32>> =

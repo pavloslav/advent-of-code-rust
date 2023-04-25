@@ -1,16 +1,24 @@
-pub fn parse_input(input: &str) -> Vec<Vec<u8>> {
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
     input
         .lines()
         .map(|line| {
             line.chars()
-                .map(|digit| digit.to_digit(10).unwrap() as u8)
-                .collect()
+                .map(|digit| {
+                    Ok(digit.to_digit(10).ok_or_else(|| {
+                        TaskError(format!("Not a digit: '{digit}'"))
+                    })? as u8)
+                })
+                .collect::<Result<_>>()
         })
         .collect()
 }
 
-pub fn task1(map: &Vec<Vec<u8>>) -> usize {
-    map.iter()
+pub fn task1(map: &Vec<Vec<u8>>) -> Result<usize> {
+    Ok(map
+        .iter()
         .enumerate()
         .map(|(i, line)| {
             line.iter()
@@ -28,7 +36,7 @@ pub fn task1(map: &Vec<Vec<u8>>) -> usize {
                 })
                 .sum::<usize>()
         })
-        .sum()
+        .sum())
 }
 
 fn floodfill(map: &mut Vec<Vec<u8>>, i: i32, j: i32) -> usize {
@@ -48,7 +56,7 @@ fn floodfill(map: &mut Vec<Vec<u8>>, i: i32, j: i32) -> usize {
     }
 }
 
-pub fn task2(map: &[Vec<u8>]) -> usize {
+pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
     let mut map = map.to_owned();
     let mut result = Vec::new();
     for i in 0..map.len() {
@@ -57,5 +65,5 @@ pub fn task2(map: &[Vec<u8>]) -> usize {
         }
     }
     result.sort();
-    result.iter().rev().take(3).fold(1, |x, acc| acc * x)
+    Ok(result.iter().rev().take(3).fold(1, |x, acc| acc * x))
 }

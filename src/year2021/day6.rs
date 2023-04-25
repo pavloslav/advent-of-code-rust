@@ -1,9 +1,10 @@
-fn simulate(mut state: [usize; 9], time: usize) -> usize
-{
+use super::super::common::Result;
+
+fn simulate(mut state: [usize; 9], time: usize) -> usize {
     for _ in 0..time {
         let giving_birth = state[0];
         for i in 0..8 {
-            state[i] = state[i+1];
+            state[i] = state[i + 1];
         }
         state[6] += giving_birth;
         state[8] = giving_birth;
@@ -11,20 +12,21 @@ fn simulate(mut state: [usize; 9], time: usize) -> usize
     state.iter().sum()
 }
 
-pub fn parse_input(input: &str) -> [usize; 9] {
+pub fn parse_input(input: &str) -> Result<[usize; 9]> {
     let mut state = [0; 9];
-    for fish in input.split(',').map(|x|x.parse::<usize>().unwrap()) {
-        state[fish] += 1;
-    };
-    state
+    for fish in input.split(',').map(|x| x.parse::<usize>()) {
+        state[fish?] += 1;
+    }
+    Ok(state)
 }
 
-pub fn task1(state: &[usize; 9]) -> usize
-{
-    simulate(*state, 80)
+const SIZE1: usize = 80;
+const SIZE2: usize = 256;
+
+pub fn task1(state: &[usize; 9]) -> Result<usize> {
+    Ok(simulate(*state, SIZE1))
 }
 
-pub fn task2(state: &[usize; 9]) -> usize
-{
-    simulate(*state, 256)
+pub fn task2(state: &[usize; 9]) -> Result<usize> {
+    Ok(simulate(*state, SIZE2))
 }
