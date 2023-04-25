@@ -1,35 +1,34 @@
-use std::collections::BTreeMap;
+use super::super::common::Result;
 
-fn memory_game(s:&str, turn: u64) -> u64
-{
-    let mut input = s.split(',').map(|line|line.parse().unwrap());
-    let mut numbers = BTreeMap::new();
-    let mut last_spoken:u64 = 0;
-    for i in 0..turn {
-        let new = input.next()
-                           .unwrap_or_else(||
-            i-*numbers.get(&last_spoken).unwrap_or(&i)
+use std::collections::HashMap;
 
-        );
-        //println!("{}: {:?}, {}",i, numbers, last_spoken);
-        if i>0 {
-            numbers.insert(last_spoken, i);
-        }
+fn memory_game(input: &[usize], turn: usize) -> usize {
+    let mut numbers: HashMap<_, _> = input
+        .iter()
+        .take(input.len() - 1)
+        .enumerate()
+        .map(|(i, &n)| (n, i + 1))
+        .collect();
+    let mut last_spoken = input[input.len() - 1];
+    for i in input.len()..turn {
+        let new = numbers.get(&last_spoken).map(|n| i - n).unwrap_or(0);
+        numbers.insert(last_spoken, i);
         last_spoken = new;
     }
     last_spoken
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input
+pub fn parse_input(input: &str) -> Result<Vec<usize>> {
+    input.trim().split(',').map(|s| Ok(s.parse()?)).collect()
 }
 
-pub fn task1(s:&str) -> u64
-{
-    memory_game(s, 2020)
+const NUMBER1: usize = 2020;
+const NUMBER2: usize = 30_000_000;
+
+pub fn task1(input: &[usize]) -> Result<usize> {
+    Ok(memory_game(input, NUMBER1))
 }
 
-pub fn task2(s:&str) -> u64
-{
-    memory_game(s, 30000000)
+pub fn task2(input: &[usize]) -> Result<usize> {
+    Ok(memory_game(input, NUMBER2))
 }

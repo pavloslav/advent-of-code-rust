@@ -34,7 +34,7 @@ fn main_unsafe() -> Result<()> {
         ("2017".to_owned(), year2017::task),
         ("2019".to_owned(), year2019::task),
         ("2020".to_owned(), year2020::task),
-        //("2021".to_owned(), year2021::task),
+        ("2021".to_owned(), year2021::task),
         //("2022".to_owned(), year2022::task),
     ]
     .into_iter()
@@ -45,7 +45,7 @@ fn main_unsafe() -> Result<()> {
         //("2017".to_owned(), year2017::task as FunPanic),
         //("2019".to_owned(), year2019::task as FunPanic),
         //("2020".to_owned(), year2020::task as FunPanic),
-        ("2021".to_owned(), year2021::task as FunPanic),
+        //("2021".to_owned(), year2021::task as FunPanic),
         ("2022".to_owned(), year2022::task as FunPanic),
     ]
     .into_iter()

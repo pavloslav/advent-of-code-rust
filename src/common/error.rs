@@ -67,6 +67,6 @@ impl From<serde_json::Error> for Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{self:?}")
+        write!(f, "AoC Error: {self:?}")
     }
 }

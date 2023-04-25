@@ -1,5 +1,9 @@
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 #[derive(Debug, Clone)]
-enum Operation {
+pub enum Operation {
     Jmp(i64),
     Acc(i64),
     Nop(i64),
@@ -13,37 +17,42 @@ struct Computer {
     program: Program,
 }
 
-impl Operation {
-    fn from_str(line: &str) -> Operation {
-        let mut parts = line.split(' ');
-        let operation = parts.next().unwrap();
-        let value = parts.next().unwrap().parse().unwrap();
-        match operation {
-            "nop" => Operation::Nop(value),
-            "acc" => Operation::Acc(value),
-            "jmp" => Operation::Jmp(value),
-            _ => panic!("WTF!!!111"),
+impl std::str::FromStr for Operation {
+    type Err = Error;
+    fn from_str(line: &str) -> Result<Operation> {
+        let (operation, value) =
+            scan_fmt::scan_fmt!(line, "{} {}", String, i64)?;
+        match operation.as_str() {
+            "nop" => Ok(Operation::Nop(value)),
+            "acc" => Ok(Operation::Acc(value)),
+            "jmp" => Ok(Operation::Jmp(value)),
+            _ => Err(TaskError(format!("Can't parse operation '{line}'"))),
         }
     }
 }
 
 impl Computer {
-    fn with_program(code: &str) -> Computer {
+    fn with_program(program: Program) -> Computer {
         Computer {
             instruction: 0,
             accumulator: 0,
-            program: code.lines().map(Operation::from_str).collect(),
+            program,
         }
     }
-    fn tick(&mut self) {
+    fn tick(&mut self) -> Result<()> {
         match self.program[self.instruction] {
             Operation::Jmp(offset) => {
                 self.instruction = if offset.is_negative() {
-                    self.instruction.checked_sub(offset.unsigned_abs() as usize)
+                    self.instruction
+                        .checked_sub(offset.unsigned_abs() as usize)
+                        .ok_or_else(|| {
+                            TaskError("Wrong instruction address".to_string())
+                        })?
                 } else {
-                    self.instruction.checked_add(offset as usize)
+                    self.instruction.checked_add(offset as usize).ok_or_else(
+                        || TaskError("Wrong instruction address".to_string()),
+                    )?
                 }
-                .unwrap();
             }
             Operation::Acc(increment) => {
                 self.accumulator += increment;
@@ -51,6 +60,7 @@ impl Computer {
             }
             Operation::Nop(_) => self.instruction += 1,
         }
+        Ok(())
     }
     fn exited(&self) -> bool {
         self.instruction == self.program.len()
@@ -60,22 +70,22 @@ impl Computer {
     }
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input
+pub fn parse_input(input: &str) -> Result<Program> {
+    input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(s: &str) -> i64 {
-    let mut computer = Computer::with_program(s);
+pub fn task1(program: &Program) -> Result<i64> {
+    let mut computer = Computer::with_program(program.clone());
     let mut visited = vec![false; computer.program.len()];
     while !visited[computer.instruction] {
         visited[computer.instruction] = true;
-        computer.tick();
+        computer.tick()?;
     }
-    computer.accumulator
+    Ok(computer.accumulator)
 }
 
-pub fn task2(s: &str) -> i64 {
-    let mut computer = Computer::with_program(s);
+pub fn task2(program: &Program) -> Result<i64> {
+    let mut computer = Computer::with_program(program.clone());
     println!("Read program {} instructions", computer.program.len());
     for i in 0..computer.program.len() {
         let mut visited = vec![false; computer.program.len()];
@@ -95,7 +105,7 @@ pub fn task2(s: &str) -> i64 {
         computer.accumulator = 0;
         while !computer.not_working() && !visited[computer.instruction] {
             visited[computer.instruction] = true;
-            computer.tick();
+            computer.tick()?;
         }
         if computer.exited() {
             break;
@@ -111,9 +121,9 @@ pub fn task2(s: &str) -> i64 {
         computer.program[i] = save;
     }
     if computer.exited() {
-        computer.accumulator
+        Ok(computer.accumulator)
     } else {
-        -1
+        Err(TaskError("Failed to calculate".to_string()))
     }
 }
 
@@ -131,6 +141,6 @@ acc -99
 acc +1
 jmp -4
 acc +6";
-        assert_eq!(task2(input1), 8);
+        assert_eq!(task2(&parse_input(&input1).unwrap()).unwrap(), 8);
     }
 }

@@ -1,8 +1,11 @@
-fn get_first_bus(after: i32, periods: &Vec<i32>) -> i32 {
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+fn get_first_bus(after: i32, periods: &[Option<i32>]) -> i32 {
     let mut best_time = i32::MAX;
     let mut best_bus = -1;
     for &period in periods {
-        if period > 0 {
+        if let Some(period) = period {
             let loops = after / period;
             let first_arrive_after = if loops * period == after {
                 after
@@ -18,29 +21,26 @@ fn get_first_bus(after: i32, periods: &Vec<i32>) -> i32 {
     (best_time - after) * best_bus
 }
 
-pub fn parse_input(s: &str) -> (i32, Vec<i32>) {
+pub fn parse_input(s: &str) -> Result<(i32, Vec<Option<i32>>)> {
     let mut lines = s.lines();
-    let timestamp = lines.next().unwrap().parse().unwrap();
+    let timestamp = lines
+        .next()
+        .ok_or_else(|| TaskError("Empty input!".to_string()))?
+        .parse()?;
     let times = lines
         .next()
-        .unwrap()
+        .ok_or_else(|| TaskError("Empty input!".to_string()))?
         .split(',')
-        .map(|part| part.parse().unwrap_or(-1))
+        .map(|part| part.parse().ok())
         .collect();
-    (timestamp, times)
+    Ok((timestamp, times))
 }
 
-fn get_sequence_time(times: &[i32]) -> i64 {
+fn get_sequence_time(times: &[Option<i32>]) -> i64 {
     let buses: Vec<_> = times
         .iter()
         .enumerate()
-        .filter_map(|(i, &x)| {
-            if x > 0 {
-                Some(((x - i as i32).rem_euclid(x), x))
-            } else {
-                None
-            }
-        })
+        .filter_map(|(i, &x)| x.map(|x| ((x - i as i32).rem_euclid(x), x)))
         .collect();
     let mut first_time = buses[0].0 as i64;
     let mut step = 1_i64;
@@ -57,12 +57,12 @@ fn get_sequence_time(times: &[i32]) -> i64 {
     first_time
 }
 
-pub fn task1(data: &(i32, Vec<i32>)) -> i32 {
-    get_first_bus(data.0, &data.1)
+pub fn task1(data: &(i32, Vec<Option<i32>>)) -> Result<i32> {
+    Ok(get_first_bus(data.0, &data.1))
 }
 
-pub fn task2(data: &(i32, Vec<i32>)) -> i64 {
-    get_sequence_time(&data.1)
+pub fn task2(data: &(i32, Vec<Option<i32>>)) -> Result<i64> {
+    Ok(get_sequence_time(&data.1))
 }
 
 #[cfg(test)]
@@ -73,7 +73,8 @@ mod test {
         let data = parse_input(
             "0
 7,13,x,x,59,x,31,19",
-        );
-        assert_eq!(task2(&data), 1068781);
+        )
+        .unwrap();
+        assert_eq!(task2(&data).unwrap(), 1068781);
     }
 }

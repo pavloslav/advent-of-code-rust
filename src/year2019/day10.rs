@@ -71,8 +71,8 @@ pub fn task2(asteroids: &[(i16, i16)]) -> Result<i16> {
     let station = station_position(asteroids)?;
     let mut asteroids: Vec<_> = asteroids
         .iter()
-        .filter(|&&asteroid| asteroid != (0, 0))
         .map(|&a| (a.0 - station.0, a.1 - station.1))
+        .filter(|&asteroid| asteroid != (0, 0))
         .collect();
     asteroids.sort_by(|&a, &b| atan(b).total_cmp(&atan(a)));
     let mut sorted_asteroids: Vec<Vec<_>> = Vec::new();

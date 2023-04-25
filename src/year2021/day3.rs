@@ -1,23 +1,34 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 pub struct Data {
     numbers: Vec<usize>,
     size: usize,
 }
 
-pub fn parse_input(input: &str) -> Data {
-    let mut size = 0;
-    Data {
-        numbers: input
-            .lines()
-            .map(|line| {
-                size = line.len();
-                usize::from_str_radix(line, 2).unwrap()
-            })
-            .collect(),
-        size,
-    }
+pub fn parse_input(input: &str) -> Result<Data> {
+    let mut size = None;
+    let numbers = input
+        .lines()
+        .map(|line| {
+            if let Some(s) = size {
+                if s != line.len() {
+                    return Err(TaskError(format!(
+                        "All lines should be same length {}, but one is {s}",
+                        line.len()
+                    )));
+                }
+            } else {
+                size = Some(line.len());
+            }
+            Ok(usize::from_str_radix(line, 2)?)
+        })
+        .collect::<Result<_>>()?;
+    let size = size.ok_or_else(|| TaskError("No line length!".to_string()))?;
+    Ok(Data { numbers, size })
 }
 
-pub fn task1(data: &Data) -> usize {
+pub fn task1(data: &Data) -> Result<usize> {
     let (gamma, epsilon) = (0..data.size)
         .rev()
         .map(|i| data.numbers.iter().filter(|&n| (n >> i) & 1 == 1).count())
@@ -27,7 +38,7 @@ pub fn task1(data: &Data) -> usize {
                 (epsilon << 1) | (2 * count <= data.numbers.len()) as usize,
             )
         });
-    gamma * epsilon
+    Ok(gamma * epsilon)
 }
 
 fn find_by_bit_criteria<F>(data: &Data, criteria: F) -> usize
@@ -47,12 +58,12 @@ where
     numbers[0]
 }
 
-pub fn task2(data: &Data) -> usize {
+pub fn task2(data: &Data) -> Result<usize> {
     let oxygen = find_by_bit_criteria(data, |digit, more_ones| {
         (digit == 1) == more_ones
     });
     let co2 = find_by_bit_criteria(data, |digit, more_ones| {
         (digit == 0) == more_ones
     });
-    oxygen * co2
+    Ok(oxygen * co2)
 }

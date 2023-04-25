@@ -1,10 +1,19 @@
-pub fn parse_input(input: &str) -> Vec<usize> {
-    let mut adapters: Vec<usize> =
-        input.lines().map(|l| l.parse().unwrap()).collect();
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<usize>> {
+    let mut adapters: Vec<usize> = input
+        .lines()
+        .map(|l| Ok(l.parse()?))
+        .collect::<Result<Vec<usize>>>()?;
     adapters.push(0);
-    adapters.push(adapters.iter().max().unwrap() + 3);
+    let max = adapters
+        .iter()
+        .max()
+        .ok_or_else(|| TaskError("This should never happen!".to_string()))?;
+    adapters.push(max + 3);
     adapters.sort();
-    adapters
+    Ok(adapters)
 }
 
 fn count_differences_in_sorted(adapters: &[usize]) -> [usize; 3] {
@@ -15,9 +24,9 @@ fn count_differences_in_sorted(adapters: &[usize]) -> [usize; 3] {
     result
 }
 
-pub fn task1(data: &[usize]) -> usize {
+pub fn task1(data: &[usize]) -> Result<usize> {
     let [diff1, _, diff3] = count_differences_in_sorted(data);
-    diff1 * diff3
+    Ok(diff1 * diff3)
 }
 
 fn count_arranjements(adapters: &[usize]) -> usize {
@@ -34,8 +43,8 @@ fn count_arranjements(adapters: &[usize]) -> usize {
     paths[adapters.len() - 1]
 }
 
-pub fn task2(data: &[usize]) -> usize {
-    count_arranjements(data)
+pub fn task2(data: &[usize]) -> Result<usize> {
+    Ok(count_arranjements(data))
 }
 
 #[cfg(test)]
@@ -55,8 +64,8 @@ mod tests {
 6
 12
 4";
-        let data = parse_input(input1);
-        assert_eq!(task1(&data), 35);
-        assert_eq!(task2(&data), 8);
+        let data = parse_input(input1).unwrap();
+        assert_eq!(task1(&data).unwrap(), 35);
+        assert_eq!(task2(&data).unwrap(), 8);
     }
 }

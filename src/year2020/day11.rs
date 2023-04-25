@@ -1,3 +1,5 @@
+use super::super::common::Result;
+
 mod ferry {
     enum ModelKind {
         Close,
@@ -113,7 +115,6 @@ mod ferry {
                                 FLOOR
                             } else {
                                 let occupied = self.count_neighbors(row, col);
-                                //println!("Place {} {} has {} occupied neighbors", row, col, occupied);
                                 if occupied == 0
                                     && self.seats[row][col] == EMPTY
                                 {
@@ -142,9 +143,7 @@ mod ferry {
         }
 
         pub fn get_stable_count(&mut self) -> usize {
-            while self.step() {
-                //println!("{}", self);
-            }
+            while self.step() {}
             self.count(OCCUPIED)
         }
     }
@@ -187,18 +186,18 @@ mod ferry {
     }
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input)
 }
 
-pub fn task1(s: &str) -> usize {
+pub fn task1(s: &str) -> Result<usize> {
     let mut model = ferry::Model::close(s);
-    model.get_stable_count()
+    Ok(model.get_stable_count())
 }
 
-pub fn task2(s: &str) -> usize {
+pub fn task2(s: &str) -> Result<usize> {
     let mut model = ferry::Model::distant(s);
-    model.get_stable_count()
+    Ok(model.get_stable_count())
 }
 
 #[cfg(test)]
@@ -217,7 +216,7 @@ L.LLLLL.LL
 LLLLLLLLLL
 L.LLLLLL.L
 L.LLLLL.LL";
-        assert_eq!(task1(input1), 37);
-        assert_eq!(task2(input1), 26);
+        assert_eq!(task1(input1).unwrap(), 37);
+        assert_eq!(task2(input1).unwrap(), 26);
     }
 }

@@ -1,3 +1,7 @@
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 const BINGO_SIZE: usize = 5;
 
 struct Board([[usize; BINGO_SIZE]; BINGO_SIZE]);
@@ -20,15 +24,16 @@ pub struct BingoSettings {
     boards: Vec<Board>,
 }
 
-impl BingoSettings {
-    fn from_str(s: &str) -> BingoSettings {
+impl std::str::FromStr for BingoSettings {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<BingoSettings> {
         let mut s = s.lines();
         let calls = s
             .next()
             .unwrap()
             .split(',')
-            .map(|s| s.parse().unwrap())
-            .collect();
+            .map(|s| Ok(s.parse()?))
+            .collect::<Result<_>>()?;
         let mut boards = Vec::new();
         let mut idx = 0;
         for line in s {
@@ -42,14 +47,16 @@ impl BingoSettings {
                 ]));
                 idx = 0;
             } else {
-                let mut board = boards.last_mut().unwrap();
+                let mut board = boards
+                    .last_mut()
+                    .ok_or_else(|| TaskError("board is empty!".to_string()))?;
                 for (i, n) in line.split_whitespace().enumerate() {
-                    board.0[idx][i] = n.parse().unwrap();
+                    board.0[idx][i] = n.parse()?;
                 }
                 idx = (idx + 1) % 5;
             }
         }
-        BingoSettings { calls, boards }
+        Ok(BingoSettings { calls, boards })
     }
 }
 
@@ -78,7 +85,7 @@ impl Bingo<'_> {
         }
     }
 
-    fn task(&mut self, nwinner: usize) -> usize {
+    fn task(&mut self, nwinner: usize) -> Result<usize> {
         for &call in &self.settings.calls {
             self.strikeout(call);
             if self.winners.len() == nwinner {
@@ -126,20 +133,24 @@ impl Bingo<'_> {
         }
     }
 
-    fn last_winner_score(&self) -> usize {
-        self.winners.last().unwrap().1
+    fn last_winner_score(&self) -> Result<usize> {
+        if let Some(last) = self.winners.last() {
+            Ok(last.1)
+        } else {
+            Err(TaskError("No winners".to_string()))
+        }
     }
 }
 
-pub fn parse_input(input: &str) -> BingoSettings {
-    BingoSettings::from_str(input)
+pub fn parse_input(input: &str) -> Result<BingoSettings> {
+    input.parse()
 }
 
-pub fn task1(bingo: &BingoSettings) -> usize {
+pub fn task1(bingo: &BingoSettings) -> Result<usize> {
     Bingo::new(bingo).task(1)
 }
 
-pub fn task2(bingo: &BingoSettings) -> usize {
+pub fn task2(bingo: &BingoSettings) -> Result<usize> {
     Bingo::new(bingo).task(bingo.boards.len())
 }
 
@@ -170,13 +181,13 @@ mod tests {
 
     #[test]
     fn test_task1() {
-        let bingo = BingoSettings::from_str(&DATA);
-        assert_eq!(task1(&bingo), 4512);
+        let bingo = parse_input(&DATA).unwrap();
+        assert_eq!(task1(&bingo).unwrap(), 4512);
     }
 
     #[test]
     fn test_task2() {
-        let bingo = BingoSettings::from_str(&DATA);
-        assert_eq!(task2(&bingo), 1924);
+        let bingo = parse_input(&DATA).unwrap();
+        assert_eq!(task2(&bingo).unwrap(), 1924);
     }
 }

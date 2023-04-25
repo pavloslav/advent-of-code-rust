@@ -1,29 +1,36 @@
+use super::super::common::Error;
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 pub enum Command {
     Forward(i32),
     Down(i32),
     Up(i32),
 }
 
-impl Command {
-    fn new(line: &str) -> Command {
-        let mut parts = line.split_whitespace();
-        let instruction = parts.next().unwrap();
-        let value = parts.next().unwrap().parse().unwrap();
+impl std::str::FromStr for Command {
+    type Err = Error;
+    fn from_str(line: &str) -> Result<Command> {
+        let (instruction, value) =
+            scan_fmt::scan_fmt!(line, "{} {}", String, i32)?;
+
         use Command::*;
-        match instruction {
+        Ok(match instruction.as_str() {
             "forward" => Forward(value),
             "down" => Down(value),
             "up" => Up(value),
-            _ => panic!("{}", instruction),
-        }
+            other => {
+                return Err(TaskError(format!("Unknown instruction '{other}'")))
+            }
+        })
     }
 }
 
-pub fn parse_input(input: &str) -> Vec<Command> {
-    input.lines().map(Command::new).collect()
+pub fn parse_input(input: &str) -> Result<Vec<Command>> {
+    input.lines().map(|line| Ok(line.parse()?)).collect()
 }
 
-pub fn task1(commands: &[Command]) -> i32 {
+pub fn task1(commands: &[Command]) -> Result<i32> {
     use Command::*;
     let (x, y) =
         commands
@@ -33,10 +40,10 @@ pub fn task1(commands: &[Command]) -> i32 {
                 Down(dy) => (x, y + dy),
                 Up(dy) => (x, y - dy),
             });
-    x * y
+    Ok(x * y)
 }
 
-pub fn task2(commands: &[Command]) -> i32 {
+pub fn task2(commands: &[Command]) -> Result<i32> {
     use Command::*;
     let (x, y, _) =
         commands
@@ -46,5 +53,5 @@ pub fn task2(commands: &[Command]) -> i32 {
                 Down(da) => (x, y, aim + da),
                 Up(da) => (x, y, aim - da),
             });
-    x * y
+    Ok(x * y)
 }

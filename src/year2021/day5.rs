@@ -1,57 +1,87 @@
-pub type Line = ((i32, i32),(i32, i32));
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+#[derive(Clone, Copy, PartialEq)]
+pub struct Point {
+    x: i32,
+    y: i32,
+}
+
+pub struct Line {
+    pt1: Point,
+    pt2: Point,
+}
 
 const FIELD_SIZE: usize = 1000;
 
-pub fn parse_input(lines: &str) -> Vec<Line> {
-    lines.lines()
-         .map(|line|{
-            let mut line = line.split(" -> ");
-            let mut pt1 = line.next().unwrap().split(',');
-            let mut pt2 = line.next().unwrap().split(',');
-            ((pt1.next().unwrap().parse().unwrap(), pt1.next().unwrap().parse().unwrap()),
-             (pt2.next().unwrap().parse().unwrap(), pt2.next().unwrap().parse().unwrap()))
+pub fn parse_input(lines: &str) -> Result<Vec<Line>> {
+    lines
+        .lines()
+        .map(|line| {
+            let (x1, y1, x2, y2) = scan_fmt::scan_fmt!(
+                line,
+                "{},{} -> {},{}",
+                i32,
+                i32,
+                i32,
+                i32
+            )?;
+            Ok(Line {
+                pt1: Point { x: x1, y: y1 },
+                pt2: Point { x: x2, y: y2 },
+            })
         })
         .collect()
 }
 
 fn is_diagonal(line: &Line) -> bool {
-    line.0.0 != line.1.0 && line.0.1 != line.1.1
+    line.pt1.x != line.pt2.x && line.pt1.y != line.pt2.y
 }
 
-fn ordering_to_i32(order: std::cmp::Ordering) -> i32{
+/*fn ordering_to_i32(order: std::cmp::Ordering) -> i32 {
     match order {
-        std::cmp::Ordering::Greater =>  1,
-        std::cmp::Ordering::Equal   =>  0,
-        std::cmp::Ordering::Less    => -1,
+        std::cmp::Ordering::Greater => 1,
+        std::cmp::Ordering::Equal => 0,
+        std::cmp::Ordering::Less => -1,
     }
-}
+}*/
 
-fn task(vents: &[Line], is_diagonals_needed: bool) -> i32
-{
-    let mut field: Vec<Vec<i32>> = std::iter::repeat(std::iter::repeat(0).take(FIELD_SIZE).collect()).take(FIELD_SIZE).collect();
+fn task(vents: &[Line], is_diagonals_needed: bool) -> Result<i32> {
+    let mut field: Vec<Vec<i32>> =
+        std::iter::repeat(std::iter::repeat(0).take(FIELD_SIZE).collect())
+            .take(FIELD_SIZE)
+            .collect();
     for vent in vents {
         if is_diagonals_needed || !is_diagonal(vent) {
-            let (mut x, mut y) = vent.0;
-            let (dx, dy) = (-ordering_to_i32(x.cmp(&vent.1.0)),-ordering_to_i32(y.cmp(&vent.1.1)));
+            let mut pt = vent.pt1;
+            let (dx, dy) =
+                ((vent.pt2.x - pt.x).signum(), (vent.pt2.y - pt.y).signum());
             loop {
-                field[x as usize][y as usize] += 1;
-                if (x,y) == vent.1 {
+                if pt.x < 0 || pt.y < 0 {
+                    return Err(TaskError(
+                        "Point {pt:?} is negative".to_string(),
+                    ));
+                }
+                field[pt.x as usize][pt.y as usize] += 1;
+                if pt == vent.pt2 {
                     break;
                 }
-                x += dx;
-                y += dy;
+                pt.x += dx;
+                pt.y += dy;
             }
         }
     }
-    field.iter().map(|line|line.iter().filter(|&&x|x>1).count() as i32).sum()
+    let sum = field
+        .iter()
+        .map(|line| line.iter().filter(|&&x| x > 1).count() as i32)
+        .sum();
+    Ok(sum)
 }
 
-pub fn task1(vents: &[Line]) -> i32
-{
+pub fn task1(vents: &[Line]) -> Result<i32> {
     task(vents, false)
 }
 
-pub fn task2(vents: &[Line]) -> i32
-{
+pub fn task2(vents: &[Line]) -> Result<i32> {
     task(vents, true)
 }

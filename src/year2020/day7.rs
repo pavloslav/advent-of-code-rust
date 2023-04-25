@@ -1,9 +1,10 @@
+use super::super::common::Result;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
 type BagMap = HashMap<String, Vec<(String, usize)>>;
 
-fn create_rev_map(s: &str) -> BagMap {
+fn create_map(s: &str, reverse: bool) -> Result<BagMap> {
     let mut result = BagMap::new();
     for rule in s.lines() {
         let undotted = &rule[..rule.len() - 1];
@@ -15,7 +16,7 @@ fn create_rev_map(s: &str) -> BagMap {
             if content != "no other bags" {
                 let number = content.split(' ').next().unwrap();
                 let number_len = number.len();
-                let number: usize = number.parse().unwrap();
+                let number: usize = number.parse()?;
                 let content = if number > 1 {
                     &content[number_len..content.len() - 1]
                 } else {
@@ -23,14 +24,21 @@ fn create_rev_map(s: &str) -> BagMap {
                 }
                 .trim()
                 .to_owned();
-                result
-                    .entry(content)
-                    .or_default()
-                    .push((container.to_string(), number));
+                if reverse {
+                    result
+                        .entry(content)
+                        .or_default()
+                        .push((container.to_string(), number));
+                } else {
+                    result
+                        .entry(container.to_string())
+                        .or_default()
+                        .push((content, number));
+                }
             }
         }
     }
-    result
+    Ok(result)
 }
 
 fn count_holders(map: &BagMap, bag: &str) -> usize {
@@ -52,36 +60,6 @@ fn count_holders(map: &BagMap, bag: &str) -> usize {
     result.len()
 }
 
-fn create_map(s: &str) -> BagMap {
-    let mut result = BagMap::new();
-    for rule in s.lines() {
-        let undotted = &rule[..rule.len() - 1];
-        let mut sides = undotted.split(" contain ");
-        let container = sides.next().unwrap();
-        let container = &container[..container.len() - 1];
-        let contents = sides.next().unwrap().trim();
-        if contents != "no other bags" {
-            for content in contents.split(", ") {
-                let number = content.split(' ').next().unwrap();
-                let number_len = number.len();
-                let number: usize = number.parse().unwrap();
-                let content = if number > 1 {
-                    &content[number_len..content.len() - 1]
-                } else {
-                    &content[number_len..]
-                }
-                .trim()
-                .to_owned();
-                result
-                    .entry(container.to_string())
-                    .or_default()
-                    .push((content.to_string(), number));
-            }
-        }
-    }
-    result
-}
-
 fn count_insides(map: &BagMap, bag: &str) -> usize {
     1 + map.get(bag).map_or(0, |bags| {
         bags.iter()
@@ -90,18 +68,18 @@ fn count_insides(map: &BagMap, bag: &str) -> usize {
     })
 }
 
-pub fn parse_input(input: &str) -> &str {
-    input
+pub fn parse_input(input: &str) -> Result<&str> {
+    Ok(input)
 }
 
-pub fn task1(s: &str) -> usize {
-    let map = create_rev_map(s);
-    count_holders(&map, "shiny gold bag")
+pub fn task1(s: &str) -> Result<usize> {
+    let map = create_map(s, true)?;
+    Ok(count_holders(&map, "shiny gold bag"))
 }
 
-pub fn task2(s: &str) -> usize {
-    let map = create_map(s);
-    count_insides(&map, "shiny gold bag") - 1
+pub fn task2(s: &str) -> Result<usize> {
+    let map = create_map(s, false)?;
+    Ok(count_insides(&map, "shiny gold bag") - 1)
 }
 
 #[cfg(test)]
@@ -127,7 +105,7 @@ dark green bags contain 2 dark blue bags.
 dark blue bags contain 2 dark violet bags.
 dark violet bags contain no other bags.";
 
-        assert_eq!(task2(input1), 32);
-        assert_eq!(task2(input2), 126);
+        assert_eq!(task2(input1).unwrap(), 32);
+        assert_eq!(task2(input2).unwrap(), 126);
     }
 }
