@@ -27,7 +27,7 @@ impl std::str::FromStr for Command {
 }
 
 pub fn parse_input(input: &str) -> Result<Vec<Command>> {
-    input.lines().map(|line| Ok(line.parse()?)).collect()
+    input.lines().map(|line| line.parse()).collect()
 }
 
 pub fn task1(commands: &[Command]) -> Result<i32> {

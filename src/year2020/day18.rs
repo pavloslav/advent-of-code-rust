@@ -32,30 +32,24 @@ fn first_op(s: &str, precedence: bool) -> Option<usize> {
 fn calculate(s: &str, precedence: bool) -> Result<u64> {
     Ok(if let Ok(val) = s.parse() {
         val
-    } else {
-        if let Some(op_idx) = first_op(s, precedence) {
-            let left = s[..op_idx].trim();
-            let op = s[op_idx..op_idx + 1].trim();
-            let right = s[op_idx + 1..].trim();
-            match op {
-                "+" => {
-                    calculate(left, precedence)? + calculate(right, precedence)?
-                }
-                "*" => {
-                    calculate(left, precedence)? * calculate(right, precedence)?
-                }
-                _ => Err(TaskError(format!(
-                    "failed with op='{op}' on
-s = '{s}'
-left='{left}'
-right = '{right}'"
-                )))?,
-            }
-        } else if s.len() <= 1 {
-            Err(TaskError(format!("failed on s = '{s}'")))?
-        } else {
-            calculate(s[1..s.len() - 1].trim(), precedence)?
+    } else if let Some(op_idx) = first_op(s, precedence) {
+        let left = s[..op_idx].trim();
+        let op = s[op_idx..op_idx + 1].trim();
+        let right = s[op_idx + 1..].trim();
+        match op {
+            "+" => calculate(left, precedence)? + calculate(right, precedence)?,
+            "*" => calculate(left, precedence)? * calculate(right, precedence)?,
+            _ => Err(TaskError(format!(
+                "failed with op='{op}' on
+    s = '{s}'
+    left='{left}'
+    right = '{right}'"
+            )))?,
         }
+    } else if s.len() <= 1 {
+        Err(TaskError(format!("failed on s = '{s}'")))?
+    } else {
+        calculate(s[1..s.len() - 1].trim(), precedence)?
     })
 }
 

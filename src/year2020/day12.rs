@@ -27,8 +27,7 @@ pub struct Order {
 impl std::str::FromStr for Order {
     type Err = Error;
     fn from_str(s: &str) -> Result<Order> {
-        let (typ, par) =
-            scan_fmt::scan_fmt!(dbg!(s), "{1[EWSNLRF]}{}", char, i32)?;
+        let (typ, par) = scan_fmt::scan_fmt!(s, "{1[EWSNLRF]}{}", char, i32)?;
         Ok(Order {
             com: match typ {
                 'E' => OrderType::East,
@@ -91,19 +90,20 @@ struct ShipWaypoint {
 }
 
 impl ShipWaypoint {
-    fn step(&mut self, action: &Order) {
+    fn step(&mut self, action: &Order) -> Result<()> {
         match action.com {
             OrderType::East => self.waypt_lon += action.par,
             OrderType::West => self.waypt_lon -= action.par,
             OrderType::South => self.waypt_lat -= action.par,
             OrderType::North => self.waypt_lat += action.par,
-            OrderType::Left => self.turn(action.par),
-            OrderType::Right => self.turn(-action.par),
+            OrderType::Left => self.turn(action.par)?,
+            OrderType::Right => self.turn(-action.par)?,
             OrderType::Forward => {
                 self.lon += self.waypt_lon * action.par;
                 self.lat += self.waypt_lat * action.par;
             }
         }
+        Ok(())
     }
     fn new() -> ShipWaypoint {
         ShipWaypoint {
@@ -116,12 +116,13 @@ impl ShipWaypoint {
     fn distance(&self) -> i32 {
         self.lon.abs() + self.lat.abs()
     }
-    fn travel(&mut self, orders: &[Order]) {
+    fn travel(&mut self, orders: &[Order]) -> Result<()> {
         for order in orders {
-            self.step(&order);
+            self.step(order)?;
         }
+        Ok(())
     }
-    fn turn(&mut self, angle: i32) {
+    fn turn(&mut self, angle: i32) -> Result<()> {
         match angle.rem_euclid(360) {
             0 => {}
             90 => {
@@ -138,13 +139,18 @@ impl ShipWaypoint {
                 self.waypt_lon = self.waypt_lat;
                 self.waypt_lat = -t;
             }
-            _ => panic!(),
+            other => {
+                return Err(TaskError(format!(
+                    "Angle {other} is not supported"
+                )));
+            }
         }
+        Ok(())
     }
 }
 
 pub fn parse_input(input: &str) -> Result<Vec<Order>> {
-    input.trim().lines().map(|s| Ok(s.parse()?)).collect()
+    input.trim().lines().map(|s| s.parse()).collect()
 }
 
 pub fn task1(orders: &[Order]) -> Result<i32> {
@@ -155,7 +161,7 @@ pub fn task1(orders: &[Order]) -> Result<i32> {
 
 pub fn task2(orders: &[Order]) -> Result<i32> {
     let mut ship = ShipWaypoint::new();
-    ship.travel(orders);
+    ship.travel(orders)?;
     Ok(ship.distance())
 }
 

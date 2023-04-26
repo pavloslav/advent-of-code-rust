@@ -1,11 +1,11 @@
 #[rustfmt::skip]
-super::mod_list_panic!(year2022
+super::mod_list!(year2022
     , day1
     , day2 
     , day3 
     , day4 
     , day5 
-    , day6 
+    /*, day6 
     , day7 
     , day8 
     , day9 
@@ -24,5 +24,5 @@ super::mod_list_panic!(year2022
     , day22
     //, day23 
     //, day24 
-    , day25
+    , day25*/
     );

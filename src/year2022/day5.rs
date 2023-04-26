@@ -1,9 +1,11 @@
+use super::super::common::Result;
+
 pub struct Cargo {
     stacks: Vec<Vec<char>>,
     plan: Vec<(usize, usize, usize)>,
 }
 
-pub fn parse_input(input: &str) -> Cargo {
+pub fn parse_input(input: &str) -> Result<Cargo> {
     let mut stacks = Vec::new();
     let mut plan = Vec::new();
     for line in input.lines() {
@@ -18,24 +20,23 @@ pub fn parse_input(input: &str) -> Cargo {
                     }
                 }
             }
-        } else if line.starts_with("move") {
-            let mut line = line.split_whitespace();
-            line.next();
-            let number = line.next().unwrap().parse().unwrap();
-            line.next();
-            let from = line.next().unwrap().parse().unwrap();
-            line.next();
-            let to = line.next().unwrap().parse().unwrap();
+        } else if let Ok((number, from, to)) = scan_fmt::scan_fmt!(
+            line,
+            "move {} from {} to {}",
+            usize,
+            usize,
+            usize
+        ) {
             plan.push((number, from, to));
         }
     }
     for stack in &mut stacks {
         stack.reverse();
     }
-    Cargo { stacks, plan }
+    Ok(Cargo { stacks, plan })
 }
 
-pub fn task1(input: &Cargo) -> String {
+pub fn task1(input: &Cargo) -> Result<String> {
     let mut stacks = input.stacks.clone();
     for &(number, from, to) in &input.plan {
         for _ in 0..number {
@@ -44,13 +45,13 @@ pub fn task1(input: &Cargo) -> String {
             }
         }
     }
-    stacks
+    Ok(stacks
         .iter()
         .map(|stack| stack.last().unwrap_or(&' ').to_string())
-        .collect()
+        .collect())
 }
 
-pub fn task2(input: &Cargo) -> String {
+pub fn task2(input: &Cargo) -> Result<String> {
     let mut stacks = input.stacks.clone();
     for &(number, from, to) in &input.plan {
         let new_from_len = stacks[from - 1].len() - number;
@@ -58,8 +59,8 @@ pub fn task2(input: &Cargo) -> String {
         stacks[from - 1].truncate(new_from_len);
         stacks[to - 1].extend(crates);
     }
-    stacks
+    Ok(stacks
         .iter()
         .map(|stack| stack.last().unwrap_or(&' ').to_string())
-        .collect()
+        .collect())
 }

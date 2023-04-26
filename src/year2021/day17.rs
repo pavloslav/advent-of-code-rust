@@ -1,27 +1,28 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 type Rect = ((i32, i32), (i32, i32));
 
-pub fn parse_input(input: &str) -> Rect {
-    let mut parts = input["target area: ".len()..].split(", ");
-    let mut xs = parts.next().unwrap()["x=".len()..]
-        .split("..")
-        .map(|x| x.parse().unwrap());
-    let mut ys = parts.next().unwrap()["x=".len()..]
-        .split("..")
-        .map(|x| x.parse().unwrap());
-    (
-        (xs.next().unwrap(), ys.next().unwrap()),
-        (xs.next().unwrap(), ys.next().unwrap()),
-    )
+pub fn parse_input(input: &str) -> Result<Rect> {
+    let (x1, x2, y1, y2) = scan_fmt::scan_fmt!(
+        input,
+        "target area: x={}..{}, y={}..{}",
+        i32,
+        i32,
+        i32,
+        i32
+    )?;
+    Ok(((x1, y1), (x2, y2)))
 }
 
-pub fn task1(input: &Rect) -> i32 {
+pub fn task1(input: &Rect) -> Result<i32> {
     let &((x1, y1), (x2, _y2)) = input;
-    //x1<=vx*(vx+1)/2<=x2
-    //2*x1<=vx**2 + vx<=2*x2
     let vx = (((1 + 8 * x2) as f64).sqrt() as i32 - 1) / 2;
-    assert!(vx * (vx + 1) / 2 >= x1, "Probe don't stop, vx={}", vx);
+    if vx * (vx + 1) / 2 < x1 {
+        return Err(TaskError(format!("Probe don't stop, vx={vx}")));
+    }
     let vy = (y1 + 1).abs();
-    vy * (vy + 1) / 2
+    Ok(vy * (vy + 1) / 2)
 }
 
 fn get_all_velocities(input: &Rect) -> std::collections::HashSet<(i32, i32)> {
@@ -41,12 +42,7 @@ fn get_all_velocities(input: &Rect) -> std::collections::HashSet<(i32, i32)> {
         }
         let vy_min = ((y1 + t * (t - 1) / 2) as f64 / t as f64).ceil() as i32;
         let vy_max = ((y2 + t * (t - 1) / 2) as f64 / t as f64).floor() as i32;
-        /*let r = std::cmp::max(0, vx_max - vx_min + 1) as usize
-            * std::cmp::max(0, vy_max - vy_min + 1) as usize;
-        println!(
-            "t={}, vx={}..{}, vy={}..{}, total={}",
-            t, vx_min, vx_max, vy_min, vy_max, r
-        );*/
+
         for vx in vx_min..=vx_max {
             for vy in vy_min..=vy_max {
                 result.insert((vx, vy));
@@ -56,8 +52,8 @@ fn get_all_velocities(input: &Rect) -> std::collections::HashSet<(i32, i32)> {
     result
 }
 
-pub fn task2(input: &Rect) -> usize {
-    get_all_velocities(input).len()
+pub fn task2(input: &Rect) -> Result<usize> {
+    Ok(get_all_velocities(input).len())
 }
 
 #[cfg(test)]
@@ -66,12 +62,12 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(&((20, -10), (30, -5))), 45);
+        assert_eq!(task1(&((20, -10), (30, -5))).unwrap(), 45);
     }
 
     #[test]
     fn test_task2() {
-        assert_eq!(task2(&((20, -10), (30, -5))), 112);
+        assert_eq!(task2(&((20, -10), (30, -5))).unwrap(), 112);
     }
 
     use itertools::Itertools;

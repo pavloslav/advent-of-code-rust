@@ -18,7 +18,7 @@ pub fn parse_input(input: &str) -> Result<Vec<usize>> {
 }
 
 pub fn task1(s: &[usize]) -> Result<usize> {
-    s.into_iter()
+    s.iter()
         .max()
         .copied()
         .ok_or_else(|| TaskError("Empty input!".to_string()))

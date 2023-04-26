@@ -1,11 +1,18 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 type Cave = Vec<Vec<usize>>;
 
-pub fn parse_input(input: &str) -> Cave {
+pub fn parse_input(input: &str) -> Result<Cave> {
     input
         .lines()
         .map(|line| {
             line.chars()
-                .map(|risk| risk.to_digit(10).unwrap() as usize)
+                .map(|risk| {
+                    Ok(risk.to_digit(10).ok_or_else(|| {
+                        TaskError(format!("Wrong digit {risk}"))
+                    })? as usize)
+                })
                 .collect()
         })
         .collect()
@@ -18,40 +25,41 @@ pub fn dijkstra(cave: &Cave) -> usize {
     len_cave[0][0] = Some(0);
     let mut to_search: BTreeMap<usize, Vec<(usize, usize)>> =
         [(0, [(0, 0)].into())].into();
-    while !to_search.is_empty() {
-        let min_key = *to_search.keys().next().unwrap();
-        let (x, y) = to_search.get_mut(&min_key).unwrap().pop().unwrap();
-        if to_search[&min_key].is_empty() {
-            to_search.remove(&min_key);
-        }
+
+    while let Some(mut e) = to_search.first_entry() {
+        let (key, x, y) = if let Some((x, y)) = e.get_mut().pop() {
+            (*e.key(), x, y)
+        } else {
+            e.remove();
+            continue;
+        };
         for (dx, dy) in [(0, 1), (1, 0), (-1, 0), (0, -1)] {
-            let x = x as i32 + dx;
-            let y = y as i32 + dy;
-            if 0 <= x && x < size as i32 && 0 <= y && y < size as i32 {
-                let x = x as usize;
-                let y = y as usize;
-                let old = len_cave[x][y];
-                len_cave[x][y] = Some(match len_cave[x][y] {
-                    Some(risk) => std::cmp::min(risk, min_key + cave[x][y]),
-                    None => min_key + cave[x][y],
-                });
-                if len_cave[x][y] != old {
-                    to_search
-                        .entry(len_cave[x][y].unwrap())
-                        .or_default()
-                        .push((x, y));
+            match (x.checked_add_signed(dx), y.checked_add_signed(dy)) {
+                (Some(x), Some(y)) if x < size && y < size => {
+                    let old = len_cave[x][y];
+                    len_cave[x][y] = Some(match len_cave[x][y] {
+                        Some(risk) => std::cmp::min(risk, key + cave[x][y]),
+                        None => key + cave[x][y],
+                    });
+                    if len_cave[x][y] != old {
+                        to_search
+                            .entry(len_cave[x][y].unwrap())
+                            .or_default()
+                            .push((x, y));
+                    }
                 }
+                _ => {}
             }
         }
     }
     len_cave[size - 1][size - 1].unwrap() - len_cave[0][0].unwrap()
 }
 
-pub fn task1(cave: &Cave) -> usize {
-    dijkstra(cave)
+pub fn task1(cave: &Cave) -> Result<usize> {
+    Ok(dijkstra(cave))
 }
 
-pub fn task2(cave: &Cave) -> usize {
+pub fn task2(cave: &Cave) -> Result<usize> {
     let size = cave.len();
     let mut real_cave = vec![vec![0; size * 5]; size * 5];
     for i_mult in 0..5 {
@@ -64,7 +72,7 @@ pub fn task2(cave: &Cave) -> usize {
             }
         }
     }
-    dijkstra(&real_cave)
+    Ok(dijkstra(&real_cave))
 }
 
 #[cfg(test)]
@@ -83,6 +91,6 @@ mod test {
 3125421639
 1293138521
 2311944581";
-        assert_eq!(task1(&parse_input(input)), 40);
+        assert_eq!(task1(&parse_input(input).unwrap()).unwrap(), 40);
     }
 }

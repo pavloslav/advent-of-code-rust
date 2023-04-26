@@ -1,3 +1,5 @@
+use super::super::common::Result;
+
 use unicode_categories::UnicodeCategories;
 
 type CaveName = String;
@@ -23,21 +25,19 @@ impl CaveNode {
 
 type CaveMap = std::collections::HashMap<CaveName, CaveNode>;
 
-pub fn parse_input(input: &str) -> CaveMap {
+pub fn parse_input(input: &str) -> Result<CaveMap> {
     let mut map = CaveMap::new();
     for line in input.lines() {
-        if let Some(dash) = line.find('-') {
-            let left = line[..dash].to_string();
-            let right = line[dash + 1..].to_string();
-            map.entry(left.to_owned())
-                .and_modify(|node| node.ways_out.push(right.to_owned()))
-                .or_insert_with(|| CaveNode::new(&left, &right));
-            map.entry(right.to_owned())
-                .and_modify(|node| node.ways_out.push(left.to_owned()))
-                .or_insert_with(|| CaveNode::new(&right, &left));
-        }
+        let (left, right) = scan_fmt::scan_fmt!(line, "{}-{}", String, String)?;
+
+        map.entry(left.clone())
+            .and_modify(|node| node.ways_out.push(right.clone()))
+            .or_insert_with(|| CaveNode::new(&left, &right));
+        map.entry(right.clone())
+            .and_modify(|node| node.ways_out.push(left.clone()))
+            .or_insert_with(|| CaveNode::new(&right, &left));
     }
-    map
+    Ok(map)
 }
 
 fn count_ways(map: &mut CaveMap, start: &str, end: &str) -> usize {
@@ -65,9 +65,9 @@ fn count_ways(map: &mut CaveMap, start: &str, end: &str) -> usize {
     result
 }
 
-pub fn task1(map: &CaveMap) -> usize {
+pub fn task1(map: &CaveMap) -> Result<usize> {
     let mut map = map.clone();
-    count_ways(&mut map, "start", "end")
+    Ok(count_ways(&mut map, "start", "end"))
 }
 
 fn count_ways2(
@@ -111,7 +111,7 @@ fn count_ways2(
     result
 }
 
-pub fn task2(map: &CaveMap) -> usize {
+pub fn task2(map: &CaveMap) -> Result<usize> {
     let mut map = map.clone();
-    count_ways2(&mut map, "start", "end", false, false)
+    Ok(count_ways2(&mut map, "start", "end", false, false))
 }

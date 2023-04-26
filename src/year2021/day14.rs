@@ -1,3 +1,6 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 type Counter = std::collections::HashMap<char, usize>;
 
 type Polymer = Vec<char>;
@@ -11,31 +14,36 @@ pub struct PolymerData {
 }
 
 impl PolymerData {
-    fn from_str(input: &str) -> PolymerData {
+    fn from_str(input: &str) -> Result<PolymerData> {
         let mut lines = input.lines();
         let mut polymer_data = PolymerData {
-            polymer: lines.next().unwrap().chars().collect(),
+            polymer: lines
+                .next()
+                .ok_or_else(|| TaskError("Empty input!".to_string()))?
+                .chars()
+                .collect(),
             rules: std::collections::HashMap::new(),
             counters: std::collections::HashMap::new(),
         };
-        lines.next();
-        for line in lines {
-            let mut parts = line.split(" -> ");
-            let left = parts.next().unwrap();
-            let right = parts.next().unwrap();
-            polymer_data.rules.insert(
-                (left.chars().next().unwrap(), left.chars().nth(1).unwrap()),
-                right.chars().next().unwrap(),
-            );
+
+        for line in lines.skip(1) {
+            let (left1, left2, right) = scan_fmt::scan_fmt!(
+                line,
+                "{/./}{/./} -> {/./}",
+                char,
+                char,
+                char
+            )?;
+            polymer_data.rules.insert((left1, left2), right);
         }
-        polymer_data
+        Ok(polymer_data)
     }
 
     fn composition_recursive(
         &mut self,
         polymer: (char, char),
         steps: usize,
-    ) -> Counter {
+    ) -> Result<Counter> {
         let (left, right) = polymer;
         if !self.counters.contains_key(&(left, right, steps)) {
             let counters = if steps == 0 {
@@ -44,9 +52,9 @@ impl PolymerData {
                 match self.rules.get(&(left, right)) {
                     Some(&v) => {
                         let mut left =
-                            self.composition_recursive((left, v), steps - 1);
+                            self.composition_recursive((left, v), steps - 1)?;
                         for (element, count) in
-                            self.composition_recursive((v, right), steps - 1)
+                            self.composition_recursive((v, right), steps - 1)?
                         {
                             *left.entry(element).or_insert(0) += count;
                         }
@@ -57,40 +65,50 @@ impl PolymerData {
             };
             self.counters.insert((left, right, steps), counters);
         }
-        self.counters.get(&(left, right, steps)).unwrap().clone()
+        Ok(self
+            .counters
+            .get(&(left, right, steps))
+            .ok_or_else(|| TaskError("Empty counters!".to_string()))?
+            .clone())
     }
 
-    fn composition(&mut self, steps: usize) -> usize {
+    fn composition(&mut self, steps: usize) -> Result<usize> {
         let mut counter: Counter = [(self.polymer[0], 1)].into();
         for i in 0..self.polymer.len() - 1 {
             for (element, count) in self.composition_recursive(
                 (self.polymer[i], self.polymer[i + 1]),
                 steps,
-            ) {
+            )? {
                 *counter.entry(element).or_insert(0) += count;
             }
         }
 
-        let min = counter.values().min().unwrap();
-        let max = counter.values().max().unwrap();
-        max - min
+        let min = counter
+            .values()
+            .min()
+            .ok_or_else(|| TaskError("Empty counter!".to_string()))?;
+        let max = counter
+            .values()
+            .max()
+            .ok_or_else(|| TaskError("Empty counter!".to_string()))?;
+        Ok(max - min)
     }
 }
 
-pub fn parse_input(input: &str) -> PolymerData {
+pub fn parse_input(input: &str) -> Result<PolymerData> {
     PolymerData::from_str(input)
 }
 
-fn task(data: &PolymerData, steps: usize) -> usize {
+fn task(data: &PolymerData, steps: usize) -> Result<usize> {
     let mut data = data.clone();
     data.composition(steps)
 }
 
-pub fn task1(data: &PolymerData) -> usize {
+pub fn task1(data: &PolymerData) -> Result<usize> {
     task(data, 10)
 }
 
-pub fn task2(data: &PolymerData) -> usize {
+pub fn task2(data: &PolymerData) -> Result<usize> {
     task(data, 40)
 }
 
@@ -119,6 +137,6 @@ BC -> B
 CC -> N
 CN -> C";
 
-        assert_eq!(task1(&parse_input(input)), 1588);
+        assert_eq!(task1(&parse_input(input).unwrap()).unwrap(), 1588);
     }
 }

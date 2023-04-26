@@ -1,3 +1,6 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 fn value(c: char) -> u32 {
     if c.is_uppercase() {
         (c as u8 - b'A') as u32 + 27
@@ -6,27 +9,30 @@ fn value(c: char) -> u32 {
     }
 }
 
-pub fn parse_input(input: &str) -> Vec<Vec<u32>> {
-    input
+pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
+    Ok(input
         .lines()
         .map(|line| line.chars().map(value).collect())
-        .collect()
+        .collect())
 }
 
 use std::collections::HashSet;
 
-pub fn task1(input: &[Vec<u32>]) -> u32 {
+pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
     input
         .iter()
         .map(|backpack| {
             let (left, right) = backpack.split_at(backpack.len() / 2);
             let left: HashSet<_> = left.iter().collect();
-            right.iter().find(|&item| left.contains(&item)).unwrap()
+            right
+                .iter()
+                .find(|&item| left.contains(&item))
+                .ok_or_else(|| TaskError("Empty badges!".to_string()))
         })
-        .sum()
+        .try_fold(0, |acc, x: Result<_>| Ok(acc + x?))
 }
 
-pub fn task2(input: &[Vec<u32>]) -> u32 {
+pub fn task2(input: &[Vec<u32>]) -> Result<u32> {
     let mut result = 0;
     for group in input.chunks(3) {
         let mut badges: HashSet<_> = group[0].iter().collect();
@@ -36,7 +42,10 @@ pub fn task2(input: &[Vec<u32>]) -> u32 {
                 .copied()
                 .collect();
         }
-        result += *badges.iter().next().unwrap();
+        result += *badges
+            .iter()
+            .next()
+            .ok_or_else(|| TaskError("Empty badges!".to_string()))?;
     }
-    result
+    Ok(result)
 }

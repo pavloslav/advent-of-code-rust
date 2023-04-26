@@ -1,3 +1,5 @@
+use super::super::common::Result;
+
 pub struct Assignment {
     left: usize,
     right: usize,
@@ -5,10 +7,7 @@ pub struct Assignment {
 }
 
 impl Assignment {
-    fn new(input: &str) -> Assignment {
-        let mut input = input.split('-');
-        let left = input.next().unwrap().parse().unwrap();
-        let right = input.next().unwrap().parse().unwrap();
+    fn new(left: usize, right: usize) -> Assignment {
         Assignment {
             left,
             right,
@@ -25,15 +24,19 @@ impl Assignment {
     }
 }
 
-pub fn parse_input(input: &str) -> Vec<(Assignment, Assignment)> {
+pub fn parse_input(input: &str) -> Result<Vec<(Assignment, Assignment)>> {
     input
         .lines()
         .map(|line| {
-            let mut pair = line.split(',');
-            (
-                Assignment::new(pair.next().unwrap()),
-                Assignment::new(pair.next().unwrap()),
-            )
+            let (l1, r1, l2, r2) = scan_fmt::scan_fmt!(
+                line,
+                "{}-{},{}-{}",
+                usize,
+                usize,
+                usize,
+                usize
+            )?;
+            Ok((Assignment::new(l1, r1), Assignment::new(l2, r2)))
         })
         .collect()
 }
@@ -45,12 +48,14 @@ where
     assignments.iter().filter(f).count()
 }
 
-pub fn task1(assignments: &[(Assignment, Assignment)]) -> usize {
-    filter_count(assignments, |&(left, right)| {
+pub fn task1(assignments: &[(Assignment, Assignment)]) -> Result<usize> {
+    Ok(filter_count(assignments, |&(left, right)| {
         left.contains(right) || right.contains(left)
-    })
+    }))
 }
 
-pub fn task2(assignments: &[(Assignment, Assignment)]) -> usize {
-    filter_count(assignments, |&(left, right)| left.overlaps(right))
+pub fn task2(assignments: &[(Assignment, Assignment)]) -> Result<usize> {
+    Ok(filter_count(assignments, |&(left, right)| {
+        left.overlaps(right)
+    }))
 }
