@@ -1,7 +1,10 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 type Point = (i32, i32);
 type SensorData = (Point, Point);
 
-pub fn parse_input(input: &str) -> Vec<SensorData> {
+pub fn parse_input(input: &str) -> Result<Vec<SensorData>> {
     input
         .lines()
         .map(|line| {
@@ -12,9 +15,8 @@ pub fn parse_input(input: &str) -> Vec<SensorData> {
                 i32,
                 i32,
                 i32
-            )
-            .unwrap();
-            ((x, y), (bx, by))
+            )?;
+            Ok(((x, y), (bx, by)))
         })
         .collect()
 }
@@ -45,7 +47,7 @@ fn generate_row(sensors: &[SensorData], row_y: i32) -> Vec<(i32, i32)> {
     list
 }
 
-pub fn task1(sensors: &[SensorData]) -> i32 {
+pub fn task1(sensors: &[SensorData]) -> Result<i32> {
     const ROW_Y: i32 = 2_000_000;
     let list = generate_row(sensors, ROW_Y);
 
@@ -56,13 +58,14 @@ pub fn task1(sensors: &[SensorData]) -> i32 {
     beacons.sort();
     beacons.dedup();
 
-    list.iter()
+    Ok(list
+        .iter()
         .map(|(left, right)| right - left + 1)
         .sum::<i32>()
-        - beacons.len() as i32
+        - beacons.len() as i32)
 }
 
-pub fn task2(sensors: &[SensorData]) -> usize {
+pub fn task2(sensors: &[SensorData]) -> Result<usize> {
     const SIZE: i32 = 4_000_000;
     for row_y in 0..=SIZE {
         let mut list = generate_row(sensors, row_y);
@@ -89,15 +92,17 @@ pub fn task2(sensors: &[SensorData]) -> usize {
         }
         if list.len() == 1 {
             if list[0].0 > 0 {
-                return row_y as usize;
+                return Ok(row_y as usize);
             } else if list[0].1 < SIZE {
-                return SIZE as usize * SIZE as usize + row_y as usize;
+                return Ok(SIZE as usize * SIZE as usize + row_y as usize);
             }
         } else {
-            return (list[0].1 as usize + 1) * SIZE as usize + row_y as usize;
+            return Ok(
+                (list[0].1 as usize + 1) * SIZE as usize + row_y as usize
+            );
         }
     }
-    unreachable!();
+    Err(TaskError("Not found".to_string()))
 }
 
 #[cfg(test)]
@@ -110,6 +115,6 @@ mod test {
             ((0, 2_000_000), (-1, 2_000_000)),
             ((3, 2_000_001), (5, 2_000_001)),
         ];
-        assert_eq!(task1(&input), 5);
+        assert_eq!(task1(&input).unwrap(), 5);
     }
 }

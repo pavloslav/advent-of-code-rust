@@ -1,3 +1,5 @@
+use super::super::common::Result;
+
 pub enum FsRecord {
     File(usize),
     Dir(Box<Directory>),
@@ -77,7 +79,7 @@ impl Directory {
     }
 }
 
-pub fn parse_input(input: &str) -> Directory {
+pub fn parse_input(input: &str) -> Result<Directory> {
     let mut root = Directory::new();
     let mut path = vec![];
     for instruction in input.lines() {
@@ -96,29 +98,29 @@ pub fn parse_input(input: &str) -> Directory {
             }
         } else if instruction != "$ ls" {
             //executing ls
-            let mut instruction = instruction.split_whitespace();
-            let typ = instruction.next().unwrap();
-            let name = instruction.next().unwrap();
-            path.push(name.to_string());
+            let (typ, name) =
+                scan_fmt::scan_fmt!(instruction, "{} {}", String, String)?;
+            path.push(name);
             if typ == "dir" {
                 root.add_dir(&path);
             } else {
-                root.add_file(&path, typ.parse().unwrap());
+                root.add_file(&path, typ.parse()?);
             }
             path.pop();
         }
     }
-    root
+    Ok(root)
 }
 
-pub fn task1(root: &Directory) -> usize {
-    root.get_sizes(|size| if size <= 100_000 { size } else { 0 })
-        .1
+pub fn task1(root: &Directory) -> Result<usize> {
+    Ok(root
+        .get_sizes(|size| if size <= 100_000 { size } else { 0 })
+        .1)
 }
 
-pub fn task2(root: &Directory) -> usize {
+pub fn task2(root: &Directory) -> Result<usize> {
     let current_size = root.get_sizes(|_| 0).0;
     let unused = 70_000_000 - current_size;
     let needed = 30_000_000 - unused;
-    root.get_best_size(needed).1
+    Ok(root.get_best_size(needed).1)
 }

@@ -1,15 +1,12 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
 use serde_json::Value;
 
-pub fn parse_input(input: &str) -> Vec<Value> {
+pub fn parse_input(input: &str) -> Result<Vec<Value>> {
     input
         .lines()
-        .filter_map(|line| {
-            if line.is_empty() {
-                None
-            } else {
-                Some(serde_json::from_str(line).unwrap())
-            }
-        })
+        .filter(|line| !line.is_empty())
+        .map(|line| Ok(serde_json::from_str(line)?))
         .collect()
 }
 
@@ -40,8 +37,8 @@ fn cmp(left: &Value, right: &Value) -> std::cmp::Ordering {
     }
 }
 
-pub fn task1(input: &[Value]) -> usize {
-    input
+pub fn task1(input: &[Value]) -> Result<usize> {
+    let sum = input
         .chunks(2)
         .enumerate()
         .filter_map(|(i, pair)| {
@@ -51,19 +48,28 @@ pub fn task1(input: &[Value]) -> usize {
                 None
             }
         })
-        .sum()
+        .sum();
+    Ok(sum)
 }
 
-pub fn task2(input: &[Value]) -> usize {
+pub fn task2(input: &[Value]) -> Result<usize> {
     let mut packets = input.to_vec();
-    let start: Value = serde_json::from_str("[[2]]").unwrap();
-    let end: Value = serde_json::from_str("[[6]]").unwrap();
+    let start: Value = serde_json::from_str("[[2]]")?;
+    let end: Value = serde_json::from_str("[[6]]")?;
     packets.push(start.clone());
     packets.push(end.clone());
     packets.sort_by(cmp);
-    let start = packets.iter().position(|v| v == &start).unwrap() + 1;
-    let end = packets.iter().position(|v| v == &end).unwrap() + 1;
-    start * end
+    let start = packets
+        .iter()
+        .position(|v| v == &start)
+        .ok_or_else(|| TaskError("start not found".to_string()))?
+        + 1;
+    let end = packets
+        .iter()
+        .position(|v| v == &end)
+        .ok_or_else(|| TaskError("end not found".to_string()))?
+        + 1;
+    Ok(start * end)
 }
 
 #[cfg(test)]
@@ -95,6 +101,6 @@ mod test {
 
 [1,[2,[3,[4,[5,6,7]]]],8,9]
 [1,[2,[3,[4,[5,6,0]]]],8,9]";
-        assert_eq!(task1(&parse_input(inp)), 13);
+        assert_eq!(task1(&parse_input(inp).unwrap()).unwrap(), 13);
     }
 }

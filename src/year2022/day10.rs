@@ -1,7 +1,18 @@
-pub fn parse_input(input: &str) -> Vec<Option<i32>> {
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<Option<i32>>> {
     input
         .lines()
-        .map(|line| line.split_whitespace().nth(1).map(|v| v.parse().unwrap()))
+        .map(|line| {
+            if line == "noop" {
+                Ok(None)
+            } else if let Ok(val) = scan_fmt::scan_fmt!(line, "addx {}", i32) {
+                Ok(Some(val))
+            } else {
+                Err(TaskError(format!("Can't parse line '{line}'")))
+            }
+        })
         .collect()
 }
 
@@ -15,7 +26,7 @@ struct Computer<'code> {
 impl<'code> Computer<'code> {
     fn new(code: &'code [Option<i32>]) -> Computer<'code> {
         Computer {
-            code, //code.iter().copied().collect(),
+            code,
             x: 1,
             ip: 0,
             wait: false,
@@ -35,9 +46,9 @@ impl<'code> Computer<'code> {
     }
 }
 
-pub fn task1(input: &[Option<i32>]) -> i32 {
+pub fn task1(input: &[Option<i32>]) -> Result<i32> {
     let mut computer = Computer::new(input);
-    (1..240)
+    let sum = (1..240)
         .filter_map(|cycle| {
             let r = if cycle % 40 == 20 {
                 Some(cycle * computer.x)
@@ -47,14 +58,15 @@ pub fn task1(input: &[Option<i32>]) -> i32 {
             computer.clock();
             r
         })
-        .sum()
+        .sum();
+    Ok(sum)
 }
 
 use itertools::Itertools;
 
-pub fn task2(input: &[Option<i32>]) -> String {
+pub fn task2(input: &[Option<i32>]) -> Result<String> {
     let mut computer = Computer::new(input);
-    (0..6)
+    let result = (0..6)
         .map(|_row| {
             (0..40)
                 .map(|pixel| {
@@ -68,7 +80,8 @@ pub fn task2(input: &[Option<i32>]) -> String {
                 })
                 .collect::<String>()
         })
-        .join("\n")
+        .join("\n");
+    Ok(result)
 }
 
 #[cfg(test)]
@@ -223,6 +236,6 @@ addx -11
 noop
 noop
 noop";
-        assert_eq!(task1(&parse_input(&input)), 13140);
+        assert_eq!(task1(&parse_input(&input).unwrap()).unwrap(), 13140);
     }
 }

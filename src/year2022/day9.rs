@@ -1,7 +1,26 @@
-pub fn parse_input(input: &str) -> Vec<(char, usize)> {
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+type Order = ((i32, i32), i32);
+
+pub fn parse_input(input: &str) -> Result<Vec<Order>> {
     input
         .lines()
-        .map(|l| (l.chars().next().unwrap(), l[2..].parse().unwrap()))
+        .map(|l| {
+            let (dir, value) = scan_fmt::scan_fmt!(l, "{} {}", char, i32)?;
+            let dir = match dir {
+                'L' => (-1, 0),
+                'R' => (1, 0),
+                'U' => (0, 1),
+                'D' => (0, -1),
+                other => {
+                    return Err(TaskError(format!(
+                        "Unknown direction '{other}'"
+                    )));
+                }
+            };
+            Ok((dir, value))
+        })
         .collect()
 }
 
@@ -9,14 +28,9 @@ pub fn parse_input(input: &str) -> Vec<(char, usize)> {
 struct Rope(i32, i32);
 
 impl Rope {
-    fn pull(&mut self, dir: char) {
-        match dir {
-            'L' => self.0 -= 1,
-            'R' => self.0 += 1,
-            'U' => self.1 += 1,
-            'D' => self.1 -= 1,
-            _ => unimplemented!(),
-        }
+    fn pull(&mut self, dir: (i32, i32)) {
+        self.0 += dir.0;
+        self.1 += dir.1;
     }
     fn step(&mut self, after: Rope) {
         if (self.0 - after.0).abs() > 1 || (self.1 - after.1).abs() > 1 {
@@ -27,10 +41,9 @@ impl Rope {
 }
 use std::collections::HashSet;
 
-fn run_rope(path: &[(char, usize)], len: usize) -> usize {
+fn run_rope(path: &[Order], len: usize) -> usize {
     let mut visited = HashSet::new();
     let mut rope = vec![Rope(0, 0); len];
-    //visited.insert(rope[len - 1]);
     for &(dir, num) in path {
         for _ in 0..num {
             rope[0].pull(dir);
@@ -44,12 +57,12 @@ fn run_rope(path: &[(char, usize)], len: usize) -> usize {
     visited.len()
 }
 
-pub fn task1(path: &[(char, usize)]) -> usize {
-    run_rope(path, 2)
+pub fn task1(path: &[Order]) -> Result<usize> {
+    Ok(run_rope(path, 2))
 }
 
-pub fn task2(path: &[(char, usize)]) -> usize {
-    run_rope(path, 10)
+pub fn task2(path: &[Order]) -> Result<usize> {
+    Ok(run_rope(path, 10))
 }
 
 #[cfg(test)]
@@ -66,7 +79,7 @@ R 4
 D 1
 L 5
 R 2";
-        let data = parse_input(input);
-        assert_eq!(task1(&data), 13);
+        let data = parse_input(input).unwrap();
+        assert_eq!(task1(&data).unwrap(), 13);
     }
 }

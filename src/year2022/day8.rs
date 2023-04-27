@@ -1,15 +1,22 @@
-pub fn parse_input(input: &str) -> Vec<Vec<i32>> {
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
     input
         .lines()
         .map(|line| {
             line.chars()
-                .map(|c| c.to_digit(10).unwrap() as i32)
+                .map(|c| {
+                    Ok(c.to_digit(10).ok_or_else(|| {
+                        TaskError(format!("Wrong digit '{c}'"))
+                    })? as i32)
+                })
                 .collect()
         })
         .collect()
 }
 
-pub fn task1(trees: &[Vec<i32>]) -> usize {
+pub fn task1(trees: &[Vec<i32>]) -> Result<usize> {
     let mut count = 0;
     for (y, row) in trees.iter().enumerate() {
         for (x, &h) in row.iter().enumerate() {
@@ -22,10 +29,10 @@ pub fn task1(trees: &[Vec<i32>]) -> usize {
             }
         }
     }
-    count
+    Ok(count)
 }
 
-pub fn task2(trees: &[Vec<i32>]) -> usize {
+pub fn task2(trees: &[Vec<i32>]) -> Result<usize> {
     let mut best = 0;
 
     for (y, row) in trees.iter().enumerate() {
@@ -87,5 +94,5 @@ pub fn task2(trees: &[Vec<i32>]) -> usize {
             best = std::cmp::max(best, score);
         }
     }
-    best
+    Ok(best)
 }

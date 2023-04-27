@@ -1,16 +1,15 @@
-pub fn parse_input(input: &str) -> Vec<Vec<u8>> {
-    let input = input
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
+    let input: Vec<Vec<(i32, i32)>> = input
         .lines()
         .map(|line| {
             line.split(" -> ")
-                .map(|pair| {
-                    let (x, y) =
-                        scan_fmt::scan_fmt!(pair, "{},{}", i32, i32).unwrap();
-                    (x, y)
-                })
-                .collect::<Vec<_>>()
+                .map(|pair| Ok(scan_fmt::scan_fmt!(pair, "{},{}", i32, i32)?))
+                .collect::<Result<Vec<_>>>()
         })
-        .collect::<Vec<_>>();
+        .collect::<Result<Vec<_>>>()?;
     let (max_x, max_y) = input.iter().flat_map(|line| line.iter()).fold(
         (i32::MIN, i32::MIN),
         |(max_x, max_y), &(x, y)| {
@@ -43,17 +42,17 @@ pub fn parse_input(input: &str) -> Vec<Vec<u8>> {
             }
         }
     }
-    map
+    Ok(map)
 }
 
-pub fn task1(map: &[Vec<u8>]) -> usize {
+pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
     let mut map = map.to_vec();
     for sandgrain in 0.. {
         assert_eq!(map[0][500], b' ');
         let (mut x, mut y) = (500, 0);
         loop {
             if y == map.len() - 1 {
-                return sandgrain;
+                return Ok(sandgrain);
             } else if map[y + 1][x] == b' ' {
             } else if map[y + 1][x - 1] == b' ' {
                 x -= 1;
@@ -66,15 +65,15 @@ pub fn task1(map: &[Vec<u8>]) -> usize {
             y += 1;
         }
     }
-    unreachable!()
+    Err(TaskError("unreachable!".to_string()))
 }
 
-pub fn task2(map: &[Vec<u8>]) -> usize {
+pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
     let mut map = map.to_vec();
     map.push(vec![b' '; map[0].len()]);
     for sandgrain in 0.. {
         if map[0][500] != b' ' {
-            return sandgrain;
+            return Ok(sandgrain);
         }
         let (mut x, mut y) = (500, 0);
         loop {
@@ -93,5 +92,5 @@ pub fn task2(map: &[Vec<u8>]) -> usize {
             y += 1;
         }
     }
-    unreachable!()
+    Err(TaskError("unreachable!".to_string()))
 }

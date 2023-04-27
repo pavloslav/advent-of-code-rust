@@ -1,5 +1,8 @@
-pub fn parse_input(input: &str) -> Vec<Vec<u8>> {
-    input.lines().map(|line| line.bytes().collect()).collect()
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
+    Ok(input.lines().map(|line| line.bytes().collect()).collect())
 }
 
 fn value(f: u8) -> u8 {
@@ -57,21 +60,21 @@ fn shortest_way(start: (i32, i32), map: &[Vec<u8>]) -> Option<usize> {
     unreachable!()
 }
 
-pub fn task1(map: &[Vec<u8>]) -> usize {
+pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
     let start = map
         .iter()
         .enumerate()
-        .filter_map(|(i, line)| {
+        .find_map(|(i, line)| {
             line.iter()
                 .position(|&symbol| symbol == b'S')
                 .map(|j| (i as i32, j as i32))
         })
-        .next()
-        .unwrap();
-    shortest_way(start, map).unwrap()
+        .ok_or_else(|| TaskError("Empty input!".to_string()))?;
+    shortest_way(start, map)
+        .ok_or_else(|| TaskError("Way not found!".to_string()))
 }
 
-pub fn task2(map: &[Vec<u8>]) -> usize {
+pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
     map.iter()
         .enumerate()
         .map(|(i, line)| {
@@ -87,6 +90,6 @@ pub fn task2(map: &[Vec<u8>]) -> usize {
                 .min()
         })
         .min()
-        .unwrap()
-        .unwrap()
+        .ok_or_else(|| TaskError("Empty table!".to_string()))?
+        .ok_or_else(|| TaskError("Empty line!".to_string()))
 }
