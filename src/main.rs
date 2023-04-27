@@ -1,5 +1,6 @@
 pub mod common;
 
+use common::Error;
 use common::Result;
 
 mod year2015;
@@ -40,20 +41,8 @@ fn main_unsafe() -> Result<()> {
     .into_iter()
     .collect();
 
-    type FunPanic = fn(&str);
-    let _tasks_panic: HashMap<String, FunPanic> = [
-        //("2017".to_owned(), year2017::task as FunPanic),
-        //("2019".to_owned(), year2019::task as FunPanic),
-        //("2020".to_owned(), year2020::task as FunPanic),
-        //("2021".to_owned(), year2021::task as FunPanic),
-        //("2022".to_owned(), year2022::task as FunPanic),
-    ]
-    .into_iter()
-    .collect();
-
-    tasks
-        .get(&args.year)
-        .unwrap_or_else(|| panic!("Year {} is incorrect!", args.year))(
-        &format!("day{}", args.day),
-    )
+    tasks.get(&args.year).ok_or_else(|| Error::WrongTask)?(&format!(
+        "day{}",
+        args.day
+    ))
 }
