@@ -1,3 +1,6 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 pub enum Order {
     Walk(i16),
     Turn(i16),
@@ -10,7 +13,7 @@ pub struct Task {
 
 use once_cell::sync::Lazy;
 
-pub fn parse_input(input: &str) -> Task {
+pub fn parse_input(input: &str) -> Result<Task> {
     let mut lines = input.lines();
     let map = lines
         .by_ref()
@@ -23,15 +26,15 @@ pub fn parse_input(input: &str) -> Task {
     let path = PATH_REGEX
         .find_iter(lines.next().unwrap())
         .map(|mat| match mat.as_str() {
-            "R" => Order::Turn(1),
-            "L" => Order::Turn(-1),
-            num => Order::Walk(num.parse().unwrap()),
+            "R" => Ok(Order::Turn(1)),
+            "L" => Ok(Order::Turn(-1)),
+            num => Ok(Order::Walk(num.parse()?)),
         })
-        .collect();
-    Task { map, path }
+        .collect::<Result<_>>()?;
+    Ok(Task { map, path })
 }
 
-pub fn task1(input: &Task) -> usize {
+pub fn task1(input: &Task) -> Result<usize> {
     let mut dir = 0;
     let mut x = 0;
     let mut y = 0;
@@ -49,7 +52,11 @@ pub fn task1(input: &Task) -> usize {
                                 input.map[y]
                                     .iter()
                                     .position(|&c| c != b' ')
-                                    .unwrap()
+                                    .ok_or_else(|| {
+                                        TaskError(format!(
+                                            "Empty string, x = {x}, y = {y}, dir = {dir}!"
+                                        ))
+                                    })?
                             },
                             y,
                         ),
@@ -66,7 +73,11 @@ pub fn task1(input: &Task) -> usize {
                                     .map
                                     .iter()
                                     .position(|row| row[x] != b' ')
-                                    .unwrap()
+                                    .ok_or_else(|| {
+                                        TaskError(format!(
+                                            "Empty string, x = {x}, y = {y}, dir = {dir}!"
+                                        ))
+                                    })?
                             },
                         ),
                         2 => (
@@ -76,7 +87,11 @@ pub fn task1(input: &Task) -> usize {
                                 input.map[y]
                                     .iter()
                                     .rposition(|&c| c != b' ')
-                                    .unwrap()
+                                    .ok_or_else(|| {
+                                        TaskError(format!(
+                                            "Empty string, x = {x}, y = {y}, dir = {dir}!"
+                                        ))
+                                    })?
                             },
                             y,
                         ),
@@ -94,10 +109,18 @@ pub fn task1(input: &Task) -> usize {
                                     .rposition(|row| {
                                         row.len() > x && row[x] != b' '
                                     })
-                                    .unwrap()
+                                    .ok_or_else(|| {
+                                        TaskError(format!(
+                                            "Empty string, x = {x}, y = {y}, dir = {dir}!"
+                                        ))
+                                    })?
                             },
                         ),
-                        _ => panic!("Direction can't be {dir}!"),
+                        _ => {
+                            return Err(TaskError(format!(
+                                "Direction can't be {dir}!"
+                            )))
+                        }
                     };
                     if input.map[ny][nx] == b'.' {
                         (x, y) = (nx, ny);
@@ -107,9 +130,9 @@ pub fn task1(input: &Task) -> usize {
             Order::Turn(d) => dir = (dir + d).rem_euclid(4),
         }
     }
-    1000 * (y + 1) + 4 * (x + 1) + dir as usize
+    Ok(1000 * (y + 1) + 4 * (x + 1) + dir as usize)
 }
 
-pub fn task2(_input: &Task) -> usize {
+pub fn task2(_input: &Task) -> Result<usize> {
     unimplemented!();
 }

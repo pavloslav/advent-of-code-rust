@@ -1,13 +1,10 @@
-pub fn parse_input(input: &str) -> Vec<(usize, usize, usize)> {
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<(usize, usize, usize)>> {
     input
         .lines()
         .map(|line| {
-            let mut line = line.split(',');
-            (
-                line.next().unwrap().parse().unwrap(),
-                line.next().unwrap().parse().unwrap(),
-                line.next().unwrap().parse().unwrap(),
-            )
+            Ok(scan_fmt::scan_fmt!(line, "{},{},{}", usize, usize, usize)?)
         })
         .collect()
 }
@@ -95,13 +92,13 @@ impl Space {
     }
 }
 
-pub fn task1(lava: &[(usize, usize, usize)]) -> usize {
+pub fn task1(lava: &[(usize, usize, usize)]) -> Result<usize> {
     let space = Space::from_lava(lava);
-    space.count_lava_neighbors(State::Empty)
+    Ok(space.count_lava_neighbors(State::Empty))
 }
 
-pub fn task2(lava: &[(usize, usize, usize)]) -> usize {
+pub fn task2(lava: &[(usize, usize, usize)]) -> Result<usize> {
     let mut space = Space::from_lava(lava);
     space.floodfill();
-    space.count_lava_neighbors(State::Outer)
+    Ok(space.count_lava_neighbors(State::Outer))
 }

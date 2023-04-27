@@ -16,7 +16,7 @@ super::mod_list!(year2022
     , day14 
     , day15 
     //, day16
-    /*, day17 
+    , day17 
     , day18 
     //, day19 
     , day20 
@@ -24,5 +24,5 @@ super::mod_list!(year2022
     , day22
     //, day23 
     //, day24 
-    , day25*/
+    , day25
     );

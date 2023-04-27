@@ -1,36 +1,58 @@
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
 type Yell = u64;
+
+pub enum Operation {
+    Add,
+    Sub,
+    Mul,
+    Div,
+}
+
+impl Operation {
+    fn apply(&self, left: Yell, right: Yell) -> Yell {
+        match self {
+            Operation::Add => left + right,
+            Operation::Sub => left - right,
+            Operation::Mul => left * right,
+            Operation::Div => left / right,
+        }
+    }
+    fn apply_inv_left(&self, value: Yell, other: Yell) -> Yell {
+        match self {
+            Operation::Add => value - other,
+            Operation::Sub => value + other,
+            Operation::Mul => value / other,
+            Operation::Div => value * other,
+        }
+    }
+
+    fn apply_inv_right(&self, value: Yell, other: Yell) -> Yell {
+        match self {
+            Operation::Add => value - other,
+            Operation::Sub => other - value,
+            Operation::Mul => value / other,
+            Operation::Div => other / value,
+        }
+    }
+}
 
 pub enum Monkey {
     Value(Yell),
-    Operation(String, char, String),
+    Operation(String, Operation, String),
 }
 
 use std::collections::HashMap;
 
 impl Monkey {
-    fn new(input: &str) -> Monkey {
-        if let Ok(value) = input.parse() {
-            Monkey::Value(value)
-        } else {
-            let (left, op, right) =
-                scan_fmt::scan_fmt!(input, "{} {} {}", String, char, String)
-                    .unwrap();
-            Monkey::Operation(left, op, right)
-        }
-    }
     fn yell(&self, monkeys: &HashMap<String, Monkey>) -> Yell {
         match self {
             Monkey::Value(yell) => *yell,
             Monkey::Operation(left, op, right) => {
                 let left = monkeys[left].yell(monkeys);
                 let right = monkeys[right].yell(monkeys);
-                match op {
-                    '+' => left + right,
-                    '-' => left - right,
-                    '*' => left * right,
-                    '/' => left / right,
-                    _ => unimplemented!(),
-                }
+                op.apply(left, right)
             }
         }
     }
@@ -54,23 +76,11 @@ impl Monkey {
             Monkey::Operation(left, op, right) => {
                 if left == "humn" || monkeys[left].has_humn(monkeys) {
                     let right = monkeys[right].yell(monkeys);
-                    let to_left = match op {
-                        '+' => value - right,
-                        '-' => value + right,
-                        '*' => value / right,
-                        '/' => value * right,
-                        _ => unimplemented!(),
-                    };
+                    let to_left = op.apply_inv_left(value, right);
                     monkeys[left].find_humn(monkeys, to_left)
                 } else {
                     let left = monkeys[left].yell(monkeys);
-                    let to_right = match op {
-                        '+' => value - left,
-                        '-' => left - value,
-                        '*' => value / left,
-                        '/' => left / value,
-                        _ => unimplemented!(),
-                    };
+                    let to_right = op.apply_inv_right(value, left);
                     monkeys[right].find_humn(monkeys, to_right)
                 }
             }
@@ -79,31 +89,54 @@ impl Monkey {
     }
 }
 
-pub fn parse_input(input: &str) -> HashMap<String, Monkey> {
+pub fn parse_input(input: &str) -> Result<HashMap<String, Monkey>> {
     input
         .lines()
         .map(|line| {
-            let mut parts = line.split(": ");
-            let name = parts.next().unwrap();
-            let yell = parts.next().unwrap();
-            (name.to_owned(), Monkey::new(yell))
+            if let Ok((name, yell)) =
+                scan_fmt::scan_fmt!(line, "{}: {} {} {}", String, Yell)
+            {
+                Ok((name, Monkey::Value(yell)))
+            } else if let Ok((name, left, op, right)) = scan_fmt::scan_fmt!(
+                line,
+                "{}: {} {} {}",
+                String,
+                String,
+                char,
+                String
+            ) {
+                let op = match op {
+                    '+' => Operation::Add,
+                    '-' => Operation::Sub,
+                    '*' => Operation::Mul,
+                    '/' => Operation::Div,
+                    other => {
+                        return Err(TaskError(format!(
+                            "Unknown operation '{other}'"
+                        )));
+                    }
+                };
+                Ok((name, Monkey::Operation(left, op, right)))
+            } else {
+                Err(TaskError(format!("Unknown monkey format: '{line}'")))
+            }
         })
         .collect()
 }
 
-pub fn task1(map: &HashMap<String, Monkey>) -> Yell {
-    map[&"root".to_owned()].yell(map)
+pub fn task1(map: &HashMap<String, Monkey>) -> Result<Yell> {
+    Ok(map[&"root".to_owned()].yell(map))
 }
 
-pub fn task2(map: &HashMap<String, Monkey>) -> Yell {
+pub fn task2(map: &HashMap<String, Monkey>) -> Result<Yell> {
     if let Monkey::Operation(left, _, right) = &map["root"] {
         if map[left].has_humn(map) {
-            map[left].find_humn(map, map[right].yell(map))
+            Ok(map[left].find_humn(map, map[right].yell(map)))
         } else {
-            map[right].find_humn(map, map[left].yell(map))
+            Ok(map[right].find_humn(map, map[left].yell(map)))
         }
     } else {
-        unreachable!()
+        Err(TaskError("No root monkey!".to_string()))
     }
 }
 
@@ -128,11 +161,11 @@ hmdt: 32";
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(&parse_input(INPUT)), 152);
+        assert_eq!(task1(&parse_input(INPUT).unwrap()).unwrap(), 152);
     }
 
     #[test]
     fn test_task2() {
-        assert_eq!(task2(&parse_input(INPUT)), 301);
+        assert_eq!(task2(&parse_input(INPUT).unwrap()).unwrap(), 301);
     }
 }

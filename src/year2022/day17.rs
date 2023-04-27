@@ -1,5 +1,16 @@
-pub fn parse_input(input: &str) -> &str {
-    input.trim()
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<i32>> {
+    input
+        .trim()
+        .bytes()
+        .map(|c| match c {
+            b'<' => Ok(-1),
+            b'>' => Ok(1),
+            other => Err(TaskError(format!("Unknown jet direction '{other}'"))),
+        })
+        .collect()
 }
 
 const TUBE_WIDTH: usize = 7;
@@ -27,20 +38,21 @@ const FIGURES: &[&[&[u8]]] = &[
 
 const EMPTY_LINE: &[u8] = ".......".as_bytes();
 
+#[derive(Clone)]
 struct Tetris<'commands> {
     tube: std::collections::VecDeque<Vec<u8>>,
     figure_idx: usize,
-    commands: &'commands [u8],
+    commands: &'commands [i32],
     commands_idx: usize,
     skipped: usize,
 }
 
 impl<'commands> Tetris<'commands> {
-    fn new(commands: &str) -> Tetris {
+    fn new(commands: &'commands [i32]) -> Tetris {
         Tetris {
             tube: std::collections::VecDeque::new(),
             figure_idx: 0,
-            commands: commands.as_bytes(),
+            commands,
             commands_idx: 0,
             skipped: 0,
         }
@@ -49,11 +61,7 @@ impl<'commands> Tetris<'commands> {
         let mut x = 2;
         let mut y = -4;
         loop {
-            let next_x = x + match self.commands[self.commands_idx] {
-                b'>' => 1,
-                b'<' => -1,
-                dir => unimplemented!("Invalid move {}", dir),
-            };
+            let next_x = x + self.commands[self.commands_idx];
             self.commands_idx += 1;
             if self.commands_idx == self.commands.len() {
                 self.commands_idx = 0;
@@ -139,67 +147,40 @@ impl PartialEq for Tetris<'_> {
     }
 }
 
-pub fn task1(input: &str) -> usize {
+const STEPS: usize = 2022;
+
+pub fn task1(input: &[i32]) -> Result<usize> {
     let mut tetris = Tetris::new(input);
-    for _ in 0..2022 {
+    for _ in 0..STEPS {
         tetris.play();
     }
-    tetris.tower_height()
+    Ok(tetris.tower_height())
 }
 
-pub fn task2(input: &str) -> usize {
-    let mut hare = Tetris::new(input);
-    let mut tortoise = Tetris::new(input);
+use super::super::common::floyd_hare_tortoise;
 
-    //Floyd's algorithm
-    //First meet
-    for _ in 0.. {
-        hare.play();
-        hare.play();
-        tortoise.play();
-        if hare == tortoise {
-            break;
-        }
-    }
-    //Find the interval until looping starts
-    let mut start = 0;
-    hare = Tetris::new(input);
-    for i in 0.. {
-        hare.play();
-        tortoise.play();
-        if hare == tortoise {
-            start = i;
-            break;
-        }
-    }
-    //Find the period
-    let mut period = 0;
-    for i in 0.. {
-        hare.play();
-        if hare == tortoise {
-            period = i + 1;
-            break;
-        }
-    }
+const ELEPHANT_STEPS: usize = 1_000_000_000_000;
 
-    //Let hare run one last time
-    hare = Tetris::new(input);
-    for _ in 0..start {
-        hare.play();
+pub fn task2(input: &[i32]) -> Result<usize> {
+    let (lambda, mu) = floyd_hare_tortoise(|| Tetris::new(input), |t| t.play());
+
+    let mut tetris = Tetris::new(input);
+    for _ in 0..mu {
+        tetris.play();
     }
-    let start_height = hare.tower_height();
-    for _ in 0..period {
-        hare.play();
+    let start_height = tetris.tower_height();
+    for _ in 0..lambda {
+        tetris.play();
     }
-    let period_height = hare.tower_height() - start_height;
-    let remains = (1_000_000_000_000 - start) % period;
+    let period_height = tetris.tower_height() - start_height;
+    let remains = (ELEPHANT_STEPS - mu) % lambda;
     for _ in 0..remains {
-        hare.play();
+        tetris.play();
     }
-    let remains_height = hare.tower_height() - start_height - period_height;
-    start_height
-        + (1_000_000_000_000 - start - remains) / period * period_height
-        + remains_height
+    let remains_height = tetris.tower_height() - start_height - period_height;
+    Ok(start_height
+        + (ELEPHANT_STEPS - mu - remains) / lambda * period_height
+        + remains_height)
 }
 
 #[cfg(test)]
@@ -209,7 +190,7 @@ mod test {
     const EXAMPLE: &'static str = &">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
     #[test]
     fn test_task1() {
-        assert_eq!(task1(EXAMPLE), 3068);
+        assert_eq!(task1(&parse_input(EXAMPLE).unwrap()).unwrap(), 3068);
     }
 
     /*#[test]

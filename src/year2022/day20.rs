@@ -1,8 +1,10 @@
-pub fn parse_input(input: &str) -> Vec<i32> {
-    input.lines().map(|x| x.parse().unwrap()).collect()
+use super::super::common::Result;
+
+pub fn parse_input(input: &str) -> Result<Vec<i32>> {
+    input.lines().map(|x| Ok(x.parse()?)).collect()
 }
 
-pub fn task1(input: &[i32]) -> i32 {
+pub fn task1(input: &[i32]) -> Result<i32> {
     let mut mixed = input.to_vec();
     for &x in input {
         let pos = mixed.iter().position(|&i| i == x).unwrap();
@@ -13,19 +15,17 @@ pub fn task1(input: &[i32]) -> i32 {
         if tgt > input.len() as i32 {
             tgt = (tgt + 1) % input.len() as i32;
         }
-        println!("{x} moves to position {tgt}");
         mixed.remove(pos);
         mixed.insert(tgt as usize, x);
-        //println!("{mixed:?}");
     }
     let zero = mixed.iter().position(|&i| i == 0).unwrap();
-    [1000, 2000, 3000]
+    Ok([1000, 2000, 3000]
         .iter()
         .map(|c| mixed[(zero + c) % mixed.len()])
-        .sum()
+        .sum())
 }
 
-pub fn task2(_input: &[i32]) -> usize {
+pub fn task2(_input: &[i32]) -> Result<usize> {
     unimplemented!();
 }
 
@@ -35,6 +35,6 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(&[1, 2, -3, 3, -2, 0, 4]), 3);
+        assert_eq!(task1(&[1, 2, -3, 3, -2, 0, 4]).unwrap(), 3);
     }
 }

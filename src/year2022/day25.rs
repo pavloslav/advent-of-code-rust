@@ -1,22 +1,32 @@
-fn from_snafu(input: &str) -> i64 {
+use super::super::common::Error::TaskError;
+use super::super::common::Result;
+
+fn from_snafu(input: &str) -> Result<i64> {
     input
         .chars()
-        .map(|c| match c {
-            '=' => -2,
-            '-' => -1,
-            c if c.is_ascii_digit() => c.to_digit(10).unwrap() as i64,
-            _ => panic!("Wrong digit: {c}"),
+        .map(|c| {
+            Ok(match c {
+                '=' => -2,
+                '-' => -1,
+                c => c
+                    .to_digit(10)
+                    .ok_or_else(|| TaskError(format!("Wrong digit: {c}")))?
+                    as i64,
+            })
         })
-        .fold(0, |acc, d| acc * 5 + d)
+        .try_fold(0, |acc, d: Result<i64>| Ok(acc * 5 + d?))
 }
 
-fn to_snafu(input: i64) -> String {
+fn to_snafu(input: i64) -> Result<String> {
     let mut n = input;
     let mut result = vec![];
     while n != 0 {
         let d = n % 5;
         if d <= 2 {
-            result.push(char::from_digit(d as u32, 10).unwrap());
+            result.push(
+                char::from_digit(d as u32, 10)
+                    .ok_or_else(|| TaskError(format!("Wrong digit: {d}")))?,
+            );
             n /= 5;
         } else {
             result.push(if d == 3 { '=' } else { '-' });
@@ -24,18 +34,18 @@ fn to_snafu(input: i64) -> String {
             n += 1;
         }
     }
-    result.iter().rev().collect()
+    Ok(result.iter().rev().collect())
 }
 
-pub fn parse_input(input: &str) -> Vec<i64> {
+pub fn parse_input(input: &str) -> Result<Vec<i64>> {
     input.lines().map(from_snafu).collect()
 }
 
-pub fn task1(input: &[i64]) -> String {
+pub fn task1(input: &[i64]) -> Result<String> {
     to_snafu(input.iter().sum())
 }
 
-pub fn task2(_input: &[i64]) -> usize {
+pub fn task2(_input: &[i64]) -> Result<usize> {
     unimplemented!();
 }
 
@@ -59,7 +69,7 @@ mod test {
 
     #[test]
     fn test_task1() {
-        assert_eq!(task1(&parse_input(EXAMPLE)), "2=-1=0");
+        assert_eq!(task1(&parse_input(EXAMPLE).unwrap()).unwrap(), "2=-1=0");
     }
 
     #[test]
@@ -75,14 +85,14 @@ mod test {
             ("1-12", 107),
             ("1=-0-2", 1747),
         ] {
-            assert_eq!(from_snafu(snafu), n);
+            assert_eq!(from_snafu(snafu).unwrap(), n);
         }
     }
 
     #[test]
     fn test_to_snafu() {
-        assert_eq!(to_snafu(1747), "1=-0-2");
-        assert_eq!(to_snafu(107), "1-12");
-        assert_eq!(to_snafu(4890), "2=-1=0");
+        assert_eq!(to_snafu(1747).unwrap(), "1=-0-2");
+        assert_eq!(to_snafu(107).unwrap(), "1-12");
+        assert_eq!(to_snafu(4890).unwrap(), "2=-1=0");
     }
 }
