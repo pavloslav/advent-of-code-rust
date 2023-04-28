@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 pub enum Direction {
     Down,

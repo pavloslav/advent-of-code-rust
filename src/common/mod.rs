@@ -14,7 +14,6 @@ pub mod aoc;
 pub use aoc::get_input;
 pub use aoc::get_input_with_mod;
 pub use aoc::FunctionHolder;
-pub use aoc::FunctionHolderPanic;
 
 pub mod error;
 

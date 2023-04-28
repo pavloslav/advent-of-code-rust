@@ -1,5 +1,5 @@
 use super::super::common::floyd_hare_tortoise::floyd_hare_tortoise_with_cmp;
-use super::super::common::Result;
+use super::aoc::*;
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct Moon {

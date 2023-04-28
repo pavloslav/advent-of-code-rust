@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::aoc::*;
 use super::super::common::Error::TaskError;
 
 const TOTAL_SPOONS: usize = 100;

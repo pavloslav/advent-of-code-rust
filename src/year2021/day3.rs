@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 pub struct Data {
     numbers: Vec<usize>,

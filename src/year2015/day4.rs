@@ -1,10 +1,8 @@
-use super::Result;
+use super::aoc::*;
 
 pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input.trim())
 }
-
-use super::super::common::Md5Hasher;
 
 fn find_hash(init: &str, zeroes: usize) -> Result<usize> {
     Ok((0..)

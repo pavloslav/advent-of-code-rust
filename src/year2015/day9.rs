@@ -1,5 +1,4 @@
-use super::Error::TaskError;
-use super::Result;
+use super::aoc::*;
 
 type Distances = Vec<Vec<usize>>;
 

@@ -1,5 +1,4 @@
-use super::Error::TaskError;
-use super::Result;
+use super::aoc::*;
 
 use once_cell::sync::Lazy;
 

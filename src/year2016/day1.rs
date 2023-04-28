@@ -1,6 +1,6 @@
 use super::super::common::Error;
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 #[derive(Debug, Clone, Copy)]
 struct Direction {
@@ -9,7 +9,7 @@ struct Direction {
 
 impl Direction {
     fn rotate(&mut self, rot: i8) {
-        self.dir = (self.dir + rot) % 4;
+        self.dir = (self.dir + rot).rem_euclid(4);
     }
     const NORTH: Direction = Direction { dir: 0 };
 }
@@ -30,7 +30,7 @@ impl Pos {
             1 => self.x += len,
             2 => self.y -= len,
             3 => self.x -= len,
-            _ => unreachable!("This cannot be!"),
+            other => unreachable!("Direction can't be {other}!"),
         }
     }
 }

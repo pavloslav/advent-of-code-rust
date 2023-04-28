@@ -1,5 +1,6 @@
-use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
+//common::Error::TaskError;
+//use super::aoc::*;
 
 type Data = Vec<i32>;
 

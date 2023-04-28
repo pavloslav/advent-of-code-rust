@@ -1,5 +1,4 @@
-use super::super::common::floyd_hare_tortoise;
-use super::Result;
+use super::aoc::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input.split_whitespace().map(|s| Ok(s.parse()?)).collect()

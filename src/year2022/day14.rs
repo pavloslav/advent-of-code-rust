@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
     let input: Vec<Vec<(i32, i32)>> = input

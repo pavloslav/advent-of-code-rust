@@ -1,5 +1,5 @@
-use super::Error::TaskError;
-use super::Result;
+use super::aoc::*;
+
 type Data = Vec<Instruction>;
 
 struct Point {

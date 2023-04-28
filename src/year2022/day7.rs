@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::aoc::*;
 
 pub enum FsRecord {
     File(usize),

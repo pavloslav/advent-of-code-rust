@@ -1,5 +1,4 @@
-use super::Error::TaskError;
-use super::Result;
+use super::aoc::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
     input

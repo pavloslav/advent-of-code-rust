@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
     let mut pos = initial;

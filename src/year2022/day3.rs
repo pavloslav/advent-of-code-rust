@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 fn value(c: char) -> u32 {
     if c.is_uppercase() {

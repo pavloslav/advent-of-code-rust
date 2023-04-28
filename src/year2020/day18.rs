@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 fn first_op(s: &str, precedence: bool) -> Option<usize> {
     let mut plus = None;

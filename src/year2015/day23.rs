@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 const REG_A: usize = 0;
 const REG_B: usize = 1;

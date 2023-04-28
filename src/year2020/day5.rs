@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 fn seat_id(code: &str) -> Result<usize> {
     code.chars()

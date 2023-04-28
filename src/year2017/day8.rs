@@ -1,6 +1,4 @@
-use super::Error;
-use super::Error::TaskError;
-use super::Result;
+use super::aoc::*;
 
 #[derive(Debug)]
 pub enum Operation {

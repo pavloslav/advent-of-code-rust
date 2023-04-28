@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 fn task<F>(crabs: &[i32], fuel: F) -> Result<i32>
 where

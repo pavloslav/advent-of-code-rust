@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::aoc::*;
 
 fn can_be_triangle(a: i32, b: i32, c: i32) -> bool {
     a + b > c && (a - b).abs() < c

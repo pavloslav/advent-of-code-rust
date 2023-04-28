@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::aoc::*;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 

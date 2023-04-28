@@ -51,41 +51,6 @@ pub fn get_input(year: &str, day: &str) -> Result<String> {
 }
 
 #[derive(Clone, Copy)]
-pub struct FunctionHolderPanic {
-    pub f: fn(),
-}
-
-#[macro_export]
-#[allow(clippy::crate_in_macro_def)]
-macro_rules! mod_list_panic {
-    ($year: ident, $($day: ident),+) => {
-        use once_cell::sync::OnceCell;
-        $(pub mod $day;)*
-        pub fn task(day: &str) {
-            let fn_map = FN_MAP.get_or_init(||std::collections::HashMap::from ([
-                $((stringify!($day), crate::common::FunctionHolderPanic {
-                        f: || {
-                            let year_str = stringify!($year);
-                            let day_str = stringify!($day);
-                            let input =
-                                crate::common::get_input_with_mod(year_str, day_str)
-                                    .unwrap();
-                            let data = $day::parse_input(&input);
-                            println!("{} {}", year_str, day_str);
-                            println!("Result 1:\n{}", $day::task1(&data));
-                            println!("Result 2:\n{}", $day::task2(&data));
-                        },
-                    }),)*
-                ]));
-            (fn_map[day].f)()
-
-        }
-        static FN_MAP : OnceCell<std::collections::HashMap<&'static str, crate::common::FunctionHolderPanic>> = OnceCell::new();
-
-    }
-}
-
-#[derive(Clone, Copy)]
 pub struct FunctionHolder {
     pub f: fn() -> Result<()>,
 }
@@ -101,18 +66,24 @@ where
 }
 
 #[macro_export]
-#[allow(clippy::crate_in_macro_def)]
+//#[allow(clippy::crate_in_macro_def)]
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
         use once_cell::sync::Lazy;
-        use super::common::Result;
-        use super::common::Error;
         use super::common::aoc::measure;
+
+        pub mod aoc {
+            pub use super::super::common::Result;
+            pub use super::super::common::Error;
+            pub use super::super::common::Error::TaskError;
+            pub use super::super::common::floyd_hare_tortoise::*;
+            pub use super::super::common::Md5Hasher;
+        }
 
         $(pub mod $day;)*
 
-        pub fn task(day: &str) -> Result<()> {
-            (FN_MAP.get(day).ok_or(Error::WrongTask)?.f)()
+        pub fn task(day: &str) -> aoc::Result<()> {
+            (FN_MAP.get(day).ok_or(aoc::Error::WrongTask)?.f)()
         }
 
         static FN_MAP : Lazy<std::collections::HashMap<&'static str, crate::common::FunctionHolder>>

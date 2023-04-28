@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::aoc::*;
 use super::knots_hash;
 
 pub fn parse_input(input: &str) -> Result<&str> {

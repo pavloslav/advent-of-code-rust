@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 use std::collections::HashSet;
 
 pub fn parse_input(input: &str) -> Result<Vec<i64>> {

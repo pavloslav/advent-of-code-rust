@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 fn get_first_bus(after: i32, periods: &[Option<i32>]) -> i32 {
     let mut best_time = i32::MAX;

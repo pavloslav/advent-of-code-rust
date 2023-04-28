@@ -1,6 +1,6 @@
 use super::super::common::Error;
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 pub enum Command {
     Forward(i32),

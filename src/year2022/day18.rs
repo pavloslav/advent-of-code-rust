@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::aoc::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<(usize, usize, usize)>> {
     input

@@ -1,4 +1,4 @@
-use super::super::common::Result;
+use super::aoc::*;
 
 fn simulate(mut state: [usize; 9], time: usize) -> usize {
     for _ in 0..time {

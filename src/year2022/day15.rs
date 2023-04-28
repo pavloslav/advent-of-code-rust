@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 type Point = (i32, i32);
 type SensorData = (Point, Point);

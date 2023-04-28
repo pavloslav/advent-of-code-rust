@@ -1,5 +1,5 @@
 use super::super::common::Error::TaskError;
-use super::super::common::Result;
+use super::aoc::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<(i16, i16)>> {
     Ok(input
