@@ -5,13 +5,13 @@ pub fn parse_input(input: &str) -> Result<&str> {
 }
 
 fn find_hash(init: &str, zeroes: usize) -> Result<usize> {
-    Ok((0..)
+    (0..)
         .find(|i| {
             Md5Hasher::new_from_str(init)
                 .add_str(&i.to_string())
                 .has_zeroes(zeroes)
         })
-        .expect("Find can't fail on open range"))
+        .ok_or_else(|| TaskError("unreachable!()".to_string()))
 }
 
 pub fn task1(input: &str) -> Result<usize> {

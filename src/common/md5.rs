@@ -13,7 +13,6 @@ impl Md5Hasher {
     pub fn new_from_str(s: &str) -> Md5Hasher {
         let mut hasher = Md5Hasher { hasher: Md5::new() };
         hasher.hasher.input_str(s);
-        //        assert_eq!(self.hasher.output_bits(), u128::BITS as usize);
         hasher
     }
 

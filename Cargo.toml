@@ -11,18 +11,19 @@ default = ["verbose"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rust-ini = "*"                                      #common::settings
-minreq = {version = "*", features = ["https"] }     #common::network
+rust-ini = "*"                                      # common::settings
+minreq = {version = "*", features = ["https"] }     # common::network
 
-regex = "*"                                         #whereever needed
-itertools = "*"                                     #whereever needed
-scan_fmt = "*"                                      #wherever needed
+regex = "*"                                         # wherever needed
+itertools = "*"                                     # wherever needed
+scan_fmt = "*"                                      # wherever needed
 
-once_cell = "*"                                     #will move to std
+once_cell = "*"                                     # will move to std
 
-rust-crypto = "*"                                   #2015/4, 2016/5
-unicode_categories = "*"                            #2021/12
-serde_json = "*"                                    #2015/12, 2022/13
-num = "*"                                           #2019/10, 2019/12 - gcd, lcm
+rust-crypto = "*"                                   # common::md5Hasher
+unicode_categories = "*"                            # 2021/12
+serde_json = "*"                                    # 2015/12, 2022/13
+num = "*"                                           # 2019/10, 2019/12 - gcd, lcd
 
-clap = { version = "*", features = ["derive"] } #arguments parser
+clap = { version = "*", features = ["derive"] }     # arguments parser
+fancy-regex = "*"                                   # backreferences

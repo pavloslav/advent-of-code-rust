@@ -11,6 +11,7 @@ pub enum Error {
     ParseChar(std::char::ParseCharError),
     ScanFmt(scan_fmt::parse::ScanError),
     SerdeJson(serde_json::Error),
+    FancyRegex(fancy_regex::Error),
     TaskError(String),
     WrongTask,
 }
@@ -62,6 +63,12 @@ impl From<scan_fmt::parse::ScanError> for Error {
 impl From<serde_json::Error> for Error {
     fn from(err: serde_json::Error) -> Error {
         Error::SerdeJson(err)
+    }
+}
+
+impl From<fancy_regex::Error> for Error {
+    fn from(err: fancy_regex::Error) -> Error {
+        Error::FancyRegex(err)
     }
 }
 
