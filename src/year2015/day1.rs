@@ -1,10 +1,6 @@
 use super::aoc::*;
-//common::Error::TaskError;
-//use super::aoc::*;
 
-type Data = Vec<i32>;
-
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> Result<Vec<i32>> {
     input.chars().map(value).collect()
 }
 
@@ -16,19 +12,23 @@ fn value(c: char) -> Result<i32> {
     }
 }
 
-pub fn task1(instructions: &Data) -> Result<i32> {
+pub fn task1(instructions: &[i32]) -> Result<i32> {
     Ok(instructions.iter().sum())
 }
 
-pub fn task2(instructions: &Data) -> Result<usize> {
-    Ok(instructions
+pub fn task2(instructions: &[i32]) -> Result<usize> {
+    let not_in_basement = instructions
         .iter()
-        .scan(0, |acc, c| {
-            *acc += c;
-            Some(*acc).filter(|&floor| floor >= 0)
+        .scan(0, |floor, change| {
+            *floor += change;
+            if *floor >= 0 {
+                Some(*floor)
+            } else {
+                None
+            }
         })
-        .count()
-        + 1)
+        .count();
+    Ok(not_in_basement + 1)
 }
 
 #[cfg(test)]
