@@ -15,7 +15,7 @@ pub fn task1(input: &str) -> Result<usize> {
     Ok(input
         .lines()
         .map(|line| {
-            let mut count = 0;
+            let mut count = 2; // quotes
             let mut state = State::Normal;
 
             for ch in line.chars() {
@@ -40,7 +40,7 @@ pub fn task1(input: &str) -> Result<usize> {
                     }
                 }
             }
-            count + 2
+            count
         })
         .sum())
 }

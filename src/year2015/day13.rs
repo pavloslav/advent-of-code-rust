@@ -1,4 +1,3 @@
-use super::super::common::Error::TaskError;
 use super::aoc::*;
 
 pub struct Table {
@@ -12,7 +11,7 @@ pub fn parse_input(input: &str) -> Result<Table> {
     for line in input.lines() {
         let (first, gain, score, second) = scan_fmt::scan_fmt!(
             line,
-            "{} would {} {} happiness units by sitting next to {}",
+            "{} would {/gain|lose/} {} happiness units by sitting next to {}",
             String,
             String,
             i32,

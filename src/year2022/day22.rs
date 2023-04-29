@@ -134,5 +134,5 @@ pub fn task1(input: &Task) -> Result<usize> {
 }
 
 pub fn task2(_input: &Task) -> Result<usize> {
-    unimplemented!();
+    todo!();
 }

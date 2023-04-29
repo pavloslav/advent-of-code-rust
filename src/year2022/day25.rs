@@ -46,7 +46,7 @@ pub fn task1(input: &[i64]) -> Result<String> {
 }
 
 pub fn task2(_input: &[i64]) -> Result<usize> {
-    unimplemented!();
+    todo!();
 }
 
 #[cfg(test)]

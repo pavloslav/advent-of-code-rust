@@ -18,7 +18,7 @@ super::mod_list!(year2015
     , day16
     , day17 
     , day18 
-    //, day19 
+    , day19 
     , day20 
     , day21 
     //, day22

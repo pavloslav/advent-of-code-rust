@@ -47,5 +47,5 @@ pub fn task1(input: &Formulas) -> Result<usize> {
 }
 
 pub fn task2(_input: &Formulas) -> Result<usize> {
-    unimplemented!();
+    todo!();
 }

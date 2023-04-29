@@ -1,8 +1,6 @@
 use super::aoc::*;
 
-type Distances = Vec<Vec<usize>>;
-
-pub fn parse_input(input: &str) -> Result<Distances> {
+pub fn parse_input(input: &str) -> Result<Vec<Vec<usize>>> {
     let mut dist = Vec::new();
     let mut name_map = std::collections::HashMap::new();
     for line in input.lines() {
@@ -30,7 +28,7 @@ pub fn parse_input(input: &str) -> Result<Distances> {
 
 use itertools::Itertools; //permutations
 
-fn task(distances: &Distances) -> impl Iterator<Item = usize> + '_ {
+fn task(distances: &[Vec<usize>]) -> impl Iterator<Item = usize> + '_ {
     (0..distances.len())
         .permutations(distances.len())
         .map(|comb| {
@@ -46,13 +44,13 @@ fn task(distances: &Distances) -> impl Iterator<Item = usize> + '_ {
         })
 }
 
-pub fn task1(distances: &Distances) -> Result<usize> {
+pub fn task1(distances: &[Vec<usize>]) -> Result<usize> {
     task(distances)
         .min()
         .ok_or_else(|| TaskError("No distances provided!".to_string()))
 }
 
-pub fn task2(distances: &Distances) -> Result<usize> {
+pub fn task2(distances: &[Vec<usize>]) -> Result<usize> {
     task(distances)
         .max()
         .ok_or_else(|| TaskError("No distances provided!".to_string()))

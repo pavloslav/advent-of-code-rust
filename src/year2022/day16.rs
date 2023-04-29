@@ -68,7 +68,7 @@ impl Searcher {
 }
 
 pub fn task1(directions: &Directions) -> usize {
-    unimplemented!();
+    todo!();
     let mut searcher = Searcher {
         map: directions.clone(),
         opened: HashSet::new(),
@@ -77,5 +77,5 @@ pub fn task1(directions: &Directions) -> usize {
 }
 
 pub fn task2(_directions: &Directions) -> usize {
-    unimplemented!();
+    todo!();
 }

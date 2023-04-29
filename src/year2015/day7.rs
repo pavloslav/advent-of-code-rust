@@ -37,65 +37,40 @@ pub enum Rule {
 }
 
 impl Rule {
-    fn new(input: &str) -> Result<(String, Rule)> {
-        static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
-            once_cell::sync::Lazy::new(|| {
-                regex::Regex::new(r"^((?P<left>\w+) (?P<op>\w+) (?P<right>\w+)|(NOT (?P<not>\w+))|(?P<value>\w+)) -> (?P<target>\w+)$").unwrap()
-            });
-        INPUT_REGEX
-            .captures(input)
-            .map(|captures| {
-                if let (Some(left), Some(op), Some(right), Some(target)) = (
-                    captures.name("left"),
-                    captures.name("op"),
-                    captures.name("right"),
-                    captures.name("target"),
-                ) {
-                    let rule = match op.as_str() {
-                        "AND" => Rule::And(
-                            Wire::new(left.as_str()),
-                            Wire::new(right.as_str()),
-                        ),
-                        "OR" => Rule::Or(
-                            Wire::new(left.as_str()),
-                            Wire::new(right.as_str()),
-                        ),
-                        "LSHIFT" => Rule::LShift(
-                            Wire::new(left.as_str()),
-                            Wire::new(right.as_str()),
-                        ),
-                        "RSHIFT" => Rule::RShift(
-                            Wire::new(left.as_str()),
-                            Wire::new(right.as_str()),
-                        ),
-                        other => {
-                            return Err(TaskError(format!(
-                                "Incorrect binary operation: {other}"
-                            )))
-                        }
-                    };
-                    Ok((target.as_str().to_string(), rule))
-                } else if let (Some(not), Some(target)) =
-                    (captures.name("not"), captures.name("target"))
-                {
-                    Ok((
-                        target.as_str().to_string(),
-                        Rule::Not(Wire::new(not.as_str())),
-                    ))
-                } else if let (Some(value), Some(target)) =
-                    (captures.name("value"), captures.name("target"))
-                {
-                    Ok((
-                        target.as_str().to_string(),
-                        Rule::Direct(Wire::new(value.as_str())),
-                    ))
-                } else {
-                    Err(TaskError(format!("Incorrect rule: {input}")))
-                }
-            })
-            .unwrap_or_else(|| {
-                Err(TaskError(format!("Unable to parse rule: {input}")))
-            })
+    fn new(s: &str) -> Result<(String, Rule)> {
+        if let Ok((left, op, right, target)) = scan_fmt::scan_fmt!(
+            s,
+            "{} {/AND|OR|LSHIFT|RSHIFT/} {} -> {}",
+            String,
+            String,
+            String,
+            String
+        ) {
+            let left = Wire::new(&left);
+            let right = Wire::new(&right);
+            Ok((
+                target,
+                match op.as_str() {
+                    "AND" => Rule::And(left, right),
+                    "OR" => Rule::Or(left, right),
+                    "LSHIFT" => Rule::LShift(left, right),
+                    "RSHIFT" => Rule::RShift(left, right),
+                    other => {
+                        return Err(TaskError(format!(
+                            "Incorrect binary operation: {other}"
+                        )))
+                    }
+                },
+            ))
+        } else if let Ok((operand, target)) =
+            scan_fmt::scan_fmt!(s, "NOT {} -> {}", String, String)
+        {
+            Ok((target, Rule::Not(Wire::new(&operand))))
+        } else {
+            let (wire, target) =
+                scan_fmt::scan_fmt!(s, "{} -> {}", String, String)?;
+            Ok((target, Rule::Direct(Wire::new(&wire))))
+        }
     }
 
     fn calculate(&self, wires: &mut Wires) -> Result<u16> {

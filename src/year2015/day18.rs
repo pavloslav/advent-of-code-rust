@@ -5,8 +5,8 @@ const STEPS: usize = 100;
 
 #[rustfmt::skip]
 const NEIGHBORS: [(i32, i32); 8] = [(-1,-1), (-1, 0), (-1, 1),
-                                   ( 0,-1),          ( 0, 1),
-                                   ( 1,-1), ( 1, 0), ( 1, 1)];
+                                    ( 0,-1),          ( 0, 1),
+                                    ( 1,-1), ( 1, 0), ( 1, 1)];
 
 #[derive(Clone, Copy)]
 pub enum Cell {

@@ -26,7 +26,7 @@ pub fn task1(input: &[i32]) -> Result<i32> {
 }
 
 pub fn task2(_input: &[i32]) -> Result<usize> {
-    unimplemented!();
+    todo!();
 }
 
 #[cfg(test)]

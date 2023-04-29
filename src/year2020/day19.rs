@@ -141,5 +141,5 @@ pub fn task1(s: &str) -> usize {
 }
 
 pub fn task2(_s: &str) -> usize {
-    unimplemented!()
+    todo!()
 }

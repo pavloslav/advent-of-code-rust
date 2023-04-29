@@ -114,7 +114,7 @@ pub fn task1(seafloor: &Seafloor) -> usize {
 }
 
 pub fn task2(_seafloor: &Seafloor) -> usize {
-    unimplemented!()
+    todo!()
 }
 
 #[cfg(test)]

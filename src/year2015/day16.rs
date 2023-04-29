@@ -40,12 +40,11 @@ pub fn parse_input(input: &str) -> Result<Vec<Map>> {
     input
         .lines()
         .map(|line| {
-            line.split_once(": ")
-                .unwrap()
-                .1
-                .split(", ")
+            let data =
+                scan_fmt::scan_fmt!(line, "Sue {*d}: {/.*$/}{e}", String)?;
+            data.split(", ")
                 .map(|value| {
-                    Ok(scan_fmt::scan_fmt!(value, "{}: {}", String, usize)?)
+                    Ok(scan_fmt::scan_fmt!(value, "{}: {d}", String, usize)?)
                 })
                 .collect::<Result<Map>>()
         })
