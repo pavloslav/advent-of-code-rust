@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 type Present = (usize, usize, usize);
 
@@ -6,7 +6,8 @@ pub fn parse_input(input: &str) -> Result<Vec<Present>> {
     input
         .lines()
         .map(|line| {
-            Ok(scan_fmt::scan_fmt!(line, "{}x{}x{}", usize, usize, usize)?)
+            scan_fmt::scan_fmt!(line, "{}x{}x{}", usize, usize, usize)
+                .map_err(|_| task_error!("Failed to parse '{line}'"))
         })
         .collect::<Result<_>>()
 }

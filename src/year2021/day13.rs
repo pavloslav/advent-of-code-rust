@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 #[derive(Copy, Clone)]
 pub enum Fold {
@@ -46,9 +45,7 @@ pub fn parse_input(input: &str) -> Result<InvisiblePaper> {
                 'x' => Fold::X(value),
                 'y' => Fold::Y(value),
                 other => {
-                    return Err(TaskError(format!(
-                        "Impossible value '{other}'!"
-                    )))
+                    return Err(task_error!("Impossible value '{other}'!"))
                 }
             };
             data.folds.push(fold);
@@ -74,14 +71,14 @@ pub fn task2(data: &InvisiblePaper) -> Result<String> {
         .iter()
         .map(|(x, _)| x)
         .max()
-        .ok_or_else(|| TaskError("No dots!".to_string()))?
+        .ok_or_else(|| task_error!("No dots!"))?
         + 1;
     let max_y = data
         .dots
         .iter()
         .map(|(_, y)| y)
         .max()
-        .ok_or_else(|| TaskError("No dots!".to_string()))?
+        .ok_or_else(|| task_error!("No dots!"))?
         + 1;
     let mut result = String::new();
     for y in 0..max_y {

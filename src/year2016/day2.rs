@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
     let mut pos = initial;
@@ -13,7 +12,7 @@ fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
                 'D' => pos.1 += 1,
                 'L' => pos.0 -= 1,
                 _ => {
-                    return Err(TaskError(format!("Wrong move '{mov}'")));
+                    return Err(task_error!("Wrong move '{mov}'"));
                 }
             }
             if map.get(pos.1).and_then(|line| line.get(pos.0)) == Some(&b'X') {
@@ -24,10 +23,11 @@ fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
             map.get(pos.1)
                 .and_then(|line| line.get(pos.0))
                 .ok_or_else(|| {
-                    TaskError(format!(
+                    task_error!(
                         "Coordinates {}:{} are out of bounds!",
-                        pos.0, pos.1
-                    ))
+                        pos.0,
+                        pos.1
+                    )
                 })?
                 .to_owned()
                 .into(),

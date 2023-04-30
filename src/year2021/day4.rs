@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 const BINGO_SIZE: usize = 5;
 
@@ -49,7 +47,7 @@ impl std::str::FromStr for BingoSettings {
             } else {
                 let mut board = boards
                     .last_mut()
-                    .ok_or_else(|| TaskError("board is empty!".to_string()))?;
+                    .ok_or_else(|| task_error!("board is empty!"))?;
                 for (i, n) in line.split_whitespace().enumerate() {
                     board.0[idx][i] = n.parse()?;
                 }
@@ -137,7 +135,7 @@ impl Bingo<'_> {
         if let Some(last) = self.winners.last() {
             Ok(last.1)
         } else {
-            Err(TaskError("No winners".to_string()))
+            Err(task_error!("No winners"))
         }
     }
 }

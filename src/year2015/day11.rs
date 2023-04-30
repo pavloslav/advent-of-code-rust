@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 type Password = Vec<u8>;
 
 pub fn parse_input(input: &str) -> Result<Password> {

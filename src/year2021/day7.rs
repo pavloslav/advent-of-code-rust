@@ -1,17 +1,12 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 fn task<F>(crabs: &[i32], fuel: F) -> Result<i32>
 where
     F: Fn(i32, i32) -> i32,
 {
     let total = |pos| crabs.iter().map(|&crab| fuel(crab, pos)).sum();
-    let mut pos = (crabs
-        .last()
-        .ok_or_else(|| TaskError("Empty list!".to_string()))?
-        - crabs
-            .first()
-            .ok_or_else(|| TaskError("Empty list!".to_string()))?)
+    let mut pos = (crabs.last().ok_or_else(|| task_error!("Empty list!"))?
+        - crabs.first().ok_or_else(|| task_error!("Empty list!"))?)
         / 2;
     let mut step = pos / 2;
     loop {

@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Cave = Vec<Vec<usize>>;
 
@@ -9,9 +8,10 @@ pub fn parse_input(input: &str) -> Result<Cave> {
         .map(|line| {
             line.chars()
                 .map(|risk| {
-                    Ok(risk.to_digit(10).ok_or_else(|| {
-                        TaskError(format!("Wrong digit {risk}"))
-                    })? as usize)
+                    Ok(risk
+                        .to_digit(10)
+                        .ok_or_else(|| task_error!("Wrong digit {risk}"))?
+                        as usize)
                 })
                 .collect()
         })

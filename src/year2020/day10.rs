@@ -1,16 +1,12 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     let mut adapters: Vec<usize> = input
         .lines()
         .map(|l| Ok(l.parse()?))
         .collect::<Result<Vec<usize>>>()?;
+    let max = *adapters.iter().max().unwrap_or(&0);
     adapters.push(0);
-    let max = adapters
-        .iter()
-        .max()
-        .ok_or_else(|| TaskError("This should never happen!".to_string()))?;
     adapters.push(max + 3);
     adapters.sort();
     Ok(adapters)

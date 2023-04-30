@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 use std::collections::HashMap;
 
 fn scan_chem(element: &str) -> Result<(String, usize)> {

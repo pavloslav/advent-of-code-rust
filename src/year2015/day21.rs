@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 use itertools::Itertools;
 
@@ -82,11 +81,9 @@ fn search(boss: &Character, need_min: bool) -> Result<usize> {
         })
     });
     if need_min {
-        iter.min()
-            .ok_or(TaskError("Empty iterator on min".to_string()))
+        iter.min().ok_or(task_error!("Empty iterator on min"))
     } else {
-        iter.max()
-            .ok_or(TaskError("Empty iterator on min".to_string()))
+        iter.max().ok_or(task_error!("Empty iterator on min"))
     }
 }
 

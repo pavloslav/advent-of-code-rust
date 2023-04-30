@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
     input
@@ -7,9 +6,9 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
         .map(|line| {
             line.chars()
                 .map(|c| {
-                    Ok(c.to_digit(10).ok_or_else(|| {
-                        TaskError(format!("Wrong digit '{c}'"))
-                    })? as i32)
+                    Ok(c.to_digit(10)
+                        .ok_or_else(|| task_error!("Wrong digit '{c}'"))?
+                        as i32)
                 })
                 .collect()
         })

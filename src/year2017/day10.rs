@@ -1,5 +1,5 @@
-use super::aoc::*;
 use super::knots_hash;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input)

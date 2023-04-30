@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input.trim())
@@ -7,11 +7,11 @@ pub fn parse_input(input: &str) -> Result<&str> {
 fn find_hash(init: &str, zeroes: usize) -> Result<usize> {
     (0..)
         .find(|i| {
-            Md5Hasher::new_from_str(init)
+            crate::common::Md5Hasher::new_from_str(init)
                 .add_str(&i.to_string())
                 .has_zeroes(zeroes)
         })
-        .ok_or_else(|| TaskError("unreachable!()".to_string()))
+        .ok_or_else(|| task_error!("unreachable"))
 }
 
 pub fn task1(input: &str) -> Result<usize> {

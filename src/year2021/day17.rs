@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Rect = ((i32, i32), (i32, i32));
 
@@ -19,7 +18,7 @@ pub fn task1(input: &Rect) -> Result<i32> {
     let &((x1, y1), (x2, _y2)) = input;
     let vx = (((1 + 8 * x2) as f64).sqrt() as i32 - 1) / 2;
     if vx * (vx + 1) / 2 < x1 {
-        return Err(TaskError(format!("Probe don't stop, vx={vx}")));
+        return Err(task_error!("Probe don't stop, vx={vx}"));
     }
     let vy = (y1 + 1).abs();
     Ok(vy * (vy + 1) / 2)

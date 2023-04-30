@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub struct Data {
     preamble: usize,
@@ -39,7 +38,7 @@ fn find_span_adding(data: &Data, target: i64) -> Result<&[i64]> {
             return Ok(&numbers[start..end]);
         }
     }
-    Err(TaskError("Not found!".to_string()))
+    Err(task_error!("Not found!"))
 }
 
 pub fn parse_input(input: &str) -> Result<Data> {
@@ -64,7 +63,7 @@ pub fn task2(data: &Data) -> Result<i64> {
     if let (Some(min), Some(max)) = (arr.iter().min(), arr.iter().max()) {
         Ok(min + max)
     } else {
-        Err(TaskError("Should be not empty!".to_string()))
+        Err(task_error!("Should be not empty!"))
     }
 }
 

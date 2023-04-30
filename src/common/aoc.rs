@@ -1,9 +1,9 @@
-use super::error::Result;
+use crate::common::error::Result;
 use std::time::Duration;
 use std::time::SystemTime;
 
-use super::network;
-use super::settings;
+use crate::common::network;
+use crate::common::settings;
 
 const AOC_SETTINGS_FILE_NAME: &str = "aoc.ini";
 
@@ -70,20 +70,13 @@ where
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
         use once_cell::sync::Lazy;
-        use super::common::aoc::measure;
-
-        pub mod aoc {
-            pub use super::super::common::Result;
-            pub use super::super::common::Error;
-            pub use super::super::common::Error::TaskError;
-            pub use super::super::common::floyd_hare_tortoise::*;
-            pub use super::super::common::Md5Hasher;
-        }
+        use crate::common::aoc::measure;
+        //pub use crate::prelude::*;
 
         $(pub mod $day;)*
 
-        pub fn task(day: &str) -> aoc::Result<()> {
-            (FN_MAP.get(day).ok_or(aoc::Error::WrongTask)?.f)()
+        pub fn task(day: &str) -> crate::Result<()> {
+            (FN_MAP.get(day).ok_or(crate::Error::WrongTask{year:stringify!($year).to_string(), day:day.to_string()})?.f)()
         }
 
         static FN_MAP : Lazy<std::collections::HashMap<&'static str, crate::common::FunctionHolder>>

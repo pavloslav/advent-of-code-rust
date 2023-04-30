@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<i32>> {
     input.lines().map(|x| Ok(x.parse()?)).collect()

@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<char>>> {
     build_lcd(6, 50, input)
@@ -69,14 +68,12 @@ fn build_lcd(
                     lcd[x][0] = temp;
                 }
             } else {
-                return Err(TaskError(format!(
+                return Err(task_error!(
                     "Can't find all data in command {command}"
-                )));
+                ));
             }
         } else {
-            return Err(TaskError(format!(
-                "Failed to parse command {command}"
-            )));
+            return Err(task_error!("Failed to parse command {command}"));
         }
     }
     Ok(lcd)

@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 fn first_op(s: &str, precedence: bool) -> Option<usize> {
     let mut plus = None;
@@ -39,15 +38,15 @@ fn calculate(s: &str, precedence: bool) -> Result<u64> {
         match op {
             "+" => calculate(left, precedence)? + calculate(right, precedence)?,
             "*" => calculate(left, precedence)? * calculate(right, precedence)?,
-            _ => Err(TaskError(format!(
+            _ => Err(task_error!(
                 "failed with op='{op}' on
     s = '{s}'
     left='{left}'
     right = '{right}'"
-            )))?,
+            ))?,
         }
     } else if s.len() <= 1 {
-        Err(TaskError(format!("failed on s = '{s}'")))?
+        Err(task_error!("failed on s = '{s}'"))?
     } else {
         calculate(s[1..s.len() - 1].trim(), precedence)?
     })

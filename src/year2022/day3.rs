@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 fn value(c: char) -> u32 {
     if c.is_uppercase() {
@@ -27,7 +26,7 @@ pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
             right
                 .iter()
                 .find(|&item| left.contains(&item))
-                .ok_or_else(|| TaskError("Empty badges!".to_string()))
+                .ok_or_else(|| task_error!("Empty badges!"))
         })
         .try_fold(0, |acc, x: Result<_>| Ok(acc + x?))
 }
@@ -45,7 +44,7 @@ pub fn task2(input: &[Vec<u32>]) -> Result<u32> {
         result += *badges
             .iter()
             .next()
-            .ok_or_else(|| TaskError("Empty badges!".to_string()))?;
+            .ok_or_else(|| task_error!("Empty badges!"))?;
     }
     Ok(result)
 }

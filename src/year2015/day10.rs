@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-use super::aoc::*;
+use crate::*;
 
 fn look_and_say(input: &str) -> String {
     input

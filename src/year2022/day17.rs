@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<i32>> {
     input
@@ -8,7 +7,7 @@ pub fn parse_input(input: &str) -> Result<Vec<i32>> {
         .map(|c| match c {
             b'<' => Ok(-1),
             b'>' => Ok(1),
-            other => Err(TaskError(format!("Unknown jet direction '{other}'"))),
+            other => Err(task_error!("Unknown jet direction '{other}'")),
         })
         .collect()
 }

@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 use super::computer::Computer;
 
@@ -25,7 +24,7 @@ pub fn task1(code: &[isize]) -> Result<isize> {
         .collect::<Result<Vec<_>>>()?
         .into_iter()
         .max()
-        .ok_or_else(|| TaskError("Should not be empty!".to_string()))
+        .ok_or_else(|| task_error!("Should not be empty!"))
 }
 
 pub fn task2(code: &[isize]) -> Result<isize> {
@@ -59,6 +58,6 @@ pub fn task2(code: &[isize]) -> Result<isize> {
         .collect::<Result<Vec<_>>>()?
         .iter()
         .max()
-        .ok_or_else(|| TaskError("Should not be empty!".to_string()))
+        .ok_or_else(|| task_error!("Should not be empty!"))
         .copied()
 }

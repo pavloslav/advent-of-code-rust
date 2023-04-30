@@ -41,8 +41,8 @@ fn main_unsafe() -> Result<()> {
     .into_iter()
     .collect();
 
-    tasks.get(&args.year).ok_or_else(|| Error::WrongTask)?(&format!(
-        "day{}",
-        args.day
-    ))
+    tasks.get(&args.year).ok_or_else(|| Error::WrongTask {
+        year: args.year.clone(),
+        day: args.day.clone(),
+    })?(&format!("day{}", args.day))
 }

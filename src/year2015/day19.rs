@@ -1,5 +1,5 @@
-use super::aoc::*;
-use std::collections::{HashMap, HashSet};
+use crate::*;
+use std::collections::HashSet;
 
 type Molecule = String;
 type Rules = Vec<(Molecule, Molecule)>;
@@ -13,7 +13,7 @@ pub fn parse_input(input: &str) -> Result<(Rules, Molecule)> {
         .collect::<Result<Rules>>()?;
     let molecule = lines
         .next()
-        .ok_or(TaskError("No molecula for Rudolph".to_string()))?
+        .ok_or(task_error!("No molecula for Rudolph"))?
         .to_string();
     Ok((rules, molecule))
 }
@@ -34,7 +34,7 @@ pub fn task1((rules, medicine): &(Rules, Molecule)) -> Result<usize> {
     Ok(molecules.len())
 }
 
-pub fn task2((rules, medicine): &(Rules, Molecule)) -> Result<usize> {
+pub fn task2((_rules, medicine): &(Rules, Molecule)) -> Result<usize> {
     /* Rules have three special elements: Rn, Ar and Y
      *  they are never on the left side and always in a pattern
      *  _ => _ Rn (_ Y)* _ Ar
@@ -47,7 +47,7 @@ pub fn task2((rules, medicine): &(Rules, Molecule)) -> Result<usize> {
     let rn = medicine.matches("Rn").count();
     let ar = medicine.matches("Ar").count();
     if rn != ar {
-        return Err(TaskError("Rn and Ar are not in symmetry!".to_string()));
+        return Err(task_error!("Rn and Ar are not in symmetry!"));
     }
     let elements = medicine.matches(char::is_uppercase).count();
     Ok(elements - 2 * y - rn - ar - 1)

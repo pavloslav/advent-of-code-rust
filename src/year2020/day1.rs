@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 use std::collections::HashSet;
 
 pub fn parse_input(input: &str) -> Result<Vec<i64>> {
@@ -11,7 +10,7 @@ pub fn task1(data: &[i64]) -> Result<i64> {
     data.iter()
         .find(|&value| set.contains(&(2020 - value)))
         .map(|value| value * (2020 - value))
-        .ok_or_else(|| TaskError("Not found".to_string()))
+        .ok_or_else(|| task_error!("Not found"))
 }
 
 pub fn task2(data: &[i64]) -> Result<i64> {
@@ -24,5 +23,5 @@ pub fn task2(data: &[i64]) -> Result<i64> {
             }
         }
     }
-    Err(TaskError("Not found".to_string()))
+    Err(task_error!("Not found"))
 }

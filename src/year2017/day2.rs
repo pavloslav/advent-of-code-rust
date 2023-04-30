@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
     input
@@ -11,11 +11,15 @@ pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
     input
         .iter()
         .map(|line| {
-            Ok(line.iter().max().ok_or_else(|| {
-                TaskError("Empty data unacceptable!".to_string())
-            })? - line.iter().min().ok_or_else(|| {
-                TaskError("Empty data unacceptable!".to_string())
-            })?)
+            let max = line
+                .iter()
+                .max()
+                .ok_or_else(|| task_error!("Empty data unacceptable!"))?;
+            let min = line
+                .iter()
+                .min()
+                .ok_or_else(|| task_error!("Empty data unacceptable!"))?;
+            Ok(max - min)
         })
         .sum()
 }

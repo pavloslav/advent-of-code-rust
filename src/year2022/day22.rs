@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub enum Order {
     Walk(i16),
@@ -53,9 +52,9 @@ pub fn task1(input: &Task) -> Result<usize> {
                                     .iter()
                                     .position(|&c| c != b' ')
                                     .ok_or_else(|| {
-                                        TaskError(format!(
+                                        task_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
-                                        ))
+                                        )
                                     })?
                             },
                             y,
@@ -74,9 +73,9 @@ pub fn task1(input: &Task) -> Result<usize> {
                                     .iter()
                                     .position(|row| row[x] != b' ')
                                     .ok_or_else(|| {
-                                        TaskError(format!(
+                                        task_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
-                                        ))
+                                        )
                                     })?
                             },
                         ),
@@ -88,9 +87,9 @@ pub fn task1(input: &Task) -> Result<usize> {
                                     .iter()
                                     .rposition(|&c| c != b' ')
                                     .ok_or_else(|| {
-                                        TaskError(format!(
+                                        task_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
-                                        ))
+                                        )
                                     })?
                             },
                             y,
@@ -110,16 +109,16 @@ pub fn task1(input: &Task) -> Result<usize> {
                                         row.len() > x && row[x] != b' '
                                     })
                                     .ok_or_else(|| {
-                                        TaskError(format!(
+                                        task_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
-                                        ))
+                                        )
                                     })?
                             },
                         ),
                         _ => {
-                            return Err(TaskError(format!(
+                            return Err(task_error!(
                                 "Direction can't be {dir}!"
-                            )))
+                            ))
                         }
                     };
                     if input.map[ny][nx] == b'.' {

@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
     Ok(input.lines().map(|line| line.bytes().collect()).collect())
@@ -69,9 +68,8 @@ pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
                 .position(|&symbol| symbol == b'S')
                 .map(|j| (i as i32, j as i32))
         })
-        .ok_or_else(|| TaskError("Empty input!".to_string()))?;
-    shortest_way(start, map)
-        .ok_or_else(|| TaskError("Way not found!".to_string()))
+        .ok_or_else(|| task_error!("Empty input!"))?;
+    shortest_way(start, map).ok_or_else(|| task_error!("Way not found!"))
 }
 
 pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
@@ -90,6 +88,6 @@ pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
                 .min()
         })
         .min()
-        .ok_or_else(|| TaskError("Empty table!".to_string()))?
-        .ok_or_else(|| TaskError("Empty line!".to_string()))
+        .ok_or_else(|| task_error!("Empty table!"))?
+        .ok_or_else(|| task_error!("Empty line!"))
 }

@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 use std::collections::HashSet;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<&str>>> {

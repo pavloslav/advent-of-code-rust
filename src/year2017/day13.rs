@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Firewall = Vec<(i32, i32)>;
 
@@ -30,5 +29,5 @@ pub fn task2(firewall: &Firewall) -> Result<i32> {
                 .iter()
                 .all(|(depth, range)| (delay + depth) % (2 * (range - 1)) != 0)
         })
-        .ok_or_else(|| TaskError("This shouldn't be".to_string()))
+        .ok_or_else(|| task_error!("This shouldn't be"))
 }

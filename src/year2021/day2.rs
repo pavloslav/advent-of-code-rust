@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub enum Command {
     Forward(i32),
@@ -19,9 +17,7 @@ impl std::str::FromStr for Command {
             "forward" => Forward(value),
             "down" => Down(value),
             "up" => Up(value),
-            other => {
-                return Err(TaskError(format!("Unknown instruction '{other}'")))
-            }
+            other => return Err(task_error!("Unknown instruction '{other}'")),
         })
     }
 }

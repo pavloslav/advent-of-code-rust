@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Counter = std::collections::HashMap<char, usize>;
 
@@ -19,7 +18,7 @@ impl PolymerData {
         let mut polymer_data = PolymerData {
             polymer: lines
                 .next()
-                .ok_or_else(|| TaskError("Empty input!".to_string()))?
+                .ok_or_else(|| task_error!("Empty input!"))?
                 .chars()
                 .collect(),
             rules: std::collections::HashMap::new(),
@@ -68,7 +67,7 @@ impl PolymerData {
         Ok(self
             .counters
             .get(&(left, right, steps))
-            .ok_or_else(|| TaskError("Empty counters!".to_string()))?
+            .ok_or_else(|| task_error!("Empty counters!"))?
             .clone())
     }
 
@@ -86,11 +85,11 @@ impl PolymerData {
         let min = counter
             .values()
             .min()
-            .ok_or_else(|| TaskError("Empty counter!".to_string()))?;
+            .ok_or_else(|| task_error!("Empty counter!"))?;
         let max = counter
             .values()
             .max()
-            .ok_or_else(|| TaskError("Empty counter!".to_string()))?;
+            .ok_or_else(|| task_error!("Empty counter!"))?;
         Ok(max - min)
     }
 }

@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 struct Point {
     x: usize,
@@ -33,9 +33,7 @@ impl std::str::FromStr for Instruction {
             "turn on" => Command::On,
             "turn off" => Command::Off,
             "toggle" => Command::Toggle,
-            other => {
-                return Err(TaskError(format!("Wrong command: '{other}'")))
-            }
+            other => return Err(task_error!("Wrong command: '{other}'")),
         };
         Ok(Instruction {
             command,

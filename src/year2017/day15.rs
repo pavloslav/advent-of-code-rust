@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input
@@ -7,7 +6,7 @@ pub fn parse_input(input: &str) -> Result<Vec<usize>> {
         .map(|s| {
             Ok(s.split_whitespace()
                 .last()
-                .ok_or_else(|| TaskError("Empty input!".to_string()))?
+                .ok_or_else(|| task_error!("Empty input!"))?
                 .parse()?)
         })
         .collect()

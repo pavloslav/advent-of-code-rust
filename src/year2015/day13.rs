@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub struct Table {
     scores: Vec<Vec<i32>>,
@@ -20,7 +20,7 @@ pub fn parse_input(input: &str) -> Result<Table> {
         let score = match gain.as_str() {
             "gain" => score,
             "lose" => -score,
-            other => return Err(TaskError(format!("Units can not '{other}'"))),
+            other => return Err(task_error!(("Units can not '{other}'"))),
         };
 
         let names_size = names.len();

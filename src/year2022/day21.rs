@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Yell = u64;
 
@@ -111,14 +110,12 @@ pub fn parse_input(input: &str) -> Result<HashMap<String, Monkey>> {
                     '*' => Operation::Mul,
                     '/' => Operation::Div,
                     other => {
-                        return Err(TaskError(format!(
-                            "Unknown operation '{other}'"
-                        )));
+                        return Err(task_error!("Unknown operation '{other}'"));
                     }
                 };
                 Ok((name, Monkey::Operation(left, op, right)))
             } else {
-                Err(TaskError(format!("Unknown monkey format: '{line}'")))
+                Err(task_error!("Unknown monkey format: '{line}'"))
             }
         })
         .collect()
@@ -136,7 +133,7 @@ pub fn task2(map: &HashMap<String, Monkey>) -> Result<Yell> {
             Ok(map[right].find_humn(map, map[left].yell(map)))
         }
     } else {
-        Err(TaskError("No root monkey!".to_string()))
+        Err(task_error!("No root monkey!"))
     }
 }
 

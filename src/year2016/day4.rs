@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 use std::cmp::Ordering;
 use std::collections::HashMap;
@@ -22,9 +20,9 @@ impl std::str::FromStr for Room {
                 )
                 .unwrap()
             });
-        let cap = INPUT_REGEX.captures(input).ok_or_else(|| {
-            TaskError(format!("Can't parse the input '{input}'"))
-        })?;
+        let cap = INPUT_REGEX
+            .captures(input)
+            .ok_or_else(|| task_error!("Can't parse the input '{input}'"))?;
         if let (Some(name), Some(id), Some(check_sum)) =
             (cap.name("name"), cap.name("id"), cap.name("check_sum"))
         {
@@ -34,7 +32,7 @@ impl std::str::FromStr for Room {
                 check_sum: check_sum.as_str().to_string(),
             })
         } else {
-            Err(TaskError("Can't find all fields in input".to_string()))
+            Err(task_error!("Can't find all fields in input"))
         }
     }
 }
@@ -90,7 +88,7 @@ pub fn task2(input: &[Room]) -> Result<usize> {
                     && room.decrypt().contains("northpole object")
             })
         })
-        .ok_or_else(|| TaskError("No room found".to_string()))
+        .ok_or_else(|| task_error!("No room found"))
 }
 
 #[cfg(test)]
