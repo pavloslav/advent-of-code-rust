@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub enum Direction {
     Down,
@@ -80,9 +79,7 @@ impl Packet {
                 .iter()
                 .enumerate()
                 .find(|&(_, &b)| b == b'|')
-                .ok_or_else(|| {
-                    TaskError("First line should contain '|'!".to_string())
-                })?
+                .ok_or_else(|| task_error!("First line should contain '|'!"))?
                 .0,
             y: 0,
             dir: Direction::Down,

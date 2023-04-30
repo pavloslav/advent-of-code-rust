@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub enum Dance {
     Spin(usize),
@@ -24,7 +22,7 @@ impl FromStr for Dance {
                     scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char)?;
                 Dance::SwapDancer(first, second)
             }
-            _ => return Err(TaskError(format!("Unknown command {s}"))),
+            _ => return Err(task_error!("Unknown command {s}")),
         })
     }
 }

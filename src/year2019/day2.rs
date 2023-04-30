@@ -1,6 +1,5 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
 use super::computer::Computer;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<isize>> {
     Computer::prepare_code(input)
@@ -28,5 +27,5 @@ pub fn task2(input: &[isize]) -> Result<isize> {
             }
         }
     }
-    Err(TaskError("Answer not found!".to_string()))
+    Err(task_error!("Answer not found!"))
 }

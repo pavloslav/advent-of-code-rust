@@ -15,6 +15,7 @@ pub use aoc::get_input;
 pub use aoc::get_input_with_mod;
 pub use aoc::FunctionHolder;
 
+#[macro_use]
 pub mod error;
 
 pub use error::Error;

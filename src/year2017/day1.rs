@@ -1,19 +1,16 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<u32>> {
     input
         .lines()
         .find(|s| !s.starts_with("//") && !s.is_empty())
         .ok_or_else(|| {
-            TaskError(
-                "There should be non-comment and non-empty line".to_string(),
-            )
+            task_error!("There should be non-comment and non-empty line")
         })?
         .chars()
         .map(|c| {
             c.to_digit(10)
-                .ok_or_else(|| TaskError(format!("Can't parse digit '{c}'")))
+                .ok_or_else(|| task_error!("Can't parse digit '{c}'"))
         })
         .collect()
 }

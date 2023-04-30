@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 use std::ops::RangeInclusive;
 
 pub fn parse_input(input: &str) -> Result<RangeInclusive<usize>> {

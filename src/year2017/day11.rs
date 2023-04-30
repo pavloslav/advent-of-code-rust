@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<(i32, i32)>> {
     input
@@ -13,7 +12,7 @@ pub fn parse_input(input: &str) -> Result<Vec<(i32, i32)>> {
                 "se" => (1, 0),
                 "s" => (0, 1),
                 "sw" => (-1, 1),
-                other => Err(TaskError(format!("Unknown direction: {other}")))?,
+                other => Err(task_error!("Unknown direction: {other}"))?,
             })
         })
         .collect()

@@ -2,16 +2,12 @@
  * Wrapper for minreq crate
  */
 
-#[derive(Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum Error {
-    Network(minreq::Error),
+    #[error("Network error: {0}")]
+    Network(#[from] minreq::Error),
+    #[error("Server responded with fail: {0}")]
     WrongResponce(String),
-}
-
-impl From<minreq::Error> for Error {
-    fn from(err: minreq::Error) -> Error {
-        Error::Network(err)
-    }
 }
 
 pub fn get_input_from_url(

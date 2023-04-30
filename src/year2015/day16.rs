@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Map = std::collections::HashMap<String, usize>;
 
@@ -64,7 +63,7 @@ where
         .iter()
         .enumerate()
         .find(|(_i, data)| check(data, &filter))
-        .ok_or_else(|| TaskError("No suitable answer".to_string()))?
+        .ok_or_else(|| task_error!("No suitable answer"))?
         .0
         + 1)
 }

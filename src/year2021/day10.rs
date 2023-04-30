@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 enum Brackets {
     Correct(Vec<char>),
@@ -16,9 +15,9 @@ fn check_brackets(line: &str) -> Result<Brackets> {
             '<' => stack.push('>'),
             closing => {
                 if symbol
-                    != stack.pop().ok_or_else(|| {
-                        TaskError("No brackets to pop".to_string())
-                    })?
+                    != stack
+                        .pop()
+                        .ok_or_else(|| task_error!("No brackets to pop"))?
                 {
                     return Ok(Brackets::Incorrect(closing));
                 }
@@ -58,9 +57,9 @@ pub fn task2(data: &str) -> Result<usize> {
                         '}' => 3,
                         '>' => 4,
                         other => {
-                            return Err(TaskError(format!(
+                            return Err(task_error!(
                                 "Unknown bracket '{other}'"
-                            )));
+                            ));
                         }
                     })
             })?)

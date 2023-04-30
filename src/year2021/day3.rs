@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub struct Data {
     numbers: Vec<usize>,
@@ -13,10 +12,10 @@ pub fn parse_input(input: &str) -> Result<Data> {
         .map(|line| {
             if let Some(s) = size {
                 if s != line.len() {
-                    return Err(TaskError(format!(
+                    return Err(task_error!(
                         "All lines should be same length {}, but one is {s}",
                         line.len()
-                    )));
+                    ));
                 }
             } else {
                 size = Some(line.len());
@@ -24,7 +23,7 @@ pub fn parse_input(input: &str) -> Result<Data> {
             Ok(usize::from_str_radix(line, 2)?)
         })
         .collect::<Result<_>>()?;
-    let size = size.ok_or_else(|| TaskError("No line length!".to_string()))?;
+    let size = size.ok_or_else(|| task_error!("No line length!"))?;
     Ok(Data { numbers, size })
 }
 

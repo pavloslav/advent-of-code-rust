@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub struct Register {
     reg: usize,
@@ -12,9 +10,7 @@ impl std::str::FromStr for Register {
         let reg = ["a", "b", "c", "d"]
             .iter()
             .position(|&r| r == reg)
-            .ok_or_else(|| {
-                TaskError(format!("'{reg}' is not a register name"))
-            })?;
+            .ok_or_else(|| task_error!("'{reg}' is not a register name"))?;
         Ok(Register { reg })
     }
 }
@@ -81,10 +77,10 @@ pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
                         shift: y.as_str().parse()?,
                     })
                 } else {
-                    Err(TaskError(format!("Can't find parts in '{line}'")))
+                    Err(task_error!("Can't find parts in '{line}'"))
                 }
             } else {
-                Err(TaskError(format!("Can't match '{line}'")))
+                Err(task_error!("Can't match '{line}'"))
             }
         })
         .collect::<Result<Vec<_>>>()

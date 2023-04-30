@@ -1,5 +1,5 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+//use crate::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<u32>> {
     let mut result = vec![0];
@@ -10,7 +10,9 @@ pub fn parse_input(input: &str) -> Result<Vec<u32>> {
         } else if calories.is_empty() {
             result.push(0);
         } else {
-            return Err(TaskError(format!("Incorrect input: '{calories}'")));
+            return Err(
+                super::super::task_error!("Incorrect input: '{calories}'"), /* task_error!(("Incorrect input: '{calories}'")*/
+            );
         }
     }
     result.sort();

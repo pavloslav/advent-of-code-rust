@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<u32> {
     Ok(input.trim().parse()?)
@@ -44,7 +44,7 @@ pub fn task2(&input: &u32) -> Result<u32> {
             }
         }
     }
-    Err(TaskError("Failed to find the answer".to_string()))
+    Err(task_error!("Failed to find the answer"))
 }
 
 #[cfg(test)]

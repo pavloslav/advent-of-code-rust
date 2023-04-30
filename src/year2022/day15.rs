@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Point = (i32, i32);
 type SensorData = (Point, Point);
@@ -102,7 +101,7 @@ pub fn task2(sensors: &[SensorData]) -> Result<usize> {
             );
         }
     }
-    Err(TaskError("Not found".to_string()))
+    Err(task_error!("Not found"))
 }
 
 #[cfg(test)]

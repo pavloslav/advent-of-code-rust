@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub enum FsRecord {
     File(usize),

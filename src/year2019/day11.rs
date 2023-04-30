@@ -1,5 +1,5 @@
-use super::aoc::*;
 use super::computer::Computer;
+use crate::*;
 use std::collections::HashMap;
 
 struct Robot {

@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Order = ((i32, i32), i32);
 
@@ -14,9 +13,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Order>> {
                 'U' => (0, 1),
                 'D' => (0, -1),
                 other => {
-                    return Err(TaskError(format!(
-                        "Unknown direction '{other}'"
-                    )));
+                    return Err(task_error!("Unknown direction '{other}'"));
                 }
             };
             Ok((dir, value))

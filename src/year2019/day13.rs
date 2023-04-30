@@ -1,6 +1,5 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
 use super::computer::Computer;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<isize>> {
     Computer::prepare_code(input)
@@ -51,7 +50,7 @@ pub fn task2(code: &[isize]) -> Result<isize> {
                 last
             }
         })
-        .ok_or_else(|| TaskError("Impossible!".to_string()))?;
+        .ok_or_else(|| task_error!("Impossible!"))?;
     let mut blocks: HashMap<_, _> =
         grid.iter().filter(|(_, &t)| t == BLOCK).collect();
 

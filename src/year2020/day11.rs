@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 mod ferry {
     enum ModelKind {

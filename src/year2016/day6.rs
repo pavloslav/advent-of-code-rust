@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 use std::collections::HashMap;
 
@@ -25,9 +24,7 @@ pub fn task1(statistics: &[HashMap<char, u32>]) -> Result<String> {
                 .iter()
                 .max_by_key(|tuple| tuple.1)
                 .map(|tuple| *tuple.0)
-                .ok_or_else(|| {
-                    TaskError("No elements in statistics".to_string())
-                })
+                .ok_or_else(|| task_error!("No elements in statistics"))
         })
         .collect()
 }
@@ -40,9 +37,7 @@ pub fn task2(statistics: &[HashMap<char, u32>]) -> Result<String> {
                 .iter()
                 .min_by_key(|tuple| tuple.1)
                 .map(|tuple| *tuple.0)
-                .ok_or_else(|| {
-                    TaskError("No elements in statistics".to_string())
-                })
+                .ok_or_else(|| task_error!("No elements in statistics"))
         })
         .collect()
 }

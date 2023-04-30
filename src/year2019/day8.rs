@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input)
@@ -22,9 +21,7 @@ pub fn task1(input: &str) -> Result<usize> {
     {
         Ok(ones * twos)
     } else {
-        Err(TaskError(
-            "Impossible, 3 elements are 3 elements".to_string(),
-        ))
+        Err(task_error!("Impossible, 3 elements are 3 elements",))
     }
 }
 
@@ -33,7 +30,7 @@ fn decode(c: char) -> Result<char> {
         '0' => ' ',
         '1' => 'X',
         '2' => '-',
-        other => Err(TaskError(format!("Unknown symbol '{other}'")))?,
+        other => Err(task_error!("Unknown symbol '{other}'"))?,
     })
 }
 

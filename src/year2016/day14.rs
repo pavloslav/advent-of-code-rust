@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 use super::super::common::Md5Hasher;
 use itertools::Itertools;

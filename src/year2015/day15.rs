@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 const TOTAL_SPOONS: usize = 100;
 const TOTAL_CALORIES: i32 = 500;

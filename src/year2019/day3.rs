@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub struct Step {
     direction: (i32, i32),
@@ -16,12 +14,10 @@ impl std::str::FromStr for Step {
                 Some('L') => (-1, 0),
                 Some('U') => (0, 1),
                 Some('D') => (0, -1),
-                Some(other) => Err(TaskError(format!(
-                    "Unable to parse direction '{other}'"
-                )))?,
-                None => {
-                    Err(TaskError("Unable to parse emtpy string".to_string()))?
+                Some(other) => {
+                    Err(task_error!("Unable to parse direction '{other}'"))?
                 }
+                None => Err(task_error!("Unable to parse empty string"))?,
             },
             length: input[1..].parse()?,
         })
@@ -34,7 +30,7 @@ pub fn parse_input(input: &str) -> Result<[Vec<Step>; 2]> {
         .map(|line| line.split(',').map(|step| step.parse()).collect())
         .collect::<Result<Vec<_>>>()?
         .try_into()
-        .map_err(|_| TaskError("Wrong size".to_string()))
+        .map_err(|_| task_error!("Wrong size"))
 }
 
 use std::collections::HashSet;
@@ -60,7 +56,7 @@ pub fn task1(input: &[Vec<Step>; 2]) -> Result<usize> {
     way1.intersection(&way2)
         .map(|(x, y)| (x.abs() + y.abs()) as usize)
         .min()
-        .ok_or_else(|| TaskError("Way is empty!".to_string()))
+        .ok_or_else(|| task_error!("Way is empty!"))
 }
 
 use std::collections::HashMap;
@@ -92,5 +88,5 @@ pub fn task2(input: &[Vec<Step>; 2]) -> Result<usize> {
         .filter(|(key, _)| way2.contains_key(key))
         .map(|(_, &length)| length)
         .min()
-        .ok_or_else(|| TaskError("Way is empty!".to_string()))
+        .ok_or_else(|| task_error!("Way is empty!"))
 }

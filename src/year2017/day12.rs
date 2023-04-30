@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 type Connections = std::collections::HashMap<usize, Vec<usize>>;
 
@@ -13,7 +12,7 @@ pub fn parse_input(input: &str) -> Result<Connections> {
         .map(|line| {
             INPUT_REGEX
                 .captures(line)
-                .ok_or_else(|| TaskError("Can't parse input".to_string()))
+                .ok_or_else(|| task_error!("Can't parse input"))
                 .map(|captures| {
                     if let (Some(index), Some(connected)) =
                         (captures.name("index"), captures.name("connected"))
@@ -27,9 +26,7 @@ pub fn parse_input(input: &str) -> Result<Connections> {
                                 .collect::<Result<_>>()?,
                         ))
                     } else {
-                        Err(TaskError(
-                            "Can't find all elements in line".to_string(),
-                        ))
+                        Err(task_error!("Can't find all elements in line"))
                     }
                 })?
         })

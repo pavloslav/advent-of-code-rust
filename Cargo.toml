@@ -27,3 +27,4 @@ num = "*"                                           # 2019/10, 2019/12 - gcd, lc
 
 clap = { version = "*", features = ["derive"] }     # arguments parser
 fancy-regex = "*"                                   # backreferences
+thiserror = "*"                                     # attempt

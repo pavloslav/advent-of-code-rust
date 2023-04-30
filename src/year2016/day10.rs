@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 #[derive(Copy, Clone)]
 pub enum Target {
@@ -23,7 +22,7 @@ impl Target {
         match typ {
             "bot" => Ok(Target::Bot(target)),
             "output" => Ok(Target::Output(target)),
-            other => Err(TaskError(format!("Unknown target type '{other}'"))),
+            other => Err(task_error!("Unknown target type '{other}'")),
         }
     }
     fn give(&self, value: usize, bots: &mut Robots, output: &mut Output) {
@@ -112,21 +111,25 @@ impl Robot {
     ) -> Result<()> {
         self.target_lo
             .as_ref()
-            .ok_or_else(|| TaskError("Failed to get low target".to_string()))?
+            .ok_or_else(|| task_error!("Failed to get low target"))?
             .give(
-                *self.hands.iter().min().ok_or_else(|| {
-                    TaskError("Hands can't be empty!".to_string())
-                })?,
+                *self
+                    .hands
+                    .iter()
+                    .min()
+                    .ok_or_else(|| task_error!("Hands can't be empty!"))?,
                 bots,
                 output,
             );
         self.target_hi
             .as_ref()
-            .ok_or_else(|| TaskError("Failed to get hi target".to_string()))?
+            .ok_or_else(|| task_error!("Failed to get hi target"))?
             .give(
-                *self.hands.iter().max().ok_or_else(|| {
-                    TaskError("Hands can't be empty!".to_string())
-                })?,
+                *self
+                    .hands
+                    .iter()
+                    .max()
+                    .ok_or_else(|| task_error!("Hands can't be empty!"))?,
                 bots,
                 output,
             );
@@ -154,7 +157,7 @@ pub fn task1(robots: &Robots) -> Result<usize> {
             }
         }
     }
-    Err(TaskError("Not found".to_string()))
+    Err(task_error!("Not found"))
 }
 
 pub fn task2(robots: &Robots) -> Result<usize> {

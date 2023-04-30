@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<(i16, i16)>> {
     Ok(input
@@ -49,7 +48,7 @@ fn station_position(asteroids: &[(i16, i16)]) -> Result<(i16, i16)> {
         .iter()
         .max_by_key(|&&station| visible_from(station, asteroids))
         .copied()
-        .ok_or_else(|| TaskError("Asteroids shouldn't be empty!".to_string()))
+        .ok_or_else(|| task_error!("Asteroids shouldn't be empty!"))
 }
 
 pub fn task1(asteroids: &[(i16, i16)]) -> Result<usize> {
@@ -64,9 +63,9 @@ const ASTEROID_NEEDED: usize = 200;
 
 pub fn task2(asteroids: &[(i16, i16)]) -> Result<i16> {
     if asteroids.len() <= ASTEROID_NEEDED {
-        return Err(TaskError(format!(
+        return Err(task_error!(
             "There should be at least {ASTEROID_NEEDED} asteroids!"
-        )));
+        ));
     }
     let station = station_position(asteroids)?;
     let mut asteroids: Vec<_> = asteroids

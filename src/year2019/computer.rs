@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 use std::collections::{HashMap, VecDeque};
 
@@ -60,9 +59,9 @@ impl Computer {
                 let tgt = self.get_target(1)?;
                 self.memory.insert(
                     tgt,
-                    self.input.pop_front().ok_or_else(|| {
-                        TaskError("Input is empty!".to_string())
-                    })?,
+                    self.input
+                        .pop_front()
+                        .ok_or_else(|| task_error!("Input is empty!"))?,
                 );
                 self.ip += 2;
             }
@@ -101,9 +100,7 @@ impl Computer {
                 self.ip += 2;
             }
             Computer::HLT => {}
-            opcode => {
-                return Err(TaskError(format!("Unknown opcode: {opcode}")))
-            }
+            opcode => return Err(task_error!("Unknown opcode: {opcode}")),
         }
         Ok(())
     }
@@ -136,10 +133,10 @@ impl Computer {
                 .memory
                 .get(&(self.relative_base + self.memory[&(self.ip + index)]))
                 .unwrap_or(&0),
-            other => Err(TaskError(format!(
+            other => Err(task_error!(
                 "Unknown source mode {other} in instruction {}",
                 self.memory[&self.ip]
-            )))?,
+            ))?,
         })
     }
     fn get_target(&self, index: Word) -> Result<Word> {
@@ -150,10 +147,11 @@ impl Computer {
         Ok(match mode % 10 {
             0 => self.memory[&(self.ip + index)],
             2 => self.relative_base + self.memory[&(self.ip + index)],
-            other => Err(TaskError(format!(
+            other => Err(task_error!(
                 "Unknown target mode {other} in instruction {} on ip {}",
-                self.memory[&self.ip], self.ip
-            )))?,
+                self.memory[&self.ip],
+                self.ip
+            ))?,
         })
     }
     pub fn run(&mut self) -> Result<&mut Self> {
@@ -168,7 +166,7 @@ impl Computer {
     pub fn read(&mut self) -> Result<Word> {
         self.output
             .pop_front()
-            .ok_or_else(|| TaskError("Output is empty!".to_string()))
+            .ok_or_else(|| task_error!("Output is empty!"))
     }
     pub fn prepare_code(input: &str) -> Result<Vec<Word>> {
         input.trim().split(',').map(|x| Ok(x.parse()?)).collect()

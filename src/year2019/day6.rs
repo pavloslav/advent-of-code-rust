@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<[String; 2]>> {
     input
@@ -9,9 +8,7 @@ pub fn parse_input(input: &str) -> Result<Vec<[String; 2]>> {
                 .map(|s| s.to_string())
                 .collect::<Vec<_>>()
                 .try_into()
-                .map_err(|_| {
-                    TaskError("Wrong number of elements in input!".to_string())
-                })
+                .map_err(|_| task_error!("Wrong number of elements in input!"))
         })
         .collect()
 }

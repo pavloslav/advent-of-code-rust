@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 #[derive(Debug, Clone)]
 pub enum Operation {
@@ -26,7 +24,7 @@ impl std::str::FromStr for Operation {
             "nop" => Ok(Operation::Nop(value)),
             "acc" => Ok(Operation::Acc(value)),
             "jmp" => Ok(Operation::Jmp(value)),
-            _ => Err(TaskError(format!("Can't parse operation '{line}'"))),
+            _ => Err(task_error!("Can't parse operation '{line}'")),
         }
     }
 }
@@ -46,11 +44,11 @@ impl Computer {
                     self.instruction
                         .checked_sub(offset.unsigned_abs() as usize)
                         .ok_or_else(|| {
-                            TaskError("Wrong instruction address".to_string())
+                            task_error!("Wrong instruction address")
                         })?
                 } else {
                     self.instruction.checked_add(offset as usize).ok_or_else(
-                        || TaskError("Wrong instruction address".to_string()),
+                        || task_error!("Wrong instruction address"),
                     )?
                 }
             }
@@ -123,7 +121,7 @@ pub fn task2(program: &Program) -> Result<i64> {
     if computer.exited() {
         Ok(computer.accumulator)
     } else {
-        Err(TaskError("Failed to calculate".to_string()))
+        Err(task_error!("Failed to calculate"))
     }
 }
 

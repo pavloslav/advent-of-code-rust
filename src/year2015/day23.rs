@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 const REG_A: usize = 0;
 const REG_B: usize = 1;
@@ -10,7 +9,7 @@ fn reg_num(input: &str) -> Result<Register> {
     match input {
         "a" => Ok(REG_A),
         "b" => Ok(REG_B),
-        other => Err(TaskError(format!("Wrong register '{other}'"))),
+        other => Err(task_error!("Wrong register '{other}'")),
     }
 }
 
@@ -36,7 +35,7 @@ impl Instruction {
         INPUT_REGEX
             .captures(input)
             .ok_or_else(|| {
-                TaskError(format!("Can't find any instructions in '{input}'"))
+                task_error!("Can't find any instructions in '{input}'")
             })
             .and_then(|captures| {
                 Ok(if let Some(hlf) = captures.name("hlf") {
@@ -62,9 +61,7 @@ impl Instruction {
                         jio_off.as_str().parse()?,
                     )
                 } else {
-                    return Err(TaskError(format!(
-                        "Unknown instruction: {input}"
-                    )));
+                    return Err(task_error!("Unknown instruction: {input}"));
                 })
             })
     }
@@ -101,14 +98,14 @@ impl Computer {
     fn get_reg(&mut self, reg: Register) -> Result<&mut usize> {
         self.regs
             .get_mut(reg)
-            .ok_or_else(|| TaskError(format!("Incorrect register {reg}")))
+            .ok_or_else(|| task_error!("Incorrect register {reg}"))
     }
 
     fn step(&mut self) -> Result<bool> {
         let instr = self
             .program
             .get(self.ip)
-            .ok_or_else(|| TaskError(format!("Incorrect ip: {}", self.ip)))?
+            .ok_or_else(|| task_error!("Incorrect ip: {}", self.ip))?
             .clone();
         match instr {
             Instruction::Hlf(tgt) => {

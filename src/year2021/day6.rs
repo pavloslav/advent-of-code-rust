@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 fn simulate(mut state: [usize; 9], time: usize) -> usize {
     for _ in 0..time {

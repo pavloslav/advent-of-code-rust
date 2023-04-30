@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 use unicode_categories::UnicodeCategories;
 

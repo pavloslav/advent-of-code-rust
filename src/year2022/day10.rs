@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Option<i32>>> {
     input
@@ -10,7 +9,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Option<i32>>> {
             } else if let Ok(val) = scan_fmt::scan_fmt!(line, "addx {}", i32) {
                 Ok(Some(val))
             } else {
-                Err(TaskError(format!("Can't parse line '{line}'")))
+                Err(task_error!("Can't parse line '{line}'"))
             }
         })
         .collect()

@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 use serde_json::Value;
 
 pub fn parse_input(input: &str) -> Result<Vec<Value>> {
@@ -62,12 +61,12 @@ pub fn task2(input: &[Value]) -> Result<usize> {
     let start = packets
         .iter()
         .position(|v| v == &start)
-        .ok_or_else(|| TaskError("start not found".to_string()))?
+        .ok_or_else(|| task_error!("start not found"))?
         + 1;
     let end = packets
         .iter()
         .position(|v| v == &end)
-        .ok_or_else(|| TaskError("end not found".to_string()))?
+        .ok_or_else(|| task_error!("end not found"))?
         + 1;
     Ok(start * end)
 }

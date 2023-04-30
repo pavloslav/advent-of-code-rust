@@ -1,5 +1,4 @@
-use super::super::common::Error;
-use super::aoc::*;
+use crate::*;
 
 pub struct PasswordPolicy {
     a: usize,

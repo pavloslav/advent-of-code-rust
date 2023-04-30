@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub struct Assignment {
     left: usize,

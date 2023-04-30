@@ -1,6 +1,4 @@
-use super::super::common::Error;
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 #[derive(Debug)]
 struct Ship {
@@ -37,7 +35,7 @@ impl std::str::FromStr for Order {
                 'L' => OrderType::Left,
                 'R' => OrderType::Right,
                 'F' => OrderType::Forward,
-                other => Err(TaskError(format!("Unknown order: '{other}'")))?,
+                other => Err(task_error!("Unknown order: '{other}'"))?,
             },
             par,
         })
@@ -140,9 +138,7 @@ impl ShipWaypoint {
                 self.waypt_lat = -t;
             }
             other => {
-                return Err(TaskError(format!(
-                    "Angle {other} is not supported"
-                )));
+                return Err(task_error!("Angle {other} is not supported"));
             }
         }
         Ok(())

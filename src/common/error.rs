@@ -1,79 +1,34 @@
-use std::fmt::Display;
-use std::time::SystemTimeError;
-
-#[derive(Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum Error {
-    Network(super::network::Error),
-    Settings(super::settings::Error),
-    TimeError(SystemTimeError),
-    Clap(clap::error::Error),
-    ParseInt(std::num::ParseIntError),
-    ParseChar(std::char::ParseCharError),
-    ScanFmt(scan_fmt::parse::ScanError),
-    SerdeJson(serde_json::Error),
-    FancyRegex(fancy_regex::Error),
+    #[error("{0}")]
     TaskError(String),
-    WrongTask,
+    #[error("{0}")]
+    Network(#[from] super::network::Error),
+    #[error("{0}")]
+    Settings(#[from] super::settings::SettingsError),
+    #[error("TimeError: {0}")]
+    TimeError(#[from] std::time::SystemTimeError),
+    #[error("Clap error: {0}")]
+    Clap(#[from] clap::error::Error),
+    #[error("Error parsing int: {0}")]
+    ParseInt(#[from] std::num::ParseIntError),
+    #[error("Error parsing char: {0}")]
+    ParseChar(#[from] std::char::ParseCharError),
+    #[error("Error in ScanFmt: {0}")]
+    ScanFmt(#[from] scan_fmt::parse::ScanError),
+    #[error("Serde JSON Error: {0}")]
+    SerdeJson(#[from] serde_json::Error),
+    #[error("Fancy Regex error: {0}")]
+    FancyRegex(#[from] fancy_regex::Error),
+    #[error("Incorrect task: year {year}, day {day}")]
+    WrongTask { year: String, day: String },
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-impl From<super::network::Error> for Error {
-    fn from(err: super::network::Error) -> Error {
-        Error::Network(err)
-    }
-}
-
-impl From<super::settings::Error> for Error {
-    fn from(err: super::settings::Error) -> Error {
-        Error::Settings(err)
-    }
-}
-
-impl From<SystemTimeError> for Error {
-    fn from(err: SystemTimeError) -> Error {
-        Error::TimeError(err)
-    }
-}
-
-impl From<clap::error::Error> for Error {
-    fn from(err: clap::error::Error) -> Error {
-        Error::Clap(err)
-    }
-}
-
-impl From<std::num::ParseIntError> for Error {
-    fn from(err: std::num::ParseIntError) -> Error {
-        Error::ParseInt(err)
-    }
-}
-
-impl From<std::char::ParseCharError> for Error {
-    fn from(err: std::char::ParseCharError) -> Error {
-        Error::ParseChar(err)
-    }
-}
-
-impl From<scan_fmt::parse::ScanError> for Error {
-    fn from(err: scan_fmt::parse::ScanError) -> Error {
-        Error::ScanFmt(err)
-    }
-}
-
-impl From<serde_json::Error> for Error {
-    fn from(err: serde_json::Error) -> Error {
-        Error::SerdeJson(err)
-    }
-}
-
-impl From<fancy_regex::Error> for Error {
-    fn from(err: fancy_regex::Error) -> Error {
-        Error::FancyRegex(err)
-    }
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "AoC Error: {self:?}")
-    }
+#[macro_export]
+macro_rules! task_error {
+    ($($arg:tt)*) => {
+        Error::TaskError(format!("{} line {}: {}", file!(), line!(), format!($($arg)*)))
+    };
 }

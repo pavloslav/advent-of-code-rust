@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 const STEPS: usize = 100;
 
@@ -97,9 +96,7 @@ pub fn parse_input(input: &str) -> Result<Life> {
                     .map(|ch| match ch {
                         '.' => Ok(Cell::Disabled),
                         '#' => Ok(Cell::Enabled),
-                        _ => Err(TaskError(format!(
-                            "Unexpected character: {ch}"
-                        ))),
+                        _ => Err(task_error!("Unexpected character: {ch}")),
                     })
                     .collect::<Result<Vec<Cell>>>()
             })

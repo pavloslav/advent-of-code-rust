@@ -1,4 +1,4 @@
-use super::aoc::*;
+use crate::*;
 
 pub struct Cargo {
     stacks: Vec<Vec<char>>,

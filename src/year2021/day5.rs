@@ -1,7 +1,6 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Point {
     x: i32,
     y: i32,
@@ -50,9 +49,7 @@ fn task(vents: &[Line], is_diagonals_needed: bool) -> Result<i32> {
                 ((vent.pt2.x - pt.x).signum(), (vent.pt2.y - pt.y).signum());
             loop {
                 if pt.x < 0 || pt.y < 0 {
-                    return Err(TaskError(
-                        "Point {pt:?} is negative".to_string(),
-                    ));
+                    return Err(task_error!("Point {pt:?} is negative"));
                 }
                 field[pt.x as usize][pt.y as usize] += 1;
                 if pt == vent.pt2 {

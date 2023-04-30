@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
     let input: Vec<Vec<(i32, i32)>> = input
@@ -65,7 +64,7 @@ pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
             y += 1;
         }
     }
-    Err(TaskError("unreachable!".to_string()))
+    Err(task_error!("unreachable"))
 }
 
 pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
@@ -92,5 +91,5 @@ pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
             y += 1;
         }
     }
-    Err(TaskError("unreachable!".to_string()))
+    Err(task_error!("unreachable!"))
 }

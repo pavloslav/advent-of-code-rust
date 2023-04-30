@@ -1,5 +1,4 @@
-use super::super::common::Error::TaskError;
-use super::aoc::*;
+use crate::*;
 
 fn get_first_bus(after: i32, periods: &[Option<i32>]) -> i32 {
     let mut best_time = i32::MAX;
@@ -25,11 +24,11 @@ pub fn parse_input(s: &str) -> Result<(i32, Vec<Option<i32>>)> {
     let mut lines = s.lines();
     let timestamp = lines
         .next()
-        .ok_or_else(|| TaskError("Empty input!".to_string()))?
+        .ok_or_else(|| task_error!("Empty input!"))?
         .parse()?;
     let times = lines
         .next()
-        .ok_or_else(|| TaskError("Empty input!".to_string()))?
+        .ok_or_else(|| task_error!("Empty input!"))?
         .split(',')
         .map(|part| part.parse().ok())
         .collect();
