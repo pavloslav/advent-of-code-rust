@@ -6,23 +6,10 @@ const AOC_INI_SECTION: &str = "aoc";
 const INI_SESSION_NAME: &str = "session";
 const INI_LINK_YEAR_NAME: &str = "link_year";
 
-pub struct Settings {
-    pub session: String,
-    pub format_url_string: String,
-}
-
-impl Settings {
-    pub fn format_url(&self, year: &str, day: &str) -> String {
-        self.format_url_string
-            .replace("{year}", year)
-            .replace("{day}", day)
-    }
-}
-
 #[derive(thiserror::Error, Debug)]
 pub enum SettingsError {
     #[error("Problem in file: {0}")]
-    Ini(#[from] ini::Error),
+    Ini(#[from] ::ini::Error),
     #[error("Incorrect data in file: {0}")]
     Aoc(String),
 }
@@ -37,7 +24,7 @@ fn read_value<'a>(
     )))
 }
 
-pub fn read_setting(file_name: &str) -> Result<Settings, SettingsError> {
+pub fn read_setting(file_name: &str) -> Result<super::Settings, SettingsError> {
     let ini = ini::Ini::load_from_file(file_name)?;
     let section =
         ini.section(Some(AOC_INI_SECTION))
@@ -45,8 +32,8 @@ pub fn read_setting(file_name: &str) -> Result<Settings, SettingsError> {
                 "No section {} found",
                 AOC_INI_SECTION
             )))?;
-    Ok(Settings {
+    Ok(super::Settings {
         session: read_value(section, INI_SESSION_NAME)?.to_string(),
-        format_url_string: read_value(section, INI_LINK_YEAR_NAME)?.to_string(),
+        link_year: read_value(section, INI_LINK_YEAR_NAME)?.to_string(),
     })
 }

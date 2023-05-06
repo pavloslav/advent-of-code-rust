@@ -11,7 +11,9 @@ default = ["verbose"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rust-ini = "*"                                      # common::settings, should change to json
+#rust-ini = "0.19"                                   # common::settings::ini
+serde = { version = "1", features = ["derive"] }    # common::settings::json
+serde_json = { version = "1"}                       # 2015/12, 2022/13
 minreq = {version = "2.7.0", features = ["https"] } # common::network
 
 regex = "1"                                         # wherever needed
@@ -22,7 +24,7 @@ once_cell = "*"                                     # will move to std
 
 rust-crypto = "0.2"                                 # common::md5Hasher
 unicode_categories = "0.1"                          # 2021/12
-serde_json = "1"                                    # 2015/12, 2022/13
+
 num = "0.4"                                         # 2019/10, 2019/12 - gcd, lcd
 
 clap = { version = "4.2", features = ["derive"] }   # arguments parser

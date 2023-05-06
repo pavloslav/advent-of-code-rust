@@ -5,8 +5,6 @@ use std::time::SystemTime;
 use crate::common::network;
 use crate::common::settings;
 
-const AOC_SETTINGS_FILE_NAME: &str = "aoc.ini";
-
 #[cfg(feature = "verbose")]
 macro_rules! log {
     ($($arg : tt) *) =>
@@ -35,7 +33,7 @@ pub fn get_input(year: &str, day: &str) -> Result<String> {
     let filename = cache_file_name(year, day);
     std::fs::read_to_string(&filename).or_else(|file_error| -> Result<String> {
         log!("Cache not found ({})", file_error);
-        let settings = settings::read_setting(AOC_SETTINGS_FILE_NAME)?;
+        let settings = settings::read_setting()?;
         let url = settings.format_url(year, day);
         log!("Trying url '{}'", url);
 
