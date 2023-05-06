@@ -1,10 +1,6 @@
 use crate::*;
 
-pub struct Table {
-    scores: Vec<Vec<i32>>,
-}
-
-pub fn parse_input(input: &str) -> Result<Table> {
+pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
     let mut names = std::collections::HashMap::new();
     let mut scores = vec![];
     for line in input.lines() {
@@ -36,45 +32,37 @@ pub fn parse_input(input: &str) -> Result<Table> {
         scores[second][first] += score;
     }
     println!("{}", scores.len());
-    Ok(Table { scores })
-}
-
-impl Table {
-    fn round_score(&self, perm: &[usize]) -> i32 {
-        (0..perm.len())
-            .map(|i| {
-                self.scores[perm[i]]
-                    [perm[if i + 1 == perm.len() { 0 } else { i + 1 }]]
-            })
-            .sum()
-    }
-    fn line_score(&self, perm: &[usize]) -> i32 {
-        perm.windows(2)
-            .map(|pair| {
-                if let &[left, right] = pair {
-                    self.scores[left][right]
-                } else {
-                    unreachable!("windows(2) should always return 2 items")
-                }
-            })
-            .sum()
-    }
+    Ok(scores)
 }
 
 use itertools::Itertools;
 
-pub fn task1(input: &Table) -> Result<i32> {
-    (0..input.scores.len())
-        .permutations(input.scores.len())
-        .map(|permutation| input.round_score(&permutation))
+fn score(scores: &[Vec<i32>], perm: &[usize]) -> i32 {
+    perm.iter()
+        .tuple_windows()
+        .map(|(&left, &right)| scores[left][right])
+        .sum()
+}
+
+pub fn task1(input: &[Vec<i32>]) -> Result<i32> {
+    (0..input.len())
+        .permutations(input.len())
+        .map(|permutation| {
+            let perm: Vec<usize> = permutation
+                .iter()
+                .chain(std::iter::once(&permutation[0]))
+                .copied()
+                .collect();
+            score(&input, &perm)
+        })
         .max()
         .ok_or_else(|| task_error!("No options to consider"))
 }
 
-pub fn task2(input: &Table) -> Result<i32> {
-    (0..input.scores.len())
-        .permutations(input.scores.len())
-        .map(|permutation| input.line_score(&permutation))
+pub fn task2(input: &[Vec<i32>]) -> Result<i32> {
+    (0..input.len())
+        .permutations(input.len())
+        .map(|permutation| score(&input, &permutation))
         .max()
         .ok_or_else(|| task_error!("No options to consider"))
 }
