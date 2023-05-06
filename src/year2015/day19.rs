@@ -43,7 +43,7 @@ pub fn task2((_rules, medicine): &(Rules, Molecule)) -> Result<usize> {
      * So, removing Y costs 1/2 operation, removing Ar or Rn - 1 operation
      * https://www.reddit.com/r/adventofcode/comments/3xflz8/day_19_solutions/
      */
-    let y = medicine.matches("Y").count();
+    let y = medicine.matches('Y').count();
     let rn = medicine.matches("Rn").count();
     let ar = medicine.matches("Ar").count();
     if rn != ar {

@@ -29,6 +29,6 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[macro_export]
 macro_rules! task_error {
     ($($arg:tt)*) => {
-        Error::TaskError(format!("{} line {}: {}", file!(), line!(), format!($($arg)*)))
+        Error::TaskError(format!("{}:{}: {}", file!(), line!(), format!($($arg)*)))
     };
 }

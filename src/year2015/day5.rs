@@ -5,15 +5,15 @@ pub fn parse_input(input: &str) -> Result<&str> {
 }
 
 use once_cell::sync::Lazy;
-const BAD: Lazy<regex::Regex> =
+static BAD: Lazy<regex::Regex> =
     Lazy::new(|| regex::Regex::new(r"ab|cd|pq|xy").unwrap());
-const PAIR: Lazy<fancy_regex::Regex> =
+static PAIR: Lazy<fancy_regex::Regex> =
     Lazy::new(|| fancy_regex::Regex::new(r"(.)\1").unwrap());
-const VOWELS: Lazy<regex::Regex> =
+static VOWELS: Lazy<regex::Regex> =
     Lazy::new(|| regex::Regex::new(r"[aeiou]").unwrap());
-const PAIRS: Lazy<fancy_regex::Regex> =
+static PAIRS: Lazy<fancy_regex::Regex> =
     Lazy::new(|| fancy_regex::Regex::new(r"(..).*\1").unwrap());
-const MIDDLE: Lazy<fancy_regex::Regex> =
+static MIDDLE: Lazy<fancy_regex::Regex> =
     Lazy::new(|| fancy_regex::Regex::new(r"(.).\1").unwrap());
 
 fn nice1(line: &str) -> Result<bool> {

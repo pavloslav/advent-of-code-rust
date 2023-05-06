@@ -1,6 +1,6 @@
 [package]
 name = "advent_of_code"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 
 [features]
@@ -11,20 +11,20 @@ default = ["verbose"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rust-ini = "*"                                      # common::settings
-minreq = {version = "*", features = ["https"] }     # common::network
+rust-ini = "*"                                      # common::settings, should change to json
+minreq = {version = "2.7.0", features = ["https"] } # common::network
 
-regex = "*"                                         # wherever needed
+regex = "1"                                         # wherever needed
 itertools = "*"                                     # wherever needed
-scan_fmt = "*"                                      # wherever needed
+scan_fmt = "0.2"                                    # wherever needed
 
 once_cell = "*"                                     # will move to std
 
-rust-crypto = "*"                                   # common::md5Hasher
-unicode_categories = "*"                            # 2021/12
-serde_json = "*"                                    # 2015/12, 2022/13
-num = "*"                                           # 2019/10, 2019/12 - gcd, lcd
+rust-crypto = "2"                                   # common::md5Hasher
+unicode_categories = "0.1"                          # 2021/12
+serde_json = "1"                                    # 2015/12, 2022/13
+num = "0.4"                                         # 2019/10, 2019/12 - gcd, lcd
 
-clap = { version = "*", features = ["derive"] }     # arguments parser
-fancy-regex = "*"                                   # backreferences
-thiserror = "*"                                     # attempt
+clap = { version = "4.2", features = ["derive"] }   # arguments parser
+fancy-regex = "0.11"                                # backreferences
+thiserror = "1.0"                                   # attempt

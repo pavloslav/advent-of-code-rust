@@ -70,23 +70,22 @@ where
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
         use once_cell::sync::Lazy;
-        use crate::common::aoc::measure;
-        //pub use crate::prelude::*;
+        use $crate::common::aoc::measure;
 
         $(pub mod $day;)*
 
-        pub fn task(day: &str) -> crate::Result<()> {
-            (FN_MAP.get(day).ok_or(crate::Error::WrongTask{year:stringify!($year).to_string(), day:day.to_string()})?.f)()
+        pub fn task(day: &str) -> $crate::Result<()> {
+            (FN_MAP.get(day).ok_or($crate::Error::WrongTask{year:stringify!($year).to_string(), day:day.to_string()})?.f)()
         }
 
-        static FN_MAP : Lazy<std::collections::HashMap<&'static str, crate::common::FunctionHolder>>
+        static FN_MAP : Lazy<std::collections::HashMap<&'static str, $crate::common::FunctionHolder>>
             = Lazy::new(||std::collections::HashMap::from ([
-                $((stringify!($day), crate::common::FunctionHolder {
+                $((stringify!($day), $crate::common::FunctionHolder {
                         f: || {
                             let year_str = stringify!($year);
                             let day_str = stringify!($day);
                             let input =
-                                crate::common::get_input_with_mod(year_str, day_str)?;
+                                $crate::common::get_input_with_mod(year_str, day_str)?;
                             println!("{} {}", year_str, day_str);
 
                             let (data, time_parse) = measure(||$day::parse_input(&input));

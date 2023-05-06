@@ -75,8 +75,8 @@ pub fn task1(ingridients: &IngridientList) -> Result<i32> {
         }
         if stack.len() < ingridients.ingridients.len() - 1 {
             stack.resize(ingridients.ingridients.len() - 1, 0);
-        } else {
-            stack.last_mut().map(|last|*last += 1);
+        } else if let Some(last) = stack.last_mut() { 
+            *last += 1; 
         }
         let sum: usize = stack.iter().sum();
         if sum <= TOTAL_SPOONS {
@@ -102,9 +102,10 @@ pub fn task2(ingridients: &IngridientList) -> Result<i32> {
         }
         if stack.len() < ingridients.ingridients.len() - 1 {
             stack.resize(ingridients.ingridients.len() - 1, 0);
-        } else {
-            stack.last_mut().map(|last|*last+=1);
-        }
+        } else if let Some(last) = stack.last_mut() { 
+            *last+=1; 
+         }
+        
         let sum : usize = stack.iter().sum();
         if sum <= TOTAL_SPOONS {
             stack.push(TOTAL_SPOONS - sum);

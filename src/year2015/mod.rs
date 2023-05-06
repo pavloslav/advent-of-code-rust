@@ -23,6 +23,6 @@ super::mod_list!(year2015
     , day21 
     , day22
     , day23 
-    //, day24 
+    , day24 
     //, day25
     );

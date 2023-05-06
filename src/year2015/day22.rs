@@ -36,7 +36,7 @@ enum Spell {
     Recharge,
 }
 
-const PRICES: Lazy<HashMap<Spell, i32>> = Lazy::new(|| {
+static PRICES: Lazy<HashMap<Spell, i32>> = Lazy::new(|| {
     HashMap::from([
         (Spell::MagicMissile, 53),
         (Spell::Drain, 73),

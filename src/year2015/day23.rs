@@ -23,47 +23,28 @@ pub enum Instruction {
     Jio(Register, isize),
 }
 
-impl Instruction {
-    fn new(input: &str) -> Result<Instruction> {
-        static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
-            once_cell::sync::Lazy::new(|| {
-                regex::Regex::new(
-                    r"^(hlf (?P<hlf>\w))|(tpl (?P<tpl>\w))|(inc (?P<inc>\w))|(jmp (?P<jmp>[+-]?\d+))|(jie (?P<jie_reg>\w), (?P<jie_off>[+-]?\d+))|(jio (?P<jio_reg>\w), (?P<jio_off>[+-]?\d+))$",
-                )
-                .unwrap()
-            });
-        INPUT_REGEX
-            .captures(input)
-            .ok_or_else(|| {
-                task_error!("Can't find any instructions in '{input}'")
-            })
-            .and_then(|captures| {
-                Ok(if let Some(hlf) = captures.name("hlf") {
-                    Instruction::Hlf(reg_num(hlf.as_str())?)
-                } else if let Some(tpl) = captures.name("tpl") {
-                    Instruction::Tpl(reg_num(tpl.as_str())?)
-                } else if let Some(inc) = captures.name("inc") {
-                    Instruction::Inc(reg_num(inc.as_str())?)
-                } else if let Some(jmp) = captures.name("jmp") {
-                    Instruction::Jmp(jmp.as_str().parse()?)
-                } else if let (Some(jie_reg), Some(jie_off)) =
-                    (captures.name("jie_reg"), captures.name("jie_off"))
-                {
-                    Instruction::Jie(
-                        reg_num(jie_reg.as_str())?,
-                        jie_off.as_str().parse()?,
-                    )
-                } else if let (Some(jio_reg), Some(jio_off)) =
-                    (captures.name("jio_reg"), captures.name("jio_off"))
-                {
-                    Instruction::Jio(
-                        reg_num(jio_reg.as_str())?,
-                        jio_off.as_str().parse()?,
-                    )
-                } else {
-                    return Err(task_error!("Unknown instruction: {input}"));
-                })
-            })
+impl std::str::FromStr for Instruction {
+    type Err = Error;
+    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+        if let Ok(reg) = scan_fmt::scan_fmt!(s, "hlf {}", String) {
+            Ok(Instruction::Hlf(reg_num(&reg)?))
+        } else if let Ok(reg) = scan_fmt::scan_fmt!(s, "tpl {}", String) {
+            Ok(Instruction::Tpl(reg_num(&reg)?))
+        } else if let Ok(reg) = scan_fmt::scan_fmt!(s, "inc {}", String) {
+            Ok(Instruction::Inc(reg_num(&reg)?))
+        } else if let Ok(value) = scan_fmt::scan_fmt!(s, "jmp {}", isize) {
+            Ok(Instruction::Jmp(value))
+        } else if let Ok((reg, value)) =
+            scan_fmt::scan_fmt!(s, "jie {}, {}", String, isize)
+        {
+            Ok(Instruction::Jie(reg_num(&reg)?, value))
+        } else if let Ok((reg, value)) =
+            scan_fmt::scan_fmt!(s, "jio {}, {}", String, isize)
+        {
+            Ok(Instruction::Jio(reg_num(&reg)?, value))
+        } else {
+            Err(task_error!("Incorrect instruction '{s}'"))
+        }
     }
 }
 
@@ -74,7 +55,7 @@ struct Computer {
 }
 
 pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
-    input.lines().map(Instruction::new).collect()
+    input.lines().map(|s| s.parse()).collect()
 }
 
 impl Computer {
