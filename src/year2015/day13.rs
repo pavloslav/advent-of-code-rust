@@ -5,13 +5,12 @@ pub struct Table {
 }
 
 pub fn parse_input(input: &str) -> Result<Table> {
-    todo!("Make it dynamic programming");
     let mut names = std::collections::HashMap::new();
     let mut scores = vec![];
     for line in input.lines() {
         let (first, gain, score, second) = scan_fmt::scan_fmt!(
             line,
-            "{} would {/gain|lose/} {} happiness units by sitting next to {}",
+            "{} would {/gain|lose/} {} happiness units by sitting next to {}.",
             String,
             String,
             i32,
@@ -20,7 +19,7 @@ pub fn parse_input(input: &str) -> Result<Table> {
         let score = match gain.as_str() {
             "gain" => score,
             "lose" => -score,
-            other => return Err(task_error!(("Units can not '{other}'"))),
+            other => return Err(task_error!("Units can not be '{other}'")),
         };
 
         let names_size = names.len();
@@ -36,25 +35,29 @@ pub fn parse_input(input: &str) -> Result<Table> {
         scores[first][second] += score;
         scores[second][first] += score;
     }
+    println!("{}", scores.len());
     Ok(Table { scores })
 }
 
 impl Table {
-    fn round_score<I>(&self, it: I) -> i32
-    where
-        I: Iterator<Item = usize>,
-    {
-        let v: Vec<_> = it.collect();
-        (0..v.len())
-            .map(|i| self.scores[v[i]][v[(i + 1) % v.len()]])
+    fn round_score(&self, perm: &[usize]) -> i32 {
+        (0..perm.len())
+            .map(|i| {
+                self.scores[perm[i]]
+                    [perm[if i + 1 == perm.len() { 0 } else { i + 1 }]]
+            })
             .sum()
     }
-    fn line_score<I>(&self, it: I) -> i32
-    where
-        I: Iterator<Item = usize>,
-    {
-        let v: Vec<_> = it.collect();
-        (0..v.len() - 1).map(|i| self.scores[v[i]][v[i + 1]]).sum()
+    fn line_score(&self, perm: &[usize]) -> i32 {
+        perm.windows(2)
+            .map(|pair| {
+                if let &[left, right] = pair {
+                    self.scores[left][right]
+                } else {
+                    unreachable!("windows(2) should always return 2 items")
+                }
+            })
+            .sum()
     }
 }
 
@@ -63,15 +66,15 @@ use itertools::Itertools;
 pub fn task1(input: &Table) -> Result<i32> {
     (0..input.scores.len())
         .permutations(input.scores.len())
-        .map(|permutation| input.round_score(permutation.into_iter()))
+        .map(|permutation| input.round_score(&permutation))
         .max()
-        .ok_or_else(|| TaskError("No options to consider".to_string()))
+        .ok_or_else(|| task_error!("No options to consider"))
 }
 
 pub fn task2(input: &Table) -> Result<i32> {
     (0..input.scores.len())
         .permutations(input.scores.len())
-        .map(|permutation| input.line_score(permutation.into_iter()))
+        .map(|permutation| input.line_score(&permutation))
         .max()
-        .ok_or_else(|| TaskError("No options to consider".to_string()))
+        .ok_or_else(|| task_error!("No options to consider"))
 }

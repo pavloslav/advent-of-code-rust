@@ -16,11 +16,11 @@ minreq = {version = "2.7.0", features = ["https"] } # common::network
 
 regex = "1"                                         # wherever needed
 itertools = "*"                                     # wherever needed
-scan_fmt = "0.2"                                    # wherever needed
+scan_fmt = "0.2"                                    # all inputs
 
 once_cell = "*"                                     # will move to std
 
-rust-crypto = "2"                                   # common::md5Hasher
+rust-crypto = "0.2"                                 # common::md5Hasher
 unicode_categories = "0.1"                          # 2021/12
 serde_json = "1"                                    # 2015/12, 2022/13
 num = "0.4"                                         # 2019/10, 2019/12 - gcd, lcd

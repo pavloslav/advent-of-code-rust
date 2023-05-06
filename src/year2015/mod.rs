@@ -12,7 +12,7 @@ super::mod_list!(year2015
     , day10
     , day11 
     , day12 
-    //, day13 
+    , day13 
     , day14 
     , day15 
     , day16
@@ -24,5 +24,5 @@ super::mod_list!(year2015
     , day22
     , day23 
     , day24 
-    //, day25
+    , day25
     );
