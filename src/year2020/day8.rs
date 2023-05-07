@@ -84,7 +84,6 @@ pub fn task1(program: &Program) -> Result<i64> {
 
 pub fn task2(program: &Program) -> Result<i64> {
     let mut computer = Computer::with_program(program.clone());
-    println!("Read program {} instructions", computer.program.len());
     for i in 0..computer.program.len() {
         let mut visited = vec![false; computer.program.len()];
         let save = computer.program[i].clone();
@@ -108,14 +107,6 @@ pub fn task2(program: &Program) -> Result<i64> {
         if computer.exited() {
             break;
         }
-        println!(
-            "Change on {} from {:?} to {:?} is {} with {} visited instructions",
-            i,
-            save,
-            computer.program[i],
-            if computer.exited() { "success" } else { "fail" },
-            visited.iter().map(|&x| u32::from(x)).sum::<u32>()
-        );
         computer.program[i] = save;
     }
     if computer.exited() {

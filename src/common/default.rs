@@ -5,9 +5,9 @@ pub fn parse_input(input: &str) -> Result<&str> {
 }
 
 pub fn task1(input: &str) -> Result<usize> {
-    todo!();
+    Err(task_error!("Solution not found"))
 }
 
 pub fn task2(input: &str) -> Result<usize> {
-    todo!();
+    Err(task_error!("Solution not found"))
 }
