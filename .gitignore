@@ -48,6 +48,7 @@ Temporary Items
 
 # Config file - for session
 aoc.ini
+settings.json
 
 .fingerprint
 **\target
@@ -55,3 +56,4 @@ aoc.ini
 *.lock
 cache
 cache/*.*
+.vscode
