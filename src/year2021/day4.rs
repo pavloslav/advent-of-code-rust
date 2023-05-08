@@ -179,13 +179,13 @@ mod tests {
 
     #[test]
     fn test_task1() {
-        let bingo = parse_input(&DATA).unwrap();
+        let bingo = parse_input(DATA).unwrap();
         assert_eq!(task1(&bingo).unwrap(), 4512);
     }
 
     #[test]
     fn test_task2() {
-        let bingo = parse_input(&DATA).unwrap();
+        let bingo = parse_input(DATA).unwrap();
         assert_eq!(task2(&bingo).unwrap(), 1924);
     }
 }

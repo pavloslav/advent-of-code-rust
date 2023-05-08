@@ -171,7 +171,7 @@ N3
 F7
 R90
 F11";
-        assert_eq!(task1(&parse_input(&input).unwrap()).unwrap(), 25);
-        assert_eq!(task2(&parse_input(&input).unwrap()).unwrap(), 286);
+        assert_eq!(task1(&parse_input(input).unwrap()).unwrap(), 25);
+        assert_eq!(task2(&parse_input(input).unwrap()).unwrap(), 286);
     }
 }

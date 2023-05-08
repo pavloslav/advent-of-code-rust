@@ -130,6 +130,6 @@ acc -99
 acc +1
 jmp -4
 acc +6";
-        assert_eq!(task2(&parse_input(&input1).unwrap()).unwrap(), 8);
+        assert_eq!(task2(&parse_input(input1).unwrap()).unwrap(), 8);
     }
 }

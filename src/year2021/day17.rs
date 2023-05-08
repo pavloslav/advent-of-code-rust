@@ -105,7 +105,7 @@ mod test {
             if !lost.is_empty() {
                 println!("Lost values: {:?}", lost);
             }
-            assert!(false);
+            panic!();
         }
     }
 }

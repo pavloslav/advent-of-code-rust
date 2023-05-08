@@ -235,6 +235,6 @@ addx -11
 noop
 noop
 noop";
-        assert_eq!(task1(&parse_input(&input).unwrap()).unwrap(), 13140);
+        assert_eq!(task1(&parse_input(input).unwrap()).unwrap(), 13140);
     }
 }

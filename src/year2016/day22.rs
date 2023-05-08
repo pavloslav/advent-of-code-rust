@@ -2,9 +2,9 @@ use crate::*;
 
 #[derive(Clone)]
 pub struct Node {
-    x: i32,
-    y: i32,
-    size: i32,
+    _x: i32,
+    _y: i32,
+    _size: i32,
     used: i32,
     avail: i32,
 }
@@ -26,7 +26,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Node>> {
             if used+avail != size {
                 Err(task_error!("Used={used}, avail={avail}, together {}, but size is {size}!", used+avail))?
             }
-            Ok(Node { x, y, size, used, avail })
+            Ok(Node { _x:x, _y:y, _size:size, used, avail })
         })
         .collect()
 }

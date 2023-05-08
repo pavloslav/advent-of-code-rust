@@ -186,7 +186,7 @@ pub fn task2(input: &[i32]) -> Result<usize> {
 mod test {
     use super::*;
 
-    const EXAMPLE: &'static str = &">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
+    const EXAMPLE: &str = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
     #[test]
     fn test_task1() {
         assert_eq!(task1(&parse_input(EXAMPLE).unwrap()).unwrap(), 3068);

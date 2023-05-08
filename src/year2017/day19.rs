@@ -114,7 +114,7 @@ pub fn task2(input: &Packet) -> Result<usize> {
 #[cfg(test)]
 mod test {
     use super::*;
-    const FIELD: &'static str = "     |          
+    const FIELD: &str = "     |          
      |  +--+    
      A  |  C    
  F---|----E|--+ 
