@@ -53,7 +53,7 @@ pub fn task1(input: &[Vec<i32>]) -> Result<i32> {
                 .chain(std::iter::once(&permutation[0]))
                 .copied()
                 .collect();
-            score(&input, &perm)
+            score(input, &perm)
         })
         .max()
         .ok_or_else(|| task_error!("No options to consider"))
@@ -62,7 +62,7 @@ pub fn task1(input: &[Vec<i32>]) -> Result<i32> {
 pub fn task2(input: &[Vec<i32>]) -> Result<i32> {
     (0..input.len())
         .permutations(input.len())
-        .map(|permutation| score(&input, &permutation))
+        .map(|permutation| score(input, &permutation))
         .max()
         .ok_or_else(|| task_error!("No options to consider"))
 }

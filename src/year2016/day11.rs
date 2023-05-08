@@ -153,7 +153,7 @@ pub fn task1((size, position): &(usize, Position)) -> Result<usize> {
 }
 
 pub fn task2((size, position): &(usize, Position)) -> Result<usize> {
-    task(&position, *size + 2)
+    task(position, *size + 2)
 }
 
 #[cfg(test)]

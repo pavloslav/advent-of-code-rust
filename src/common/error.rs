@@ -22,6 +22,8 @@ pub enum Error {
     FancyRegex(#[from] fancy_regex::Error),
     #[error("Incorrect task: year {year}, day {day}")]
     WrongTask { year: String, day: String },
+    #[error("Convertion error: {0}")]
+    Utf8Error(#[from] std::string::FromUtf8Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
