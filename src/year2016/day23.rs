@@ -7,11 +7,12 @@ pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
 
 pub fn task1(input: &[Instruction]) -> Result<isize> {
     let mut computer = Computer::new(input);
+    computer.registers[0] = 7;
     computer.run()
 }
 
 pub fn task2(input: &[Instruction]) -> Result<isize> {
     let mut computer = Computer::new(input);
-    computer.registers[2] = 1;
+    computer.registers[0] = 12;
     computer.run()
 }
