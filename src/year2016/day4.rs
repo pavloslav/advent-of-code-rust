@@ -22,7 +22,7 @@ impl std::str::FromStr for Room {
             });
         let cap = INPUT_REGEX
             .captures(input)
-            .ok_or_else(|| task_error!("Can't parse the input '{input}'"))?;
+            .ok_or_else(|| aoc_error!("Can't parse the input '{input}'"))?;
         if let (Some(name), Some(id), Some(check_sum)) =
             (cap.name("name"), cap.name("id"), cap.name("check_sum"))
         {
@@ -32,7 +32,7 @@ impl std::str::FromStr for Room {
                 check_sum: check_sum.as_str().to_string(),
             })
         } else {
-            Err(task_error!("Can't find all fields in input"))
+            Err(aoc_error!("Can't find all fields in input"))
         }
     }
 }
@@ -88,7 +88,7 @@ pub fn task2(input: &[Room]) -> Result<usize> {
                     && room.decrypt().contains("northpole object")
             })
         })
-        .ok_or_else(|| task_error!("No room found"))
+        .ok_or_else(|| aoc_error!("No room found"))
 }
 
 #[cfg(test)]

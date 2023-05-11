@@ -9,7 +9,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Option<i32>>> {
             } else if let Ok(val) = scan_fmt::scan_fmt!(line, "addx {}", i32) {
                 Ok(Some(val))
             } else {
-                Err(task_error!("Can't parse line '{line}'"))
+                Err(aoc_error!("Can't parse line '{line}'"))
             }
         })
         .collect()

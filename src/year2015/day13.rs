@@ -15,7 +15,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
         let score = match gain.as_str() {
             "gain" => score,
             "lose" => -score,
-            other => return Err(task_error!("Units can not be '{other}'")),
+            other => return Err(aoc_error!("Units can not be '{other}'")),
         };
 
         let names_size = names.len();
@@ -56,7 +56,7 @@ pub fn task1(input: &[Vec<i32>]) -> Result<i32> {
             score(input, &perm)
         })
         .max()
-        .ok_or_else(|| task_error!("No options to consider"))
+        .ok_or_else(|| aoc_error!("No options to consider"))
 }
 
 pub fn task2(input: &[Vec<i32>]) -> Result<i32> {
@@ -64,5 +64,5 @@ pub fn task2(input: &[Vec<i32>]) -> Result<i32> {
         .permutations(input.len())
         .map(|permutation| score(input, &permutation))
         .max()
-        .ok_or_else(|| task_error!("No options to consider"))
+        .ok_or_else(|| aoc_error!("No options to consider"))
 }

@@ -7,7 +7,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Present>> {
         .lines()
         .map(|line| {
             scan_fmt::scan_fmt!(line, "{}x{}x{}", usize, usize, usize)
-                .map_err(|_| task_error!("Failed to parse '{line}'"))
+                .map_err(|_| aoc_error!("Failed to parse '{line}'"))
         })
         .collect::<Result<_>>()
 }

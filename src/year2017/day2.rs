@@ -14,11 +14,11 @@ pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
             let max = line
                 .iter()
                 .max()
-                .ok_or_else(|| task_error!("Empty data unacceptable!"))?;
+                .ok_or_else(|| aoc_error!("Empty data unacceptable!"))?;
             let min = line
                 .iter()
                 .min()
-                .ok_or_else(|| task_error!("Empty data unacceptable!"))?;
+                .ok_or_else(|| aoc_error!("Empty data unacceptable!"))?;
             Ok(max - min)
         })
         .sum()

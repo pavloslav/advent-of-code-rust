@@ -59,7 +59,7 @@ impl std::str::FromStr for Command {
         ) {
             Ok(Command::Move(x, y))
         } else {
-            Err(task_error!("Can't parse '{s}' into command"))
+            Err(aoc_error!("Can't parse '{s}' into command"))
         }
     }
 }
@@ -77,11 +77,11 @@ pub fn task1(input: &[Command]) -> Result<String> {
             Command::SwapLetter(x, y) => {
                 let x =
                     password.iter().position(|c| c == x).ok_or_else(|| {
-                        task_error!("No letter {} in password", *x as char)
+                        aoc_error!("No letter {} in password", *x as char)
                     })?;
                 let y =
                     password.iter().position(|c| c == y).ok_or_else(|| {
-                        task_error!("No letter {} in password", *y as char)
+                        aoc_error!("No letter {} in password", *y as char)
                     })?;
                 password.swap(x, y);
             }
@@ -90,7 +90,7 @@ pub fn task1(input: &[Command]) -> Result<String> {
             Command::RotateBased(b) => {
                 let mut b =
                     password.iter().position(|c| c == b).ok_or_else(|| {
-                        task_error!("No letter {} in password", *b as char)
+                        aoc_error!("No letter {} in password", *b as char)
                     })?;
                 b += if b >= 4 { 2 } else { 1 };
                 password.rotate_right(b % password.len());
@@ -103,7 +103,7 @@ pub fn task1(input: &[Command]) -> Result<String> {
             Command::Move(x, y) => {
                 let letter = password
                     .remove(*x)
-                    .ok_or_else(|| task_error!("Index {x} out of bounds"))?;
+                    .ok_or_else(|| aoc_error!("Index {x} out of bounds"))?;
                 password.insert(*y, letter);
             }
         }
@@ -121,11 +121,11 @@ pub fn task2(input: &[Command]) -> Result<String> {
             Command::SwapLetter(x, y) => {
                 let x =
                     password.iter().position(|c| c == x).ok_or_else(|| {
-                        task_error!("No letter {} in password", *x as char)
+                        aoc_error!("No letter {} in password", *x as char)
                     })?;
                 let y =
                     password.iter().position(|c| c == y).ok_or_else(|| {
-                        task_error!("No letter {} in password", *y as char)
+                        aoc_error!("No letter {} in password", *y as char)
                     })?;
                 password.swap(x, y);
             }
@@ -134,7 +134,7 @@ pub fn task2(input: &[Command]) -> Result<String> {
             Command::RotateBased(b) => {
                 let mut b =
                     password.iter().position(|c| c == b).ok_or_else(|| {
-                        task_error!("No letter {} in password", *b as char)
+                        aoc_error!("No letter {} in password", *b as char)
                     })?;
                 b = match b {
                     0 => 7,
@@ -146,7 +146,7 @@ pub fn task2(input: &[Command]) -> Result<String> {
                     6 => 0,
                     7 => 4,
                     other => {
-                        return Err(task_error!(
+                        return Err(aoc_error!(
                             "Letter position {other}! How?"
                         ))
                     }
@@ -161,7 +161,7 @@ pub fn task2(input: &[Command]) -> Result<String> {
             Command::Move(x, y) => {
                 let letter = password
                     .remove(*y)
-                    .ok_or_else(|| task_error!("Index {x} out of bounds"))?;
+                    .ok_or_else(|| aoc_error!("Index {x} out of bounds"))?;
                 password.insert(*x, letter);
             }
         }

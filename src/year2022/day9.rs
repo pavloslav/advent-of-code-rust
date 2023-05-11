@@ -13,7 +13,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Order>> {
                 'U' => (0, 1),
                 'D' => (0, -1),
                 other => {
-                    return Err(task_error!("Unknown direction '{other}'"));
+                    return Err(aoc_error!("Unknown direction '{other}'"));
                 }
             };
             Ok((dir, value))

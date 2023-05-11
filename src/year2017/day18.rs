@@ -21,7 +21,7 @@ impl std::str::FromStr for Operand {
         } else {
             match s.chars().next() {
                 Some(c) if s.len() == 1 => Ok(Operand::Reg(c)),
-                _ => Err(task_error!("Can't parse operand '{s}'")),
+                _ => Err(aoc_error!("Can't parse operand '{s}'")),
             }
         }
     }
@@ -59,7 +59,7 @@ impl std::str::FromStr for Instruction {
         });
         INPUT_REGEX
             .captures(s)
-            .ok_or_else(|| task_error!("Can't parse instruction: '{s}'"))
+            .ok_or_else(|| aoc_error!("Can't parse instruction: '{s}'"))
             .and_then(|cap| {
                 if let Some(x) = cap.name("snd") {
                     Ok(Instruction::Snd(x.as_str().parse()?))
@@ -101,7 +101,7 @@ impl std::str::FromStr for Instruction {
                         y.as_str().parse()?,
                     ))
                 } else {
-                    Err(task_error!("Unknown instruction: '{s}'"))
+                    Err(aoc_error!("Unknown instruction: '{s}'"))
                 }
             })
     }
@@ -131,7 +131,7 @@ struct Computer {
 impl Computer {
     fn step(&mut self) -> Result<bool> {
         let instr = self.program.get(self.ip as usize).ok_or_else(|| {
-            task_error!("Wrong IP {}, stopping execution", self.ip)
+            aoc_error!("Wrong IP {}, stopping execution", self.ip)
         })?;
         match instr {
             Instruction::Snd(val) => {
@@ -191,7 +191,7 @@ impl Computer {
             .borrow_mut()
             .back()
             .copied()
-            .ok_or_else(|| task_error!("No last sound played"))
+            .ok_or_else(|| aoc_error!("No last sound played"))
     }
     fn new(program: &[Instruction], kind: ComputerKind) -> Computer {
         Computer {

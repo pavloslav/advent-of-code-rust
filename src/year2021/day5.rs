@@ -49,7 +49,7 @@ fn task(vents: &[Line], is_diagonals_needed: bool) -> Result<i32> {
                 ((vent.pt2.x - pt.x).signum(), (vent.pt2.y - pt.y).signum());
             loop {
                 if pt.x < 0 || pt.y < 0 {
-                    return Err(task_error!("Point {pt:?} is negative"));
+                    return Err(aoc_error!("Point {pt:?} is negative"));
                 }
                 field[pt.x as usize][pt.y as usize] += 1;
                 if pt == vent.pt2 {

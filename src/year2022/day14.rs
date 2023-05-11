@@ -64,7 +64,7 @@ pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
             y += 1;
         }
     }
-    Err(task_error!("unreachable"))
+    Err(aoc_error!("unreachable"))
 }
 
 pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
@@ -91,5 +91,5 @@ pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
             y += 1;
         }
     }
-    Err(task_error!("unreachable!"))
+    Err(aoc_error!("unreachable!"))
 }

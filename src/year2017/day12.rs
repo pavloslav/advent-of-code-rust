@@ -12,7 +12,7 @@ pub fn parse_input(input: &str) -> Result<Connections> {
         .map(|line| {
             INPUT_REGEX
                 .captures(line)
-                .ok_or_else(|| task_error!("Can't parse input"))
+                .ok_or_else(|| aoc_error!("Can't parse input"))
                 .map(|captures| {
                     if let (Some(index), Some(connected)) =
                         (captures.name("index"), captures.name("connected"))
@@ -26,7 +26,7 @@ pub fn parse_input(input: &str) -> Result<Connections> {
                                 .collect::<Result<_>>()?,
                         ))
                     } else {
-                        Err(task_error!("Can't find all elements in line"))
+                        Err(aoc_error!("Can't find all elements in line"))
                     }
                 })?
         })

@@ -11,7 +11,7 @@ fn find_hash(init: &str, zeroes: usize) -> Result<usize> {
                 .add_str(&i.to_string())
                 .has_zeroes(zeroes)
         })
-        .ok_or_else(|| task_error!("unreachable"))
+        .ok_or_else(|| aoc_error!("unreachable"))
 }
 
 pub fn task1(input: &str) -> Result<usize> {

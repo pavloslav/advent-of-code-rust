@@ -56,7 +56,7 @@ impl Rule {
                     "LSHIFT" => Rule::LShift(left, right),
                     "RSHIFT" => Rule::RShift(left, right),
                     other => {
-                        return Err(task_error!(
+                        return Err(aoc_error!(
                             "Incorrect binary operation: {other}"
                         ))
                     }
@@ -98,7 +98,7 @@ type Wires = std::collections::HashMap<String, Rule>;
 fn get_rule(wires: &Wires, name: &str) -> Result<Rule> {
     wires
         .get(name)
-        .ok_or_else(|| task_error!("No wire '{name}' found"))
+        .ok_or_else(|| aoc_error!("No wire '{name}' found"))
         .map(Clone::clone)
 }
 

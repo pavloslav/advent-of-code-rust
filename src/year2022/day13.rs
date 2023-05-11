@@ -61,12 +61,12 @@ pub fn task2(input: &[Value]) -> Result<usize> {
     let start = packets
         .iter()
         .position(|v| v == &start)
-        .ok_or_else(|| task_error!("start not found"))?
+        .ok_or_else(|| aoc_error!("start not found"))?
         + 1;
     let end = packets
         .iter()
         .position(|v| v == &end)
-        .ok_or_else(|| task_error!("end not found"))?
+        .ok_or_else(|| aoc_error!("end not found"))?
         + 1;
     Ok(start * end)
 }

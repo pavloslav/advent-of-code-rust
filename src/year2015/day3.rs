@@ -8,7 +8,7 @@ fn parse_move(value: u8) -> Result<Move> {
         b'v' => (0, -1),
         b'>' => (1, 0),
         b'<' => (-1, 0),
-        other => return Err(task_error!("Wrong symbol '{other}' in input")),
+        other => return Err(aoc_error!("Wrong symbol '{other}' in input")),
     })
 }
 

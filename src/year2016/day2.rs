@@ -12,7 +12,7 @@ fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
                 'D' => pos.1 += 1,
                 'L' => pos.0 -= 1,
                 _ => {
-                    return Err(task_error!("Wrong move '{mov}'"));
+                    return Err(aoc_error!("Wrong move '{mov}'"));
                 }
             }
             if map.get(pos.1).and_then(|line| line.get(pos.0)) == Some(&b'X') {
@@ -23,7 +23,7 @@ fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
             map.get(pos.1)
                 .and_then(|line| line.get(pos.0))
                 .ok_or_else(|| {
-                    task_error!(
+                    aoc_error!(
                         "Coordinates {}:{} are out of bounds!",
                         pos.0,
                         pos.1

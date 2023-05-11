@@ -14,7 +14,7 @@ impl FromStr for Operation {
         match s {
             "inc" => Ok(Operation::Inc),
             "dec" => Ok(Operation::Dec),
-            other => Err(task_error!("Parsing operation '{other}' failed")),
+            other => Err(aoc_error!("Parsing operation '{other}' failed")),
         }
     }
 }
@@ -40,7 +40,7 @@ impl FromStr for Comparison {
             "<=" => Ok(Le),
             "==" => Ok(Eq),
             "!=" => Ok(Ne),
-            other => Err(task_error!("Parsing comparison '{other}' failed")),
+            other => Err(aoc_error!("Parsing comparison '{other}' failed")),
         }
     }
 }
@@ -119,7 +119,7 @@ pub fn task1(input: &[Instruction]) -> Result<i32> {
         .values()
         .max()
         .copied()
-        .ok_or_else(|| task_error!("No registers present"))
+        .ok_or_else(|| aoc_error!("No registers present"))
 }
 
 pub fn task2(input: &[Instruction]) -> Result<i32> {

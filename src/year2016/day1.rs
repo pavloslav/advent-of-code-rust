@@ -45,7 +45,7 @@ impl std::str::FromStr for Command {
         let rot = match rot {
             'L' => -1,
             'R' => 1,
-            other => return Err(task_error!("wrong rotation '{other}'")),
+            other => return Err(aoc_error!("wrong rotation '{other}'")),
         };
         Ok(Command { rot, len })
     }

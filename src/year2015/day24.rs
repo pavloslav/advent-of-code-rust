@@ -45,7 +45,7 @@ fn task(presents: &[Weight], parts: Weight) -> Result<Weight> {
     let mut best = None;
     let mass: Weight = presents.iter().sum();
     if mass % parts != 0 {
-        return Err(task_error!("Can't divide {mass} by {parts}!"));
+        return Err(aoc_error!("Can't divide {mass} by {parts}!"));
     }
     let target = mass / parts;
     for len in 0..presents.len() {
@@ -67,7 +67,7 @@ fn task(presents: &[Weight], parts: Weight) -> Result<Weight> {
             }
         }
     }
-    best.ok_or_else(|| task_error!("Not found"))
+    best.ok_or_else(|| aoc_error!("Not found"))
 }
 
 pub fn task1(input: &[Weight]) -> Result<Weight> {

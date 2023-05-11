@@ -23,7 +23,7 @@ Damage: {}",
         i32,
         i32
     )
-    .map_err(|_| task_error!("Wrong input format"))?;
+    .map_err(|_| aoc_error!("Wrong input format"))?;
     Ok(Game::new(hp, dmg))
 }
 
@@ -156,7 +156,7 @@ pub fn task(&game: &Game, hard_mode: bool) -> Result<i32> {
         }
         situations = new_situations;
     }
-    best_mana.ok_or(task_error!("No solution found"))
+    best_mana.ok_or(aoc_error!("No solution found"))
 }
 
 pub fn task1(game: &Game) -> Result<i32> {

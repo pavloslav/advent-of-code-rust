@@ -81,9 +81,9 @@ fn search(boss: &Character, need_min: bool) -> Result<usize> {
         })
     });
     if need_min {
-        iter.min().ok_or(task_error!("Empty iterator on min"))
+        iter.min().ok_or(aoc_error!("Empty iterator on min"))
     } else {
-        iter.max().ok_or(task_error!("Empty iterator on min"))
+        iter.max().ok_or(aoc_error!("Empty iterator on min"))
     }
 }
 

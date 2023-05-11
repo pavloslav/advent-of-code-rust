@@ -101,7 +101,7 @@ pub fn task2(sensors: &[SensorData]) -> Result<usize> {
             );
         }
     }
-    Err(task_error!("Not found"))
+    Err(aoc_error!("Not found"))
 }
 
 #[cfg(test)]

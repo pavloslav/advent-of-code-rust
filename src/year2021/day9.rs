@@ -8,7 +8,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
                 .map(|digit| {
                     Ok(digit
                         .to_digit(10)
-                        .ok_or_else(|| task_error!("Not a digit: '{digit}'"))?
+                        .ok_or_else(|| aoc_error!("Not a digit: '{digit}'"))?
                         as u8)
                 })
                 .collect::<Result<_>>()

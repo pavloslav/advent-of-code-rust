@@ -6,7 +6,7 @@ pub fn parse_input(input: &str) -> Result<Vec<usize>> {
         .map(|s| {
             Ok(s.split_whitespace()
                 .last()
-                .ok_or_else(|| task_error!("Empty input!"))?
+                .ok_or_else(|| aoc_error!("Empty input!"))?
                 .parse()?)
         })
         .collect()

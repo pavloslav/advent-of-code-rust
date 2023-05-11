@@ -7,7 +7,7 @@ pub fn parse_input(input: &str) -> Result<Vec<i32>> {
         .map(|c| match c {
             b'<' => Ok(-1),
             b'>' => Ok(1),
-            other => Err(task_error!("Unknown jet direction '{other}'")),
+            other => Err(aoc_error!("Unknown jet direction '{other}'")),
         })
         .collect()
 }

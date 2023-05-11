@@ -44,7 +44,7 @@ pub fn task2(&input: &u32) -> Result<u32> {
             }
         }
     }
-    Err(task_error!("Failed to find the answer"))
+    Err(aoc_error!("Failed to find the answer"))
 }
 
 #[cfg(test)]

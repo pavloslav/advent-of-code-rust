@@ -12,7 +12,7 @@ pub fn parse_input(input: &str) -> Result<Data> {
         .map(|line| {
             if let Some(s) = size {
                 if s != line.len() {
-                    return Err(task_error!(
+                    return Err(aoc_error!(
                         "All lines should be same length {}, but one is {s}",
                         line.len()
                     ));
@@ -23,7 +23,7 @@ pub fn parse_input(input: &str) -> Result<Data> {
             Ok(usize::from_str_radix(line, 2)?)
         })
         .collect::<Result<_>>()?;
-    let size = size.ok_or_else(|| task_error!("No line length!"))?;
+    let size = size.ok_or_else(|| aoc_error!("No line length!"))?;
     Ok(Data { numbers, size })
 }
 

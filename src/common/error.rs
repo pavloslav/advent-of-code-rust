@@ -29,7 +29,7 @@ pub enum Error {
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[macro_export]
-macro_rules! task_error {
+macro_rules! aoc_error {
     ($($arg:tt)*) => {
         Error::TaskError(format!("{}:{}: {}", file!(), line!(), format!($($arg)*)))
     };

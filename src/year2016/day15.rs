@@ -17,7 +17,7 @@ pub fn task(input: &[(usize, usize)]) -> Result<usize> {
             return Ok(moment);
         }
     }
-    Err(task_error!("Solution not found"))
+    Err(aoc_error!("Solution not found"))
 }
 
 pub fn task1(input: &[(usize, usize)]) -> Result<usize> {

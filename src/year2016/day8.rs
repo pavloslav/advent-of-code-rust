@@ -68,12 +68,12 @@ fn build_lcd(
                     lcd[x][0] = temp;
                 }
             } else {
-                return Err(task_error!(
+                return Err(aoc_error!(
                     "Can't find all data in command {command}"
                 ));
             }
         } else {
-            return Err(task_error!("Failed to parse command {command}"));
+            return Err(aoc_error!("Failed to parse command {command}"));
         }
     }
     Ok(lcd)

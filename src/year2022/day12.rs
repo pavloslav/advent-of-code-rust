@@ -68,8 +68,8 @@ pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
                 .position(|&symbol| symbol == b'S')
                 .map(|j| (i as i32, j as i32))
         })
-        .ok_or_else(|| task_error!("Empty input!"))?;
-    shortest_way(start, map).ok_or_else(|| task_error!("Way not found!"))
+        .ok_or_else(|| aoc_error!("Empty input!"))?;
+    shortest_way(start, map).ok_or_else(|| aoc_error!("Way not found!"))
 }
 
 pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
@@ -88,6 +88,6 @@ pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
                 .min()
         })
         .min()
-        .ok_or_else(|| task_error!("Empty table!"))?
-        .ok_or_else(|| task_error!("Empty line!"))
+        .ok_or_else(|| aoc_error!("Empty table!"))?
+        .ok_or_else(|| aoc_error!("Empty line!"))
 }

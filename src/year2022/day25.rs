@@ -9,7 +9,7 @@ fn from_snafu(input: &str) -> Result<i64> {
                 '-' => -1,
                 c => c
                     .to_digit(10)
-                    .ok_or_else(|| task_error!("Wrong digit: {c}"))?
+                    .ok_or_else(|| aoc_error!("Wrong digit: {c}"))?
                     as i64,
             })
         })
@@ -24,7 +24,7 @@ fn to_snafu(input: i64) -> Result<String> {
         if d <= 2 {
             result.push(
                 char::from_digit(d as u32, 10)
-                    .ok_or_else(|| task_error!("Wrong digit: {d}"))?,
+                    .ok_or_else(|| aoc_error!("Wrong digit: {d}"))?,
             );
             n /= 5;
         } else {

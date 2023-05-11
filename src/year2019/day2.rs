@@ -27,5 +27,5 @@ pub fn task2(input: &[isize]) -> Result<isize> {
             }
         }
     }
-    Err(task_error!("Answer not found!"))
+    Err(aoc_error!("Answer not found!"))
 }

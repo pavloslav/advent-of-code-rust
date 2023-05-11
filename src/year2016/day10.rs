@@ -22,7 +22,7 @@ impl Target {
         match typ {
             "bot" => Ok(Target::Bot(target)),
             "output" => Ok(Target::Output(target)),
-            other => Err(task_error!("Unknown target type '{other}'")),
+            other => Err(aoc_error!("Unknown target type '{other}'")),
         }
     }
     fn give(&self, value: usize, bots: &mut Robots, output: &mut Output) {
@@ -111,25 +111,25 @@ impl Robot {
     ) -> Result<()> {
         self.target_lo
             .as_ref()
-            .ok_or_else(|| task_error!("Failed to get low target"))?
+            .ok_or_else(|| aoc_error!("Failed to get low target"))?
             .give(
                 *self
                     .hands
                     .iter()
                     .min()
-                    .ok_or_else(|| task_error!("Hands can't be empty!"))?,
+                    .ok_or_else(|| aoc_error!("Hands can't be empty!"))?,
                 bots,
                 output,
             );
         self.target_hi
             .as_ref()
-            .ok_or_else(|| task_error!("Failed to get hi target"))?
+            .ok_or_else(|| aoc_error!("Failed to get hi target"))?
             .give(
                 *self
                     .hands
                     .iter()
                     .max()
-                    .ok_or_else(|| task_error!("Hands can't be empty!"))?,
+                    .ok_or_else(|| aoc_error!("Hands can't be empty!"))?,
                 bots,
                 output,
             );
@@ -157,7 +157,7 @@ pub fn task1(robots: &Robots) -> Result<usize> {
             }
         }
     }
-    Err(task_error!("Not found"))
+    Err(aoc_error!("Not found"))
 }
 
 pub fn task2(robots: &Robots) -> Result<usize> {

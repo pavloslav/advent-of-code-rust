@@ -11,7 +11,7 @@ pub fn parse_input(input: &str) -> Result<Vec<u32>> {
             result.push(0);
         } else {
             return Err(
-                super::super::task_error!("Incorrect input: '{calories}'"), /* task_error!(("Incorrect input: '{calories}'")*/
+                super::super::aoc_error!("Incorrect input: '{calories}'"), /* aoc_error!(("Incorrect input: '{calories}'")*/
             );
         }
     }

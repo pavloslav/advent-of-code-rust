@@ -10,7 +10,7 @@ pub fn parse_input(input: &str) -> Result<Cave> {
                 .map(|risk| {
                     Ok(risk
                         .to_digit(10)
-                        .ok_or_else(|| task_error!("Wrong digit {risk}"))?
+                        .ok_or_else(|| aoc_error!("Wrong digit {risk}"))?
                         as usize)
                 })
                 .collect()

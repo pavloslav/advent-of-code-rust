@@ -13,7 +13,7 @@ pub fn parse_input(input: &str) -> Result<(Rules, Molecule)> {
         .collect::<Result<Rules>>()?;
     let molecule = lines
         .next()
-        .ok_or(task_error!("No molecula for Rudolph"))?
+        .ok_or(aoc_error!("No molecula for Rudolph"))?
         .to_string();
     Ok((rules, molecule))
 }
@@ -47,7 +47,7 @@ pub fn task2((_rules, medicine): &(Rules, Molecule)) -> Result<usize> {
     let rn = medicine.matches("Rn").count();
     let ar = medicine.matches("Ar").count();
     if rn != ar {
-        return Err(task_error!("Rn and Ar are not in symmetry!"));
+        return Err(aoc_error!("Rn and Ar are not in symmetry!"));
     }
     let elements = medicine.matches(char::is_uppercase).count();
     Ok(elements - 2 * y - rn - ar - 1)

@@ -54,7 +54,7 @@ pub fn task1(input: &str) -> Result<String> {
         traveler.step();
     }
     if traveler.solutions.len() != 1 {
-        Err(task_error!("Found {} solutions!", traveler.solutions.len()))
+        Err(aoc_error!("Found {} solutions!", traveler.solutions.len()))
     } else {
         Ok(traveler.solutions[0].clone())
     }

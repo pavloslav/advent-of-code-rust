@@ -5,12 +5,12 @@ pub fn parse_input(input: &str) -> Result<Vec<u32>> {
         .lines()
         .find(|s| !s.starts_with("//") && !s.is_empty())
         .ok_or_else(|| {
-            task_error!("There should be non-comment and non-empty line")
+            aoc_error!("There should be non-comment and non-empty line")
         })?
         .chars()
         .map(|c| {
             c.to_digit(10)
-                .ok_or_else(|| task_error!("Can't parse digit '{c}'"))
+                .ok_or_else(|| aoc_error!("Can't parse digit '{c}'"))
         })
         .collect()
 }

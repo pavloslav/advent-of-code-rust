@@ -17,7 +17,7 @@ fn check_brackets(line: &str) -> Result<Brackets> {
                 if symbol
                     != stack
                         .pop()
-                        .ok_or_else(|| task_error!("No brackets to pop"))?
+                        .ok_or_else(|| aoc_error!("No brackets to pop"))?
                 {
                     return Ok(Brackets::Incorrect(closing));
                 }
@@ -57,7 +57,7 @@ pub fn task2(data: &str) -> Result<usize> {
                         '}' => 3,
                         '>' => 4,
                         other => {
-                            return Err(task_error!(
+                            return Err(aoc_error!(
                                 "Unknown bracket '{other}'"
                             ));
                         }

@@ -60,7 +60,7 @@ impl LookUp {
                 }
             }
             if to_visit_next.is_empty() {
-                return Err(task_error!("No way!"));
+                return Err(aoc_error!("No way!"));
             }
             to_visit = to_visit_next;
         }
@@ -91,7 +91,7 @@ impl LookUp {
                 }
             }
             if to_visit_next.is_empty() {
-                return Err(task_error!("No way!"));
+                return Err(aoc_error!("No way!"));
             }
             to_visit = to_visit_next;
         }

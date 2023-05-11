@@ -10,7 +10,7 @@ pub fn parse_input(input: &str) -> Result<Vec<bool>> {
         .map(|c| match c {
             '0' => Ok(false),
             '1' => Ok(true),
-            other => Err(task_error!("Unknown byte '{other}'")),
+            other => Err(aoc_error!("Unknown byte '{other}'")),
         })
         .collect()
 }

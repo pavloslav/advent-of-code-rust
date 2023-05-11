@@ -29,5 +29,5 @@ pub fn task2(&input: &usize) -> Result<usize> {
     }
     left.front()
         .copied()
-        .ok_or_else(|| task_error!("Solution not found"))
+        .ok_or_else(|| aoc_error!("Solution not found"))
 }

@@ -18,7 +18,7 @@ impl PolymerData {
         let mut polymer_data = PolymerData {
             polymer: lines
                 .next()
-                .ok_or_else(|| task_error!("Empty input!"))?
+                .ok_or_else(|| aoc_error!("Empty input!"))?
                 .chars()
                 .collect(),
             rules: std::collections::HashMap::new(),
@@ -67,7 +67,7 @@ impl PolymerData {
         Ok(self
             .counters
             .get(&(left, right, steps))
-            .ok_or_else(|| task_error!("Empty counters!"))?
+            .ok_or_else(|| aoc_error!("Empty counters!"))?
             .clone())
     }
 
@@ -85,11 +85,11 @@ impl PolymerData {
         let min = counter
             .values()
             .min()
-            .ok_or_else(|| task_error!("Empty counter!"))?;
+            .ok_or_else(|| aoc_error!("Empty counter!"))?;
         let max = counter
             .values()
             .max()
-            .ok_or_else(|| task_error!("Empty counter!"))?;
+            .ok_or_else(|| aoc_error!("Empty counter!"))?;
         Ok(max - min)
     }
 }

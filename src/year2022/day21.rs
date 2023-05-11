@@ -110,12 +110,12 @@ pub fn parse_input(input: &str) -> Result<HashMap<String, Monkey>> {
                     '*' => Operation::Mul,
                     '/' => Operation::Div,
                     other => {
-                        return Err(task_error!("Unknown operation '{other}'"));
+                        return Err(aoc_error!("Unknown operation '{other}'"));
                     }
                 };
                 Ok((name, Monkey::Operation(left, op, right)))
             } else {
-                Err(task_error!("Unknown monkey format: '{line}'"))
+                Err(aoc_error!("Unknown monkey format: '{line}'"))
             }
         })
         .collect()
@@ -133,7 +133,7 @@ pub fn task2(map: &HashMap<String, Monkey>) -> Result<Yell> {
             Ok(map[right].find_humn(map, map[left].yell(map)))
         }
     } else {
-        Err(task_error!("No root monkey!"))
+        Err(aoc_error!("No root monkey!"))
     }
 }
 

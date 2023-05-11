@@ -21,7 +21,7 @@ pub fn task1(input: &str) -> Result<usize> {
     {
         Ok(ones * twos)
     } else {
-        Err(task_error!("Impossible, 3 elements are 3 elements",))
+        Err(aoc_error!("Impossible, 3 elements are 3 elements",))
     }
 }
 
@@ -30,7 +30,7 @@ fn decode(c: char) -> Result<char> {
         '0' => ' ',
         '1' => 'X',
         '2' => '-',
-        other => Err(task_error!("Unknown symbol '{other}'"))?,
+        other => Err(aoc_error!("Unknown symbol '{other}'"))?,
     })
 }
 

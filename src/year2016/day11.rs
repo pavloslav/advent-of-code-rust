@@ -79,7 +79,7 @@ pub fn parse_input(input: &str) -> Result<(usize, Position)> {
             "second" => 1,
             "third" => 2,
             "fourth" => 3,
-            other => return Err(task_error!("Unknown floor '{other}'")),
+            other => return Err(aoc_error!("Unknown floor '{other}'")),
         };
         static SPLIT_REGEX: Lazy<regex::Regex> =
             Lazy::new(|| regex::Regex::new(r"(, and )|(, )|( and )").unwrap());
@@ -97,7 +97,7 @@ pub fn parse_input(input: &str) -> Result<(usize, Position)> {
                     String
                 )
                 .map_err(|_| {
-                    task_error!("List '{list}', item '{item}' fails")
+                    aoc_error!("List '{list}', item '{item}' fails")
                 })?;
                 let idx = *name_map.entry(microchip).or_insert(name_map_len);
                 position.set_item(2 * idx, floor);
@@ -145,7 +145,7 @@ pub fn task(input: &Position, size: usize) -> Result<usize> {
         visited.extend(current);
         current = new;
     }
-    Err(task_error!("Solution not found"))
+    Err(aoc_error!("Solution not found"))
 }
 
 pub fn task1((size, position): &(usize, Position)) -> Result<usize> {

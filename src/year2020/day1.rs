@@ -10,7 +10,7 @@ pub fn task1(data: &[i64]) -> Result<i64> {
     data.iter()
         .find(|&value| set.contains(&(2020 - value)))
         .map(|value| value * (2020 - value))
-        .ok_or_else(|| task_error!("Not found"))
+        .ok_or_else(|| aoc_error!("Not found"))
 }
 
 pub fn task2(data: &[i64]) -> Result<i64> {
@@ -23,5 +23,5 @@ pub fn task2(data: &[i64]) -> Result<i64> {
             }
         }
     }
-    Err(task_error!("Not found"))
+    Err(aoc_error!("Not found"))
 }

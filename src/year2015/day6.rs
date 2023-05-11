@@ -33,7 +33,7 @@ impl std::str::FromStr for Instruction {
             "turn on" => Command::On,
             "turn off" => Command::Off,
             "toggle" => Command::Toggle,
-            other => return Err(task_error!("Wrong command: '{other}'")),
+            other => return Err(aoc_error!("Wrong command: '{other}'")),
         };
         Ok(Instruction {
             command,

@@ -8,7 +8,7 @@ pub fn parse_input(input: &str) -> Result<Vec<[String; 2]>> {
                 .map(|s| s.to_string())
                 .collect::<Vec<_>>()
                 .try_into()
-                .map_err(|_| task_error!("Wrong number of elements in input!"))
+                .map_err(|_| aoc_error!("Wrong number of elements in input!"))
         })
         .collect()
 }

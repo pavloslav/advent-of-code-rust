@@ -24,11 +24,11 @@ pub fn parse_input(s: &str) -> Result<(i32, Vec<Option<i32>>)> {
     let mut lines = s.lines();
     let timestamp = lines
         .next()
-        .ok_or_else(|| task_error!("Empty input!"))?
+        .ok_or_else(|| aoc_error!("Empty input!"))?
         .parse()?;
     let times = lines
         .next()
-        .ok_or_else(|| task_error!("Empty input!"))?
+        .ok_or_else(|| aoc_error!("Empty input!"))?
         .split(',')
         .map(|part| part.parse().ok())
         .collect();

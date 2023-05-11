@@ -2,9 +2,8 @@ use crate::*;
 
 #[derive(Clone)]
 pub struct Node {
-    _x: i32,
-    _y: i32,
-    _size: i32,
+    x: usize,
+    y: usize,
     used: i32,
     avail: i32,
 }
@@ -17,16 +16,16 @@ pub fn parse_input(input: &str) -> Result<Vec<Node>> {
             let (x, y, size, used, avail) = scan_fmt::scan_fmt!(
                 line,
                 "/dev/grid/node-x{d}-y{d} {d}T {d}T {d}T {*d}%",
-                i32,
-                i32,
+                usize,
+                usize,
                 i32,
                 i32,
                 i32
             )?;
             if used+avail != size {
-                Err(task_error!("Used={used}, avail={avail}, together {}, but size is {size}!", used+avail))?
+                Err(aoc_error!("Used={used}, avail={avail}, together {}, but size is {size}!", used+avail))?
             }
-            Ok(Node { _x:x, _y:y, _size:size, used, avail })
+            Ok(Node { x, y, used, avail })
         })
         .collect()
 }
@@ -48,6 +47,44 @@ pub fn task1(nodes: &[Node]) -> Result<usize> {
     Ok(pairs)
 }
 
-pub fn task2(_nodes: &[Node]) -> Result<usize> {
-    Err(task_error!("Solution not found"))
+pub fn task2(nodes: &[Node]) -> Result<String> {
+    let width = nodes
+        .iter()
+        .map(|node| node.x)
+        .max()
+        .ok_or_else(|| aoc_error!("No nodes!!!1111"))?
+        + 1;
+    let height = nodes
+        .iter()
+        .map(|node| node.y)
+        .max()
+        .ok_or_else(|| aoc_error!("No nodes!!!1111"))?
+        + 1;
+    let mut map = vec![vec![b'X'; width]; height];
+    for node in nodes {
+        map[node.y][node.x] = match node.used {
+            0 => b'_',
+            x if x < 100 => b'.',
+            _ => b'#',
+        };
+    }
+    if map[0][0] != b'.' || map[0][width - 1] != b'.' {
+        return Err(aoc_error!(
+            "Node 0,0 is {}, node 0,{} is {}!",
+            map[0][0],
+            width - 1,
+            map[0][width - 1]
+        ));
+    }
+    map[0][0] = b'E';
+    map[0][width - 1] = b'<';
+
+    Ok(map
+        .iter()
+        .map(|row| {
+            std::str::from_utf8(row)
+                .map_err(|_| aoc_error!("Impossible, it's ASCII!"))
+        })
+        .collect::<Result<Vec<_>>>()?
+        .join("\n"))
 }

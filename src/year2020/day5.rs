@@ -5,7 +5,7 @@ fn seat_id(code: &str) -> Result<usize> {
         .map(|c| match c {
             'F' | 'L' => Ok(0),
             'B' | 'R' => Ok(1),
-            other => Err(task_error!("Incorrect zone/seat symbol '{other}'")),
+            other => Err(aoc_error!("Incorrect zone/seat symbol '{other}'")),
         })
         .try_fold(0, |acc, n| Ok(acc * 2 + n?))
 }
@@ -18,7 +18,7 @@ pub fn task1(s: &[usize]) -> Result<usize> {
     s.iter()
         .max()
         .copied()
-        .ok_or_else(|| task_error!("Empty input!"))
+        .ok_or_else(|| aoc_error!("Empty input!"))
 }
 
 pub fn task2(s: &[usize]) -> Result<usize> {

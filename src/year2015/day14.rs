@@ -32,7 +32,7 @@ pub fn task1(deers: &[Reindeer]) -> Result<usize> {
         .iter()
         .map(|deer| deer.distance(RACE_TIME))
         .max()
-        .ok_or(task_error!("No deers to find the result!"))
+        .ok_or(aoc_error!("No deers to find the result!"))
 }
 
 pub fn task2(deers: &Vec<Reindeer>) -> Result<usize> {
@@ -43,7 +43,7 @@ pub fn task2(deers: &Vec<Reindeer>) -> Result<usize> {
         let &best = distances
             .iter()
             .max()
-            .ok_or(task_error!("No deers to find the result!"))?;
+            .ok_or(aoc_error!("No deers to find the result!"))?;
         for i in 0..deers.len() {
             if distances[i] == best {
                 results[i] += 1;
@@ -53,5 +53,5 @@ pub fn task2(deers: &Vec<Reindeer>) -> Result<usize> {
     results
         .into_iter()
         .max()
-        .ok_or(task_error!("No deers to find the result!"))
+        .ok_or(aoc_error!("No deers to find the result!"))
 }

@@ -45,7 +45,7 @@ pub fn parse_input(input: &str) -> Result<InvisiblePaper> {
                 'x' => Fold::X(value),
                 'y' => Fold::Y(value),
                 other => {
-                    return Err(task_error!("Impossible value '{other}'!"))
+                    return Err(aoc_error!("Impossible value '{other}'!"))
                 }
             };
             data.folds.push(fold);
@@ -71,14 +71,14 @@ pub fn task2(data: &InvisiblePaper) -> Result<String> {
         .iter()
         .map(|(x, _)| x)
         .max()
-        .ok_or_else(|| task_error!("No dots!"))?
+        .ok_or_else(|| aoc_error!("No dots!"))?
         + 1;
     let max_y = data
         .dots
         .iter()
         .map(|(_, y)| y)
         .max()
-        .ok_or_else(|| task_error!("No dots!"))?
+        .ok_or_else(|| aoc_error!("No dots!"))?
         + 1;
     let mut result = String::new();
     for y in 0..max_y {

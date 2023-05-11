@@ -63,7 +63,7 @@ where
         .iter()
         .enumerate()
         .find(|(_i, data)| check(data, &filter))
-        .ok_or_else(|| task_error!("No suitable answer"))?
+        .ok_or_else(|| aoc_error!("No suitable answer"))?
         .0
         + 1)
 }

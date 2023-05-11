@@ -22,7 +22,7 @@ impl FromStr for Dance {
                     scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char)?;
                 Dance::SwapDancer(first, second)
             }
-            _ => return Err(task_error!("Unknown command {s}")),
+            _ => return Err(aoc_error!("Unknown command {s}")),
         })
     }
 }

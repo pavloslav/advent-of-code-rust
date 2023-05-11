@@ -5,8 +5,8 @@ where
     F: Fn(i32, i32) -> i32,
 {
     let total = |pos| crabs.iter().map(|&crab| fuel(crab, pos)).sum();
-    let mut pos = (crabs.last().ok_or_else(|| task_error!("Empty list!"))?
-        - crabs.first().ok_or_else(|| task_error!("Empty list!"))?)
+    let mut pos = (crabs.last().ok_or_else(|| aoc_error!("Empty list!"))?
+        - crabs.first().ok_or_else(|| aoc_error!("Empty list!"))?)
         / 2;
     let mut step = pos / 2;
     loop {

@@ -61,7 +61,7 @@ impl Computer {
                     tgt,
                     self.input
                         .pop_front()
-                        .ok_or_else(|| task_error!("Input is empty!"))?,
+                        .ok_or_else(|| aoc_error!("Input is empty!"))?,
                 );
                 self.ip += 2;
             }
@@ -100,7 +100,7 @@ impl Computer {
                 self.ip += 2;
             }
             Computer::HLT => {}
-            opcode => return Err(task_error!("Unknown opcode: {opcode}")),
+            opcode => return Err(aoc_error!("Unknown opcode: {opcode}")),
         }
         Ok(())
     }
@@ -133,7 +133,7 @@ impl Computer {
                 .memory
                 .get(&(self.relative_base + self.memory[&(self.ip + index)]))
                 .unwrap_or(&0),
-            other => Err(task_error!(
+            other => Err(aoc_error!(
                 "Unknown source mode {other} in instruction {}",
                 self.memory[&self.ip]
             ))?,
@@ -147,7 +147,7 @@ impl Computer {
         Ok(match mode % 10 {
             0 => self.memory[&(self.ip + index)],
             2 => self.relative_base + self.memory[&(self.ip + index)],
-            other => Err(task_error!(
+            other => Err(aoc_error!(
                 "Unknown target mode {other} in instruction {} on ip {}",
                 self.memory[&self.ip],
                 self.ip
@@ -166,7 +166,7 @@ impl Computer {
     pub fn read(&mut self) -> Result<Word> {
         self.output
             .pop_front()
-            .ok_or_else(|| task_error!("Output is empty!"))
+            .ok_or_else(|| aoc_error!("Output is empty!"))
     }
     pub fn prepare_code(input: &str) -> Result<Vec<Word>> {
         input.trim().split(',').map(|x| Ok(x.parse()?)).collect()

@@ -38,7 +38,7 @@ fn find_span_adding(data: &Data, target: i64) -> Result<&[i64]> {
             return Ok(&numbers[start..end]);
         }
     }
-    Err(task_error!("Not found!"))
+    Err(aoc_error!("Not found!"))
 }
 
 pub fn parse_input(input: &str) -> Result<Data> {
@@ -63,7 +63,7 @@ pub fn task2(data: &Data) -> Result<i64> {
     if let (Some(min), Some(max)) = (arr.iter().min(), arr.iter().max()) {
         Ok(min + max)
     } else {
-        Err(task_error!("Should be not empty!"))
+        Err(aoc_error!("Should be not empty!"))
     }
 }
 

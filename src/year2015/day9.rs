@@ -47,11 +47,11 @@ fn task(distances: &[Vec<usize>]) -> impl Iterator<Item = usize> + '_ {
 pub fn task1(distances: &[Vec<usize>]) -> Result<usize> {
     task(distances)
         .min()
-        .ok_or_else(|| task_error!("No distances provided!"))
+        .ok_or_else(|| aoc_error!("No distances provided!"))
 }
 
 pub fn task2(distances: &[Vec<usize>]) -> Result<usize> {
     task(distances)
         .max()
-        .ok_or_else(|| task_error!("No distances provided!"))
+        .ok_or_else(|| aoc_error!("No distances provided!"))
 }

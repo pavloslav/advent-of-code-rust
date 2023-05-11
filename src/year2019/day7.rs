@@ -24,7 +24,7 @@ pub fn task1(code: &[isize]) -> Result<isize> {
         .collect::<Result<Vec<_>>>()?
         .into_iter()
         .max()
-        .ok_or_else(|| task_error!("Should not be empty!"))
+        .ok_or_else(|| aoc_error!("Should not be empty!"))
 }
 
 pub fn task2(code: &[isize]) -> Result<isize> {
@@ -58,6 +58,6 @@ pub fn task2(code: &[isize]) -> Result<isize> {
         .collect::<Result<Vec<_>>>()?
         .iter()
         .max()
-        .ok_or_else(|| task_error!("Should not be empty!"))
+        .ok_or_else(|| aoc_error!("Should not be empty!"))
         .copied()
 }

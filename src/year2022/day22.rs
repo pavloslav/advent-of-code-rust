@@ -52,7 +52,7 @@ pub fn task1(input: &Task) -> Result<usize> {
                                     .iter()
                                     .position(|&c| c != b' ')
                                     .ok_or_else(|| {
-                                        task_error!(
+                                        aoc_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
                                         )
                                     })?
@@ -73,7 +73,7 @@ pub fn task1(input: &Task) -> Result<usize> {
                                     .iter()
                                     .position(|row| row[x] != b' ')
                                     .ok_or_else(|| {
-                                        task_error!(
+                                        aoc_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
                                         )
                                     })?
@@ -87,7 +87,7 @@ pub fn task1(input: &Task) -> Result<usize> {
                                     .iter()
                                     .rposition(|&c| c != b' ')
                                     .ok_or_else(|| {
-                                        task_error!(
+                                        aoc_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
                                         )
                                     })?
@@ -109,14 +109,14 @@ pub fn task1(input: &Task) -> Result<usize> {
                                         row.len() > x && row[x] != b' '
                                     })
                                     .ok_or_else(|| {
-                                        task_error!(
+                                        aoc_error!(
                                             "Empty string, x = {x}, y = {y}, dir = {dir}!"
                                         )
                                     })?
                             },
                         ),
                         _ => {
-                            return Err(task_error!(
+                            return Err(aoc_error!(
                                 "Direction can't be {dir}!"
                             ))
                         }

@@ -79,7 +79,7 @@ impl Packet {
                 .iter()
                 .enumerate()
                 .find(|&(_, &b)| b == b'|')
-                .ok_or_else(|| task_error!("First line should contain '|'!"))?
+                .ok_or_else(|| aoc_error!("First line should contain '|'!"))?
                 .0,
             y: 0,
             dir: Direction::Down,

@@ -38,7 +38,7 @@ fn calculate(s: &str, precedence: bool) -> Result<u64> {
         match op {
             "+" => calculate(left, precedence)? + calculate(right, precedence)?,
             "*" => calculate(left, precedence)? * calculate(right, precedence)?,
-            _ => Err(task_error!(
+            _ => Err(aoc_error!(
                 "failed with op='{op}' on
     s = '{s}'
     left='{left}'
@@ -46,7 +46,7 @@ fn calculate(s: &str, precedence: bool) -> Result<u64> {
             ))?,
         }
     } else if s.len() <= 1 {
-        Err(task_error!("failed on s = '{s}'"))?
+        Err(aoc_error!("failed on s = '{s}'"))?
     } else {
         calculate(s[1..s.len() - 1].trim(), precedence)?
     })

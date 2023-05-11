@@ -9,7 +9,7 @@ fn reg_num(input: &str) -> Result<Register> {
     match input {
         "a" => Ok(REG_A),
         "b" => Ok(REG_B),
-        other => Err(task_error!("Wrong register '{other}'")),
+        other => Err(aoc_error!("Wrong register '{other}'")),
     }
 }
 
@@ -43,7 +43,7 @@ impl std::str::FromStr for Instruction {
         {
             Ok(Instruction::Jio(reg_num(&reg)?, value))
         } else {
-            Err(task_error!("Incorrect instruction '{s}'"))
+            Err(aoc_error!("Incorrect instruction '{s}'"))
         }
     }
 }
@@ -79,14 +79,14 @@ impl Computer {
     fn get_reg(&mut self, reg: Register) -> Result<&mut usize> {
         self.regs
             .get_mut(reg)
-            .ok_or_else(|| task_error!("Incorrect register {reg}"))
+            .ok_or_else(|| aoc_error!("Incorrect register {reg}"))
     }
 
     fn step(&mut self) -> Result<bool> {
         let instr = self
             .program
             .get(self.ip)
-            .ok_or_else(|| task_error!("Incorrect ip: {}", self.ip))?
+            .ok_or_else(|| aoc_error!("Incorrect ip: {}", self.ip))?
             .clone();
         match instr {
             Instruction::Hlf(tgt) => {

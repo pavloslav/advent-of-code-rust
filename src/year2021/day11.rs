@@ -15,7 +15,7 @@ impl Octopuses {
                     line.chars()
                         .map(|c| {
                             Ok(c.to_digit(10)
-                                .ok_or_else(|| task_error!("Wrong digit {c}"))?
+                                .ok_or_else(|| aoc_error!("Wrong digit {c}"))?
                                 as u8)
                         })
                         .collect::<Result<Vec<u8>>>()

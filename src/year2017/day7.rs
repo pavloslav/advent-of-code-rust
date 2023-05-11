@@ -31,10 +31,10 @@ pub fn parse_input(input: &str) -> Result<Tower> {
                         };
                     Ok((name.as_str().to_owned(), (weight, children)))
                 } else {
-                    Err(task_error!("No name and weight found in '{line}'"))
+                    Err(aoc_error!("No name and weight found in '{line}'"))
                 }
             } else {
-                Err(task_error!("Failed to parse the line '{line}'"))
+                Err(aoc_error!("Failed to parse the line '{line}'"))
             }
         })
         .collect()
@@ -48,7 +48,7 @@ fn get_root(tower: &Tower) -> Result<String> {
     tower
         .keys()
         .find(|k| !children.contains(k))
-        .ok_or_else(|| task_error!("No root found!"))
+        .ok_or_else(|| aoc_error!("No root found!"))
         .cloned()
 }
 
@@ -85,7 +85,7 @@ fn get_correct_weight(tower: &Tower, root: &str) -> Result<usize> {
         get_correct_weight(tower, &weights[&wrong][0])
             .or_else(|_| Ok(tower[&weights[&wrong][0]].0 + correct - wrong))
     } else {
-        Err(task_error!("Can't find answer"))
+        Err(aoc_error!("Can't find answer"))
     }
 }
 

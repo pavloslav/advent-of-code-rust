@@ -17,7 +17,7 @@ impl std::str::FromStr for Command {
             "forward" => Forward(value),
             "down" => Down(value),
             "up" => Up(value),
-            other => return Err(task_error!("Unknown instruction '{other}'")),
+            other => return Err(aoc_error!("Unknown instruction '{other}'")),
         })
     }
 }

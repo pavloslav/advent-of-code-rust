@@ -7,7 +7,7 @@ fn reg_num(input: &str) -> Result<Register> {
     ["a", "b", "c", "d"]
         .iter()
         .position(|&r| r == input)
-        .ok_or_else(|| task_error!("'{input}' is not a register name"))
+        .ok_or_else(|| aoc_error!("'{input}' is not a register name"))
 }
 
 #[derive(Clone, Copy)]
@@ -39,6 +39,7 @@ pub enum OneArgument {
     Inc,
     Dec,
     Tgl,
+    Out,
 }
 
 #[derive(Clone)]
@@ -62,7 +63,7 @@ impl std::str::FromStr for Instruction {
             if matches!(dst, RegValue::Register(_)) {
                 Ok(Instruction::TwoArgument(TwoArgument::Cpy, src, dst))
             } else {
-                Err(task_error!("Wrong cpy second argument"))
+                Err(aoc_error!("Wrong cpy second argument"))
             }
         } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "inc {}", RegValue) {
             Ok(Instruction::OneArgument(OneArgument::Inc, tgt))
@@ -74,8 +75,10 @@ impl std::str::FromStr for Instruction {
             Ok(Instruction::TwoArgument(TwoArgument::Jnz, src, tgt))
         } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "tgl {}", RegValue) {
             Ok(Instruction::OneArgument(OneArgument::Tgl, tgt))
+        } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "out {}", RegValue) {
+            Ok(Instruction::OneArgument(OneArgument::Out, tgt))
         } else {
-            Err(task_error!("Unknown instruction '{}'", s))
+            Err(aoc_error!("Unknown instruction '{}'", s))
         }
     }
 }
@@ -84,6 +87,7 @@ pub struct Computer {
     pub registers: [Value; 4],
     program: Vec<Instruction>,
     ip: usize,
+    out: Option<Value>,
 }
 
 impl Computer {
@@ -92,75 +96,86 @@ impl Computer {
             registers: [0; 4],
             program: program.to_vec(),
             ip: 0,
+            out: None,
         }
     }
-    pub fn run(&mut self) -> Result<Value> {
-        while self.ip < self.program.len() {
-            match &self.program[self.ip] {
-                Instruction::OneArgument(
-                    OneArgument::Inc,
-                    RegValue::Register(r),
-                ) => {
-                    self.registers[*r] += 1;
-                }
-                Instruction::OneArgument(
-                    OneArgument::Dec,
-                    RegValue::Register(r),
-                ) => {
-                    self.registers[*r] -= 1;
-                }
-                Instruction::OneArgument(OneArgument::Tgl, tgt) => {
-                    let tgt = self.ip as Value + tgt.get(&self.registers);
-                    if (0..self.program.len() as isize).contains(&tgt) {
-                        let tgt = tgt as usize;
-                        self.program[tgt] = match &self.program[tgt] {
-                            Instruction::OneArgument(OneArgument::Inc, r) => {
-                                Instruction::OneArgument(OneArgument::Dec, *r)
-                            }
-                            Instruction::OneArgument(_, r) => {
-                                Instruction::OneArgument(OneArgument::Inc, *r)
-                            }
-                            Instruction::TwoArgument(
-                                TwoArgument::Jnz,
-                                r1,
-                                r2,
-                            ) => Instruction::TwoArgument(
-                                TwoArgument::Cpy,
-                                *r1,
-                                *r2,
-                            ),
-                            Instruction::TwoArgument(_, r1, r2) => {
-                                Instruction::TwoArgument(
-                                    TwoArgument::Jnz,
-                                    *r1,
-                                    *r2,
-                                )
-                            }
+    pub fn step(&mut self) -> Result<()> {
+        match &self.program[self.ip] {
+            Instruction::OneArgument(
+                OneArgument::Inc,
+                RegValue::Register(r),
+            ) => {
+                self.registers[*r] += 1;
+            }
+            Instruction::OneArgument(
+                OneArgument::Dec,
+                RegValue::Register(r),
+            ) => {
+                self.registers[*r] -= 1;
+            }
+            Instruction::OneArgument(OneArgument::Tgl, tgt) => {
+                let tgt = self.ip as Value + tgt.get(&self.registers);
+                if (0..self.program.len() as isize).contains(&tgt) {
+                    let tgt = tgt as usize;
+                    self.program[tgt] = match &self.program[tgt] {
+                        Instruction::OneArgument(OneArgument::Inc, r) => {
+                            Instruction::OneArgument(OneArgument::Dec, *r)
+                        }
+                        Instruction::OneArgument(_, r) => {
+                            Instruction::OneArgument(OneArgument::Inc, *r)
+                        }
+                        Instruction::TwoArgument(TwoArgument::Jnz, r1, r2) => {
+                            Instruction::TwoArgument(TwoArgument::Cpy, *r1, *r2)
+                        }
+                        Instruction::TwoArgument(_, r1, r2) => {
+                            Instruction::TwoArgument(TwoArgument::Jnz, *r1, *r2)
                         }
                     }
                 }
-                Instruction::TwoArgument(
-                    TwoArgument::Cpy,
-                    src,
-                    RegValue::Register(tgt),
-                ) => {
-                    self.registers[*tgt] = src.get(&self.registers);
-                }
-                Instruction::TwoArgument(TwoArgument::Jnz, src, tgt) => {
-                    if src.get(&self.registers) != 0 {
-                        self.ip = self
-                            .ip
-                            .checked_add_signed(tgt.get(&self.registers))
-                            .ok_or_else(|| {
-                                task_error!("Ip shouldn't be less then 0!")
-                            })?;
-                        continue;
-                    }
-                }
-                _ => {} //skip incorrect instruction
             }
-            self.ip += 1;
+            Instruction::TwoArgument(
+                TwoArgument::Cpy,
+                src,
+                RegValue::Register(tgt),
+            ) => {
+                self.registers[*tgt] = src.get(&self.registers);
+            }
+            Instruction::TwoArgument(TwoArgument::Jnz, src, tgt) => {
+                if src.get(&self.registers) != 0 {
+                    self.ip = self
+                        .ip
+                        .checked_add_signed(tgt.get(&self.registers))
+                        .ok_or_else(|| {
+                            aoc_error!("Ip shouldn't be less then 0!")
+                        })?;
+                    return Ok(())
+                }
+            }
+            Instruction::OneArgument(OneArgument::Out, tgt) => {
+                self.out = Some(tgt.get(&self.registers));
+            }
+            _ => {} //skip incorrect instruction
+        }
+        self.ip += 1;
+        Ok(())
+    }
+
+    pub fn run(&mut self) -> Result<Value> {
+        while self.ip < self.program.len() {
+            self.step()?;
         }
         Ok(self.registers[0])
     }
+
+    pub fn run_to_output(&mut self) -> Result<Option<Value>> {
+        while self.ip < self.program.len() && self.out.is_none() {
+            self.step()?;
+        }
+        Ok(self.out.take())
+    }
+
+    pub fn get_state(&self) -> (usize, [Value; 4]){
+        (self.ip, self.registers)
+    }
+
 }

@@ -35,7 +35,7 @@ impl std::str::FromStr for Order {
                 'L' => OrderType::Left,
                 'R' => OrderType::Right,
                 'F' => OrderType::Forward,
-                other => Err(task_error!("Unknown order: '{other}'"))?,
+                other => Err(aoc_error!("Unknown order: '{other}'"))?,
             },
             par,
         })
@@ -138,7 +138,7 @@ impl ShipWaypoint {
                 self.waypt_lat = -t;
             }
             other => {
-                return Err(task_error!("Angle {other} is not supported"));
+                return Err(aoc_error!("Angle {other} is not supported"));
             }
         }
         Ok(())
