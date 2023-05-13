@@ -1,7 +1,7 @@
 use crate::*;
 
 pub fn parse_input(input: &str) -> Result<&str> {
-    input
+    Ok(input)
 }
 
 pub fn task1(input: &str) -> Result<usize> {

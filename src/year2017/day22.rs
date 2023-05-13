@@ -1,25 +1,21 @@
-/*
- * keeps infected only
- */
+use crate::*;
 type Map = std::collections::HashMap<(i32, i32), i32>;
 
-pub fn parse_input(input: &str) -> (Map, usize, usize) {
-    let width = input.lines().next().unwrap().len();
-    let height = input.lines().count();
-    println!("{height} {width}");
-    (
-        input
-            .lines()
-            .enumerate()
-            .flat_map(|(y, line)| {
-                line.chars().enumerate().map(move |(x, c)| {
-                    ((x as i32, y as i32), if c == '#' { 2 } else { 0 })
-                })
+pub fn parse_input(input: &str) -> Result<(Map, usize, usize)> {
+    let mut width = 0;
+    let mut height = 0;
+    let map = input
+        .lines()
+        .enumerate()
+        .flat_map(|(y, line)| {
+            width = line.len();
+            height = y + 1;
+            line.chars().enumerate().map(move |(x, c)| {
+                ((x as i32, y as i32), if c == '#' { 2 } else { 0 })
             })
-            .collect(),
-        width,
-        height,
-    )
+        })
+        .collect();
+    Ok((map, width, height))
 }
 
 struct Carrier {
@@ -57,20 +53,20 @@ impl Carrier {
     }
 }
 
-pub fn task1((map, width, height): &(Map, usize, usize)) -> usize {
+pub fn task1((map, width, height): &(Map, usize, usize)) -> Result<usize> {
     let mut map = map.clone();
     let mut carrier = Carrier::new(*width, *height);
     for _step in 0..10_000 {
         carrier.burst(&mut map, 2);
     }
-    carrier.infected
+    Ok(carrier.infected)
 }
 
-pub fn task2((map, width, height): &(Map, usize, usize)) -> usize {
+pub fn task2((map, width, height): &(Map, usize, usize)) -> Result<usize> {
     let mut map = map.clone();
     let mut carrier = Carrier::new(*width, *height);
     for _step in 0..10_000_000 {
         carrier.burst(&mut map, 1);
     }
-    carrier.infected
+    Ok(carrier.infected)
 }
