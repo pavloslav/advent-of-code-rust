@@ -3,32 +3,18 @@ use crate::*;
 type Connections = std::collections::HashMap<usize, Vec<usize>>;
 
 pub fn parse_input(input: &str) -> Result<Connections> {
-    use once_cell::sync::Lazy;
-    static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
-        regex::Regex::new(r"^(?P<index>\d+) <-> (?P<connected>.*)$").unwrap()
-    });
     input
         .lines()
         .map(|line| {
-            INPUT_REGEX
-                .captures(line)
-                .ok_or_else(|| aoc_error!("Can't parse input"))
-                .map(|captures| {
-                    if let (Some(index), Some(connected)) =
-                        (captures.name("index"), captures.name("connected"))
-                    {
-                        Ok((
-                            index.as_str().parse()?,
-                            connected
-                                .as_str()
-                                .split(", ")
-                                .map(|s| Ok(s.parse()?))
-                                .collect::<Result<_>>()?,
-                        ))
-                    } else {
-                        Err(aoc_error!("Can't find all elements in line"))
-                    }
-                })?
+            let (program, connections) =
+                scan_fmt::scan_fmt!(line, "{} <-> {/.*/}{e}", usize, String)?;
+            Ok((
+                program,
+                connections
+                    .split(", ")
+                    .map(|s| Ok(s.parse()?))
+                    .collect::<Result<_>>()?,
+            ))
         })
         .collect()
 }

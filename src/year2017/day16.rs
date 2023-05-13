@@ -11,7 +11,7 @@ impl FromStr for Dance {
     type Err = Error;
     fn from_str(s: &str) -> Result<Dance> {
         Ok(match s.chars().next() {
-            Some('s') => s[1..].parse().map(Dance::Spin)?,
+            Some('s') => Dance::Spin(s[1..].parse()?),
             Some('x') => {
                 let (first, second) =
                     scan_fmt::scan_fmt!(&s[1..], "{}/{}", usize, usize)?;

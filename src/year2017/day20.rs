@@ -7,7 +7,7 @@ pub struct Particle {
     acc: Coord,
 }
 
-pub fn parse_input(input: &str) -> Vec<Particle> {
+pub fn parse_input(input: &str) -> Result<Vec<Particle>> {
     input
         .lines()
         .map(|line| {

@@ -1,4 +1,5 @@
 pub mod knots_hash;
+pub mod computer;
 
 #[rustfmt::skip]
 super::mod_list!(year2017
@@ -24,7 +25,7 @@ super::mod_list!(year2017
     //, day20 
     //, day21 
     //, day22
-    //, day23 
+    , day23 
     //, day24 
     //, day25
     );

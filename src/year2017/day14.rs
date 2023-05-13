@@ -64,5 +64,5 @@ pub fn task2(input: &str) -> Result<usize> {
             return Ok(i);
         }
     }
-    unreachable!()
+    Err(aoc_error!("unreachable"))
 }

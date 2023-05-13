@@ -4,10 +4,11 @@ pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input
         .lines()
         .map(|s| {
-            Ok(s.split_whitespace()
-                .last()
-                .ok_or_else(|| aoc_error!("Empty input!"))?
-                .parse()?)
+            Ok(scan_fmt::scan_fmt!(
+                s,
+                "Generator {*} starts with {d}",
+                usize
+            )?)
         })
         .collect()
 }
@@ -46,10 +47,13 @@ fn task(input: &[usize], filters: &[usize], limit: usize) -> usize {
         .count()
 }
 
+const FIRST_LIMIT: usize = 40_000_000;
+const SECOND_LIMIT: usize = 5_000_000;
+
 pub fn task1(input: &[usize]) -> Result<usize> {
-    Ok(task(input, &[1, 1], 40_000_000))
+    Ok(task(input, &[1, 1], FIRST_LIMIT))
 }
 
 pub fn task2(input: &[usize]) -> Result<usize> {
-    Ok(task(input, &[4, 8], 5_000_000))
+    Ok(task(input, &[4, 8], SECOND_LIMIT))
 }

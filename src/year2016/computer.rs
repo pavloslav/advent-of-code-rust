@@ -35,23 +35,13 @@ impl RegValue {
 }
 
 #[derive(Clone)]
-pub enum OneArgument {
-    Inc,
-    Dec,
-    Tgl,
-    Out,
-}
-
-#[derive(Clone)]
-pub enum TwoArgument {
-    Jnz,
-    Cpy,
-}
-
-#[derive(Clone)]
 pub enum Instruction {
-    OneArgument(OneArgument, RegValue),
-    TwoArgument(TwoArgument, RegValue, RegValue),
+    Inc(RegValue),
+    Dec(RegValue),
+    Tgl(RegValue),
+    Out(RegValue),
+    Jnz(RegValue, RegValue),
+    Cpy(RegValue, RegValue),
 }
 
 impl std::str::FromStr for Instruction {
@@ -60,23 +50,19 @@ impl std::str::FromStr for Instruction {
         if let Ok((src, dst)) =
             scan_fmt::scan_fmt!(s, "cpy {} {}", RegValue, RegValue)
         {
-            if matches!(dst, RegValue::Register(_)) {
-                Ok(Instruction::TwoArgument(TwoArgument::Cpy, src, dst))
-            } else {
-                Err(aoc_error!("Wrong cpy second argument"))
-            }
+            Ok(Instruction::Cpy(src, dst))
         } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "inc {}", RegValue) {
-            Ok(Instruction::OneArgument(OneArgument::Inc, tgt))
+            Ok(Instruction::Inc(tgt))
         } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "dec {}", RegValue) {
-            Ok(Instruction::OneArgument(OneArgument::Dec, tgt))
+            Ok(Instruction::Dec(tgt))
         } else if let Ok((src, tgt)) =
             scan_fmt::scan_fmt!(s, "jnz {} {}", RegValue, RegValue)
         {
-            Ok(Instruction::TwoArgument(TwoArgument::Jnz, src, tgt))
+            Ok(Instruction::Jnz(src, tgt))
         } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "tgl {}", RegValue) {
-            Ok(Instruction::OneArgument(OneArgument::Tgl, tgt))
+            Ok(Instruction::Tgl(tgt))
         } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "out {}", RegValue) {
-            Ok(Instruction::OneArgument(OneArgument::Out, tgt))
+            Ok(Instruction::Out(tgt))
         } else {
             Err(aoc_error!("Unknown instruction '{}'", s))
         }
@@ -101,46 +87,30 @@ impl Computer {
     }
     pub fn step(&mut self) -> Result<()> {
         match &self.program[self.ip] {
-            Instruction::OneArgument(
-                OneArgument::Inc,
-                RegValue::Register(r),
-            ) => {
+            Instruction::Inc(RegValue::Register(r)) => {
                 self.registers[*r] += 1;
             }
-            Instruction::OneArgument(
-                OneArgument::Dec,
-                RegValue::Register(r),
-            ) => {
+            Instruction::Dec(RegValue::Register(r)) => {
                 self.registers[*r] -= 1;
             }
-            Instruction::OneArgument(OneArgument::Tgl, tgt) => {
+            Instruction::Tgl(tgt) => {
                 let tgt = self.ip as Value + tgt.get(&self.registers);
                 if (0..self.program.len() as isize).contains(&tgt) {
                     let tgt = tgt as usize;
                     self.program[tgt] = match &self.program[tgt] {
-                        Instruction::OneArgument(OneArgument::Inc, r) => {
-                            Instruction::OneArgument(OneArgument::Dec, *r)
-                        }
-                        Instruction::OneArgument(_, r) => {
-                            Instruction::OneArgument(OneArgument::Inc, *r)
-                        }
-                        Instruction::TwoArgument(TwoArgument::Jnz, r1, r2) => {
-                            Instruction::TwoArgument(TwoArgument::Cpy, *r1, *r2)
-                        }
-                        Instruction::TwoArgument(_, r1, r2) => {
-                            Instruction::TwoArgument(TwoArgument::Jnz, *r1, *r2)
-                        }
+                        Instruction::Inc(r) => Instruction::Dec(*r),
+                        Instruction::Dec(r)
+                        | Instruction::Out(r)
+                        | Instruction::Tgl(r) => Instruction::Inc(*r),
+                        Instruction::Jnz(r1, r2) => Instruction::Cpy(*r1, *r2),
+                        Instruction::Cpy(r1, r2) => Instruction::Jnz(*r1, *r2),
                     }
                 }
             }
-            Instruction::TwoArgument(
-                TwoArgument::Cpy,
-                src,
-                RegValue::Register(tgt),
-            ) => {
+            Instruction::Cpy(src, RegValue::Register(tgt)) => {
                 self.registers[*tgt] = src.get(&self.registers);
             }
-            Instruction::TwoArgument(TwoArgument::Jnz, src, tgt) => {
+            Instruction::Jnz(src, tgt) => {
                 if src.get(&self.registers) != 0 {
                     self.ip = self
                         .ip
@@ -148,10 +118,10 @@ impl Computer {
                         .ok_or_else(|| {
                             aoc_error!("Ip shouldn't be less then 0!")
                         })?;
-                    return Ok(())
+                    return Ok(());
                 }
             }
-            Instruction::OneArgument(OneArgument::Out, tgt) => {
+            Instruction::Out(tgt) => {
                 self.out = Some(tgt.get(&self.registers));
             }
             _ => {} //skip incorrect instruction
@@ -174,8 +144,7 @@ impl Computer {
         Ok(self.out.take())
     }
 
-    pub fn get_state(&self) -> (usize, [Value; 4]){
+    pub fn get_state(&self) -> (usize, [Value; 4]) {
         (self.ip, self.registers)
     }
-
 }

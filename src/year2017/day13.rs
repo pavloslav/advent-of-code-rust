@@ -29,5 +29,5 @@ pub fn task2(firewall: &Firewall) -> Result<i32> {
                 .iter()
                 .all(|(depth, range)| (delay + depth) % (2 * (range - 1)) != 0)
         })
-        .ok_or_else(|| aoc_error!("This shouldn't be"))
+        .ok_or_else(|| aoc_error!("unreachable"))
 }
