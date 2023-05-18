@@ -11,7 +11,7 @@ pub struct TuringMachine {
 }
 
 fn name_to_state(name: char) -> Result<usize> {
-    if ('A'..='Z').contains(&name) {
+    if name.is_ascii_uppercase() {
         Ok((name as u32 - b'A' as u32) as usize)
     } else {
         Err(aoc_error!("Incorrect state: 'name'"))
@@ -168,7 +168,7 @@ In state B:
     - Write the value 1.
     - Move one slot to the right.
     - Continue with state A.";
-        let machine = parse_input(&input).unwrap();
+        let machine = parse_input(input).unwrap();
         assert_eq!(task1(&machine).unwrap(), 3);
     }
 }

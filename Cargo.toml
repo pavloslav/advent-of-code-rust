@@ -15,6 +15,7 @@ default = ["verbose"]
 serde = { version = "1", features = ["derive"] }    # common::settings::json
 serde_json = { version = "1"}                       # 2015/12, 2022/13
 minreq = {version = "2.7.0", features = ["https"] } # common::network
+thiserror = "1.0"
 
 regex = "1"                                         # wherever needed
 itertools = "*"                                     # wherever needed
@@ -29,4 +30,3 @@ num = "0.4"                                         # 2019/10, 2019/12 - gcd, lc
 
 clap = { version = "4.2", features = ["derive"] }   # arguments parser
 fancy-regex = "0.11"                                # backreferences
-thiserror = "1.0"                                   # attempt
