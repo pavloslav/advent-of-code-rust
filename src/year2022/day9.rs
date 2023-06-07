@@ -31,8 +31,8 @@ impl Rope {
     }
     fn step(&mut self, after: Rope) {
         if (self.0 - after.0).abs() > 1 || (self.1 - after.1).abs() > 1 {
-            self.0 += num::signum(after.0 - self.0);
-            self.1 += num::signum(after.1 - self.1);
+            self.0 += (after.0 - self.0).signum();
+            self.1 += (after.1 - self.1).signum();
         }
     }
 }

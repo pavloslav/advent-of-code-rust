@@ -1,7 +1,5 @@
 use crate::*;
 
-use unicode_categories::UnicodeCategories;
-
 type CaveName = String;
 
 #[derive(Clone)]
@@ -14,7 +12,7 @@ impl CaveNode {
     fn new(name: &str, neighbor: &str) -> CaveNode {
         CaveNode {
             ways_out: vec![neighbor.to_owned()],
-            visited: if name.chars().all(|c| c.is_letter_uppercase()) {
+            visited: if name.chars().all(|c| c.is_uppercase()) {
                 None
             } else {
                 Some(false)

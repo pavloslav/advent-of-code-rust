@@ -12,15 +12,12 @@ pub fn parse_input(input: &str) -> Result<Vec<(i16, i16)>> {
         .collect())
 }
 
-use num::integer::gcd;
-use num::signum;
-
 fn normalized((x, y): (i16, i16)) -> (i16, i16) {
-    let gcd = gcd(x, y);
+    let gcd = common::gcd(x, y);
     if gcd != 0 {
         (x / gcd, y / gcd)
     } else {
-        (signum(x), signum(y))
+        (x.signum(), y.signum())
     }
 }
 

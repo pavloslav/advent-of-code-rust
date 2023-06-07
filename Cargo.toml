@@ -12,21 +12,19 @@ default = ["verbose"]
 
 [dependencies]
 #rust-ini = "0.19"                                   # common::settings::ini
-serde = { version = "1", features = ["derive"] }    # common::settings::json
-serde_json = { version = "1"}                       # 2015/12, 2022/13
+serde = { version = "1.0", features = ["derive"] }  # common::settings::json
+serde_json = { version = "1.0"}                     # 2015/12, 2022/13
 minreq = {version = "2.7.0", features = ["https"] } # common::network
 thiserror = "1.0"
-
-regex = "1"                                         # wherever needed
-itertools = "*"                                     # wherever needed
-scan_fmt = "0.2"                                    # all inputs
-
+clap = { version = "4.2", features = ["derive"] }   # arguments parser
 once_cell = "*"                                     # will move to std
 
-rust-crypto = "0.2"                                 # common::md5Hasher
-unicode_categories = "0.1"                          # 2021/12
-
-num = "0.4"                                         # 2019/10, 2019/12 - gcd, lcd
-
-clap = { version = "4.2", features = ["derive"] }   # arguments parser
+regex = "1.8"                                       # wherever needed
 fancy-regex = "0.11"                                # backreferences
+
+itertools = "0.10"                                  # wherever needed
+scan_fmt = "0.2"                                    # all inputs
+
+rust-crypto = "0.2"                                 # common::md5Hasher
+
+

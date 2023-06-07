@@ -77,8 +77,6 @@ pub fn task1(input: &[[isize; 3]]) -> Result<isize> {
     Ok(moons.iter().map(Moon::energy).sum())
 }
 
-use num::integer::lcm;
-
 pub fn task2(input: &[[isize; 3]]) -> Result<usize> {
     Ok((0..3)
         .map(|i| {
@@ -95,5 +93,5 @@ pub fn task2(input: &[[isize; 3]]) -> Result<usize> {
             );
             mu + lambda
         })
-        .fold(1, lcm))
+        .fold(1, common::lcm))
 }
