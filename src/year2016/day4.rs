@@ -13,27 +13,18 @@ pub struct Room {
 impl std::str::FromStr for Room {
     type Err = Error;
     fn from_str(input: &str) -> Result<Room> {
-        static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
-            once_cell::sync::Lazy::new(|| {
-                regex::Regex::new(
-                    r"^(?P<name>.+)-(?P<id>\d+)\[(?P<check_sum>\w+)\]$",
-                )
-                .unwrap()
-            });
-        let cap = INPUT_REGEX
-            .captures(input)
-            .ok_or_else(|| aoc_error!("Can't parse the input '{input}'"))?;
-        if let (Some(name), Some(id), Some(check_sum)) =
-            (cap.name("name"), cap.name("id"), cap.name("check_sum"))
-        {
-            Ok(Room {
-                name: name.as_str().to_string(),
-                id: id.as_str().parse()?,
-                check_sum: check_sum.as_str().to_string(),
-            })
-        } else {
-            Err(aoc_error!("Can't find all fields in input"))
-        }
+        let (name, id, check_sum) = scan_fmt::scan_fmt!(
+            input,
+            "{[A-Za-z-]}{d}[{}]",
+            String,
+            usize,
+            String
+        )?;
+        Ok(Room {
+            name,
+            id,
+            check_sum,
+        })
     }
 }
 

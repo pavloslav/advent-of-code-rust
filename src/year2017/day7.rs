@@ -1,38 +1,29 @@
 use crate::*;
 
-use once_cell::sync::Lazy;
-
 type Tower = std::collections::HashMap<String, (usize, Vec<String>)>;
 
 pub fn parse_input(input: &str) -> Result<Tower> {
-    static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
-        regex::Regex::new(
-            r"(?P<name>\w+) \((?P<weight>\d+)\)( -> (?P<child>.*))?",
-        )
-        .unwrap()
-    });
     input
         .lines()
         .map(|line| {
-            if let Some(captures) = INPUT_REGEX.captures(line) {
-                if let (Some(name), Some(Ok(weight))) = (
-                    captures.name("name"),
-                    captures.name("weight").map(|w| w.as_str().parse()),
-                ) {
-                    let children =
-                        if let Some(children) = captures.name("child") {
-                            children
-                                .as_str()
-                                .split(", ")
-                                .map(|s| s.to_owned())
-                                .collect()
-                        } else {
-                            vec![]
-                        };
-                    Ok((name.as_str().to_owned(), (weight, children)))
-                } else {
-                    Err(aoc_error!("No name and weight found in '{line}'"))
-                }
+            if let Ok((name, weight, children)) = scan_fmt::scan_fmt!(
+                line,
+                "{} ({d}) -> {[a-z, ]}",
+                String,
+                usize,
+                String
+            ) {
+                Ok((
+                    name,
+                    (
+                        weight,
+                        children.split(", ").map(|s| s.to_owned()).collect(),
+                    ),
+                ))
+            } else if let Ok((name, weight)) =
+                scan_fmt::scan_fmt!(line, "{} ({d})", String, usize)
+            {
+                Ok((name, (weight, vec![])))
             } else {
                 Err(aoc_error!("Failed to parse the line '{line}'"))
             }

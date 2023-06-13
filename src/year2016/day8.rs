@@ -24,56 +24,40 @@ fn build_lcd(
     for _ in 0..columns {
         lcd.push(std::iter::repeat('.').take(rows).collect::<Vec<_>>());
     }
-    static INPUT_REGEX: once_cell::sync::Lazy<regex::Regex> =
-        once_cell::sync::Lazy::new(|| {
-            regex::Regex::new(
-    r"(rect (?P<rect_x>\d+)x(?P<rect_y>\d+))|(rotate row y=(?P<row_y>\d+) by (?P<row_shift>\d+))|(rotate column x=(?P<col_x>\d+) by (?P<col_shift>\d+))"
-    ).unwrap()
-        });
-
     for command in commands.lines() {
-        if let Some(cap) = INPUT_REGEX.captures(command) {
-            if let (Some(x), Some(y)) = (cap.name("rect_x"), cap.name("rect_y"))
-            {
-                let x = x.as_str().parse()?;
-                let y = y.as_str().parse()?;
-                for line in &mut lcd[..x] {
-                    line[..y].fill('#');
+        if let Ok((x, y)) =
+            scan_fmt::scan_fmt!(command, "rect {}x{}", usize, usize)
+        {
+            for line in &mut lcd[..x] {
+                line[..y].fill('#');
+            }
+        } else if let Ok((y, shift)) =
+            scan_fmt::scan_fmt!(command, "rotate row y={} by {}", usize, usize)
+        {
+            for _ in 0..shift {
+                let temp = lcd[columns - 1][y];
+                for j in 1..columns {
+                    let x = columns - j;
+                    lcd[x][y] = lcd[x - 1][y];
                 }
-            } else if let (Some(y), Some(shift)) =
-                (cap.name("row_y"), cap.name("row_shift"))
-            {
-                let y = y.as_str().parse::<usize>()?;
-                let shift = shift.as_str().parse()?;
-                for _ in 0..shift {
-                    let temp = lcd[columns - 1][y];
-                    for j in 1..columns {
-                        let x = columns - j;
-                        lcd[x][y] = lcd[x - 1][y];
-                    }
-                    lcd[0][y] = temp;
+                lcd[0][y] = temp;
+            }
+        } else if let Ok((x, shift)) = scan_fmt::scan_fmt!(
+            command,
+            "rotate column x={} by {}",
+            usize,
+            usize
+        ) {
+            for _ in 0..shift {
+                let temp = lcd[x][rows - 1];
+                for j in 1..rows {
+                    let y = rows - j;
+                    lcd[x][y] = lcd[x][y - 1];
                 }
-            } else if let (Some(x), Some(shift)) =
-                (cap.name("col_x"), cap.name("col_shift"))
-            {
-                let x = x.as_str().parse::<usize>()?;
-                let shift = shift.as_str().parse()?;
-
-                for _ in 0..shift {
-                    let temp = lcd[x][rows - 1];
-                    for j in 1..rows {
-                        let y = rows - j;
-                        lcd[x][y] = lcd[x][y - 1];
-                    }
-                    lcd[x][0] = temp;
-                }
-            } else {
-                return Err(aoc_error!(
-                    "Can't find all data in command {command}"
-                ));
+                lcd[x][0] = temp;
             }
         } else {
-            return Err(aoc_error!("Failed to parse command {command}"));
+            return Err(aoc_error!("Can't find all data in command {command}"));
         }
     }
     Ok(lcd)
