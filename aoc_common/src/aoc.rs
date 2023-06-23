@@ -1,9 +1,9 @@
-use crate::common::error::Result;
+use super::error::Result;
 use std::time::Duration;
 use std::time::SystemTime;
 
-use crate::common::network;
-use crate::common::settings;
+use super::network;
+use super::settings;
 
 #[cfg(feature = "verbose")]
 macro_rules! log {
@@ -53,9 +53,7 @@ pub struct FunctionHolder {
     pub f: fn() -> Result<()>,
 }
 
-pub fn measure<T, F>(
-    call: F,
-) -> (T, std::result::Result<Duration, std::time::SystemTimeError>)
+pub fn measure<T, F>(call: F) -> (T, std::result::Result<Duration, std::time::SystemTimeError>)
 where
     F: FnOnce() -> T,
 {
@@ -68,7 +66,7 @@ where
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
         use once_cell::sync::Lazy;
-        use $crate::common::aoc::measure;
+        //use $crate::measure;
 
         $(pub mod $day;)*
 
@@ -76,24 +74,24 @@ macro_rules! mod_list {
             (FN_MAP.get(day).ok_or($crate::Error::WrongTask{year:stringify!($year).to_string(), day:day.to_string()})?.f)()
         }
 
-        static FN_MAP : Lazy<std::collections::HashMap<&'static str, $crate::common::FunctionHolder>>
+        static FN_MAP : Lazy<std::collections::HashMap<&'static str, $crate::FunctionHolder>>
             = Lazy::new(||std::collections::HashMap::from ([
-                $((stringify!($day), $crate::common::FunctionHolder {
+                $((stringify!($day), $crate::FunctionHolder {
                         f: || {
                             let year_str = stringify!($year);
                             let day_str = stringify!($day);
                             let input =
-                                $crate::common::get_input_with_mod(year_str, day_str)?;
+                                $crate::get_input_with_mod(year_str, day_str)?;
                             println!("{} {}", year_str, day_str);
 
-                            let (data, time_parse) = measure(||$day::parse_input(&input));
+                            let (data, time_parse) = $crate::aoc::measure(||$day::parse_input(&input));
                             let data = data?;
                             println!("Parsing time {}s", time_parse?.as_secs_f64());
 
-                            let (result1, time_task1) = measure(||$day::task1(&data));
+                            let (result1, time_task1) = $crate::aoc::measure(||$day::task1(&data));
                             println!("Result 1:\n{}\nTime: {}s", result1?, time_task1?.as_secs_f64());
 
-                            let (result2, time_task2) = measure(||$day::task2(&data));
+                            let (result2, time_task2) = $crate::aoc::measure(||$day::task2(&data));
                             println!("Result 2:\n{}\nTime: {}s", result2?, time_task2?.as_secs_f64());
 
                             Ok(())

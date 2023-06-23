@@ -20,7 +20,7 @@ pub enum Error {
     SerdeJson(#[from] serde_json::Error),
     #[error("Fancy Regex error: {0}")]
     FancyRegex(#[from] fancy_regex::Error),
-    #[error("Incorrect task: year {year}, day {day}")]
+    #[error("Incorrect task: year '{year}', day '{day}'")]
     WrongTask { year: String, day: String },
     #[error("Convertion error: {0}")]
     Utf8Error(#[from] std::string::FromUtf8Error),

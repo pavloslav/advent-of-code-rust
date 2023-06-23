@@ -1,5 +1,5 @@
-use super::super::common::floyd_hare_tortoise::floyd_hare_tortoise_with_cmp;
 use crate::*;
+use aoc_common::floyd_hare_tortoise_with_cmp;
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct Moon {
@@ -93,5 +93,5 @@ pub fn task2(input: &[[isize; 3]]) -> Result<usize> {
             );
             mu + lambda
         })
-        .fold(1, common::lcm))
+        .fold(1, aoc_common::lcm))
 }

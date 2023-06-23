@@ -11,11 +11,13 @@ default = ["verbose"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+aoc_common = {path = "aoc_common"}
+
 #rust-ini = "0.19"                                   # common::settings::ini
-serde = { version = "1.0", features = ["derive"] }  # common::settings::json
+#serde = { version = "1.0", features = ["derive"] }  # common::settings::json
 serde_json = { version = "1.0"}                     # 2015/12, 2022/13
-minreq = {version = "2.7.0", features = ["https"] } # common::network
-thiserror = "1.0"
+#minreq = {version = "2.7.0", features = ["https"] } # common::network
+#thiserror = "1.0"
 clap = { version = "4.2", features = ["derive"] }   # arguments parser
 once_cell = "*"                                     # will move to std
 

@@ -1,6 +1,5 @@
 use crate::*;
 
-use super::super::common::Md5Hasher;
 use itertools::Itertools;
 
 fn successive(s: &str, n: usize) -> Vec<char> {
@@ -14,7 +13,7 @@ fn successive(s: &str, n: usize) -> Vec<char> {
 fn stretched_hash(src: &str, additional: usize) -> String {
     let mut src = src.to_string();
     for _ in 0..=additional {
-        src = Md5Hasher::new_from_str(&src).as_str();
+        src = aoc_common::Md5Hasher::new_from_str(&src).as_str();
     }
     src
 }

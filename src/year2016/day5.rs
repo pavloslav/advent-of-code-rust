@@ -1,6 +1,6 @@
 use crate::*;
 
-use super::super::common::Md5Hasher;
+use aoc_common::Md5Hasher;
 
 pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input.trim())

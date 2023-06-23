@@ -28,7 +28,7 @@ impl Traveler {
         let mut new = HashSet::new();
         for (x, y, path) in &self.locations {
             let mut hasher =
-                crate::common::Md5Hasher::new_from_str(&self.passcode);
+                aoc_common::Md5Hasher::new_from_str(&self.passcode);
             hasher.add_str(path);
             let dirs = hasher.as_str().into_bytes();
             for (&door, (dx, dy, step)) in dirs.iter().zip(DIRECTIONS.iter()) {

@@ -1,5 +1,5 @@
-use crate::common::floyd_hare_tortoise;
 use crate::*;
+use aoc_common::floyd_hare_tortoise;
 
 pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input.split_whitespace().map(|s| Ok(s.parse()?)).collect()

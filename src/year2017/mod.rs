@@ -2,7 +2,7 @@ pub mod knots_hash;
 pub mod computer;
 
 #[rustfmt::skip]
-super::mod_list!(year2017
+aoc_common::mod_list!(year2017
     , day1
     , day2 
     , day3 

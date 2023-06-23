@@ -13,7 +13,7 @@ pub fn parse_input(input: &str) -> Result<Vec<(i16, i16)>> {
 }
 
 fn normalized((x, y): (i16, i16)) -> (i16, i16) {
-    let gcd = common::gcd(x, y);
+    let gcd = aoc_common::gcd(x, y);
     if gcd != 0 {
         (x / gcd, y / gcd)
     } else {

@@ -9,8 +9,8 @@ pub use gcd::lcm;
 pub mod md5;
 pub use md5::Md5Hasher;
 
-pub mod settings;
 pub mod network;
+pub mod settings;
 
 #[macro_use]
 pub mod aoc;
@@ -21,6 +21,12 @@ pub use aoc::FunctionHolder;
 
 #[macro_use]
 pub mod error;
+
+#[derive(clap::Parser, Debug)]
+pub struct Args {
+    pub year: String,
+    pub day: String,
+}
 
 pub use error::Error;
 pub use error::Result;

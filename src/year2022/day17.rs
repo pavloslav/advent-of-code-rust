@@ -156,7 +156,7 @@ pub fn task1(input: &[i32]) -> Result<usize> {
     Ok(tetris.tower_height())
 }
 
-use super::super::common::floyd_hare_tortoise;
+use aoc_common::floyd_hare_tortoise;
 
 const ELEPHANT_STEPS: usize = 1_000_000_000_000;
 

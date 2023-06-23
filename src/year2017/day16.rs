@@ -69,7 +69,7 @@ pub fn task2(input: &[Dance]) -> Result<String> {
     let gen = || -> String { ('a'..='p').collect() };
     let step = |s: &mut String| *s = make_dance(s.chars(), input);
 
-    let (lam, mu) = super::super::common::floyd_hare_tortoise(gen, step);
+    let (lam, mu) = aoc_common::floyd_hare_tortoise(gen, step);
     let index = mu + (DANCES_COUNT - mu) % lam;
     let mut s = gen();
     for _ in 0..index {

@@ -7,7 +7,7 @@ pub fn parse_input(input: &str) -> Result<&str> {
 fn find_hash(init: &str, zeroes: usize) -> Result<usize> {
     (0..)
         .find(|i| {
-            crate::common::Md5Hasher::new_from_str(init)
+            aoc_common::Md5Hasher::new_from_str(init)
                 .add_str(&i.to_string())
                 .has_zeroes(zeroes)
         })
