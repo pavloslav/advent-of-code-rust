@@ -12,12 +12,16 @@ default = ["verbose"]
 
 [dependencies]
 aoc_common = {path = "aoc_common"}
+year2015 = {path = "year2015"}
+year2016 = {path = "year2016"}
+year2017 = {path = "year2017"}
+year2018 = {path = "year2018"}
+year2019 = {path = "year2019"}
+year2020 = {path = "year2020"}
+year2021 = {path = "year2021"}
+year2022 = {path = "year2022"}
 
-#rust-ini = "0.19"                                   # common::settings::ini
-#serde = { version = "1.0", features = ["derive"] }  # common::settings::json
 serde_json = { version = "1.0"}                     # 2015/12, 2022/13
-#minreq = {version = "2.7.0", features = ["https"] } # common::network
-#thiserror = "1.0"
 clap = { version = "4.2", features = ["derive"] }   # arguments parser
 once_cell = "*"                                     # will move to std
 

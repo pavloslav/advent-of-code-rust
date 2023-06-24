@@ -1,0 +1,13 @@
+[package]
+name = "year2016"
+version = "1.0.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+aoc_common = {path = "../aoc_common"}
+itertools = "0.10"
+scan_fmt = "0.2"
+once_cell = "*"
+regex = "1.8"

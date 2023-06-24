@@ -1,4 +1,3 @@
-//use crate::*;
 use crate::*;
 
 pub fn parse_input(input: &str) -> Result<Vec<u32>> {
@@ -11,7 +10,7 @@ pub fn parse_input(input: &str) -> Result<Vec<u32>> {
             result.push(0);
         } else {
             return Err(
-                super::super::aoc_error!("Incorrect input: '{calories}'"), /* aoc_error!(("Incorrect input: '{calories}'")*/
+                aoc_error!("Incorrect input: '{calories}'"), /* aoc_error!(("Incorrect input: '{calories}'")*/
             );
         }
     }

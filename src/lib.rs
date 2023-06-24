@@ -1,15 +1,5 @@
-use aoc_common::aoc_error;
 use aoc_common::Error;
 use aoc_common::Result;
-
-mod year2015;
-mod year2016;
-mod year2017;
-mod year2018;
-mod year2019;
-mod year2020;
-mod year2021;
-mod year2022;
 
 use aoc_common::Args;
 use clap::Parser;
