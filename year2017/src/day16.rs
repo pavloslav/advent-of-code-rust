@@ -13,13 +13,11 @@ impl FromStr for Dance {
         Ok(match s.chars().next() {
             Some('s') => Dance::Spin(s[1..].parse()?),
             Some('x') => {
-                let (first, second) =
-                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", usize, usize)?;
+                let (first, second) = scan_fmt::scan_fmt!(&s[1..], "{}/{}", usize, usize)?;
                 Dance::SwapPlace(first, second)
             }
             Some('p') => {
-                let (first, second) =
-                    scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char)?;
+                let (first, second) = scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char)?;
                 Dance::SwapDancer(first, second)
             }
             _ => return Err(aoc_error!("Unknown command {s}")),
@@ -69,7 +67,7 @@ pub fn task2(input: &[Dance]) -> Result<String> {
     let gen = || -> String { ('a'..='p').collect() };
     let step = |s: &mut String| *s = make_dance(s.chars(), input);
 
-    let (lam, mu) = aoc_common::floyd_hare_tortoise(gen, step);
+    let (lam, mu) = common::floyd_hare_tortoise(gen, step);
     let index = mu + (DANCES_COUNT - mu) % lam;
     let mut s = gen();
     for _ in 0..index {

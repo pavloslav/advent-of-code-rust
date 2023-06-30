@@ -1,5 +1,5 @@
 #[rustfmt::skip]
-aoc_common::mod_list!(year2015
+common::mod_list!(year2015
     , day1
     , day2 
     , day3 

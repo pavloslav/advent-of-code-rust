@@ -65,9 +65,9 @@ where
 //#[allow(clippy::crate_in_macro_def)]
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
-        use aoc_common::aoc_error;
-        use aoc_common::Error;
-        use aoc_common::Result;
+        use common::aoc_error;
+        use common::Error;
+        use common::Result;
         use once_cell::sync::Lazy;
 
         $(pub mod $day;)*

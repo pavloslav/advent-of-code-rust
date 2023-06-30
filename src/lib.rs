@@ -1,8 +1,8 @@
-use aoc_common::Error;
-use aoc_common::Result;
+use common::Error;
+use common::Result;
 
-use aoc_common::Args;
 use clap::Parser;
+use common::Args;
 
 pub fn exec() -> Result<()> {
     let args = Args::try_parse()?;
@@ -17,7 +17,6 @@ pub fn exec() -> Result<()> {
         "2021" => year2021::task as Fun,
         "2022" => year2022::task as Fun,
         year => {
-            println!("---{}---", args.year.as_str());
             return Err(Error::WrongTask {
                 year: year.to_owned(),
                 day: args.day.clone(),

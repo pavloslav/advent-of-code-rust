@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-aoc_common = {path = "../aoc_common"}
+common = {path = "../common"}
 itertools = "0.10"
 scan_fmt = "0.2"
 once_cell = "*"

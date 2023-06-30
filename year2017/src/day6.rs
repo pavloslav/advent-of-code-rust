@@ -1,5 +1,5 @@
 use crate::*;
-use aoc_common::floyd_hare_tortoise;
+use common::floyd_hare_tortoise;
 
 pub fn parse_input(input: &str) -> Result<Vec<usize>> {
     input.split_whitespace().map(|s| Ok(s.parse()?)).collect()
@@ -41,8 +41,7 @@ impl From<&[usize]> for Memory {
 }
 
 pub fn task1(input: &[usize]) -> Result<usize> {
-    let (lam, mu) =
-        floyd_hare_tortoise(|| Memory::from(input), |mem| mem.redist());
+    let (lam, mu) = floyd_hare_tortoise(|| Memory::from(input), |mem| mem.redist());
     Ok(mu + lam)
 }
 

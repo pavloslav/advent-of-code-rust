@@ -1,7 +1,7 @@
 pub mod computer;
 
 #[rustfmt::skip]
-aoc_common::mod_list!(year2019
+common::mod_list!(year2019
     , day1
     , day2 
     , day3 
@@ -17,7 +17,7 @@ aoc_common::mod_list!(year2019
     , day13 
     , day14 
     , day15 
-    //, day16
+    , day16
     //, day17 
     //, day18 
     //, day19 

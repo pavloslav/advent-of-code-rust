@@ -5,15 +5,15 @@ pub fn parse_input(input: &str) -> Result<Vec<(i16, i16)>> {
         .lines()
         .enumerate()
         .flat_map(|(y, line)| {
-            line.chars().enumerate().filter_map(move |(x, c)| {
-                Some((x as i16, y as i16)).filter(|_| c == '#')
-            })
+            line.chars()
+                .enumerate()
+                .filter_map(move |(x, c)| Some((x as i16, y as i16)).filter(|_| c == '#'))
         })
         .collect())
 }
 
 fn normalized((x, y): (i16, i16)) -> (i16, i16) {
-    let gcd = aoc_common::gcd(x, y);
+    let gcd = common::gcd(x, y);
     if gcd != 0 {
         (x / gcd, y / gcd)
     } else {
@@ -28,10 +28,7 @@ fn visible_from(station: (i16, i16), asteroids: &[(i16, i16)]) -> usize {
         .iter()
         .filter_map(|&asteroid| {
             if asteroid != station {
-                Some(normalized((
-                    asteroid.0 - station.0,
-                    asteroid.1 - station.1,
-                )))
+                Some(normalized((asteroid.0 - station.0, asteroid.1 - station.1)))
             } else {
                 None
             }
@@ -75,8 +72,7 @@ pub fn task2(asteroids: &[(i16, i16)]) -> Result<i16> {
     /* REFACTOR */
     for a in asteroids {
         if !sorted_asteroids.is_empty()
-            && normalized(a)
-                == normalized(*sorted_asteroids.last().unwrap().last().unwrap())
+            && normalized(a) == normalized(*sorted_asteroids.last().unwrap().last().unwrap())
         {
             sorted_asteroids.last_mut().unwrap().push(a);
         } else {

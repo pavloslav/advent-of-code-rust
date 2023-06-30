@@ -1,8 +1,8 @@
-pub mod knots_hash;
 pub mod computer;
+pub mod knots_hash;
 
 #[rustfmt::skip]
-aoc_common::mod_list!(year2017
+common::mod_list!(year2017
     , day1
     , day2 
     , day3 

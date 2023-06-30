@@ -82,8 +82,7 @@ impl<'commands> Tetris<'commands> {
         }
     }
     fn fits(&self, x: i32, y: i32) -> bool {
-        if x < 0 || x as usize + FIGURES[self.figure_idx][0].len() > TUBE_WIDTH
-        {
+        if x < 0 || x as usize + FIGURES[self.figure_idx][0].len() > TUBE_WIDTH {
             return false;
         }
         if y < 0 {
@@ -99,9 +98,7 @@ impl<'commands> Tetris<'commands> {
                 fline.iter().enumerate().all(|(fx, &fchar)| {
                     fchar != b'#'
                         || y - (fy as i32) < 0
-                        || self.tube[(y - fy as i32) as usize]
-                            [(x + fx as i32) as usize]
-                            != b'#'
+                        || self.tube[(y - fy as i32) as usize][(x + fx as i32) as usize] != b'#'
                 })
             })
     }
@@ -112,8 +109,7 @@ impl<'commands> Tetris<'commands> {
             }
             for f_x in 0..FIGURES[self.figure_idx][f_y].len() {
                 if FIGURES[self.figure_idx][f_y][f_x] == b'#' {
-                    self.tube[(y - f_y as i32).max(0) as usize]
-                        [x as usize + f_x] = b'#';
+                    self.tube[(y - f_y as i32).max(0) as usize][x as usize + f_x] = b'#';
                 }
             }
         }
@@ -156,7 +152,7 @@ pub fn task1(input: &[i32]) -> Result<usize> {
     Ok(tetris.tower_height())
 }
 
-use aoc_common::floyd_hare_tortoise;
+use common::floyd_hare_tortoise;
 
 const ELEPHANT_STEPS: usize = 1_000_000_000_000;
 
@@ -177,9 +173,7 @@ pub fn task2(input: &[i32]) -> Result<usize> {
         tetris.play();
     }
     let remains_height = tetris.tower_height() - start_height - period_height;
-    Ok(start_height
-        + (ELEPHANT_STEPS - mu - remains) / lambda * period_height
-        + remains_height)
+    Ok(start_height + (ELEPHANT_STEPS - mu - remains) / lambda * period_height + remains_height)
 }
 
 #[cfg(test)]

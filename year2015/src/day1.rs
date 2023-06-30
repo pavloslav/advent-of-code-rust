@@ -8,7 +8,7 @@ fn value(c: char) -> Result<i32> {
     match c {
         '(' => Ok(1),
         ')' => Ok(-1),
-        _ => Err(aoc_common::aoc_error!("Wrong symbol {c}")),
+        _ => Err(common::aoc_error!("Wrong symbol {c}")),
     }
 }
 

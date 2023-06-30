@@ -1,5 +1,5 @@
 use crate::*;
-use aoc_common::floyd_hare_tortoise_with_cmp;
+use common::floyd_hare_tortoise_with_cmp;
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct Moon {
@@ -36,13 +36,7 @@ pub fn parse_input(input: &str) -> Result<Vec<[isize; 3]>> {
     input
         .lines()
         .map(|line| {
-            let (x, y, z) = scan_fmt::scan_fmt!(
-                line,
-                "<x={}, y={}, z={}>",
-                isize,
-                isize,
-                isize
-            )?;
+            let (x, y, z) = scan_fmt::scan_fmt!(line, "<x={}, y={}, z={}>", isize, isize, isize)?;
             Ok([x, y, z])
         })
         .collect()
@@ -86,12 +80,12 @@ pub fn task2(input: &[[isize; 3]]) -> Result<usize> {
                 /*step*/ |moons| step_model_coord(moons, i),
                 /* eq */
                 |hare, tortoise| {
-                    hare.iter().zip(tortoise.iter()).all(|(h, t)| {
-                        h.pos[i] == t.pos[i] && h.vel[i] == t.vel[i]
-                    })
+                    hare.iter()
+                        .zip(tortoise.iter())
+                        .all(|(h, t)| h.pos[i] == t.pos[i] && h.vel[i] == t.vel[i])
                 },
             );
             mu + lambda
         })
-        .fold(1, aoc_common::lcm))
+        .fold(1, common::lcm))
 }

@@ -6,8 +6,7 @@ pub fn parse_input(input: &str) -> Result<&str> {
     Ok(input.trim())
 }
 
-const DIRECTIONS: [(i32, i32, char); 4] =
-    [(0, -1, 'U'), (0, 1, 'D'), (-1, 0, 'L'), (1, 0, 'R')];
+const DIRECTIONS: [(i32, i32, char); 4] = [(0, -1, 'U'), (0, 1, 'D'), (-1, 0, 'L'), (1, 0, 'R')];
 
 struct Traveler {
     passcode: String,
@@ -27,8 +26,7 @@ impl Traveler {
         self.solutions.clear();
         let mut new = HashSet::new();
         for (x, y, path) in &self.locations {
-            let mut hasher =
-                aoc_common::Md5Hasher::new_from_str(&self.passcode);
+            let mut hasher = common::Md5Hasher::new_from_str(&self.passcode);
             hasher.add_str(path);
             let dirs = hasher.as_str().into_bytes();
             for (&door, (dx, dy, step)) in dirs.iter().zip(DIRECTIONS.iter()) {
