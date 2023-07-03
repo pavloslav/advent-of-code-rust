@@ -11,7 +11,7 @@ members = ['common',
 
 [package]
 name = "advent_of_code"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 
 [features]
