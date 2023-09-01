@@ -102,6 +102,6 @@ pub fn task2(input: &[isize]) -> Result<usize> {
             Answer::Filled(step) => Ok(step),
         }
     } else {
-        return Err(aoc_error!("Can't find oxygen!"));
+        Err(aoc_error!("Can't find oxygen!"))
     }
 }

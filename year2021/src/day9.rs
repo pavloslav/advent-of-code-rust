@@ -16,7 +16,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
         .collect()
 }
 
-pub fn task1(map: &Vec<Vec<u8>>) -> Result<usize> {
+pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
     Ok(map
         .iter()
         .enumerate()

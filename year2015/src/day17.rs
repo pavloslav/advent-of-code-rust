@@ -6,15 +6,13 @@ pub fn parse_input(input: &str) -> Result<Vec<usize>> {
 
 const SIZE: usize = 150;
 
-pub fn task1(input: &Vec<usize>) -> Result<usize> {
+pub fn task1(input: &[usize]) -> Result<usize> {
     let mut result = 0;
     for i in 0..(1 << input.len()) {
         if input
             .iter()
             .enumerate()
-            .filter_map(
-                |(j, &x)| if (i >> j) & 1 == 1 { Some(x) } else { None },
-            )
+            .filter_map(|(j, &x)| if (i >> j) & 1 == 1 { Some(x) } else { None })
             .sum::<usize>()
             == SIZE
         {
@@ -24,7 +22,7 @@ pub fn task1(input: &Vec<usize>) -> Result<usize> {
     Ok(result)
 }
 
-pub fn task2(input: &Vec<usize>) -> Result<usize> {
+pub fn task2(input: &[usize]) -> Result<usize> {
     let mut result = 0;
     let mut best = input.len();
     for i in 0_usize..(1 << input.len()) {
@@ -33,9 +31,7 @@ pub fn task2(input: &Vec<usize>) -> Result<usize> {
             && input
                 .iter()
                 .enumerate()
-                .filter_map(
-                    |(j, &x)| if (i >> j) & 1 == 1 { Some(x) } else { None },
-                )
+                .filter_map(|(j, &x)| if (i >> j) & 1 == 1 { Some(x) } else { None })
                 .sum::<usize>()
                 == SIZE
         {

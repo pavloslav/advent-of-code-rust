@@ -22,7 +22,7 @@ pub fn task1(input: &[i32]) -> Result<String> {
                 (signal
                     .iter()
                     .enumerate()
-                    .map(|(j, d)| d * PATTERN[(j + 1) / i % PATTERN.len()] as i32)
+                    .map(|(j, d)| d * PATTERN[(j + 1) / i % PATTERN.len()])
                     .sum::<i32>()
                     % 10)
                     .abs()

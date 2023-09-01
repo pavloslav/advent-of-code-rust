@@ -38,6 +38,39 @@ pub fn task1(input: &[(char, char)]) -> Result<String> {
     Ok(steps)
 }
 
-pub fn task2(_input: &[(char, char)]) -> Result<usize> {
-    Err(aoc_error!("Todo"))
+pub fn task2(input: &[(char, char)]) -> Result<usize> {
+    let mut steps: HashSet<char> = input
+        .iter()
+        .flat_map(|(needed, target)| [needed, target])
+        .copied()
+        .collect();
+    let mut map: HashMap<char, Vec<char>> = steps.iter().map(|&step| (step, vec![])).collect();
+    for &(needed, target) in input {
+        if let Some(targets) = map.get_mut(&needed) {
+            targets.push(target);
+        }
+    }
+
+    let mut times: HashMap<char, usize> = HashMap::new();
+    while !steps.is_empty() {
+        let mut to_remove = vec![];
+        for &step in &steps {
+            if let Some(min) = map[&step]
+                .iter()
+                .map(|target| times.get(target))
+                .min()
+                .map_or(Some(0), |rest| {
+                    rest.map(|t| t + 61 + step as usize - 'A' as usize)
+                })
+            {
+                times.insert(step, min);
+                to_remove.push(step);
+            }
+        }
+        for r in to_remove {
+            steps.remove(&r);
+        }
+    }
+
+    todo!("return the answer")
 }

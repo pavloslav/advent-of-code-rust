@@ -45,7 +45,7 @@ impl std::str::FromStr for BingoSettings {
                 ]));
                 idx = 0;
             } else {
-                let mut board = boards
+                let board = boards
                     .last_mut()
                     .ok_or_else(|| aoc_error!("board is empty!"))?;
                 for (i, n) in line.split_whitespace().enumerate() {
@@ -95,22 +95,14 @@ impl Bingo<'_> {
 
     fn strikeout(&mut self, call: usize) {
         for board_idx in 0..self.striked.len() {
-            if let Some((row, col)) =
-                self.settings.boards[board_idx].position(call)
-            {
+            if let Some((row, col)) = self.settings.boards[board_idx].position(call) {
                 self.striked[board_idx][row][col] = true;
                 self.check_winner(board_idx, row, col, call);
             };
         }
     }
 
-    fn check_winner(
-        &mut self,
-        board_idx: usize,
-        row_idx: usize,
-        col_idx: usize,
-        call: usize,
-    ) {
+    fn check_winner(&mut self, board_idx: usize, row_idx: usize, col_idx: usize, call: usize) {
         if !self.winners.iter().any(|&(board, _)| board == board_idx)
             && ((0..BINGO_SIZE)
                 .map(|i| self.striked[board_idx][row_idx][i])
@@ -156,8 +148,7 @@ pub fn task2(bingo: &BingoSettings) -> Result<usize> {
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
-    const DATA: &str =
-        "7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+    const DATA: &str = "7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
 22 13 17 11  0
  8  2 23  4 24

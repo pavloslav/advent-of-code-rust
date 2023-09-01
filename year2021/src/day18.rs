@@ -81,11 +81,7 @@ impl SnailfishNumber {
         match self {
             SnailfishNumber::Regular(_) => Explosion::Not,
             SnailfishNumber::Pair(pair) => {
-                if let (
-                    SnailfishNumber::Regular(left),
-                    SnailfishNumber::Regular(right),
-                ) = **pair
-                {
+                if let (SnailfishNumber::Regular(left), SnailfishNumber::Regular(right)) = **pair {
                     if level > 4 {
                         Explosion::Both(left, right)
                     } else {
@@ -149,8 +145,7 @@ impl SnailfishNumber {
         match self {
             SnailfishNumber::Regular(value) => {
                 if *value >= 10 {
-                    *self =
-                        SnailfishNumber::regpair(*value / 2, (*value + 1) / 2);
+                    *self = SnailfishNumber::regpair(*value / 2, (*value + 1) / 2);
                     true
                 } else {
                     false
@@ -164,9 +159,7 @@ impl SnailfishNumber {
         //println!("Finding magnitude of {:?}", self);
         match self {
             SnailfishNumber::Regular(v) => *v,
-            SnailfishNumber::Pair(pair) => {
-                3 * pair.0.magnitude() + 2 * pair.1.magnitude()
-            }
+            SnailfishNumber::Pair(pair) => 3 * pair.0.magnitude() + 2 * pair.1.magnitude(),
         }
     }
 }
@@ -195,15 +188,12 @@ pub fn task1(input: &[SnailfishNumber]) -> u32 {
     sum_vec(input).magnitude()
 }
 
-pub fn task2(input: &Vec<SnailfishNumber>) -> u32 {
+pub fn task2(input: &[SnailfishNumber]) -> u32 {
     let mut best = 0;
     for i in 0..input.len() {
         for j in 0..input.len() {
             if i != j {
-                best = std::cmp::max(
-                    best,
-                    add(input[i].clone(), input[j].clone()).magnitude(),
-                );
+                best = std::cmp::max(best, add(input[i].clone(), input[j].clone()).magnitude());
             }
         }
     }

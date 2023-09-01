@@ -22,17 +22,14 @@ impl Zone {
         }
         for coordinate in 0..3 {
             if self.limits[coordinate].start() > other.limits[coordinate].end()
-                || self.limits[coordinate].end()
-                    < other.limits[coordinate].start()
+                || self.limits[coordinate].end() < other.limits[coordinate].start()
             {
                 return Intersection::None;
             }
         }
         for coordinate in 0..3 {
-            if self.limits[coordinate].start()
-                != other.limits[coordinate].start()
-                || self.limits[coordinate].end()
-                    != other.limits[coordinate].end()
+            if self.limits[coordinate].start() != other.limits[coordinate].start()
+                || self.limits[coordinate].end() != other.limits[coordinate].end()
             {
                 return Intersection::Intersects(coordinate);
             }
@@ -54,7 +51,10 @@ impl Command {
     fn new(input: &str) -> Command {
         //on x=-20..26,y=-36..17,z=-47..7
         static INPUT_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
-            regex::Regex::new(r"(on|off) x=(-?[\d]+)..(-?[\d]+),y=(-?[\d]+)..(-?[\d]+),z=(-?[\d]+)..(-?[\d]+)").unwrap()
+            regex::Regex::new(
+                r"(on|off) x=(-?[\d]+)..(-?[\d]+),y=(-?[\d]+)..(-?[\d]+),z=(-?[\d]+)..(-?[\d]+)",
+            )
+            .unwrap()
         });
         let captures = INPUT_REGEX.captures(input).unwrap();
         let mut iter = captures.iter().skip(1);
@@ -69,9 +69,8 @@ impl Command {
             },
         };
         for coordinate in 0..3 {
-            result.zone.limits[coordinate] =
-                iter.next().unwrap().unwrap().as_str().parse().unwrap()
-                    ..=iter.next().unwrap().unwrap().as_str().parse().unwrap();
+            result.zone.limits[coordinate] = iter.next().unwrap().unwrap().as_str().parse().unwrap()
+                ..=iter.next().unwrap().unwrap().as_str().parse().unwrap();
         }
         result
     }
@@ -104,28 +103,22 @@ impl Reactor {
                         std::cmp::Ordering::Less => {
                             let removed = self.cubes.remove(idx).clone();
                             let mut left = removed.clone();
-                            left.limits[coordinate] = *removed.limits
-                                [coordinate]
-                                .start()
+                            left.limits[coordinate] = *removed.limits[coordinate].start()
                                 ..=*command.zone.limits[coordinate].start() - 1;
                             let mut right = removed;
-                            right.limits[coordinate] =
-                                *command.zone.limits[coordinate].start()
-                                    ..=*right.limits[coordinate].end();
+                            right.limits[coordinate] = *command.zone.limits[coordinate].start()
+                                ..=*right.limits[coordinate].end();
                             self.cubes.push(left);
                             self.cubes.push(right);
                         }
                         std::cmp::Ordering::Greater => {
                             let mut left = command.clone();
-                            left.zone.limits[coordinate] = *command.zone.limits
-                                [coordinate]
-                                .start()
-                                ..=*self.cubes[idx].limits[coordinate].start()
-                                    - 1;
+                            left.zone.limits[coordinate] = *command.zone.limits[coordinate].start()
+                                ..=*self.cubes[idx].limits[coordinate].start() - 1;
                             let mut right = command.clone();
-                            right.zone.limits[coordinate] =
-                                *self.cubes[idx].limits[coordinate].start()
-                                    ..=*command.zone.limits[coordinate].end();
+                            right.zone.limits[coordinate] = *self.cubes[idx].limits[coordinate]
+                                .start()
+                                ..=*command.zone.limits[coordinate].end();
                             self.add(&left);
                             self.add(&right);
                             return;
@@ -138,41 +131,29 @@ impl Reactor {
                                 std::cmp::Ordering::Greater => {
                                     let removed = self.cubes.remove(idx);
                                     let mut left = removed.clone();
-                                    left.limits[coordinate] =
-                                        *removed.limits[coordinate].start()
-                                            ..=*command.zone.limits[coordinate]
-                                                .end();
+                                    left.limits[coordinate] = *removed.limits[coordinate].start()
+                                        ..=*command.zone.limits[coordinate].end();
                                     let mut right = removed.clone();
                                     right.limits[coordinate] =
-                                        *command.zone.limits[coordinate].end()
-                                            + 1
-                                            ..=*removed.limits[coordinate]
-                                                .end();
+                                        *command.zone.limits[coordinate].end() + 1
+                                            ..=*removed.limits[coordinate].end();
                                     self.cubes.push(right);
                                     self.cubes.push(left);
                                 }
                                 std::cmp::Ordering::Less => {
                                     let mut left = command.clone();
-                                    left.zone.limits[coordinate] = *command
-                                        .zone
-                                        .limits[coordinate]
+                                    left.zone.limits[coordinate] = *command.zone.limits[coordinate]
                                         .start()
-                                        ..=*self.cubes[idx].limits[coordinate]
-                                            .end();
+                                        ..=*self.cubes[idx].limits[coordinate].end();
                                     let mut right = command.clone();
                                     right.zone.limits[coordinate] =
-                                        *self.cubes[idx].limits[coordinate]
-                                            .end()
-                                            + 1
-                                            ..=*command.zone.limits[coordinate]
-                                                .end();
+                                        *self.cubes[idx].limits[coordinate].end() + 1
+                                            ..=*command.zone.limits[coordinate].end();
                                     self.add(&left);
                                     self.add(&right);
                                     return;
                                 }
-                                _ => unreachable!(
-                                    "Both ranges shoun't be equal!"
-                                ),
+                                _ => unreachable!("Both ranges shoun't be equal!"),
                             }
                         }
                     }
@@ -202,7 +183,7 @@ pub fn parse_input(input: &str) -> Vec<Command> {
     input.lines().map(Command::new).collect()
 }
 
-pub fn task1(commands: &Vec<Command>) -> usize {
+pub fn task1(commands: &[Command]) -> usize {
     let mut reactor = Reactor::new();
     for command in commands {
         if command
@@ -217,7 +198,7 @@ pub fn task1(commands: &Vec<Command>) -> usize {
     reactor.count()
 }
 
-pub fn task2(commands: &Vec<Command>) -> usize {
+pub fn task2(commands: &[Command]) -> usize {
     let mut reactor = Reactor::new();
     for command in commands {
         reactor.add(command);

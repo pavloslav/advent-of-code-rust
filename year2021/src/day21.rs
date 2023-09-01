@@ -40,13 +40,10 @@ impl Game {
     }
     fn step(&mut self) {
         let whos_turn = self.turn % self.players.len();
-        self.players[whos_turn].position = (self.players[whos_turn].position
-            + self.roll()
-            + self.roll()
-            + self.roll()
-            - 1)
-            % Game::BOARD_SIZE
-            + 1;
+        self.players[whos_turn].position =
+            (self.players[whos_turn].position + self.roll() + self.roll() + self.roll() - 1)
+                % Game::BOARD_SIZE
+                + 1;
         self.players[whos_turn].score += self.players[whos_turn].position;
         self.turn += 1;
     }
@@ -88,12 +85,11 @@ pub struct DiracGame {
 
 impl DiracGame {
     //roll, number of universes
-    const DIRAC_CUBE: [(usize, u128); 7] =
-        [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
+    const DIRAC_CUBE: [(usize, u128); 7] = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
     const WIN_SCORE: usize = 21;
     const BOARD_SIZE: usize = 10;
 
-    fn new(pos: &Vec<usize>) -> DiracGame {
+    fn new(pos: &[usize]) -> DiracGame {
         DiracGame {
             universes: [(
                 pos.iter().map(|&position| Player::new(position)).collect(),
@@ -114,9 +110,8 @@ impl DiracGame {
         let mut universes = std::collections::HashMap::new();
         for (players, old_universes) in &self.universes {
             for (roll, roll_universes) in DiracGame::DIRAC_CUBE {
-                let new_position = (players[whos_turn].position + roll - 1)
-                    % DiracGame::BOARD_SIZE
-                    + 1;
+                let new_position =
+                    (players[whos_turn].position + roll - 1) % DiracGame::BOARD_SIZE + 1;
                 let new_score = players[whos_turn].score + new_position;
                 if new_score >= DiracGame::WIN_SCORE {
                     self.wins[whos_turn] += old_universes * roll_universes;
@@ -124,8 +119,7 @@ impl DiracGame {
                     let mut new_players = players.clone();
                     new_players[whos_turn].position = new_position;
                     new_players[whos_turn].score = new_score;
-                    *universes.entry(new_players).or_insert(0) +=
-                        old_universes * roll_universes;
+                    *universes.entry(new_players).or_insert(0) += old_universes * roll_universes;
                 }
             }
         }

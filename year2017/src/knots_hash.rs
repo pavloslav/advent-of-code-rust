@@ -9,10 +9,7 @@ pub fn knots_hash(
     for _round in 0..rounds {
         for length in lengths.clone() {
             for i in 0..length / 2 {
-                knots.swap(
-                    (position + i) % size,
-                    (position + length - 1 - i) % size,
-                );
+                knots.swap((position + i) % size, (position + length - 1 - i) % size);
             }
             position = (position + length + skip) % size;
             skip += 1;
@@ -27,7 +24,7 @@ const CHUNK_SIZE: usize = 16;
 const SUFFIX: [usize; 5] = [17, 31, 73, 47, 23];
 
 pub fn dense_hash(input: impl Iterator<Item = usize> + Clone) -> Vec<u8> {
-    knots_hash(ROUNDS, SIZE, input.chain(SUFFIX.into_iter()))
+    knots_hash(ROUNDS, SIZE, input.chain(SUFFIX))
         .chunks(CHUNK_SIZE)
         .map(|chunk| chunk.iter().fold(0, |acc, &x| acc ^ x as u8))
         .collect()

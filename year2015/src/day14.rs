@@ -10,8 +10,13 @@ pub fn parse_input(input: &str) -> Result<Vec<Reindeer>> {
     input
         .lines()
         .map(|line| {
-            let (speed, burst, rest) = scan_fmt::scan_fmt!(line, "{*} can fly {} km/s for {} seconds, but then must rest for {} seconds.", usize, usize, usize)
-            ?;
+            let (speed, burst, rest) = scan_fmt::scan_fmt!(
+                line,
+                "{*} can fly {} km/s for {} seconds, but then must rest for {} seconds.",
+                usize,
+                usize,
+                usize
+            )?;
             Ok(Reindeer { speed, burst, rest })
         })
         .collect()
@@ -22,8 +27,7 @@ const RACE_TIME: usize = 2503;
 impl Reindeer {
     fn distance(&self, time: usize) -> usize {
         let repeat = self.burst + self.rest;
-        (time / repeat * self.burst + std::cmp::min(time % repeat, self.burst))
-            * self.speed
+        (time / repeat * self.burst + std::cmp::min(time % repeat, self.burst)) * self.speed
     }
 }
 
@@ -35,11 +39,10 @@ pub fn task1(deers: &[Reindeer]) -> Result<usize> {
         .ok_or(aoc_error!("No deers to find the result!"))
 }
 
-pub fn task2(deers: &Vec<Reindeer>) -> Result<usize> {
+pub fn task2(deers: &[Reindeer]) -> Result<usize> {
     let mut results = vec![0; deers.len()];
     for t in 1..RACE_TIME {
-        let distances: Vec<_> =
-            deers.iter().map(|deer| deer.distance(t)).collect();
+        let distances: Vec<_> = deers.iter().map(|deer| deer.distance(t)).collect();
         let &best = distances
             .iter()
             .max()

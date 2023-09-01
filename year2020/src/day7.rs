@@ -44,8 +44,7 @@ fn create_map(s: &str, reverse: bool) -> Result<BagMap> {
 fn count_holders(map: &BagMap, bag: &str) -> usize {
     let mut result = HashSet::new();
     let mut to_consider = vec![bag];
-    while !to_consider.is_empty() {
-        let bag = to_consider.pop().unwrap();
+    while let Some(bag) = to_consider.pop() {
         if let Some(bags) = map.get(bag) {
             for (container, _) in bags.iter() {
                 if !result.contains(&container) {
@@ -87,8 +86,7 @@ mod tests {
     use super::*;
     #[test]
     fn test_task2() {
-        let input1 =
-            "light red bags contain 1 bright white bag, 2 muted yellow bags.
+        let input1 = "light red bags contain 1 bright white bag, 2 muted yellow bags.
 dark orange bags contain 3 bright white bags, 4 muted yellow bags.
 bright white bags contain 1 shiny gold bag.
 muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
