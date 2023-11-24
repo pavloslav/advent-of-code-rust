@@ -12,19 +12,33 @@ fn dist(pt1: (i32, i32), pt2: (i32, i32)) -> i32 {
 }
 
 fn closest(points: &[(i32, i32)], pt: (i32, i32)) -> Option<usize> {
-    points[1..]
+    enum LookupState {
+        Infinite,
+        Unique(usize, i32),
+        Duplicate(i32),
+    }
+
+    use std::cmp::Ordering as Ord;
+
+    let min = points
         .iter()
         .enumerate()
-        .fold(Ok((0, dist(points[0], pt))), |acc, (i, &point)| {
+        .fold(LookupState::Infinite, |acc, (i, &point)| {
             let d = dist(point, pt);
-            match acc.unwrap_or_else(|e| e).1.cmp(&d) {
-                std::cmp::Ordering::Greater => Ok((i + 1, d)),
-                std::cmp::Ordering::Equal => Err((i + 1, d)),
-                std::cmp::Ordering::Less => acc,
+            match acc {
+                LookupState::Infinite => LookupState::Unique(i, d),
+                LookupState::Unique(_, old) | LookupState::Duplicate(old) => match old.cmp(&d) {
+                    Ord::Greater => LookupState::Unique(i, d),
+                    Ord::Equal => LookupState::Duplicate(d),
+                    Ord::Less => acc,
+                },
             }
-        })
-        .ok()
-        .map(|(i, _)| i)
+        });
+
+    match min {
+        LookupState::Unique(idx, _) => Some(idx),
+        _ => None,
+    }
 }
 
 pub fn task1(input: &[(i32, i32)]) -> Result<usize> {

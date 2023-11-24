@@ -18,8 +18,8 @@ pub fn parse_input(input: &str) -> Result<Vec<(char, char)>> {
 pub fn task1(input: &[(char, char)]) -> Result<String> {
     let mut map: HashMap<char, HashSet<char>> = HashMap::new();
     for &(needed, target) in input {
-        map.entry(target).or_insert(HashSet::new()).insert(needed);
-        map.entry(needed).or_insert(HashSet::new());
+        map.entry(target).or_default().insert(needed);
+        map.entry(needed).or_default();
     }
     let mut steps = String::new();
     while !map.is_empty() {

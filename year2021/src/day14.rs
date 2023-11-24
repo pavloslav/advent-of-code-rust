@@ -26,35 +26,25 @@ impl PolymerData {
         };
 
         for line in lines.skip(1) {
-            let (left1, left2, right) = scan_fmt::scan_fmt!(
-                line,
-                "{/./}{/./} -> {/./}",
-                char,
-                char,
-                char
-            )?;
+            let (left1, left2, right) =
+                scan_fmt::scan_fmt!(line, "{/./}{/./} -> {/./}", char, char, char)?;
             polymer_data.rules.insert((left1, left2), right);
         }
         Ok(polymer_data)
     }
 
-    fn composition_recursive(
-        &mut self,
-        polymer: (char, char),
-        steps: usize,
-    ) -> Result<Counter> {
+    fn composition_recursive(&mut self, polymer: (char, char), steps: usize) -> Result<Counter> {
         let (left, right) = polymer;
+
+        #[allow(clippy::map_entry)]
         if !self.counters.contains_key(&(left, right, steps)) {
             let counters = if steps == 0 {
                 [(right, 1)].into()
             } else {
                 match self.rules.get(&(left, right)) {
                     Some(&v) => {
-                        let mut left =
-                            self.composition_recursive((left, v), steps - 1)?;
-                        for (element, count) in
-                            self.composition_recursive((v, right), steps - 1)?
-                        {
+                        let mut left = self.composition_recursive((left, v), steps - 1)?;
+                        for (element, count) in self.composition_recursive((v, right), steps - 1)? {
                             *left.entry(element).or_insert(0) += count;
                         }
                         left
@@ -74,10 +64,9 @@ impl PolymerData {
     fn composition(&mut self, steps: usize) -> Result<usize> {
         let mut counter: Counter = [(self.polymer[0], 1)].into();
         for i in 0..self.polymer.len() - 1 {
-            for (element, count) in self.composition_recursive(
-                (self.polymer[i], self.polymer[i + 1]),
-                steps,
-            )? {
+            for (element, count) in
+                self.composition_recursive((self.polymer[i], self.polymer[i + 1]), steps)?
+            {
                 *counter.entry(element).or_insert(0) += count;
             }
         }

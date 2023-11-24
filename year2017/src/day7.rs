@@ -6,22 +6,14 @@ pub fn parse_input(input: &str) -> Result<Tower> {
     input
         .lines()
         .map(|line| {
-            if let Ok((name, weight, children)) = scan_fmt::scan_fmt!(
-                line,
-                "{} ({d}) -> {[a-z, ]}",
-                String,
-                usize,
-                String
-            ) {
+            if let Ok((name, weight, children)) =
+                scan_fmt::scan_fmt!(line, "{} ({d}) -> {[a-z, ]}", String, usize, String)
+            {
                 Ok((
                     name,
-                    (
-                        weight,
-                        children.split(", ").map(|s| s.to_owned()).collect(),
-                    ),
+                    (weight, children.split(", ").map(|s| s.to_owned()).collect()),
                 ))
-            } else if let Ok((name, weight)) =
-                scan_fmt::scan_fmt!(line, "{} ({d})", String, usize)
+            } else if let Ok((name, weight)) = scan_fmt::scan_fmt!(line, "{} ({d})", String, usize)
             {
                 Ok((name, (weight, vec![])))
             } else {
@@ -60,7 +52,7 @@ fn get_correct_weight(tower: &Tower, root: &str) -> Result<usize> {
     let mut weights = std::collections::HashMap::<usize, Vec<String>>::new();
     for child in &tower[root].1 {
         let weight = get_weight(tower, child);
-        weights.entry(weight).or_insert(vec![]).push(child.clone());
+        weights.entry(weight).or_default().push(child.clone());
     }
     if weights.len() == 2 {
         let mut correct = 0;
