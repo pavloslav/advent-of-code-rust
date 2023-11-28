@@ -52,7 +52,10 @@ fn get_correct_weight(tower: &Tower, root: &str) -> Result<usize> {
     let mut weights = std::collections::HashMap::<usize, Vec<String>>::new();
     for child in &tower[root].1 {
         let weight = get_weight(tower, child);
-        weights.entry(weight).or_default().push(child.clone());
+        weights
+            .entry(weight)
+            .and_modify(|e| e.push(child.clone()))
+            .or_insert_with(|| vec![child.clone()]);
     }
     if weights.len() == 2 {
         let mut correct = 0;

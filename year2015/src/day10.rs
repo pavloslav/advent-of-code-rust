@@ -3,13 +3,14 @@ use itertools::Itertools;
 use crate::*;
 
 fn look_and_say(input: &str) -> String {
-    input
-        .trim()
-        .chars()
-        .group_by(|&c| c)
-        .into_iter()
-        .map(|(c, group)| format!("{}{}", group.count(), c))
-        .collect()
+    use std::fmt::Write;
+    input.trim().chars().group_by(|&c| c).into_iter().fold(
+        String::new(),
+        |mut output, (c, group)| {
+            let _ = write!(output, "{}{}", group.count(), c);
+            output
+        },
+    )
 }
 
 pub fn parse_input(input: &str) -> Result<&str> {
