@@ -16,6 +16,7 @@ pub fn exec() -> Result<()> {
         "2020" => year2020::task as Fun,
         "2021" => year2021::task as Fun,
         "2022" => year2022::task as Fun,
+        "2023" => year2023::task as Fun,
         year => {
             return Err(Error::WrongTask {
                 year: year.to_owned(),
