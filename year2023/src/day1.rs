@@ -13,6 +13,7 @@ pub fn task1(input: &[String]) -> Result<u32> {
             .ok_or(aoc_error!("No digits in line!"))?;
         let last = l
             .chars()
+            .rev()
             .find_map(|d| d.to_digit(10))
             .ok_or(aoc_error!("No digits in line!"))?;
         s += 10 * first + last;
