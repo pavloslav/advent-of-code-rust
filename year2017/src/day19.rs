@@ -18,28 +18,20 @@ pub struct Packet {
 impl Packet {
     fn step(&mut self, field: &[Vec<u8>]) -> bool {
         let result = match self.dir {
-            Direction::Down
-                if self.y + 1 < field.len()
-                    && field[self.y + 1][self.x] != b' ' =>
-            {
+            Direction::Down if self.y + 1 < field.len() && field[self.y + 1][self.x] != b' ' => {
                 self.y += 1;
                 true
             }
-            Direction::Left
-                if self.x > 0 && field[self.y][self.x - 1] != b' ' =>
-            {
+            Direction::Left if self.x > 0 && field[self.y][self.x - 1] != b' ' => {
                 self.x -= 1;
                 true
             }
-            Direction::Up
-                if self.y > 0 && field[self.y - 1][self.x] != b' ' =>
-            {
+            Direction::Up if self.y > 0 && field[self.y - 1][self.x] != b' ' => {
                 self.y -= 1;
                 true
             }
             Direction::Right
-                if self.x + 1 < field[self.y].len()
-                    && field[self.y][self.x + 1] != b' ' =>
+                if self.x + 1 < field[self.y].len() && field[self.y][self.x + 1] != b' ' =>
             {
                 self.x += 1;
                 true
@@ -73,7 +65,7 @@ impl Packet {
         self.step(field)
     }
 
-    fn new(field: &[Vec<u8>]) -> Result<Packet> {
+    fn new(field: &[Vec<u8>]) -> AocResult<Packet> {
         Ok(Packet {
             x: field[0]
                 .iter()
@@ -87,14 +79,14 @@ impl Packet {
             distance: 1,
         })
     }
-    fn travel(field: &[Vec<u8>]) -> Result<Packet> {
+    fn travel(field: &[Vec<u8>]) -> AocResult<Packet> {
         let mut packet = Packet::new(field)?;
         while packet.step(field) || packet.turn(field) {}
         Ok(packet)
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Packet> {
+pub fn parse_input(input: &str) -> AocResult<Packet> {
     Packet::travel(
         &input
             .lines()
@@ -103,11 +95,11 @@ pub fn parse_input(input: &str) -> Result<Packet> {
     )
 }
 
-pub fn task1(input: &Packet) -> Result<String> {
+pub fn task1(input: &Packet) -> AocResult<String> {
     Ok(input.letters.clone())
 }
 
-pub fn task2(input: &Packet) -> Result<usize> {
+pub fn task2(input: &Packet) -> AocResult<usize> {
     Ok(input.distance)
 }
 

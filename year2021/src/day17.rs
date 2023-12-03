@@ -2,19 +2,13 @@ use crate::*;
 
 type Rect = ((i32, i32), (i32, i32));
 
-pub fn parse_input(input: &str) -> Result<Rect> {
-    let (x1, x2, y1, y2) = scan_fmt::scan_fmt!(
-        input,
-        "target area: x={}..{}, y={}..{}",
-        i32,
-        i32,
-        i32,
-        i32
-    )?;
+pub fn parse_input(input: &str) -> AocResult<Rect> {
+    let (x1, x2, y1, y2) =
+        prse::try_parse!(input, "target area: x={}..{}, y={}..{}", i32, i32, i32, i32)?;
     Ok(((x1, y1), (x2, y2)))
 }
 
-pub fn task1(input: &Rect) -> Result<i32> {
+pub fn task1(input: &Rect) -> AocResult<i32> {
     let &((x1, y1), (x2, _y2)) = input;
     let vx = (((1 + 8 * x2) as f64).sqrt() as i32 - 1) / 2;
     if vx * (vx + 1) / 2 < x1 {
@@ -51,7 +45,7 @@ fn get_all_velocities(input: &Rect) -> std::collections::HashSet<(i32, i32)> {
     result
 }
 
-pub fn task2(input: &Rect) -> Result<usize> {
+pub fn task2(input: &Rect) -> AocResult<usize> {
     Ok(get_all_velocities(input).len())
 }
 

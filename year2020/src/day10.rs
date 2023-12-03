@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<usize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
     let mut adapters: Vec<usize> = input
         .lines()
         .map(|l| Ok(l.parse()?))
@@ -20,7 +20,7 @@ fn count_differences_in_sorted(adapters: &[usize]) -> [usize; 3] {
     result
 }
 
-pub fn task1(data: &[usize]) -> Result<usize> {
+pub fn task1(data: &[usize]) -> AocResult<usize> {
     let [diff1, _, diff3] = count_differences_in_sorted(data);
     Ok(diff1 * diff3)
 }
@@ -39,7 +39,7 @@ fn count_arranjements(adapters: &[usize]) -> usize {
     paths[adapters.len() - 1]
 }
 
-pub fn task2(data: &[usize]) -> Result<usize> {
+pub fn task2(data: &[usize]) -> AocResult<usize> {
     Ok(count_arranjements(data))
 }
 

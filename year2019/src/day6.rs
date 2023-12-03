@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<[String; 2]>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<[String; 2]>> {
     input
         .lines()
         .map(|line| {
@@ -19,7 +19,7 @@ const CENTER_OF_MASS: &str = "COM";
 const YOU: &str = "YOU";
 const SANTA: &str = "SAN";
 
-pub fn task1(input: &[[String; 2]]) -> Result<usize> {
+pub fn task1(input: &[[String; 2]]) -> AocResult<usize> {
     let mut orbits = HashMap::<&str, Vec<&str>>::new();
     for [center, satelite] in input {
         orbits.entry(center).or_default().push(satelite);
@@ -44,7 +44,7 @@ pub fn task1(input: &[[String; 2]]) -> Result<usize> {
 
 use std::collections::HashSet;
 
-pub fn task2(input: &[[String; 2]]) -> Result<usize> {
+pub fn task2(input: &[[String; 2]]) -> AocResult<usize> {
     let mut orbits = HashMap::<&str, Vec<&str>>::new();
     let mut back_orbits = HashMap::<&str, &str>::new();
     let mut visited = HashSet::<&str>::new();

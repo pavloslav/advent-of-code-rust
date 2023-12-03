@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 type Passport<'a> = HashMap<&'a str, &'a str>;
 
-pub fn parse_input(input: &str) -> Result<Vec<Passport>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Passport>> {
     let mut passports = Vec::new();
     let mut passport = Passport::new();
     for line in input.lines() {
@@ -14,8 +14,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Passport>> {
         } else {
             for record in line.split_whitespace() {
                 let mut split = record.split(':');
-                if let (Some(field), Some(value)) = (split.next(), split.next())
-                {
+                if let (Some(field), Some(value)) = (split.next(), split.next()) {
                     passport.insert(field, value);
                 }
             }
@@ -33,7 +32,7 @@ fn is_valid1(passport: &Passport) -> bool {
         .all(|field| passport.contains_key(field))
 }
 
-pub fn task1(pass: &[Passport]) -> Result<usize> {
+pub fn task1(pass: &[Passport]) -> AocResult<usize> {
     Ok(pass.iter().filter(|p| is_valid1(p)).count())
 }
 
@@ -43,19 +42,17 @@ static HCL_REGEX: Lazy<regex::Regex> =
 static ECL_REGEX: Lazy<regex::Regex> =
     Lazy::new(|| regex::Regex::new(r"^amb|blu|brn|gry|grn|hzl|oth$").unwrap());
 
-static PID_REGEX: Lazy<regex::Regex> =
-    Lazy::new(|| regex::Regex::new(r"^\d{9}$").unwrap());
+static PID_REGEX: Lazy<regex::Regex> = Lazy::new(|| regex::Regex::new(r"^\d{9}$").unwrap());
 
 fn is_valid2(passport: &Passport) -> bool {
-    let bounded_field =
-        |field, range: std::ops::RangeInclusive<usize>| -> bool {
-            matches!(
-                passport.get(&field).map(|val_str| val_str
-                    .parse()
-                    .map(|val| range.contains(&val))),
-                Some(Ok(true))
-            )
-        };
+    let bounded_field = |field, range: std::ops::RangeInclusive<usize>| -> bool {
+        matches!(
+            passport
+                .get(&field)
+                .map(|val_str| val_str.parse().map(|val| range.contains(&val))),
+            Some(Ok(true))
+        )
+    };
 
     let height = || {
         matches!(
@@ -85,6 +82,6 @@ fn is_valid2(passport: &Passport) -> bool {
         && regex_check("pid", &PID_REGEX)
 }
 
-pub fn task2(pass: &[Passport]) -> Result<usize> {
+pub fn task2(pass: &[Passport]) -> AocResult<usize> {
     Ok(pass.iter().filter(|p| is_valid2(p)).count())
 }

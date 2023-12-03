@@ -18,20 +18,16 @@ pub struct Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = Error;
-    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        let (op, left, top, right, bottom) = scan_fmt::scan_fmt!(
-            s,
-            "{/turn on|turn off|toggle/} {},{} through {},{}",
-            String,
-            usize,
-            usize,
-            usize,
-            usize
-        )?;
-        let command = match op.as_str() {
-            "turn on" => Command::On,
-            "turn off" => Command::Off,
+    type Err = AocError;
+    fn from_str(mut s: &str) -> std::result::Result<Self, Self::Err> {
+        if s.starts_with("turn ") {
+            s = &s[5..];
+        }
+        let (op, left, top, right, bottom): (&str, usize, usize, usize, usize) =
+            prse::try_parse!(s, "{} {},{} through {},{}")?;
+        let command = match op {
+            "on" => Command::On,
+            "off" => Command::Off,
             "toggle" => Command::Toggle,
             other => return Err(aoc_error!("Wrong command: '{other}'")),
         };
@@ -46,11 +42,11 @@ impl std::str::FromStr for Instruction {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(instructions: &[Instruction]) -> Result<usize> {
+pub fn task1(instructions: &[Instruction]) -> AocResult<usize> {
     let mut lights = vec![vec![false; 1000]; 1000];
     for instr in instructions {
         for line in &mut lights[instr.top_left.y..instr.bottom_right.y + 1] {
@@ -69,7 +65,7 @@ pub fn task1(instructions: &[Instruction]) -> Result<usize> {
         .sum())
 }
 
-pub fn task2(instructions: &[Instruction]) -> Result<usize> {
+pub fn task2(instructions: &[Instruction]) -> AocResult<usize> {
     let mut lights = vec![vec![0usize; 1000]; 1000];
     for instr in instructions {
         for line in &mut lights[instr.top_left.y..instr.bottom_right.y + 1] {

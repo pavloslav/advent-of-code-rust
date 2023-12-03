@@ -6,7 +6,7 @@ const FREE: u8 = b'.';
 const WALL: u8 = b'#';
 const ZERO: u8 = b'0';
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
     Ok(input.lines().map(|line| line.as_bytes().to_vec()).collect())
 }
 
@@ -22,10 +22,7 @@ fn find_locations(map: &[Vec<u8>]) -> HashMap<u8, (i32, i32)> {
     locations
 }
 
-fn find_distances(
-    map: &[Vec<u8>],
-    locations: &HashMap<u8, (i32, i32)>,
-) -> HashMap<(u8, u8), i32> {
+fn find_distances(map: &[Vec<u8>], locations: &HashMap<u8, (i32, i32)>) -> HashMap<(u8, u8), i32> {
     let mut distances = HashMap::new();
     for (&location, &(x, y)) in locations {
         let mut to_visit = HashSet::from([(x, y)]);
@@ -55,7 +52,7 @@ fn find_distances(
     distances
 }
 
-pub fn task1(map: &[Vec<u8>]) -> Result<i32> {
+pub fn task1(map: &[Vec<u8>]) -> AocResult<i32> {
     let locations = find_locations(map);
     let distances = find_distances(map, &locations);
     let mut best = i32::MAX;
@@ -75,7 +72,7 @@ pub fn task1(map: &[Vec<u8>]) -> Result<i32> {
     Ok(best)
 }
 
-pub fn task2(map: &[Vec<u8>]) -> Result<i32> {
+pub fn task2(map: &[Vec<u8>]) -> AocResult<i32> {
     let locations = find_locations(map);
     let distances = find_distances(map, &locations);
     let mut best = i32::MAX;

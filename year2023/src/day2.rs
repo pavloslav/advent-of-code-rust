@@ -37,33 +37,40 @@ impl Game {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Game>> {
+#[derive(prse::Parse)]
+#[prse = "{num} {color}"]
+struct Cube<'a> {
+    num: usize,
+    color: &'a str,
+}
+
+#[derive(prse::Parse)]
+#[prse = "Game {id}: {grabs:; :}"]
+struct InputGame<'a> {
+    id: usize,
+    grabs: Vec<Cube<'a>>,
+}
+
+pub fn parse_input(input: &str) -> AocResult<Vec<Game>> {
     input
         .lines()
         .map(|line| {
-            let (id, grabs) = scan_fmt::scan_fmt!(line, "Game {}: {/.*/}{e}", usize, String)?;
-            let grabs = grabs
-                .split("; ")
-                .map(|cubes| {
-                    let mut handful = Handful::default();
-                    for cube in cubes.split(", ") {
-                        let (number, class) = scan_fmt::scan_fmt!(cube, "{} {}", usize, String)?;
-                        match class.as_str() {
-                            "red" => handful.red = number,
-                            "blue" => handful.blue = number,
-                            "green" => handful.green = number,
-                            _ => return Err(aoc_error!("Failed to understand {cube}")),
-                        }
-                    }
-                    Ok(handful)
-                })
-                .collect::<Result<_>>()?;
-            Ok(Game { id, grabs })
+            let g: InputGame = prse::try_parse!(line, "{}").map_err(|_| aoc_error!("aaa"))?;
+            let mut handful = Handful::default();
+            for Cube { color, num } in g.grabs {
+                match color {
+                    "red" => handful.red = num,
+                    "blue" => handful.blue = num,
+                    "green" => handful.green = num,
+                    _ => return Err(aoc_error!("Unknown color '{color}'")),
+                }
+            }
+            Ok(handful)
         })
-        .collect::<Result<_>>()
+        .collect();
 }
 
-pub fn task1(input: &[Game]) -> Result<usize> {
+pub fn task1(input: &[Game]) -> AocResult<usize> {
     let max_game = Handful {
         red: 12,
         green: 13,
@@ -81,7 +88,7 @@ pub fn task1(input: &[Game]) -> Result<usize> {
         .sum())
 }
 
-pub fn task2(input: &[Game]) -> Result<usize> {
+pub fn task2(input: &[Game]) -> AocResult<usize> {
     Ok(input.iter().map(|game| game.possible_power()).sum())
 }
 

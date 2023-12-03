@@ -24,18 +24,12 @@ impl Assignment {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<(Assignment, Assignment)>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<(Assignment, Assignment)>> {
     input
         .lines()
         .map(|line| {
-            let (l1, r1, l2, r2) = scan_fmt::scan_fmt!(
-                line,
-                "{}-{},{}-{}",
-                usize,
-                usize,
-                usize,
-                usize
-            )?;
+            let (l1, r1, l2, r2) =
+                prse::try_parse!(line, "{}-{},{}-{}", usize, usize, usize, usize)?;
             Ok((Assignment::new(l1, r1), Assignment::new(l2, r2)))
         })
         .collect()
@@ -48,13 +42,13 @@ where
     assignments.iter().filter(f).count()
 }
 
-pub fn task1(assignments: &[(Assignment, Assignment)]) -> Result<usize> {
+pub fn task1(assignments: &[(Assignment, Assignment)]) -> AocResult<usize> {
     Ok(filter_count(assignments, |&(left, right)| {
         left.contains(right) || right.contains(left)
     }))
 }
 
-pub fn task2(assignments: &[(Assignment, Assignment)]) -> Result<usize> {
+pub fn task2(assignments: &[(Assignment, Assignment)]) -> AocResult<usize> {
     Ok(filter_count(assignments, |&(left, right)| {
         left.overlaps(right)
     }))

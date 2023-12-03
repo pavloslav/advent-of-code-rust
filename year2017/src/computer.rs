@@ -15,7 +15,7 @@ pub enum Operand {
 
 impl std::str::FromStr for Operand {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Operand> {
+    fn from_str(s: &str) -> AocResult<Operand> {
         if let Ok(value) = s.parse() {
             Ok(Operand::Val(value))
         } else {
@@ -51,38 +51,24 @@ pub enum Instruction {
 
 impl std::str::FromStr for Instruction {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Instruction> {
-        if let Ok(val) = scan_fmt::scan_fmt!(s, "snd {}", Operand) {
+    fn from_str(s: &str) -> AocResult<Instruction> {
+        if let Ok(val) = prse::try_parse!(s, "snd {}", Operand) {
             Ok(Instruction::Snd(val))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "set {} {}", RegName, Operand)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "set {} {}", RegName, Operand) {
             Ok(Instruction::Set(x, y))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "add {} {}", RegName, Operand)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "add {} {}", RegName, Operand) {
             Ok(Instruction::Add(x, y))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "mul {} {}", RegName, Operand)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "mul {} {}", RegName, Operand) {
             Ok(Instruction::Mul(x, y))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "mod {} {}", RegName, Operand)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "mod {} {}", RegName, Operand) {
             Ok(Instruction::Mod(x, y))
-        } else if let Ok(x) = scan_fmt::scan_fmt!(s, "rcv {}", RegName) {
+        } else if let Ok(x) = prse::try_parse!(s, "rcv {}", RegName) {
             Ok(Instruction::Rcv(x))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "jgz {} {}", Operand, Operand)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "jgz {} {}", Operand, Operand) {
             Ok(Instruction::Jgz(x, y))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "sub {} {}", RegName, Operand)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "sub {} {}", RegName, Operand) {
             Ok(Instruction::Sub(x, y))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "jnz {} {}", Operand, Operand)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "jnz {} {}", Operand, Operand) {
             Ok(Instruction::Jnz(x, y))
         } else {
             Err(aoc_error!("incorrect input: '{s}'"))
@@ -108,10 +94,11 @@ pub struct Computer {
 }
 
 impl Computer {
-    pub fn step(&mut self) -> Result<bool> {
-        let instr = self.program.get(self.ip as usize).ok_or_else(|| {
-            aoc_error!("Wrong IP {}, stopping execution", self.ip)
-        })?;
+    pub fn step(&mut self) -> AocResult<bool> {
+        let instr = self
+            .program
+            .get(self.ip as usize)
+            .ok_or_else(|| aoc_error!("Wrong IP {}, stopping execution", self.ip))?;
         match instr {
             Instruction::Snd(val) => {
                 self.output.borrow_mut().push_back(val.get(&self.registers));
@@ -121,21 +108,17 @@ impl Computer {
                 self.registers.insert(*tgt, val.get(&self.registers));
             }
             Instruction::Add(tgt, val) => {
-                *self.registers.entry(*tgt).or_insert(0) +=
-                    val.get(&self.registers)
+                *self.registers.entry(*tgt).or_insert(0) += val.get(&self.registers)
             }
             Instruction::Sub(tgt, val) => {
-                *self.registers.entry(*tgt).or_insert(0) -=
-                    val.get(&self.registers)
+                *self.registers.entry(*tgt).or_insert(0) -= val.get(&self.registers)
             }
             Instruction::Mul(tgt, val) => {
-                *self.registers.entry(*tgt).or_insert(0) *=
-                    val.get(&self.registers);
+                *self.registers.entry(*tgt).or_insert(0) *= val.get(&self.registers);
                 self.mul_counter += 1;
             }
             Instruction::Mod(tgt, val) => {
-                *self.registers.entry(*tgt).or_insert(0) %=
-                    val.get(&self.registers)
+                *self.registers.entry(*tgt).or_insert(0) %= val.get(&self.registers)
             }
             Instruction::Rcv(reg) => match self.kind {
                 ComputerKind::SoundRecover => {
@@ -146,14 +129,12 @@ impl Computer {
                     }
                 }
                 ComputerKind::SendRecieve => {
-                    if let Some(data) =
-                        self.input.upgrade().and_then(|strong| {
-                            strong
-                                .try_borrow_mut()
-                                .ok()
-                                .and_then(|mut buffer| buffer.pop_front())
-                        })
-                    {
+                    if let Some(data) = self.input.upgrade().and_then(|strong| {
+                        strong
+                            .try_borrow_mut()
+                            .ok()
+                            .and_then(|mut buffer| buffer.pop_front())
+                    }) {
                         self.registers.insert(*reg, data);
                     } else {
                         return Ok(false);
@@ -177,7 +158,7 @@ impl Computer {
         Ok(true)
     }
 
-    pub fn last_sound(&self) -> Result<RegValue> {
+    pub fn last_sound(&self) -> AocResult<RegValue> {
         self.output
             .borrow_mut()
             .back()
@@ -201,7 +182,7 @@ impl Computer {
     pub fn set_register(&mut self, reg: RegName, val: RegValue) {
         self.registers.insert(reg, val);
     }
-    pub fn get_register(&mut self, reg: RegName) -> Result<RegValue> {
+    pub fn get_register(&mut self, reg: RegName) -> AocResult<RegValue> {
         self.registers
             .get(&reg)
             .copied()

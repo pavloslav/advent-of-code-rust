@@ -32,7 +32,7 @@ impl Computer {
         self.memory[&self.ip] == Computer::IN && self.input.is_empty()
     }
 
-    fn step(&mut self) -> Result<()> {
+    fn step(&mut self) -> AocResult<()> {
         if self.is_halted() || self.is_input_blocked() {
             return Ok(());
         }
@@ -118,7 +118,7 @@ impl Computer {
         }
     }
 
-    fn get_value(&self, index: Word) -> Result<Word> {
+    fn get_value(&self, index: Word) -> AocResult<Word> {
         let mut mode = self.memory[&self.ip] / 100;
         for _ in 1..index {
             mode /= 10;
@@ -139,7 +139,7 @@ impl Computer {
             ))?,
         })
     }
-    fn get_target(&self, index: Word) -> Result<Word> {
+    fn get_target(&self, index: Word) -> AocResult<Word> {
         let mut mode = self.memory[&self.ip] / 100;
         for _ in 1..index {
             mode /= 10;
@@ -154,7 +154,7 @@ impl Computer {
             ))?,
         })
     }
-    pub fn run(&mut self) -> Result<&mut Self> {
+    pub fn run(&mut self) -> AocResult<&mut Self> {
         while !self.is_halted() && !self.is_input_blocked() {
             self.step()?;
         }
@@ -163,12 +163,12 @@ impl Computer {
     pub fn write(&mut self, value: Word) {
         self.input.push_back(value);
     }
-    pub fn read(&mut self) -> Result<Word> {
+    pub fn read(&mut self) -> AocResult<Word> {
         self.output
             .pop_front()
             .ok_or_else(|| aoc_error!("Output is empty!"))
     }
-    pub fn prepare_code(input: &str) -> Result<Vec<Word>> {
+    pub fn prepare_code(input: &str) -> AocResult<Vec<Word>> {
         input.trim().split(',').map(|x| Ok(x.parse()?)).collect()
     }
 }
@@ -292,9 +292,9 @@ mod test {
         );
 
         let larger_example = &[
-            3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31,
-            1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,
-            999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99,
+            3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0,
+            0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4,
+            20, 1105, 1, 46, 98, 99,
         ];
         test_io(larger_example, &[5], &[999], "Large - less than");
         test_io(larger_example, &[8], &[1000], "Large - equal");
@@ -304,8 +304,7 @@ mod test {
     #[test]
     fn test_day9() {
         let quine = &[
-            109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101,
-            0, 99,
+            109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99,
         ];
         test_io(quine, &[], quine, "Quine");
         test_io(

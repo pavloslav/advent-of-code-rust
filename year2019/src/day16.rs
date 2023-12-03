@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<i32>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
     input
         .trim()
         .chars()
@@ -14,7 +14,7 @@ pub fn parse_input(input: &str) -> Result<Vec<i32>> {
 const PHASES: usize = 100;
 const PATTERN: [i32; 4] = [0, 1, 0, -1];
 
-pub fn task1(input: &[i32]) -> Result<String> {
+pub fn task1(input: &[i32]) -> AocResult<String> {
     let mut signal = input.to_vec();
     for _ in 0..PHASES {
         signal = (1..=signal.len())
@@ -36,6 +36,6 @@ pub fn task1(input: &[i32]) -> Result<String> {
         .collect()
 }
 
-pub fn task2(_input: &[i32]) -> Result<usize> {
+pub fn task2(_input: &[i32]) -> AocResult<usize> {
     Err(aoc_error!("Todo"))
 }

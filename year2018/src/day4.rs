@@ -17,11 +17,11 @@ pub struct Record {
     event: Event,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Record>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Record>> {
     let mut log: Vec<Record> = input
         .lines()
         .map(|line| {
-            let (month, day, hour, minute, event) = scan_fmt::scan_fmt!(
+            let (month, day, hour, minute, event) = prse::try_parse!(
                 line,
                 "[1518-{d}-{d} {d}:{d}] {/.*/}{e}",
                 usize,
@@ -35,11 +35,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Record>> {
                 "falls asleep" => Event::Sleep,
                 "wakes up" => Event::Awake,
                 other => {
-                    let guard = scan_fmt::scan_fmt!(
-                        other,
-                        "Guard #{} begins shift",
-                        usize
-                    )?;
+                    let guard = prse::try_parse!(other, "Guard #{} begins shift", usize)?;
                     Event::BeginsShift(guard)
                 }
             };
@@ -78,7 +74,7 @@ fn minutes(record: &Record) -> usize {
         + record.minute
 }
 
-pub fn task1(log: &[Record]) -> Result<usize> {
+pub fn task1(log: &[Record]) -> AocResult<usize> {
     let mut sleep_map = HashMap::new();
     let mut current_guard = None;
     let mut sleep_start = 0;
@@ -89,8 +85,7 @@ pub fn task1(log: &[Record]) -> Result<usize> {
             Event::Awake => {
                 if let Some(guard) = current_guard {
                     for minute in sleep_start..record.minute {
-                        sleep_map.entry(guard).or_insert(vec![0; 60])
-                            [minute] += 1;
+                        sleep_map.entry(guard).or_insert(vec![0; 60])[minute] += 1;
                     }
                 }
             }
@@ -110,7 +105,7 @@ pub fn task1(log: &[Record]) -> Result<usize> {
     Ok(most_sleeping_guard * best_minute)
 }
 
-pub fn task2(log: &[Record]) -> Result<usize> {
+pub fn task2(log: &[Record]) -> AocResult<usize> {
     let mut sleep_map = HashMap::new();
     let mut current_guard = None;
     let mut sleep_start = 0;

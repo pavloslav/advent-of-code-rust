@@ -2,7 +2,7 @@ use crate::*;
 
 use std::collections::HashMap;
 
-pub fn parse_input(input: &str) -> Result<Vec<HashMap<char, u32>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<HashMap<char, u32>>> {
     let mut statistics: Vec<HashMap<char, u32>> = Vec::new();
     for line in input.lines() {
         if statistics.is_empty() {
@@ -16,7 +16,7 @@ pub fn parse_input(input: &str) -> Result<Vec<HashMap<char, u32>>> {
     Ok(statistics)
 }
 
-pub fn task1(statistics: &[HashMap<char, u32>]) -> Result<String> {
+pub fn task1(statistics: &[HashMap<char, u32>]) -> AocResult<String> {
     statistics
         .iter()
         .map(|hashmap| {
@@ -29,7 +29,7 @@ pub fn task1(statistics: &[HashMap<char, u32>]) -> Result<String> {
         .collect()
 }
 
-pub fn task2(statistics: &[HashMap<char, u32>]) -> Result<String> {
+pub fn task2(statistics: &[HashMap<char, u32>]) -> AocResult<String> {
     statistics
         .iter()
         .map(|hashmap| {

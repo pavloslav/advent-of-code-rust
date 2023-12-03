@@ -32,11 +32,11 @@ impl Moon {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<[isize; 3]>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<[isize; 3]>> {
     input
         .lines()
         .map(|line| {
-            let (x, y, z) = scan_fmt::scan_fmt!(line, "<x={}, y={}, z={}>", isize, isize, isize)?;
+            let (x, y, z) = prse::try_parse!(line, "<x={}, y={}, z={}>", isize, isize, isize)?;
             Ok([x, y, z])
         })
         .collect()
@@ -63,7 +63,7 @@ fn step_model_coord(moons: &mut Vec<Moon>, coord: usize) {
     }
 }
 
-pub fn task1(input: &[[isize; 3]]) -> Result<isize> {
+pub fn task1(input: &[[isize; 3]]) -> AocResult<isize> {
     let mut moons: Vec<Moon> = input.iter().map(Moon::new).collect();
     for _ in 0..1000 {
         step_model(&mut moons);
@@ -71,7 +71,7 @@ pub fn task1(input: &[[isize; 3]]) -> Result<isize> {
     Ok(moons.iter().map(Moon::energy).sum())
 }
 
-pub fn task2(input: &[[isize; 3]]) -> Result<usize> {
+pub fn task2(input: &[[isize; 3]]) -> AocResult<usize> {
     Ok((0..3)
         .map(|i| {
             let (lambda, mu) = floyd_hare_tortoise_with_cmp(

@@ -27,5 +27,5 @@ pub struct Args {
     pub day: String,
 }
 
-pub use error::Error;
-pub use error::Result;
+pub use error::AocError;
+pub use error::AocResult;

@@ -1,11 +1,9 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<(usize, usize, usize)>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize, usize)>> {
     input
         .lines()
-        .map(|line| {
-            Ok(scan_fmt::scan_fmt!(line, "{},{},{}", usize, usize, usize)?)
-        })
+        .map(|line| Ok(prse::try_parse!(line, "{},{},{}", usize, usize, usize)?))
         .collect()
 }
 
@@ -23,18 +21,17 @@ struct Space {
 
 impl Space {
     fn from_lava(lava: &[(usize, usize, usize)]) -> Space {
-        let (max_x, max_y, max_z) =
-            lava.iter()
-                .fold((0, 0, 0), |(max_x, max_y, max_z), &(x, y, z)| {
-                    (max_x.max(x), max_y.max(y), max_z.max(z))
-                });
+        let (max_x, max_y, max_z) = lava
+            .iter()
+            .fold((0, 0, 0), |(max_x, max_y, max_z), &(x, y, z)| {
+                (max_x.max(x), max_y.max(y), max_z.max(z))
+            });
         let lava: Vec<_> = lava
             .iter()
             .map(|&(x, y, z)| (x + 1, y + 1, z + 1))
             .collect();
         //+1 for len, +2 for empty planes around
-        let mut cubes =
-            vec![vec![vec![State::Empty; max_z + 3]; max_y + 3]; max_x + 3];
+        let mut cubes = vec![vec![vec![State::Empty; max_z + 3]; max_y + 3]; max_x + 3];
         for &(x, y, z) in &lava {
             cubes[x][y][z] = State::Lava;
         }
@@ -47,8 +44,7 @@ impl Space {
         y: usize,
         z: usize,
     ) -> impl Iterator<Item = (usize, usize, usize)> + '_ {
-        const SHIFTS: &[(usize, usize, usize)] =
-            &[(1, 0, 0), (0, 1, 0), (0, 0, 1)];
+        const SHIFTS: &[(usize, usize, usize)] = &[(1, 0, 0), (0, 1, 0), (0, 0, 1)];
         SHIFTS
             .iter()
             .filter_map(move |&(dx, dy, dz)| {
@@ -92,12 +88,12 @@ impl Space {
     }
 }
 
-pub fn task1(lava: &[(usize, usize, usize)]) -> Result<usize> {
+pub fn task1(lava: &[(usize, usize, usize)]) -> AocResult<usize> {
     let space = Space::from_lava(lava);
     Ok(space.count_lava_neighbors(State::Empty))
 }
 
-pub fn task2(lava: &[(usize, usize, usize)]) -> Result<usize> {
+pub fn task2(lava: &[(usize, usize, usize)]) -> AocResult<usize> {
     let mut space = Space::from_lava(lava);
     space.floodfill();
     Ok(space.count_lava_neighbors(State::Outer))

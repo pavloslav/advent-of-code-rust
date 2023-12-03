@@ -5,7 +5,7 @@ pub struct Cargo {
     plan: Vec<(usize, usize, usize)>,
 }
 
-pub fn parse_input(input: &str) -> Result<Cargo> {
+pub fn parse_input(input: &str) -> AocResult<Cargo> {
     let mut stacks = Vec::new();
     let mut plan = Vec::new();
     for line in input.lines() {
@@ -20,13 +20,9 @@ pub fn parse_input(input: &str) -> Result<Cargo> {
                     }
                 }
             }
-        } else if let Ok((number, from, to)) = scan_fmt::scan_fmt!(
-            line,
-            "move {} from {} to {}",
-            usize,
-            usize,
-            usize
-        ) {
+        } else if let Ok((number, from, to)) =
+            prse::try_parse!(line, "move {} from {} to {}", usize, usize, usize)
+        {
             plan.push((number, from, to));
         }
     }
@@ -36,7 +32,7 @@ pub fn parse_input(input: &str) -> Result<Cargo> {
     Ok(Cargo { stacks, plan })
 }
 
-pub fn task1(input: &Cargo) -> Result<String> {
+pub fn task1(input: &Cargo) -> AocResult<String> {
     let mut stacks = input.stacks.clone();
     for &(number, from, to) in &input.plan {
         for _ in 0..number {
@@ -51,7 +47,7 @@ pub fn task1(input: &Cargo) -> Result<String> {
         .collect())
 }
 
-pub fn task2(input: &Cargo) -> Result<String> {
+pub fn task2(input: &Cargo) -> AocResult<String> {
     let mut stacks = input.stacks.clone();
     for &(number, from, to) in &input.plan {
         let new_from_len = stacks[from - 1].len() - number;

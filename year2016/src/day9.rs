@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input.trim())
 }
 
@@ -64,12 +64,12 @@ fn decode(input: &str) -> String {
     res
 }
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     let res = decode(input);
     Ok(res.len())
 }
 
-pub fn task2(input: &str) -> Result<u64> {
+pub fn task2(input: &str) -> AocResult<u64> {
     Ok(decode2_len(input))
 }
 
@@ -91,14 +91,9 @@ mod test {
     fn test_decode2_len() {
         assert_eq!(decode2_len("(3x3)XYZ"), 9u64);
         assert_eq!(decode2_len("X(8x2)(3x3)ABCY"), 20u64);
+        assert_eq!(decode2_len("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920u64);
         assert_eq!(
-            decode2_len("(27x12)(20x12)(13x14)(7x10)(1x12)A"),
-            241920u64
-        );
-        assert_eq!(
-            decode2_len(
-                "(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"
-            ),
+            decode2_len("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"),
             445u64
         );
     }

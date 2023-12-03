@@ -1,13 +1,12 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
 fn is_abba(s: &str) -> bool {
     let b = s.as_bytes();
-    (0..(s.len() - 3))
-        .any(|i| b[i] == b[i + 3] && b[i + 1] == b[i + 2] && b[i] != b[i + 1])
+    (0..(s.len() - 3)).any(|i| b[i] == b[i + 3] && b[i + 1] == b[i + 2] && b[i] != b[i + 1])
 }
 
 fn has_abba(ip: &str) -> bool {
@@ -19,7 +18,7 @@ fn has_abba(ip: &str) -> bool {
     parts.0.iter().any(|x| x.1) && parts.1.iter().all(|x| !x.1)
 }
 
-pub fn task1(lines: &str) -> Result<usize> {
+pub fn task1(lines: &str) -> AocResult<usize> {
     Ok(lines.lines().filter(|line| has_abba(line)).count())
 }
 
@@ -42,8 +41,7 @@ fn has_aba(ip: &str) -> bool {
     let mut abs = HashSet::new();
     for s in supernets {
         for i in 0..(s.len() - 2) {
-            if s[i..i + 1] == s[i + 2..i + 3] && s[i..i + 1] != s[i + 1..i + 2]
-            {
+            if s[i..i + 1] == s[i + 2..i + 3] && s[i..i + 1] != s[i + 1..i + 2] {
                 abs.insert(s[i..i + 2].to_string());
             }
         }
@@ -51,8 +49,7 @@ fn has_aba(ip: &str) -> bool {
     let mut bas = HashSet::new();
     for s in hypernets {
         for i in 0..(s.len() - 2) {
-            if s[i..i + 1] == s[i + 2..i + 3] && s[i..i + 1] != s[i + 1..i + 2]
-            {
+            if s[i..i + 1] == s[i + 2..i + 3] && s[i..i + 1] != s[i + 1..i + 2] {
                 bas.insert(s[i + 1..i + 3].to_string());
             }
         }
@@ -61,7 +58,7 @@ fn has_aba(ip: &str) -> bool {
     !abs.is_disjoint(&bas)
 }
 
-pub fn task2(lines: &str) -> Result<usize> {
+pub fn task2(lines: &str) -> AocResult<usize> {
     Ok(lines.lines().filter(|line| has_aba(line)).count())
 }
 

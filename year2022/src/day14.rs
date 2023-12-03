@@ -1,20 +1,20 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
     let input: Vec<Vec<(i32, i32)>> = input
         .lines()
         .map(|line| {
             line.split(" -> ")
-                .map(|pair| Ok(scan_fmt::scan_fmt!(pair, "{},{}", i32, i32)?))
+                .map(|pair| Ok(prse::try_parse!(pair, "{},{}", i32, i32)?))
                 .collect::<Result<Vec<_>>>()
         })
         .collect::<Result<Vec<_>>>()?;
-    let (max_x, max_y) = input.iter().flat_map(|line| line.iter()).fold(
-        (i32::MIN, i32::MIN),
-        |(max_x, max_y), &(x, y)| {
+    let (max_x, max_y) = input
+        .iter()
+        .flat_map(|line| line.iter())
+        .fold((i32::MIN, i32::MIN), |(max_x, max_y), &(x, y)| {
             (std::cmp::max(max_x, x), std::cmp::max(max_y, y))
-        },
-    );
+        });
     let width = (2 * max_x) as usize;
     let height = (max_y + 1) as usize;
     let mut map = vec![vec![b' '; width]; height];
@@ -44,7 +44,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
     Ok(map)
 }
 
-pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
+pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
     let mut map = map.to_vec();
     for sandgrain in 0.. {
         assert_eq!(map[0][500], b' ');
@@ -67,7 +67,7 @@ pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
     Err(aoc_error!("unreachable"))
 }
 
-pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
+pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
     let mut map = map.to_vec();
     map.push(vec![b' '; map[0].len()]);
     for sandgrain in 0.. {

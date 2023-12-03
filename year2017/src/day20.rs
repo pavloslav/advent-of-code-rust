@@ -9,11 +9,11 @@ const POS: usize = 0;
 const VEL: usize = 1;
 const ACC: usize = 2;
 
-pub fn parse_input(input: &str) -> Result<Vec<Particle>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Particle>> {
     input
         .lines()
         .map(|line| {
-            let (px, py, pz, vx, vy, vz, ax, ay, az) = scan_fmt::scan_fmt!(
+            let (px, py, pz, vx, vy, vz, ax, ay, az) = prse::try_parse!(
                 line,
                 "p=<{},{},{}>, v=<{},{},{}>, a=<{},{},{}>,",
                 i64,
@@ -31,7 +31,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Particle>> {
         .collect()
 }
 
-pub fn task1(input: &[Particle]) -> Result<usize> {
+pub fn task1(input: &[Particle]) -> AocResult<usize> {
     Ok(input
         .iter()
         .enumerate()
@@ -41,7 +41,7 @@ pub fn task1(input: &[Particle]) -> Result<usize> {
         .0)
 }
 
-pub fn task2(input: &[Particle]) -> Result<usize> {
+pub fn task2(input: &[Particle]) -> AocResult<usize> {
     let mut survives = 0;
     let mut particles = input.to_vec();
 
@@ -75,8 +75,7 @@ pub fn task2(input: &[Particle]) -> Result<usize> {
                     None
                 } else if (0..6).any(|coord| {
                     (POS..=ACC).all(|kind| {
-                        extremums[coord % 2].0[kind][coord / 2]
-                            == pt.0[kind][coord / 2]
+                        extremums[coord % 2].0[kind][coord / 2] == pt.0[kind][coord / 2]
                     })
                 }) {
                     survives += 1;
@@ -84,11 +83,9 @@ pub fn task2(input: &[Particle]) -> Result<usize> {
                 } else {
                     let mut new_pt = Particle([[0; 3]; 3]);
                     for coord in 0..3 {
-                        new_pt.0[POS][coord] = pt.0[POS][coord]
-                            + pt.0[VEL][coord]
-                            + pt.0[ACC][coord];
-                        new_pt.0[VEL][coord] =
-                            pt.0[VEL][coord] + pt.0[ACC][coord];
+                        new_pt.0[POS][coord] =
+                            pt.0[POS][coord] + pt.0[VEL][coord] + pt.0[ACC][coord];
+                        new_pt.0[VEL][coord] = pt.0[VEL][coord] + pt.0[ACC][coord];
                         new_pt.0[ACC][coord] = pt.0[ACC][coord];
                     }
                     Some(new_pt)

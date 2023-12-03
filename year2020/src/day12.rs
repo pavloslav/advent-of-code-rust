@@ -24,8 +24,8 @@ pub struct Order {
 
 impl std::str::FromStr for Order {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Order> {
-        let (typ, par) = scan_fmt::scan_fmt!(s, "{1[EWSNLRF]}{}", char, i32)?;
+    fn from_str(s: &str) -> AocResult<Order> {
+        let (typ, par) = prse::try_parse!(s, "{1[EWSNLRF]}{}", char, i32)?;
         Ok(Order {
             com: match typ {
                 'E' => OrderType::East,
@@ -51,12 +51,8 @@ impl Ship {
             OrderType::West => self.lon -= action.par,
             OrderType::South => self.lat -= action.par,
             OrderType::North => self.lat += action.par,
-            OrderType::Left => {
-                self.dir = (self.dir + action.par / 90).rem_euclid(4)
-            }
-            OrderType::Right => {
-                self.dir = (self.dir - action.par / 90).rem_euclid(4)
-            }
+            OrderType::Left => self.dir = (self.dir + action.par / 90).rem_euclid(4),
+            OrderType::Right => self.dir = (self.dir - action.par / 90).rem_euclid(4),
             OrderType::Forward => {
                 self.lon += DIRECTIONS[self.dir as usize].0 * action.par;
                 self.lat += DIRECTIONS[self.dir as usize].1 * action.par;
@@ -88,7 +84,7 @@ struct ShipWaypoint {
 }
 
 impl ShipWaypoint {
-    fn step(&mut self, action: &Order) -> Result<()> {
+    fn step(&mut self, action: &Order) -> AocResult<()> {
         match action.com {
             OrderType::East => self.waypt_lon += action.par,
             OrderType::West => self.waypt_lon -= action.par,
@@ -114,13 +110,13 @@ impl ShipWaypoint {
     fn distance(&self) -> i32 {
         self.lon.abs() + self.lat.abs()
     }
-    fn travel(&mut self, orders: &[Order]) -> Result<()> {
+    fn travel(&mut self, orders: &[Order]) -> AocResult<()> {
         for order in orders {
             self.step(order)?;
         }
         Ok(())
     }
-    fn turn(&mut self, angle: i32) -> Result<()> {
+    fn turn(&mut self, angle: i32) -> AocResult<()> {
         match angle.rem_euclid(360) {
             0 => {}
             90 => {
@@ -145,17 +141,17 @@ impl ShipWaypoint {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Order>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Order>> {
     input.trim().lines().map(|s| s.parse()).collect()
 }
 
-pub fn task1(orders: &[Order]) -> Result<i32> {
+pub fn task1(orders: &[Order]) -> AocResult<i32> {
     let mut ship = Ship::new();
     ship.travel(orders);
     Ok(ship.distance())
 }
 
-pub fn task2(orders: &[Order]) -> Result<i32> {
+pub fn task2(orders: &[Order]) -> AocResult<i32> {
     let mut ship = ShipWaypoint::new();
     ship.travel(orders)?;
     Ok(ship.distance())

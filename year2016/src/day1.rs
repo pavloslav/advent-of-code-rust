@@ -40,8 +40,8 @@ pub struct Command {
 
 impl std::str::FromStr for Command {
     type Err = Error;
-    fn from_str(input: &str) -> Result<Command> {
-        let (rot, len) = scan_fmt::scan_fmt!(input, "{1[LR]}{d}", char, i32)?;
+    fn from_str(input: &str) -> AocResult<Command> {
+        let (rot, len) = prse::try_parse!(input, "{1[LR]}{d}", char, i32)?;
         let rot = match rot {
             'L' => -1,
             'R' => 1,
@@ -51,11 +51,11 @@ impl std::str::FromStr for Command {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Command>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Command>> {
     input.split(", ").map(|step| step.parse()).collect()
 }
 
-pub fn task1(way: &[Command]) -> Result<i32> {
+pub fn task1(way: &[Command]) -> AocResult<i32> {
     let mut position = Pos { x: 0, y: 0 };
     let mut dir = Direction::NORTH;
     for step in way {
@@ -67,7 +67,7 @@ pub fn task1(way: &[Command]) -> Result<i32> {
 
 use std::collections::HashSet;
 
-pub fn task2(way: &[Command]) -> Result<i32> {
+pub fn task2(way: &[Command]) -> AocResult<i32> {
     let mut position = Pos { x: 0, y: 0 };
     let mut dir = Direction::NORTH;
     let mut visited: HashSet<Pos> = HashSet::new();

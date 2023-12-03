@@ -66,11 +66,7 @@ impl Monkey {
             }
         }
     }
-    fn find_humn(
-        &self,
-        monkeys: &HashMap<String, Monkey>,
-        value: Yell,
-    ) -> Yell {
+    fn find_humn(&self, monkeys: &HashMap<String, Monkey>, value: Yell) -> Yell {
         match self {
             Monkey::Operation(left, op, right) => {
                 if left == "humn" || monkeys[left].has_humn(monkeys) {
@@ -88,22 +84,15 @@ impl Monkey {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<HashMap<String, Monkey>> {
+pub fn parse_input(input: &str) -> AocResult<HashMap<String, Monkey>> {
     input
         .lines()
         .map(|line| {
-            if let Ok((name, yell)) =
-                scan_fmt::scan_fmt!(line, "{}: {} {} {}", String, Yell)
-            {
+            if let Ok((name, yell)) = prse::try_parse!(line, "{}: {} {} {}", String, Yell) {
                 Ok((name, Monkey::Value(yell)))
-            } else if let Ok((name, left, op, right)) = scan_fmt::scan_fmt!(
-                line,
-                "{}: {} {} {}",
-                String,
-                String,
-                char,
-                String
-            ) {
+            } else if let Ok((name, left, op, right)) =
+                prse::try_parse!(line, "{}: {} {} {}", String, String, char, String)
+            {
                 let op = match op {
                     '+' => Operation::Add,
                     '-' => Operation::Sub,
@@ -121,11 +110,11 @@ pub fn parse_input(input: &str) -> Result<HashMap<String, Monkey>> {
         .collect()
 }
 
-pub fn task1(map: &HashMap<String, Monkey>) -> Result<Yell> {
+pub fn task1(map: &HashMap<String, Monkey>) -> AocResult<Yell> {
     Ok(map[&"root".to_owned()].yell(map))
 }
 
-pub fn task2(map: &HashMap<String, Monkey>) -> Result<Yell> {
+pub fn task2(map: &HashMap<String, Monkey>) -> AocResult<Yell> {
     if let Monkey::Operation(left, _, right) = &map["root"] {
         if map[left].has_humn(map) {
             Ok(map[left].find_humn(map, map[right].yell(map)))

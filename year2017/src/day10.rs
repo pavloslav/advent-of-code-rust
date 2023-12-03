@@ -1,11 +1,11 @@
 use super::knots_hash;
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     let numbers = input
         .trim()
         .split(',')
@@ -15,7 +15,7 @@ pub fn task1(input: &str) -> Result<usize> {
     Ok(knots[0] * knots[1])
 }
 
-pub fn task2(input: &str) -> Result<String> {
+pub fn task2(input: &str) -> AocResult<String> {
     use std::fmt::Write;
     Ok(
         knots_hash::dense_hash(input.trim().bytes().map(|c| c.into()))

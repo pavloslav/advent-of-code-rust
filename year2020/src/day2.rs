@@ -9,9 +9,9 @@ pub struct PasswordPolicy {
 
 impl std::str::FromStr for PasswordPolicy {
     type Err = Error;
-    fn from_str(s: &str) -> Result<PasswordPolicy> {
+    fn from_str(s: &str) -> AocResult<PasswordPolicy> {
         let (a, b, symbol, password) =
-            scan_fmt::scan_fmt!(s, "{}-{} {}: {}", usize, usize, char, String)?;
+            prse::try_parse!(s, "{}-{} {}: {}", usize, usize, char, String)?;
         Ok(PasswordPolicy {
             a,
             b,
@@ -21,7 +21,7 @@ impl std::str::FromStr for PasswordPolicy {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<PasswordPolicy>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<PasswordPolicy>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
@@ -34,7 +34,7 @@ fn is_valid(policy: &PasswordPolicy) -> bool {
     (policy.a..=policy.b).contains(&count)
 }
 
-pub fn task1(data: &[PasswordPolicy]) -> Result<usize> {
+pub fn task1(data: &[PasswordPolicy]) -> AocResult<usize> {
     Ok(data.iter().filter(|&s| is_valid(s)).count())
 }
 
@@ -43,6 +43,6 @@ fn is_valid2(policy: &PasswordPolicy) -> bool {
         != (policy.password.chars().nth(policy.b - 1) == Some(policy.symbol))
 }
 
-pub fn task2(data: &[PasswordPolicy]) -> Result<usize> {
+pub fn task2(data: &[PasswordPolicy]) -> AocResult<usize> {
     Ok(data.iter().filter(|&s| is_valid2(s)).count())
 }

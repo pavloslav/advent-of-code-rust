@@ -13,7 +13,7 @@ pub struct PolymerData {
 }
 
 impl PolymerData {
-    fn from_str(input: &str) -> Result<PolymerData> {
+    fn from_str(input: &str) -> AocResult<PolymerData> {
         let mut lines = input.lines();
         let mut polymer_data = PolymerData {
             polymer: lines
@@ -27,13 +27,13 @@ impl PolymerData {
 
         for line in lines.skip(1) {
             let (left1, left2, right) =
-                scan_fmt::scan_fmt!(line, "{/./}{/./} -> {/./}", char, char, char)?;
+                prse::try_parse!(line, "{/./}{/./} -> {/./}", char, char, char)?;
             polymer_data.rules.insert((left1, left2), right);
         }
         Ok(polymer_data)
     }
 
-    fn composition_recursive(&mut self, polymer: (char, char), steps: usize) -> Result<Counter> {
+    fn composition_recursive(&mut self, polymer: (char, char), steps: usize) -> AocResult<Counter> {
         let (left, right) = polymer;
 
         #[allow(clippy::map_entry)]
@@ -61,7 +61,7 @@ impl PolymerData {
             .clone())
     }
 
-    fn composition(&mut self, steps: usize) -> Result<usize> {
+    fn composition(&mut self, steps: usize) -> AocResult<usize> {
         let mut counter: Counter = [(self.polymer[0], 1)].into();
         for i in 0..self.polymer.len() - 1 {
             for (element, count) in
@@ -83,20 +83,20 @@ impl PolymerData {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<PolymerData> {
+pub fn parse_input(input: &str) -> AocResult<PolymerData> {
     PolymerData::from_str(input)
 }
 
-fn task(data: &PolymerData, steps: usize) -> Result<usize> {
+fn task(data: &PolymerData, steps: usize) -> AocResult<usize> {
     let mut data = data.clone();
     data.composition(steps)
 }
 
-pub fn task1(data: &PolymerData) -> Result<usize> {
+pub fn task1(data: &PolymerData) -> AocResult<usize> {
     task(data, 10)
 }
 
-pub fn task2(data: &PolymerData) -> Result<usize> {
+pub fn task2(data: &PolymerData) -> AocResult<usize> {
     task(data, 40)
 }
 

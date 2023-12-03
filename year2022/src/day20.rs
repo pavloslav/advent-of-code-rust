@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<i32>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
     input.lines().map(|x| Ok(x.parse()?)).collect()
 }
 
-pub fn task1(input: &[i32]) -> Result<i32> {
+pub fn task1(input: &[i32]) -> AocResult<i32> {
     let mut mixed = input.to_vec();
     for &x in input {
         let pos = mixed.iter().position(|&i| i == x).unwrap();
@@ -25,7 +25,7 @@ pub fn task1(input: &[i32]) -> Result<i32> {
         .sum())
 }
 
-pub fn task2(_input: &[i32]) -> Result<usize> {
+pub fn task2(_input: &[i32]) -> AocResult<usize> {
     todo!();
 }
 

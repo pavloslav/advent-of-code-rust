@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<String>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<String>> {
     Ok(input.lines().map(|l| l.to_owned()).collect())
 }
 
-pub fn task1(input: &[String]) -> Result<u32> {
+pub fn task1(input: &[String]) -> AocResult<u32> {
     let mut s = 0;
     for l in input {
         let first = l
@@ -21,7 +21,7 @@ pub fn task1(input: &[String]) -> Result<u32> {
     Ok(s)
 }
 
-pub fn task2(input: &[String]) -> Result<u32> {
+pub fn task2(input: &[String]) -> AocResult<u32> {
     let mut sum = 0;
     for l in input {
         let mut s = l.as_str();

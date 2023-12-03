@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
@@ -8,7 +8,7 @@ const WIDTH: usize = 25;
 const HEIGHT: usize = 6;
 const PIXELS: usize = WIDTH * HEIGHT;
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     if let Some([_, ones, twos]) = (0..input.len() / PIXELS)
         .map(|i| {
             let image = &input[i * PIXELS..(i + 1) * PIXELS];
@@ -25,7 +25,7 @@ pub fn task1(input: &str) -> Result<usize> {
     }
 }
 
-fn decode(c: char) -> Result<char> {
+fn decode(c: char) -> AocResult<char> {
     Ok(match c {
         '0' => ' ',
         '1' => 'X',
@@ -34,7 +34,7 @@ fn decode(c: char) -> Result<char> {
     })
 }
 
-pub fn task2(input: &str) -> Result<String> {
+pub fn task2(input: &str) -> AocResult<String> {
     let result = (0..input.len() / PIXELS)
         .map(|i| &input[i * PIXELS..(i + 1) * PIXELS])
         .try_fold("-".repeat(PIXELS), |acc, image| {

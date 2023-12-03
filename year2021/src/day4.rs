@@ -24,7 +24,7 @@ pub struct BingoSettings {
 
 impl std::str::FromStr for BingoSettings {
     type Err = Error;
-    fn from_str(s: &str) -> Result<BingoSettings> {
+    fn from_str(s: &str) -> AocResult<BingoSettings> {
         let mut s = s.lines();
         let calls = s
             .next()
@@ -83,7 +83,7 @@ impl Bingo<'_> {
         }
     }
 
-    fn task(&mut self, nwinner: usize) -> Result<usize> {
+    fn task(&mut self, nwinner: usize) -> AocResult<usize> {
         for &call in &self.settings.calls {
             self.strikeout(call);
             if self.winners.len() == nwinner {
@@ -123,7 +123,7 @@ impl Bingo<'_> {
         }
     }
 
-    fn last_winner_score(&self) -> Result<usize> {
+    fn last_winner_score(&self) -> AocResult<usize> {
         if let Some(last) = self.winners.last() {
             Ok(last.1)
         } else {
@@ -132,15 +132,15 @@ impl Bingo<'_> {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<BingoSettings> {
+pub fn parse_input(input: &str) -> AocResult<BingoSettings> {
     input.parse()
 }
 
-pub fn task1(bingo: &BingoSettings) -> Result<usize> {
+pub fn task1(bingo: &BingoSettings) -> AocResult<usize> {
     Bingo::new(bingo).task(1)
 }
 
-pub fn task2(bingo: &BingoSettings) -> Result<usize> {
+pub fn task2(bingo: &BingoSettings) -> AocResult<usize> {
     Bingo::new(bingo).task(bingo.boards.len())
 }
 

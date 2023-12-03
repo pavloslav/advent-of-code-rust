@@ -38,9 +38,7 @@ impl Life {
                     .map(|col| {
                         match NEIGHBORS
                             .iter()
-                            .filter_map(|&(dx, dy)| {
-                                self.read(row as i32 + dx, col as i32 + dy)
-                            })
+                            .filter_map(|&(dx, dy)| self.read(row as i32 + dx, col as i32 + dy))
                             .sum()
                         {
                             2 => self.field[row][col],
@@ -87,7 +85,7 @@ impl Life {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Life> {
+pub fn parse_input(input: &str) -> AocResult<Life> {
     Ok(Life {
         field: input
             .lines()
@@ -112,11 +110,11 @@ fn task(life: &Life, steps: usize, light_corners: bool) -> usize {
     life.count_on()
 }
 
-pub fn task1(life: &Life) -> Result<usize> {
+pub fn task1(life: &Life) -> AocResult<usize> {
     Ok(task(life, STEPS, false))
 }
 
-pub fn task2(life: &Life) -> Result<usize> {
+pub fn task2(life: &Life) -> AocResult<usize> {
     Ok(task(life, STEPS, true))
 }
 

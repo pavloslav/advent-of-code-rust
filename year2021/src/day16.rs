@@ -26,7 +26,7 @@ fn get_number(input: &[u8]) -> usize {
     number
 }
 
-fn parse_packet(input: &[u8]) -> Result<(Packet, &[u8]), Error> {
+fn parse_packet(input: &[u8]) -> AocResult<(Packet, &[u8]), Error> {
     if input.len() < 7 {
         return Err(Error::UnexpectedEndOfStream);
     }
@@ -101,9 +101,9 @@ pub fn parse_input(input: &str) -> Packet {
     let bit_stream: Vec<u8> = input
         .chars()
         .flat_map(|hex_digit| {
-            (0..4).rev().map(move |i| {
-                ((hex_digit.to_digit(16).unwrap() >> i) & 1) as u8
-            })
+            (0..4)
+                .rev()
+                .map(move |i| ((hex_digit.to_digit(16).unwrap() >> i) & 1) as u8)
         })
         .collect();
     parse_packet(&bit_stream).unwrap().0
@@ -134,15 +134,15 @@ impl Packet {
                 subpackets.iter().map(|p| p.calculate()).max().unwrap()
             }
             (&PacketContent::Literal(value), 4) => value,
-            (PacketContent::Operator(subpackets), 5) => usize::from(
-                subpackets[0].calculate() > subpackets[1].calculate(),
-            ),
-            (PacketContent::Operator(subpackets), 6) => usize::from(
-                subpackets[0].calculate() < subpackets[1].calculate(),
-            ),
-            (PacketContent::Operator(subpackets), 7) => usize::from(
-                subpackets[0].calculate() == subpackets[1].calculate(),
-            ),
+            (PacketContent::Operator(subpackets), 5) => {
+                usize::from(subpackets[0].calculate() > subpackets[1].calculate())
+            }
+            (PacketContent::Operator(subpackets), 6) => {
+                usize::from(subpackets[0].calculate() < subpackets[1].calculate())
+            }
+            (PacketContent::Operator(subpackets), 7) => {
+                usize::from(subpackets[0].calculate() == subpackets[1].calculate())
+            }
             _ => panic!("Wrong type_id: {}", self.type_id),
         }
     }

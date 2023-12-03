@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<&str>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<&str>> {
     Ok(input.lines().collect())
 }
 
-pub fn task1(input: &[&str]) -> Result<usize> {
+pub fn task1(input: &[&str]) -> AocResult<usize> {
     let mut two = 0;
     let mut three = 0;
     for code in input {
@@ -26,7 +26,7 @@ pub fn task1(input: &[&str]) -> Result<usize> {
     Ok(two * three)
 }
 
-pub fn task2(input: &[&str]) -> Result<String> {
+pub fn task2(input: &[&str]) -> AocResult<String> {
     for (i, line1) in input.iter().enumerate() {
         for line2 in &input[i..] {
             if line1

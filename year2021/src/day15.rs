@@ -2,7 +2,7 @@ use crate::*;
 
 type Cave = Vec<Vec<usize>>;
 
-pub fn parse_input(input: &str) -> Result<Cave> {
+pub fn parse_input(input: &str) -> AocResult<Cave> {
     input
         .lines()
         .map(|line| {
@@ -23,8 +23,7 @@ pub fn dijkstra(cave: &Cave) -> usize {
     let size = cave.len();
     let mut len_cave = vec![vec![None::<usize>; size]; size];
     len_cave[0][0] = Some(0);
-    let mut to_search: BTreeMap<usize, Vec<(usize, usize)>> =
-        [(0, [(0, 0)].into())].into();
+    let mut to_search: BTreeMap<usize, Vec<(usize, usize)>> = [(0, [(0, 0)].into())].into();
 
     while let Some(mut e) = to_search.first_entry() {
         let (key, x, y) = if let Some((x, y)) = e.get_mut().pop() {
@@ -55,11 +54,11 @@ pub fn dijkstra(cave: &Cave) -> usize {
     len_cave[size - 1][size - 1].unwrap() - len_cave[0][0].unwrap()
 }
 
-pub fn task1(cave: &Cave) -> Result<usize> {
+pub fn task1(cave: &Cave) -> AocResult<usize> {
     Ok(dijkstra(cave))
 }
 
-pub fn task2(cave: &Cave) -> Result<usize> {
+pub fn task2(cave: &Cave) -> AocResult<usize> {
     let size = cave.len();
     let mut real_cave = vec![vec![0; size * 5]; size * 5];
     for i_mult in 0..5 {

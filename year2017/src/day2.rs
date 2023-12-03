@@ -1,13 +1,13 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u32>>> {
     input
         .lines()
         .map(|line| line.split_whitespace().map(|s| Ok(s.parse()?)).collect())
         .collect()
 }
 
-pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
+pub fn task1(input: &[Vec<u32>]) -> AocResult<u32> {
     input
         .iter()
         .map(|line| {
@@ -24,7 +24,7 @@ pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
         .sum()
 }
 
-pub fn task2(input: &[Vec<u32>]) -> Result<u32> {
+pub fn task2(input: &[Vec<u32>]) -> AocResult<u32> {
     Ok(input
         .iter()
         .map(|line| {

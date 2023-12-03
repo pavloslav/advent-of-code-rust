@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
-pub fn task1(s: &str) -> Result<u32> {
+pub fn task1(s: &str) -> AocResult<u32> {
     let mut counter = 0_u32;
     let mut group = 0_u32;
     for line in s.lines() {
@@ -19,7 +19,7 @@ pub fn task1(s: &str) -> Result<u32> {
     Ok(counter + group.count_ones())
 }
 
-pub fn task2(s: &str) -> Result<u32> {
+pub fn task2(s: &str) -> AocResult<u32> {
     let mut counter = 0_u32;
     let mut group = 0_u32;
     let mut first = true;

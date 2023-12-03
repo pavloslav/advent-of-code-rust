@@ -21,8 +21,7 @@ impl Directory {
         if path.len() == 1 {
             self.records
                 .insert(path[0].to_string(), FsRecord::File(size));
-        } else if let Some(FsRecord::Dir(dir)) = self.records.get_mut(&path[0])
-        {
+        } else if let Some(FsRecord::Dir(dir)) = self.records.get_mut(&path[0]) {
             dir.add_file(&path[1..], size);
         }
     }
@@ -31,8 +30,7 @@ impl Directory {
             self.records
                 .entry(path[0].to_string())
                 .or_insert_with(|| FsRecord::Dir(Box::new(Directory::new())));
-        } else if let Some(FsRecord::Dir(dir)) = self.records.get_mut(&path[0])
-        {
+        } else if let Some(FsRecord::Dir(dir)) = self.records.get_mut(&path[0]) {
             dir.add_dir(&path[1..]);
         }
     }
@@ -64,9 +62,7 @@ impl Directory {
                 FsRecord::Dir(subdir) => {
                     let (total, current_best) = subdir.get_best_size(target);
                     inner_size += total;
-                    if current_best > target
-                        && (best == 0 || current_best < best)
-                    {
+                    if current_best > target && (best == 0 || current_best < best) {
                         best = current_best;
                     }
                 }
@@ -79,7 +75,7 @@ impl Directory {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Directory> {
+pub fn parse_input(input: &str) -> AocResult<Directory> {
     let mut root = Directory::new();
     let mut path = vec![];
     for instruction in input.lines() {
@@ -98,8 +94,7 @@ pub fn parse_input(input: &str) -> Result<Directory> {
             }
         } else if instruction != "$ ls" {
             //executing ls
-            let (typ, name) =
-                scan_fmt::scan_fmt!(instruction, "{} {}", String, String)?;
+            let (typ, name) = prse::try_parse!(instruction, "{} {}", String, String)?;
             path.push(name);
             if typ == "dir" {
                 root.add_dir(&path);
@@ -112,13 +107,13 @@ pub fn parse_input(input: &str) -> Result<Directory> {
     Ok(root)
 }
 
-pub fn task1(root: &Directory) -> Result<usize> {
+pub fn task1(root: &Directory) -> AocResult<usize> {
     Ok(root
         .get_sizes(|size| if size <= 100_000 { size } else { 0 })
         .1)
 }
 
-pub fn task2(root: &Directory) -> Result<usize> {
+pub fn task2(root: &Directory) -> AocResult<usize> {
     let current_size = root.get_sizes(|_| 0).0;
     let unused = 70_000_000 - current_size;
     let needed = 30_000_000 - unused;

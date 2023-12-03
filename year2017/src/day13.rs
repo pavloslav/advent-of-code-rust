@@ -2,14 +2,14 @@ use crate::*;
 
 type Firewall = Vec<(i32, i32)>;
 
-pub fn parse_input(input: &str) -> Result<Firewall> {
+pub fn parse_input(input: &str) -> AocResult<Firewall> {
     input
         .lines()
-        .map(|line| Ok(scan_fmt::scan_fmt!(line, "{}: {}", i32, i32)?))
+        .map(|line| Ok(prse::try_parse!(line, "{}: {}", i32, i32)?))
         .collect()
 }
 
-pub fn task1(firewall: &Firewall) -> Result<i32> {
+pub fn task1(firewall: &Firewall) -> AocResult<i32> {
     Ok(firewall
         .iter()
         .map(|(depth, range)| {
@@ -22,7 +22,7 @@ pub fn task1(firewall: &Firewall) -> Result<i32> {
         .sum())
 }
 
-pub fn task2(firewall: &Firewall) -> Result<i32> {
+pub fn task2(firewall: &Firewall) -> AocResult<i32> {
     (0..)
         .find(|delay| {
             firewall

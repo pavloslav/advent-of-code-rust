@@ -1,6 +1,6 @@
 use crate::*;
 
-fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
+fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> AocResult<String> {
     let mut pos = initial;
     let mut result = String::new();
     for line in lines.split('\n') {
@@ -22,13 +22,7 @@ fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
         result.push(
             map.get(pos.1)
                 .and_then(|line| line.get(pos.0))
-                .ok_or_else(|| {
-                    aoc_error!(
-                        "Coordinates {}:{} are out of bounds!",
-                        pos.0,
-                        pos.1
-                    )
-                })?
+                .ok_or_else(|| aoc_error!("Coordinates {}:{} are out of bounds!", pos.0, pos.1))?
                 .to_owned()
                 .into(),
         );
@@ -36,7 +30,7 @@ fn code(lines: &str, map: &[&[u8]], initial: (usize, usize)) -> Result<String> {
     Ok(result)
 }
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input.trim())
 }
 
@@ -59,11 +53,11 @@ const BIG_MAP: [&[u8]; 7] = [
     b"XXXXXXX",
 ];
 
-pub fn task1(input: &str) -> Result<String> {
+pub fn task1(input: &str) -> AocResult<String> {
     code(input, &SMALL_MAP, (2, 2))
 }
 
-pub fn task2(input: &str) -> Result<String> {
+pub fn task2(input: &str) -> AocResult<String> {
     code(input, &BIG_MAP, (1, 3))
 }
 

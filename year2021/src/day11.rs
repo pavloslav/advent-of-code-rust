@@ -7,7 +7,7 @@ pub struct Octopuses {
 }
 
 impl Octopuses {
-    fn new(input: &str) -> Result<Octopuses> {
+    fn new(input: &str) -> AocResult<Octopuses> {
         Ok(Octopuses {
             map: input
                 .lines()
@@ -56,11 +56,8 @@ impl Octopuses {
             false
         } else {
             self.map[y][x] = 0;
-            for dy in max(0, y as i32 - 1) as usize..min(self.map.len(), y + 2)
-            {
-                for dx in
-                    max(0, x as i32 - 1) as usize..min(self.map[y].len(), x + 2)
-                {
+            for dy in max(0, y as i32 - 1) as usize..min(self.map.len(), y + 2) {
+                for dx in max(0, x as i32 - 1) as usize..min(self.map[y].len(), x + 2) {
                     if self.map[dy][dx] != 0 {
                         self.map[dy][dx] += 1;
                     }
@@ -75,16 +72,16 @@ impl Octopuses {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Octopuses> {
+pub fn parse_input(input: &str) -> AocResult<Octopuses> {
     Octopuses::new(input)
 }
 
-pub fn task1(octopuses: &Octopuses) -> Result<usize> {
+pub fn task1(octopuses: &Octopuses) -> AocResult<usize> {
     let mut octopuses = octopuses.clone();
     Ok((0..100).map(|_| octopuses.step()).sum())
 }
 
-pub fn task2(octopuses: &Octopuses) -> Result<usize> {
+pub fn task2(octopuses: &Octopuses) -> AocResult<usize> {
     let mut octopuses = octopuses.clone();
     let area = octopuses.area();
     Ok((0..).take_while(|_| octopuses.step() != area).count() + 1)

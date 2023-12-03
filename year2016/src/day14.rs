@@ -44,14 +44,14 @@ fn find_key(init: &str, n: usize, hash_deep: usize) -> usize {
     unreachable!()
 }
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     Ok(find_key(input, 64, 0))
 }
 
-pub fn task2(input: &str) -> Result<usize> {
+pub fn task2(input: &str) -> AocResult<usize> {
     Ok(find_key(input, 64, 2016))
 }

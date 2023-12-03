@@ -60,9 +60,7 @@ mod ferry {
         fn count_close_neighbors(&self, row: usize, col: usize) -> usize {
             SHIFTS
                 .iter()
-                .map(|(shift_row, shift_col)| {
-                    (row as i32 + shift_row, col as i32 + shift_col)
-                })
+                .map(|(shift_row, shift_col)| (row as i32 + shift_row, col as i32 + shift_col))
                 .filter(|&(row, col)| {
                     0 <= row
                         && row < self.rows() as i32
@@ -88,12 +86,9 @@ mod ferry {
                                 && row < self.rows() as i32
                                 && 0 <= col
                                 && col < self.cols() as i32
-                                && self.seats[row as usize][col as usize]
-                                    != EMPTY
+                                && self.seats[row as usize][col as usize] != EMPTY
                         })
-                        .filter(|&(row, col)| {
-                            self.seats[row as usize][col as usize] == OCCUPIED
-                        })
+                        .filter(|&(row, col)| self.seats[row as usize][col as usize] == OCCUPIED)
                         .take(1)
                         .count()
                 })
@@ -115,9 +110,7 @@ mod ferry {
                                 FLOOR
                             } else {
                                 let occupied = self.count_neighbors(row, col);
-                                if occupied == 0
-                                    && self.seats[row][col] == EMPTY
-                                {
+                                if occupied == 0 && self.seats[row][col] == EMPTY {
                                     changed = true;
                                     OCCUPIED
                                 } else if occupied >= self.overcrowd()
@@ -186,16 +179,16 @@ mod ferry {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
-pub fn task1(s: &str) -> Result<usize> {
+pub fn task1(s: &str) -> AocResult<usize> {
     let mut model = ferry::Model::close(s);
     Ok(model.get_stable_count())
 }
 
-pub fn task2(s: &str) -> Result<usize> {
+pub fn task2(s: &str) -> AocResult<usize> {
     let mut model = ferry::Model::distant(s);
     Ok(model.get_stable_count())
 }

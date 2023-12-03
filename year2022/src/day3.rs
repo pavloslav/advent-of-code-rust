@@ -8,7 +8,7 @@ fn value(c: char) -> u32 {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u32>>> {
     Ok(input
         .lines()
         .map(|line| line.chars().map(value).collect())
@@ -17,7 +17,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<u32>>> {
 
 use std::collections::HashSet;
 
-pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
+pub fn task1(input: &[Vec<u32>]) -> AocResult<u32> {
     input
         .iter()
         .map(|backpack| {
@@ -31,7 +31,7 @@ pub fn task1(input: &[Vec<u32>]) -> Result<u32> {
         .try_fold(0, |acc, x: Result<_>| Ok(acc + x?))
 }
 
-pub fn task2(input: &[Vec<u32>]) -> Result<u32> {
+pub fn task2(input: &[Vec<u32>]) -> AocResult<u32> {
     let mut result = 0;
     for group in input.chunks(3) {
         let mut badges: HashSet<_> = group[0].iter().collect();

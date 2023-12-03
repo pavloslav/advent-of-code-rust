@@ -23,10 +23,10 @@ impl CaveNode {
 
 type CaveMap = std::collections::HashMap<CaveName, CaveNode>;
 
-pub fn parse_input(input: &str) -> Result<CaveMap> {
+pub fn parse_input(input: &str) -> AocResult<CaveMap> {
     let mut map = CaveMap::new();
     for line in input.lines() {
-        let (left, right) = scan_fmt::scan_fmt!(line, "{}-{}", String, String)?;
+        let (left, right) = prse::try_parse!(line, "{}-{}", String, String)?;
 
         map.entry(left.clone())
             .and_modify(|node| node.ways_out.push(right.clone()))
@@ -63,7 +63,7 @@ fn count_ways(map: &mut CaveMap, start: &str, end: &str) -> usize {
     result
 }
 
-pub fn task1(map: &CaveMap) -> Result<usize> {
+pub fn task1(map: &CaveMap) -> AocResult<usize> {
     let mut map = map.clone();
     Ok(count_ways(&mut map, "start", "end"))
 }
@@ -109,7 +109,7 @@ fn count_ways2(
     result
 }
 
-pub fn task2(map: &CaveMap) -> Result<usize> {
+pub fn task2(map: &CaveMap) -> AocResult<usize> {
     let mut map = map.clone();
     Ok(count_ways2(&mut map, "start", "end", false, false))
 }

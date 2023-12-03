@@ -5,7 +5,7 @@ const REG_B: usize = 1;
 
 type Register = usize;
 
-fn reg_num(input: &str) -> Result<Register> {
+fn reg_num(input: &str) -> AocResult<Register> {
     match input {
         "a" => Ok(REG_A),
         "b" => Ok(REG_B),
@@ -26,21 +26,17 @@ pub enum Instruction {
 impl std::str::FromStr for Instruction {
     type Err = Error;
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        if let Ok(reg) = scan_fmt::scan_fmt!(s, "hlf {}", String) {
+        if let Ok(reg) = prse::try_parse!(s, "hlf {}", String) {
             Ok(Instruction::Hlf(reg_num(&reg)?))
-        } else if let Ok(reg) = scan_fmt::scan_fmt!(s, "tpl {}", String) {
+        } else if let Ok(reg) = prse::try_parse!(s, "tpl {}", String) {
             Ok(Instruction::Tpl(reg_num(&reg)?))
-        } else if let Ok(reg) = scan_fmt::scan_fmt!(s, "inc {}", String) {
+        } else if let Ok(reg) = prse::try_parse!(s, "inc {}", String) {
             Ok(Instruction::Inc(reg_num(&reg)?))
-        } else if let Ok(value) = scan_fmt::scan_fmt!(s, "jmp {}", isize) {
+        } else if let Ok(value) = prse::try_parse!(s, "jmp {}", isize) {
             Ok(Instruction::Jmp(value))
-        } else if let Ok((reg, value)) =
-            scan_fmt::scan_fmt!(s, "jie {}, {}", String, isize)
-        {
+        } else if let Ok((reg, value)) = prse::try_parse!(s, "jie {}, {}", String, isize) {
             Ok(Instruction::Jie(reg_num(&reg)?, value))
-        } else if let Ok((reg, value)) =
-            scan_fmt::scan_fmt!(s, "jio {}, {}", String, isize)
-        {
+        } else if let Ok((reg, value)) = prse::try_parse!(s, "jio {}, {}", String, isize) {
             Ok(Instruction::Jio(reg_num(&reg)?, value))
         } else {
             Err(aoc_error!("Incorrect instruction '{s}'"))
@@ -54,7 +50,7 @@ struct Computer {
     program: Vec<Instruction>,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
     input.lines().map(|s| s.parse()).collect()
 }
 
@@ -76,13 +72,13 @@ impl Computer {
         }
     }
 
-    fn get_reg(&mut self, reg: Register) -> Result<&mut usize> {
+    fn get_reg(&mut self, reg: Register) -> AocResult<&mut usize> {
         self.regs
             .get_mut(reg)
             .ok_or_else(|| aoc_error!("Incorrect register {reg}"))
     }
 
-    fn step(&mut self) -> Result<bool> {
+    fn step(&mut self) -> AocResult<bool> {
         let instr = self
             .program
             .get(self.ip)
@@ -116,19 +112,19 @@ impl Computer {
         Ok(self.ip < self.program.len())
     }
 
-    fn run(&mut self) -> Result<()> {
+    fn run(&mut self) -> AocResult<()> {
         while self.step()? {}
         Ok(())
     }
 }
 
-pub fn task1(input: &[Instruction]) -> Result<usize> {
+pub fn task1(input: &[Instruction]) -> AocResult<usize> {
     let mut computer = Computer::new(0, input);
     computer.run()?;
     Ok(computer.regs[1])
 }
 
-pub fn task2(input: &[Instruction]) -> Result<usize> {
+pub fn task2(input: &[Instruction]) -> AocResult<usize> {
     let mut computer = Computer::new(1, input);
     computer.run()?;
     Ok(computer.regs[1])

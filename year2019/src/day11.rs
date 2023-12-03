@@ -35,11 +35,10 @@ impl Robot {
     fn paint(&mut self, color: u8) {
         self.painted.insert((self.x, self.y), color);
     }
-    fn work(&mut self) -> Result<()> {
+    fn work(&mut self) -> AocResult<()> {
         while !self.brain.is_halted() {
-            self.brain.write(
-                *self.painted.get(&(self.x, self.y)).unwrap_or(&0) as isize,
-            );
+            self.brain
+                .write(*self.painted.get(&(self.x, self.y)).unwrap_or(&0) as isize);
             self.brain.run()?;
             let color = self.brain.read().unwrap() as u8;
             self.paint(color);
@@ -75,17 +74,17 @@ impl Robot {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<isize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
-pub fn task1(code: &[isize]) -> Result<usize> {
+pub fn task1(code: &[isize]) -> AocResult<usize> {
     let mut robot = Robot::new(code);
     robot.work()?;
     Ok(robot.painted.len())
 }
 
-pub fn task2(code: &[isize]) -> Result<String> {
+pub fn task2(code: &[isize]) -> AocResult<String> {
     let mut robot = Robot::new(code);
     robot.painted.insert((0, 0), 1);
     robot.work()?;

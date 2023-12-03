@@ -40,7 +40,7 @@ pub fn parse_input(input: &str) -> Vec<Monkey> {
             .map(|item| item.parse().unwrap())
             .collect();
 
-        let (operator, operand) = scan_fmt::scan_fmt!(
+        let (operator, operand) = prse::try_parse!(
             input.next().unwrap(),
             "  Operation: new = old {} {}",
             String,
@@ -55,21 +55,17 @@ pub fn parse_input(input: &str) -> Vec<Monkey> {
             Operation::Mult(operand.parse().unwrap())
         };
 
-        let test = scan_fmt::scan_fmt!(
-            input.next().unwrap(),
-            "  Test: divisible by {}",
-            usize
-        )
-        .unwrap();
+        let test =
+            prse::try_parse!(input.next().unwrap(), "  Test: divisible by {}", usize).unwrap();
 
-        let if_true = scan_fmt::scan_fmt!(
+        let if_true = prse::try_parse!(
             input.next().unwrap(),
             "    If true: throw to monkey {}",
             usize
         )
         .unwrap();
 
-        let if_false = scan_fmt::scan_fmt!(
+        let if_false = prse::try_parse!(
             input.next().unwrap(),
             "    If false: throw to monkey {}",
             usize

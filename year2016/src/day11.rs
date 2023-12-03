@@ -43,9 +43,7 @@ impl Position {
             }
             if has_generator {
                 for i in 0..size {
-                    if self.get_item(2 * i) == floor
-                        && self.get_item(2 * i + 1) != floor
-                    {
+                    if self.get_item(2 * i) == floor && self.get_item(2 * i + 1) != floor {
                         return false;
                     }
                 }
@@ -61,11 +59,11 @@ impl Position {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<(usize, Position)> {
+pub fn parse_input(input: &str) -> AocResult<(usize, Position)> {
     let mut position = Position { state: 0 };
     let mut name_map = HashMap::new();
     for line in input.lines() {
-        let (floor, list) = scan_fmt::scan_fmt!(
+        let (floor, list) = prse::try_parse!(
             line,
             "The {/first|second|third|fourth/} floor contains {/[^.]*/}.{e}",
             String,
@@ -85,20 +83,12 @@ pub fn parse_input(input: &str) -> Result<(usize, Position)> {
             Lazy::new(|| regex::Regex::new(r"(, and )|(, )|( and )").unwrap());
         for item in SPLIT_REGEX.split(&list) {
             let name_map_len = name_map.len();
-            if let Ok(generator) =
-                scan_fmt::scan_fmt!(item, "a {} generator", String)
-            {
+            if let Ok(generator) = prse::try_parse!(item, "a {} generator", String) {
                 let idx = *name_map.entry(generator).or_insert(name_map_len);
                 position.set_item(2 * idx + 1, floor);
             } else {
-                let microchip = scan_fmt::scan_fmt!(
-                    item,
-                    "a {}-compatible microchip",
-                    String
-                )
-                .map_err(|_| {
-                    aoc_error!("List '{list}', item '{item}' fails")
-                })?;
+                let microchip = prse::try_parse!(item, "a {}-compatible microchip", String)
+                    .map_err(|_| aoc_error!("List '{list}', item '{item}' fails"))?;
                 let idx = *name_map.entry(microchip).or_insert(name_map_len);
                 position.set_item(2 * idx, floor);
             }
@@ -107,7 +97,7 @@ pub fn parse_input(input: &str) -> Result<(usize, Position)> {
     Ok((name_map.len(), position))
 }
 
-pub fn task(input: &Position, size: usize) -> Result<usize> {
+pub fn task(input: &Position, size: usize) -> AocResult<usize> {
     let mut visited = HashSet::new();
     let mut current = HashSet::from([input.clone()]);
     for step in 1.. {
@@ -118,9 +108,7 @@ pub fn task(input: &Position, size: usize) -> Result<usize> {
                 let new_floor = pos.get_elev() + direction;
                 if (0..=3).contains(&new_floor) {
                     for num_items in 1..=2 {
-                        for moving in
-                            elevator_floor.iter().combinations(num_items)
-                        {
+                        for moving in elevator_floor.iter().combinations(num_items) {
                             let mut new_pos = pos.clone();
                             for &item in moving {
                                 new_pos.set_item(item, new_floor);
@@ -129,9 +117,7 @@ pub fn task(input: &Position, size: usize) -> Result<usize> {
                             if new_pos.is_done(size) {
                                 return Ok(step);
                             }
-                            if new_pos.is_valid(size)
-                                && !visited.contains(&new_pos)
-                            {
+                            if new_pos.is_valid(size) && !visited.contains(&new_pos) {
                                 new.insert(new_pos);
                             }
                         }
@@ -148,11 +134,11 @@ pub fn task(input: &Position, size: usize) -> Result<usize> {
     Err(aoc_error!("Solution not found"))
 }
 
-pub fn task1((size, position): &(usize, Position)) -> Result<usize> {
+pub fn task1((size, position): &(usize, Position)) -> AocResult<usize> {
     task(position, *size)
 }
 
-pub fn task2((size, position): &(usize, Position)) -> Result<usize> {
+pub fn task2((size, position): &(usize, Position)) -> AocResult<usize> {
     task(position, *size + 2)
 }
 

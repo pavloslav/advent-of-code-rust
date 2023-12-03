@@ -2,11 +2,11 @@ use super::computer::{Computer, Instruction};
 use crate::*;
 use std::collections::HashSet;
 
-pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(input: &[Instruction]) -> Result<isize> {
+pub fn task1(input: &[Instruction]) -> AocResult<isize> {
     for start in 0.. {
         let mut computer = Computer::new(input);
         let mut visited = HashSet::new();
@@ -26,7 +26,7 @@ pub fn task1(input: &[Instruction]) -> Result<isize> {
     Err(aoc_error!("unreachable!"))
 }
 
-pub fn task2(input: &[Instruction]) -> Result<isize> {
+pub fn task2(input: &[Instruction]) -> AocResult<isize> {
     let mut computer = Computer::new(input);
     computer.registers[0] = 12;
     computer.run()

@@ -1,17 +1,16 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<(usize, usize)>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize)>> {
     let mut intervals: Vec<(usize, usize)> = Vec::new();
     for scan in input
         .lines()
-        .map(|line| scan_fmt::scan_fmt!(line, "{}-{}", usize, usize))
+        .map(|line| prse::try_parse!(line, "{}-{}", usize, usize))
     {
         let (left, right) = scan?;
         if right < left {
             unreachable!();
         }
-        let (left, right) =
-            (left.min(u32::MAX as usize), right.min(u32::MAX as usize));
+        let (left, right) = (left.min(u32::MAX as usize), right.min(u32::MAX as usize));
         intervals.push((left, right));
     }
     intervals.sort_by_key(|&(left, _)| left);
@@ -43,11 +42,11 @@ fn join(int1: (usize, usize), int2: (usize, usize)) -> Option<(usize, usize)> {
     }
 }
 
-pub fn task1(intervals: &[(usize, usize)]) -> Result<usize> {
+pub fn task1(intervals: &[(usize, usize)]) -> AocResult<usize> {
     Ok(intervals[0].1 + 1)
 }
 
-pub fn task2(intervals: &[(usize, usize)]) -> Result<usize> {
+pub fn task2(intervals: &[(usize, usize)]) -> AocResult<usize> {
     let mut allowed = u32::MAX as usize;
     for &(left, right) in intervals.iter().rev() {
         allowed -= right + 1 - left;

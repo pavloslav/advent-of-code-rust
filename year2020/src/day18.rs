@@ -28,7 +28,7 @@ fn first_op(s: &str, precedence: bool) -> Option<usize> {
     }
 }
 
-fn calculate(s: &str, precedence: bool) -> Result<u64> {
+fn calculate(s: &str, precedence: bool) -> AocResult<u64> {
     Ok(if let Ok(val) = s.parse() {
         val
     } else if let Some(op_idx) = first_op(s, precedence) {
@@ -52,15 +52,15 @@ fn calculate(s: &str, precedence: bool) -> Result<u64> {
     })
 }
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
-pub fn task1(s: &str) -> Result<u64> {
+pub fn task1(s: &str) -> AocResult<u64> {
     s.lines().map(|line| calculate(line.trim(), false)).sum()
 }
 
-pub fn task2(s: &str) -> Result<u64> {
+pub fn task2(s: &str) -> AocResult<u64> {
     s.lines().map(|line| calculate(line.trim(), true)).sum()
 }
 

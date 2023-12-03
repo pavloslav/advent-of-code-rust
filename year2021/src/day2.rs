@@ -8,9 +8,8 @@ pub enum Command {
 
 impl std::str::FromStr for Command {
     type Err = Error;
-    fn from_str(line: &str) -> Result<Command> {
-        let (instruction, value) =
-            scan_fmt::scan_fmt!(line, "{} {}", String, i32)?;
+    fn from_str(line: &str) -> AocResult<Command> {
+        let (instruction, value) = prse::try_parse!(line, "{} {}", String, i32)?;
 
         use Command::*;
         Ok(match instruction.as_str() {
@@ -22,32 +21,30 @@ impl std::str::FromStr for Command {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Command>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Command>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(commands: &[Command]) -> Result<i32> {
+pub fn task1(commands: &[Command]) -> AocResult<i32> {
     use Command::*;
-    let (x, y) =
-        commands
-            .iter()
-            .fold((0, 0), |(x, y), command| match command {
-                Forward(dx) => (x + dx, y),
-                Down(dy) => (x, y + dy),
-                Up(dy) => (x, y - dy),
-            });
+    let (x, y) = commands
+        .iter()
+        .fold((0, 0), |(x, y), command| match command {
+            Forward(dx) => (x + dx, y),
+            Down(dy) => (x, y + dy),
+            Up(dy) => (x, y - dy),
+        });
     Ok(x * y)
 }
 
-pub fn task2(commands: &[Command]) -> Result<i32> {
+pub fn task2(commands: &[Command]) -> AocResult<i32> {
     use Command::*;
-    let (x, y, _) =
-        commands
-            .iter()
-            .fold((0, 0, 0), |(x, y, aim), command| match command {
-                Forward(v) => (x + v, y + aim * v, aim),
-                Down(da) => (x, y, aim + da),
-                Up(da) => (x, y, aim - da),
-            });
+    let (x, y, _) = commands
+        .iter()
+        .fold((0, 0, 0), |(x, y, aim), command| match command {
+            Forward(v) => (x + v, y + aim * v, aim),
+            Down(da) => (x, y, aim + da),
+            Up(da) => (x, y, aim - da),
+        });
     Ok(x * y)
 }

@@ -9,15 +9,15 @@ pub enum Dance {
 use core::str::FromStr;
 impl FromStr for Dance {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Dance> {
+    fn from_str(s: &str) -> AocResult<Dance> {
         Ok(match s.chars().next() {
             Some('s') => Dance::Spin(s[1..].parse()?),
             Some('x') => {
-                let (first, second) = scan_fmt::scan_fmt!(&s[1..], "{}/{}", usize, usize)?;
+                let (first, second) = prse::try_parse!(&s[1..], "{}/{}", usize, usize)?;
                 Dance::SwapPlace(first, second)
             }
             Some('p') => {
-                let (first, second) = scan_fmt::scan_fmt!(&s[1..], "{}/{}", char, char)?;
+                let (first, second) = prse::try_parse!(&s[1..], "{}/{}", char, char)?;
                 Dance::SwapDancer(first, second)
             }
             _ => return Err(aoc_error!("Unknown command {s}")),
@@ -45,7 +45,7 @@ impl Dance {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Dance>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Dance>> {
     input.trim().split(',').map(|d| d.parse()).collect()
 }
 
@@ -57,13 +57,13 @@ fn make_dance(start: impl Iterator<Item = char>, moves: &[Dance]) -> String {
     line.iter().collect()
 }
 
-pub fn task1(input: &[Dance]) -> Result<String> {
+pub fn task1(input: &[Dance]) -> AocResult<String> {
     Ok(make_dance('a'..='p', input))
 }
 
 const DANCES_COUNT: usize = 1_000_000_000;
 
-pub fn task2(input: &[Dance]) -> Result<String> {
+pub fn task2(input: &[Dance]) -> AocResult<String> {
     let gen = || -> String { ('a'..='p').collect() };
     let step = |s: &mut String| *s = make_dance(s.chars(), input);
 

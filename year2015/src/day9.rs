@@ -1,11 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<usize>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<usize>>> {
     let mut dist = Vec::new();
-    let mut name_map = std::collections::HashMap::new();
+    let mut name_map: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
     for line in input.lines() {
-        let (from, to, distance) =
-            scan_fmt::scan_fmt!(line, "{} to {} = {}", String, String, usize)?;
+        let (from, to, distance) = prse::try_parse!(line, "{} to {} = {}")?;
         let size = name_map.len();
         let from = *name_map.entry(from).or_insert(size);
         let size = name_map.len();
@@ -44,13 +43,13 @@ fn task(distances: &[Vec<usize>]) -> impl Iterator<Item = usize> + '_ {
         })
 }
 
-pub fn task1(distances: &[Vec<usize>]) -> Result<usize> {
+pub fn task1(distances: &[Vec<usize>]) -> AocResult<usize> {
     task(distances)
         .min()
         .ok_or_else(|| aoc_error!("No distances provided!"))
 }
 
-pub fn task2(distances: &[Vec<usize>]) -> Result<usize> {
+pub fn task2(distances: &[Vec<usize>]) -> AocResult<usize> {
     task(distances)
         .max()
         .ok_or_else(|| aoc_error!("No distances provided!"))

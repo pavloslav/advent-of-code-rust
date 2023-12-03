@@ -8,13 +8,11 @@ pub struct Data {
 fn find_first_wrong(data: &Data) -> i64 {
     let numbers = &data.numbers;
     let span = data.preamble;
-    let mut set: std::collections::BTreeSet<_> =
-        numbers.iter().take(span).collect();
+    let mut set: std::collections::BTreeSet<_> = numbers.iter().take(span).collect();
 
     for i in span..numbers.len() {
         if !(0..span).any(|j| {
-            numbers[i - j] * 2 != numbers[i]
-                && set.contains(&(numbers[i] - numbers[i - j]))
+            numbers[i - j] * 2 != numbers[i] && set.contains(&(numbers[i] - numbers[i - j]))
         }) {
             return numbers[i];
         }
@@ -24,7 +22,7 @@ fn find_first_wrong(data: &Data) -> i64 {
     -1
 }
 
-fn find_span_adding(data: &Data, target: i64) -> Result<&[i64]> {
+fn find_span_adding(data: &Data, target: i64) -> AocResult<&[i64]> {
     let numbers = &data.numbers;
     let mut start = 0;
     let mut sum = numbers[0];
@@ -41,7 +39,7 @@ fn find_span_adding(data: &Data, target: i64) -> Result<&[i64]> {
     Err(aoc_error!("Not found!"))
 }
 
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> AocResult<Data> {
     Ok(Data {
         preamble: 25,
         numbers: input
@@ -51,13 +49,13 @@ pub fn parse_input(input: &str) -> Result<Data> {
     })
 }
 
-pub fn task1(data: &Data) -> Result<i64> {
+pub fn task1(data: &Data) -> AocResult<i64> {
     Ok(find_first_wrong(data))
 }
 
 //145997291 - low
 //2984417418 - high
-pub fn task2(data: &Data) -> Result<i64> {
+pub fn task2(data: &Data) -> AocResult<i64> {
     let weakness = find_first_wrong(data);
     let arr = find_span_adding(data, weakness)?;
     if let (Some(min), Some(max)) = (arr.iter().min(), arr.iter().max()) {

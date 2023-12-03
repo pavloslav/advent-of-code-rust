@@ -1,12 +1,12 @@
-use common::Error;
-use common::Result;
+use common::AocError;
+use common::AocResult;
 
 use clap::Parser;
 use common::Args;
 
-pub fn exec() -> Result<()> {
+pub fn exec() -> AocResult<()> {
     let args = Args::try_parse()?;
-    type Fun = fn(&str) -> Result<()>;
+    type Fun = fn(&str) -> AocResult<()>;
     (match args.year.as_str() {
         "2015" => year2015::task as Fun,
         "2016" => year2016::task as Fun,

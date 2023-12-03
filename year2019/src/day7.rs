@@ -2,13 +2,13 @@ use crate::*;
 
 use super::computer::Computer;
 
-pub fn parse_input(input: &str) -> Result<Vec<isize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
 use itertools::Itertools;
 
-pub fn task1(code: &[isize]) -> Result<isize> {
+pub fn task1(code: &[isize]) -> AocResult<isize> {
     (0..5)
         .permutations(5)
         .map(|perm| {
@@ -27,7 +27,7 @@ pub fn task1(code: &[isize]) -> Result<isize> {
         .ok_or_else(|| aoc_error!("Should not be empty!"))
 }
 
-pub fn task2(code: &[isize]) -> Result<isize> {
+pub fn task2(code: &[isize]) -> AocResult<isize> {
     (5..10)
         .permutations(5)
         .map(|perm| {

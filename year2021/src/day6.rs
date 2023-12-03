@@ -12,7 +12,7 @@ fn simulate(mut state: [usize; 9], time: usize) -> usize {
     state.iter().sum()
 }
 
-pub fn parse_input(input: &str) -> Result<[usize; 9]> {
+pub fn parse_input(input: &str) -> AocResult<[usize; 9]> {
     let mut state = [0; 9];
     for fish in input.split(',').map(|x| x.parse::<usize>()) {
         state[fish?] += 1;
@@ -23,10 +23,10 @@ pub fn parse_input(input: &str) -> Result<[usize; 9]> {
 const SIZE1: usize = 80;
 const SIZE2: usize = 256;
 
-pub fn task1(state: &[usize; 9]) -> Result<usize> {
+pub fn task1(state: &[usize; 9]) -> AocResult<usize> {
     Ok(simulate(*state, SIZE1))
 }
 
-pub fn task2(state: &[usize; 9]) -> Result<usize> {
+pub fn task2(state: &[usize; 9]) -> AocResult<usize> {
     Ok(simulate(*state, SIZE2))
 }
