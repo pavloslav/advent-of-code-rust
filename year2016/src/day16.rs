@@ -3,7 +3,7 @@ use crate::*;
 const FIRST_DISK_LEN: usize = 272;
 const SECOND_DISK_LEN: usize = 35651584;
 
-pub fn parse_input(input: &str) -> Result<Vec<bool>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<bool>> {
     input
         .trim()
         .chars()
@@ -31,10 +31,10 @@ pub fn task(input: &[bool], size: usize) -> String {
     data.iter().map(|&b| if b { '1' } else { '0' }).collect()
 }
 
-pub fn task1(input: &[bool]) -> Result<String> {
+pub fn task1(input: &[bool]) -> AocResult<String> {
     Ok(task(input, FIRST_DISK_LEN))
 }
 
-pub fn task2(input: &[bool]) -> Result<String> {
+pub fn task2(input: &[bool]) -> AocResult<String> {
     Ok(task(input, SECOND_DISK_LEN))
 }

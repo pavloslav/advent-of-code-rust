@@ -1,7 +1,7 @@
 use crate::*;
 use serde_json::Value;
 
-pub fn parse_input(input: &str) -> Result<Vec<Value>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Value>> {
     input
         .lines()
         .filter(|line| !line.is_empty())
@@ -14,12 +14,8 @@ fn cmp(left: &Value, right: &Value) -> std::cmp::Ordering {
         (Value::Number(left), Value::Number(right)) => {
             left.as_i64().unwrap().cmp(&right.as_i64().unwrap())
         }
-        (Value::Number(_), Value::Array(_)) => {
-            cmp(&Value::Array(vec![left.clone()]), right)
-        }
-        (Value::Array(_), Value::Number(_)) => {
-            cmp(left, &Value::Array(vec![right.clone()]))
-        }
+        (Value::Number(_), Value::Array(_)) => cmp(&Value::Array(vec![left.clone()]), right),
+        (Value::Array(_), Value::Number(_)) => cmp(left, &Value::Array(vec![right.clone()])),
         (Value::Array(left), Value::Array(right)) => {
             if let Some(c) = left
                 .iter()
@@ -36,7 +32,7 @@ fn cmp(left: &Value, right: &Value) -> std::cmp::Ordering {
     }
 }
 
-pub fn task1(input: &[Value]) -> Result<usize> {
+pub fn task1(input: &[Value]) -> AocResult<usize> {
     let sum = input
         .chunks(2)
         .enumerate()
@@ -51,7 +47,7 @@ pub fn task1(input: &[Value]) -> Result<usize> {
     Ok(sum)
 }
 
-pub fn task2(input: &[Value]) -> Result<usize> {
+pub fn task2(input: &[Value]) -> AocResult<usize> {
     let mut packets = input.to_vec();
     let start: Value = serde_json::from_str("[[2]]")?;
     let end: Value = serde_json::from_str("[[6]]")?;

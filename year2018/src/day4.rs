@@ -17,29 +17,17 @@ pub struct Record {
     event: Event,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Record>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Record>> {
     let mut log: Vec<Record> = input
         .lines()
         .map(|line| {
-            let (month, day, hour, minute, event) = scan_fmt::scan_fmt!(
-                line,
-                "[1518-{d}-{d} {d}:{d}] {/.*/}{e}",
-                usize,
-                usize,
-                usize,
-                usize,
-                String
-            )
-            .map_err(|_| aoc_error!("Can't parse '{line}'"))?;
-            let event = match event.as_str() {
+            let (month, day, hour, minute, event): (usize, usize, usize, usize, &str) =
+                prse::try_parse!(line, "[1518-{}-{} {}:{}] {}")?;
+            let event = match event {
                 "falls asleep" => Event::Sleep,
                 "wakes up" => Event::Awake,
                 other => {
-                    let guard = scan_fmt::scan_fmt!(
-                        other,
-                        "Guard #{} begins shift",
-                        usize
-                    )?;
+                    let guard = prse::try_parse!(other, "Guard #{} begins shift")?;
                     Event::BeginsShift(guard)
                 }
             };
@@ -51,7 +39,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Record>> {
                 event,
             })
         })
-        .collect::<Result<_>>()?;
+        .collect::<AocResult<_>>()?;
     log.sort_by_key(minutes);
     Ok(log)
 }
@@ -78,7 +66,7 @@ fn minutes(record: &Record) -> usize {
         + record.minute
 }
 
-pub fn task1(log: &[Record]) -> Result<usize> {
+pub fn task1(log: &[Record]) -> AocResult<usize> {
     let mut sleep_map = HashMap::new();
     let mut current_guard = None;
     let mut sleep_start = 0;
@@ -89,8 +77,7 @@ pub fn task1(log: &[Record]) -> Result<usize> {
             Event::Awake => {
                 if let Some(guard) = current_guard {
                     for minute in sleep_start..record.minute {
-                        sleep_map.entry(guard).or_insert(vec![0; 60])
-                            [minute] += 1;
+                        sleep_map.entry(guard).or_insert(vec![0; 60])[minute] += 1;
                     }
                 }
             }
@@ -110,7 +97,7 @@ pub fn task1(log: &[Record]) -> Result<usize> {
     Ok(most_sleeping_guard * best_minute)
 }
 
-pub fn task2(log: &[Record]) -> Result<usize> {
+pub fn task2(log: &[Record]) -> AocResult<usize> {
     let mut sleep_map = HashMap::new();
     let mut current_guard = None;
     let mut sleep_start = 0;

@@ -1,7 +1,7 @@
 use super::computer::Computer;
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<isize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
@@ -13,26 +13,22 @@ const BLOCK: isize = 2;
 const _PADDLE: isize = 3;
 const _BALL: isize = 4;
 
-pub fn task1(code: &[isize]) -> Result<usize> {
+pub fn task1(code: &[isize]) -> AocResult<usize> {
     let mut computer = Computer::new(code);
     computer.run()?;
     let mut grid = HashMap::new();
-    while let (Ok(x), Ok(y), Ok(t)) =
-        (computer.read(), computer.read(), computer.read())
-    {
+    while let (Ok(x), Ok(y), Ok(t)) = (computer.read(), computer.read(), computer.read()) {
         grid.insert((x, y), t);
     }
     Ok(grid.values().filter(|&&v| v == BLOCK).count())
 }
 
-pub fn task2(code: &[isize]) -> Result<isize> {
+pub fn task2(code: &[isize]) -> AocResult<isize> {
     //pre-run to calculate parameters of field
     let mut computer = Computer::new(code);
     computer.run()?;
     let mut grid = HashMap::new();
-    while let (Ok(x), Ok(y), Ok(t)) =
-        (computer.read(), computer.read(), computer.read())
-    {
+    while let (Ok(x), Ok(y), Ok(t)) = (computer.read(), computer.read(), computer.read()) {
         grid.insert((x, y), t);
     }
     let width = grid.keys().map(|&p| p.0).max().unwrap() + 1;
@@ -51,8 +47,7 @@ pub fn task2(code: &[isize]) -> Result<isize> {
             }
         })
         .ok_or_else(|| aoc_error!("Impossible!"))?;
-    let mut blocks: HashMap<_, _> =
-        grid.iter().filter(|(_, &t)| t == BLOCK).collect();
+    let mut blocks: HashMap<_, _> = grid.iter().filter(|(_, &t)| t == BLOCK).collect();
 
     let mut code = code.to_vec();
     code[0] = 2;
@@ -63,9 +58,7 @@ pub fn task2(code: &[isize]) -> Result<isize> {
     let mut score = 0;
     while !blocks.is_empty() {
         computer.run()?;
-        while let (Ok(x), Ok(y), Ok(t)) =
-            (computer.read(), computer.read(), computer.read())
-        {
+        while let (Ok(x), Ok(y), Ok(t)) = (computer.read(), computer.read(), computer.read()) {
             if x >= 0 {
                 if t != BLOCK {
                     blocks.remove(&(x, y));

@@ -4,13 +4,13 @@ use std::collections::HashSet;
 type Molecule = String;
 type Rules = Vec<(Molecule, Molecule)>;
 
-pub fn parse_input(input: &str) -> Result<(Rules, Molecule)> {
+pub fn parse_input(input: &str) -> AocResult<(Rules, Molecule)> {
     let mut lines = input.lines();
     let rules = lines
         .by_ref()
         .take_while(|line| !line.is_empty())
-        .map(|line| Ok(scan_fmt::scan_fmt!(line, "{} => {}", String, String)?))
-        .collect::<Result<Rules>>()?;
+        .map(|line| Ok(prse::try_parse!(line, "{} => {}")?))
+        .collect::<AocResult<Rules>>()?;
     let molecule = lines
         .next()
         .ok_or(aoc_error!("No molecula for Rudolph"))?
@@ -18,7 +18,7 @@ pub fn parse_input(input: &str) -> Result<(Rules, Molecule)> {
     Ok((rules, molecule))
 }
 
-pub fn task1((rules, medicine): &(Rules, Molecule)) -> Result<usize> {
+pub fn task1((rules, medicine): &(Rules, Molecule)) -> AocResult<usize> {
     let mut molecules = HashSet::new();
     println!("len={}", rules.len());
     for (from, to) in rules {
@@ -34,7 +34,7 @@ pub fn task1((rules, medicine): &(Rules, Molecule)) -> Result<usize> {
     Ok(molecules.len())
 }
 
-pub fn task2((_rules, medicine): &(Rules, Molecule)) -> Result<usize> {
+pub fn task2((_rules, medicine): &(Rules, Molecule)) -> AocResult<usize> {
     /* Rules have three special elements: Rn, Ar and Y
      *  they are never on the left side and always in a pattern
      *  _ => _ Rn (_ Y)* _ Ar

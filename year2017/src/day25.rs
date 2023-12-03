@@ -10,15 +10,15 @@ pub struct TuringMachine {
     steps: usize,
 }
 
-fn name_to_state(name: char) -> Result<usize> {
+fn name_to_state(name: char) -> AocResult<usize> {
     if name.is_ascii_uppercase() {
         Ok((name as u32 - b'A' as u32) as usize)
     } else {
-        Err(aoc_error!("Incorrect state: 'name'"))
+        Err(aoc_error!("Incorrect state: '{name}'"))
     }
 }
 
-fn dir_to_isize(dir: &str) -> Result<isize> {
+fn dir_to_isize(dir: &str) -> AocResult<isize> {
     match dir {
         "left" => Ok(-1),
         "right" => Ok(1),
@@ -69,53 +69,44 @@ impl TuringMachine {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<TuringMachine> {
+pub fn parse_input(input: &str) -> AocResult<TuringMachine> {
     let mut state = 0;
     let mut steps = 0;
     let mut states = Vec::new();
-    for block in input.split("\n\n") {
-        if let Ok((lstate, lsteps)) = scan_fmt::scan_fmt!(
+    for block in input.trim().split("\n\n") {
+        if let Ok((lstate, lsteps)) = prse::try_parse!(
             block,
             "Begin in state {}.
-Perform a diagnostic checksum after {} steps.",
-            char,
-            usize
+Perform a diagnostic checksum after {} steps."
         ) {
             state = name_to_state(lstate)?;
             steps = lsteps;
-        } else if let Ok((
-            _state,
-            write0,
-            dir0,
-            switch0,
-            write1,
-            dir1,
-            switch1,
-        )) = scan_fmt::scan_fmt!(
-            block,
-            "In state {}:
-If the current value is 0:
+        } else {
+            println!("{block:?}");
+            let (_state, write0, dir0, switch0, write1, dir1, switch1): (
+                char,
+                u8,
+                &str,
+                char,
+                u8,
+                &str,
+                char,
+            ) = prse::try_parse!(
+                block,
+                "In state {}:
+  If the current value is 0:
     - Write the value {}.
     - Move one slot to the {}.
     - Continue with state {}.
-If the current value is 1:
+  If the current value is 1:
     - Write the value {}.
     - Move one slot to the {}.
-    - Continue with state {}.",
-            char,
-            u8,
-            String,
-            char,
-            u8,
-            String,
-            char
-        ) {
+    - Continue with state {}."
+            )?;
             states.push([
-                (write0, dir_to_isize(&dir0)?, name_to_state(switch0)?),
-                (write1, dir_to_isize(&dir1)?, name_to_state(switch1)?),
+                (write0, dir_to_isize(dir0)?, name_to_state(switch0)?),
+                (write1, dir_to_isize(dir1)?, name_to_state(switch1)?),
             ]);
-        } else {
-            return Err(aoc_error!("Unable to parse {block}"));
         }
     }
     Ok(TuringMachine {
@@ -128,7 +119,7 @@ If the current value is 1:
     })
 }
 
-pub fn task1(input: &TuringMachine) -> Result<usize> {
+pub fn task1(input: &TuringMachine) -> AocResult<usize> {
     let mut machine = input.clone();
     for _step in 0..machine.steps {
         machine.step();
@@ -136,7 +127,7 @@ pub fn task1(input: &TuringMachine) -> Result<usize> {
     Ok(machine.checksum())
 }
 
-pub fn task2(_input: &TuringMachine) -> Result<&'static str> {
+pub fn task2(_input: &TuringMachine) -> AocResult<&'static str> {
     Ok("Success!")
 }
 
@@ -150,21 +141,21 @@ mod test {
 Perform a diagnostic checksum after 6 steps.
 
 In state A:
-    If the current value is 0:
+  If the current value is 0:
     - Write the value 1.
     - Move one slot to the right.
     - Continue with state B.
-    If the current value is 1:
+  If the current value is 1:
     - Write the value 0.
     - Move one slot to the left.
     - Continue with state B.
 
 In state B:
-    If the current value is 0:
+  If the current value is 0:
     - Write the value 1.
     - Move one slot to the left.
     - Continue with state A.
-    If the current value is 1:
+  If the current value is 1:
     - Write the value 1.
     - Move one slot to the right.
     - Continue with state A.";

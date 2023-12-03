@@ -3,17 +3,13 @@ use crate::*;
 type Point = (i32, i32);
 type SensorData = (Point, Point);
 
-pub fn parse_input(input: &str) -> Result<Vec<SensorData>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<SensorData>> {
     input
         .lines()
         .map(|line| {
-            let (x, y, bx, by) = scan_fmt::scan_fmt!(
+            let (x, y, bx, by) = prse::try_parse!(
                 line,
-                "Sensor at x={}, y={}: closest beacon is at x={}, y={}",
-                i32,
-                i32,
-                i32,
-                i32
+                "Sensor at x={}, y={}: closest beacon is at x={}, y={}"
             )?;
             Ok(((x, y), (bx, by)))
         })
@@ -46,7 +42,7 @@ fn generate_row(sensors: &[SensorData], row_y: i32) -> Vec<(i32, i32)> {
     list
 }
 
-pub fn task1(sensors: &[SensorData]) -> Result<i32> {
+pub fn task1(sensors: &[SensorData]) -> AocResult<i32> {
     const ROW_Y: i32 = 2_000_000;
     let list = generate_row(sensors, ROW_Y);
 
@@ -64,7 +60,7 @@ pub fn task1(sensors: &[SensorData]) -> Result<i32> {
         - beacons.len() as i32)
 }
 
-pub fn task2(sensors: &[SensorData]) -> Result<usize> {
+pub fn task2(sensors: &[SensorData]) -> AocResult<usize> {
     const SIZE: i32 = 4_000_000;
     for row_y in 0..=SIZE {
         let mut list = generate_row(sensors, row_y);
@@ -96,9 +92,7 @@ pub fn task2(sensors: &[SensorData]) -> Result<usize> {
                 return Ok(SIZE as usize * SIZE as usize + row_y as usize);
             }
         } else {
-            return Ok(
-                (list[0].1 as usize + 1) * SIZE as usize + row_y as usize
-            );
+            return Ok((list[0].1 as usize + 1) * SIZE as usize + row_y as usize);
         }
     }
     Err(aoc_error!("Not found"))

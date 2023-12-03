@@ -2,7 +2,7 @@ use crate::*;
 
 use serde_json::Value;
 
-pub fn parse_input(input: &str) -> Result<Value> {
+pub fn parse_input(input: &str) -> AocResult<Value> {
     Ok(serde_json::from_str(input)?)
 }
 
@@ -10,14 +10,12 @@ fn sum_all(json: &Value) -> i64 {
     match json {
         Value::Null | Value::String(_) | Value::Bool(_) => 0,
         Value::Number(number) => number.as_i64().unwrap_or(0),
-        Value::Object(object) => {
-            object.iter().map(|member| sum_all(member.1)).sum()
-        }
+        Value::Object(object) => object.iter().map(|member| sum_all(member.1)).sum(),
         Value::Array(vec) => vec.iter().map(sum_all).sum(),
     }
 }
 
-pub fn task1(json: &Value) -> Result<i64> {
+pub fn task1(json: &Value) -> AocResult<i64> {
     Ok(sum_all(json))
 }
 
@@ -35,6 +33,6 @@ fn sum_no_red(json: &Value) -> i64 {
     }
 }
 
-pub fn task2(json: &Value) -> Result<i64> {
+pub fn task2(json: &Value) -> AocResult<i64> {
     Ok(sum_no_red(json))
 }

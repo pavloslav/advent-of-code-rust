@@ -1,6 +1,6 @@
 use crate::*;
 
-fn task<F>(crabs: &[i32], fuel: F) -> Result<i32>
+fn task<F>(crabs: &[i32], fuel: F) -> AocResult<i32>
 where
     F: Fn(i32, i32) -> i32,
 {
@@ -24,15 +24,15 @@ where
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<i32>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
     input.split(',').map(|x| Ok(x.parse()?)).collect()
 }
 
-pub fn task1(crabs: &[i32]) -> Result<i32> {
+pub fn task1(crabs: &[i32]) -> AocResult<i32> {
     task(crabs, |crab, pos| (pos - crab).abs())
 }
 
-pub fn task2(crabs: &[i32]) -> Result<i32> {
+pub fn task2(crabs: &[i32]) -> AocResult<i32> {
     task(crabs, |crab, pos| {
         (pos - crab).abs() * ((pos - crab).abs() + 1) / 2
     })

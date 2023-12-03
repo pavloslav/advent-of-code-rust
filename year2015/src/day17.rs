@@ -1,12 +1,12 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<usize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
     input.lines().map(|line| Ok(line.parse()?)).collect()
 }
 
 const SIZE: usize = 150;
 
-pub fn task1(input: &[usize]) -> Result<usize> {
+pub fn task1(input: &[usize]) -> AocResult<usize> {
     let mut result = 0;
     for i in 0..(1 << input.len()) {
         if input
@@ -22,7 +22,7 @@ pub fn task1(input: &[usize]) -> Result<usize> {
     Ok(result)
 }
 
-pub fn task2(input: &[usize]) -> Result<usize> {
+pub fn task2(input: &[usize]) -> AocResult<usize> {
     let mut result = 0;
     let mut best = input.len();
     for i in 0_usize..(1 << input.len()) {

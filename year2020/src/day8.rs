@@ -16,11 +16,10 @@ struct Computer {
 }
 
 impl std::str::FromStr for Operation {
-    type Err = Error;
-    fn from_str(line: &str) -> Result<Operation> {
-        let (operation, value) =
-            scan_fmt::scan_fmt!(line, "{} {}", String, i64)?;
-        match operation.as_str() {
+    type Err = AocError;
+    fn from_str(line: &str) -> AocResult<Operation> {
+        let (operation, value) = prse::try_parse!(line, "{} {}")?;
+        match operation {
             "nop" => Ok(Operation::Nop(value)),
             "acc" => Ok(Operation::Acc(value)),
             "jmp" => Ok(Operation::Jmp(value)),
@@ -37,19 +36,17 @@ impl Computer {
             program,
         }
     }
-    fn tick(&mut self) -> Result<()> {
+    fn tick(&mut self) -> AocResult<()> {
         match self.program[self.instruction] {
             Operation::Jmp(offset) => {
                 self.instruction = if offset.is_negative() {
                     self.instruction
                         .checked_sub(offset.unsigned_abs() as usize)
-                        .ok_or_else(|| {
-                            aoc_error!("Wrong instruction address")
-                        })?
+                        .ok_or_else(|| aoc_error!("Wrong instruction address"))?
                 } else {
-                    self.instruction.checked_add(offset as usize).ok_or_else(
-                        || aoc_error!("Wrong instruction address"),
-                    )?
+                    self.instruction
+                        .checked_add(offset as usize)
+                        .ok_or_else(|| aoc_error!("Wrong instruction address"))?
                 }
             }
             Operation::Acc(increment) => {
@@ -68,11 +65,11 @@ impl Computer {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Program> {
+pub fn parse_input(input: &str) -> AocResult<Program> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(program: &Program) -> Result<i64> {
+pub fn task1(program: &Program) -> AocResult<i64> {
     let mut computer = Computer::with_program(program.clone());
     let mut visited = vec![false; computer.program.len()];
     while !visited[computer.instruction] {
@@ -82,7 +79,7 @@ pub fn task1(program: &Program) -> Result<i64> {
     Ok(computer.accumulator)
 }
 
-pub fn task2(program: &Program) -> Result<i64> {
+pub fn task2(program: &Program) -> AocResult<i64> {
     let mut computer = Computer::with_program(program.clone());
     for i in 0..computer.program.len() {
         let mut visited = vec![false; computer.program.len()];
@@ -90,12 +87,8 @@ pub fn task2(program: &Program) -> Result<i64> {
         match computer.program[i] {
             Operation::Jmp(1) => continue,
             Operation::Nop(1) => continue,
-            Operation::Jmp(offset) => {
-                computer.program[i] = Operation::Nop(offset)
-            }
-            Operation::Nop(offset) => {
-                computer.program[i] = Operation::Jmp(offset)
-            }
+            Operation::Jmp(offset) => computer.program[i] = Operation::Nop(offset),
+            Operation::Nop(offset) => computer.program[i] = Operation::Jmp(offset),
             _ => continue,
         }
         computer.instruction = 0;

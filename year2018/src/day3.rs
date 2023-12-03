@@ -10,19 +10,12 @@ pub struct Rect {
     bottom: i32,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Rect>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Rect>> {
     input
         .lines()
         .map(|line| {
-            let (number, left, top, width, height) = scan_fmt::scan_fmt!(
-                line,
-                "#{} @ {},{}: {}x{}",
-                i32,
-                i32,
-                i32,
-                i32,
-                i32
-            )?;
+            let (number, left, top, width, height): (i32, i32, i32, i32, i32) =
+                prse::try_parse!(line, "#{} @ {},{}: {}x{}")?;
             Ok(Rect {
                 number,
                 left,
@@ -34,7 +27,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Rect>> {
         .collect()
 }
 
-pub fn task1(input: &[Rect]) -> Result<usize> {
+pub fn task1(input: &[Rect]) -> AocResult<usize> {
     let mut multiclaimed = HashSet::new();
     for (i, r1) in input.iter().enumerate() {
         for r2 in &input[i + 1..] {
@@ -48,9 +41,8 @@ pub fn task1(input: &[Rect]) -> Result<usize> {
     Ok(multiclaimed.len())
 }
 
-pub fn task2(input: &[Rect]) -> Result<i32> {
-    let mut not_overlapped: HashSet<_> =
-        input.iter().map(|r| r.number).collect();
+pub fn task2(input: &[Rect]) -> AocResult<i32> {
+    let mut not_overlapped: HashSet<_> = input.iter().map(|r| r.number).collect();
     for (i, r1) in input.iter().enumerate() {
         for r2 in &input[i + 1..] {
             if r1.right.min(r2.right) >= r1.left.max(r2.left)

@@ -1,11 +1,11 @@
 use super::computer::*;
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(input: &[Instruction]) -> Result<usize> {
+pub fn task1(input: &[Instruction]) -> AocResult<usize> {
     let mut computer = Computer::new(input, ComputerKind::SoundRecover);
     while let Ok(step) = computer.step() {
         if !step {
@@ -15,7 +15,7 @@ pub fn task1(input: &[Instruction]) -> Result<usize> {
     Ok(computer.mul_counter)
 }
 
-pub fn task2(input: &[Instruction]) -> Result<RegValue> {
+pub fn task2(input: &[Instruction]) -> AocResult<RegValue> {
     let mut computer = Computer::new(input, ComputerKind::SoundRecover);
     computer.set_register('a', 1);
     for _ in 0..9 {

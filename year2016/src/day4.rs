@@ -10,13 +10,17 @@ pub struct Room {
 }
 
 impl std::str::FromStr for Room {
-    type Err = Error;
-    fn from_str(input: &str) -> Result<Room> {
-        let (name, id, check_sum) =
-            scan_fmt::scan_fmt!(input, "{[A-Za-z-]}{d}[{}]", String, usize, String)?;
+    type Err = AocError;
+    fn from_str(input: &str) -> AocResult<Room> {
+        let (name_id, check_sum): (&str, String) = prse::try_parse!(input, "{}[{}]")?;
+        let (name, id) = name_id.split_at(
+            name_id
+                .find(|c: char| c.is_ascii_digit())
+                .ok_or_else(|| aoc_error!("Can't find digits in room name"))?,
+        );
         Ok(Room {
-            name,
-            id,
+            name: name.to_string(),
+            id: id.parse()?,
             check_sum,
         })
     }
@@ -44,18 +48,18 @@ impl Room {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Room>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Room>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(input: &[Room]) -> Result<usize> {
+pub fn task1(input: &[Room]) -> AocResult<usize> {
     Ok(input
         .iter()
         .filter_map(|r| Some(r.id).filter(|_| r.verify_checksum()))
         .sum())
 }
 
-pub fn task2(input: &[Room]) -> Result<usize> {
+pub fn task2(input: &[Room]) -> AocResult<usize> {
     input
         .iter()
         .find_map(|room| {

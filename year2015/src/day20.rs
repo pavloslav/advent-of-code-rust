@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<usize> {
+pub fn parse_input(input: &str) -> AocResult<usize> {
     Ok(input.trim().parse()?)
 }
 
@@ -19,10 +19,10 @@ fn search(num: usize, mult: usize, limit: usize) -> usize {
     unreachable!()
 }
 
-pub fn task1(input: &usize) -> Result<usize> {
+pub fn task1(input: &usize) -> AocResult<usize> {
     Ok(search(*input, 10, usize::MAX))
 }
 
-pub fn task2(input: &usize) -> Result<usize> {
+pub fn task2(input: &usize) -> AocResult<usize> {
     Ok(search(*input, 11, 50))
 }

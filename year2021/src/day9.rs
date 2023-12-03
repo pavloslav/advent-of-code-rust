@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
     input
         .lines()
         .map(|line| {
@@ -11,12 +11,12 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
                         .ok_or_else(|| aoc_error!("Not a digit: '{digit}'"))?
                         as u8)
                 })
-                .collect::<Result<_>>()
+                .collect::<AocResult<_>>()
         })
         .collect()
 }
 
-pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
+pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
     Ok(map
         .iter()
         .enumerate()
@@ -56,7 +56,7 @@ fn floodfill(map: &mut Vec<Vec<u8>>, i: i32, j: i32) -> usize {
     }
 }
 
-pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
+pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
     let mut map = map.to_owned();
     let mut result = Vec::new();
     for i in 0..map.len() {

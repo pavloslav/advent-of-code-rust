@@ -2,16 +2,16 @@ use crate::*;
 
 use std::collections::VecDeque;
 
-pub fn parse_input(input: &str) -> Result<usize> {
+pub fn parse_input(input: &str) -> AocResult<usize> {
     Ok(input.trim().parse()?)
 }
 
-pub fn task1(input: &usize) -> Result<usize> {
+pub fn task1(input: &usize) -> AocResult<usize> {
     let l = input.ilog2();
     Ok(((input - (1 << l)) << 1) + 1)
 }
 
-pub fn task2(&input: &usize) -> Result<usize> {
+pub fn task2(&input: &usize) -> AocResult<usize> {
     let mut left: VecDeque<_> = (1..=(input + 1) / 2).collect();
     let mut right: VecDeque<_> = ((input + 3) / 2..=input).collect();
     while !right.is_empty() {

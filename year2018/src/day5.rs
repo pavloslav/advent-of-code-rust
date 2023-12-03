@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input.trim())
 }
 
@@ -11,10 +11,8 @@ fn reduce(polymer: Vec<u8>) -> usize {
         let mut skip = false;
         for i in 0..polymer.len() - 1 {
             if !skip {
-                if polymer[i].to_ascii_lowercase()
-                    == polymer[i + 1].to_ascii_lowercase()
-                    && polymer[i].is_ascii_lowercase()
-                        != polymer[i + 1].is_ascii_lowercase()
+                if polymer[i].to_ascii_lowercase() == polymer[i + 1].to_ascii_lowercase()
+                    && polymer[i].is_ascii_lowercase() != polymer[i + 1].is_ascii_lowercase()
                 {
                     skip = true;
                 } else {
@@ -35,11 +33,11 @@ fn reduce(polymer: Vec<u8>) -> usize {
     polymer.len()
 }
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     Ok(reduce(input.as_bytes().to_vec()))
 }
 
-pub fn task2(input: &str) -> Result<usize> {
+pub fn task2(input: &str) -> AocResult<usize> {
     (b'a'..=b'z')
         .map(|out| {
             reduce(

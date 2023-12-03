@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<i32>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
     input.chars().map(value).collect()
 }
 
-fn value(c: char) -> Result<i32> {
+fn value(c: char) -> AocResult<i32> {
     match c {
         '(' => Ok(1),
         ')' => Ok(-1),
@@ -12,11 +12,11 @@ fn value(c: char) -> Result<i32> {
     }
 }
 
-pub fn task1(instructions: &[i32]) -> Result<i32> {
+pub fn task1(instructions: &[i32]) -> AocResult<i32> {
     Ok(instructions.iter().sum())
 }
 
-pub fn task2(instructions: &[i32]) -> Result<usize> {
+pub fn task2(instructions: &[i32]) -> AocResult<usize> {
     let not_in_basement = instructions
         .iter()
         .scan(0, |floor, change| {

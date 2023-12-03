@@ -1,7 +1,7 @@
 use crate::*;
 type Password = Vec<u8>;
 
-pub fn parse_input(input: &str) -> Result<Password> {
+pub fn parse_input(input: &str) -> AocResult<Password> {
     Ok(input.trim().chars().map(|c| c as u8).rev().collect())
 }
 
@@ -59,7 +59,7 @@ fn next_password(password: &Password) -> Password {
     }
 }
 
-pub fn task1(password: &Password) -> Result<String> {
+pub fn task1(password: &Password) -> AocResult<String> {
     Ok(next_password(password)
         .into_iter()
         .rev()
@@ -67,7 +67,7 @@ pub fn task1(password: &Password) -> Result<String> {
         .collect())
 }
 
-pub fn task2(password: &Password) -> Result<String> {
+pub fn task2(password: &Password) -> AocResult<String> {
     Ok(next_password(&next_password(password))
         .into_iter()
         .rev()

@@ -2,7 +2,7 @@ use super::computer::Computer;
 use crate::*;
 use std::collections::{HashMap, HashSet};
 
-pub fn parse_input(input: &str) -> Result<Vec<isize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
@@ -17,7 +17,7 @@ const OXYGEN: isize = 2;
 
 type Position = (isize, isize);
 
-fn neighbor((x, y): Position, dir: isize) -> Result<Position> {
+fn neighbor((x, y): Position, dir: isize) -> AocResult<Position> {
     Ok(match dir {
         NORTH => (x, y + 1),
         SOUTH => (x, y - 1),
@@ -44,7 +44,7 @@ impl MapSearcher {
             map: HashMap::from([((0, 0), Computer::new(input))]),
         }
     }
-    fn fill(&mut self) -> Result<Answer> {
+    fn fill(&mut self) -> AocResult<Answer> {
         //359 - too high
         let mut visited: HashSet<Position> = HashSet::from_iter(self.positions.iter().cloned());
         for step in 1.. {
@@ -86,7 +86,7 @@ impl MapSearcher {
     }
 }
 
-pub fn task1(input: &[isize]) -> Result<usize> {
+pub fn task1(input: &[isize]) -> AocResult<usize> {
     let mut searcher = MapSearcher::new(input);
     match searcher.fill()? {
         Answer::Oxygen(step) => Ok(step),
@@ -94,7 +94,7 @@ pub fn task1(input: &[isize]) -> Result<usize> {
     }
 }
 
-pub fn task2(input: &[isize]) -> Result<usize> {
+pub fn task2(input: &[isize]) -> AocResult<usize> {
     let mut searcher = MapSearcher::new(input);
     if let Answer::Oxygen(_) = searcher.fill()? {
         match searcher.fill()? {

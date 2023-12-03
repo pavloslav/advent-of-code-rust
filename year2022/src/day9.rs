@@ -2,11 +2,11 @@ use crate::*;
 
 type Order = ((i32, i32), i32);
 
-pub fn parse_input(input: &str) -> Result<Vec<Order>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Order>> {
     input
         .lines()
         .map(|l| {
-            let (dir, value) = scan_fmt::scan_fmt!(l, "{} {}", char, i32)?;
+            let (dir, value) = prse::try_parse!(l, "{} {}")?;
             let dir = match dir {
                 'L' => (-1, 0),
                 'R' => (1, 0),
@@ -54,11 +54,11 @@ fn run_rope(path: &[Order], len: usize) -> usize {
     visited.len()
 }
 
-pub fn task1(path: &[Order]) -> Result<usize> {
+pub fn task1(path: &[Order]) -> AocResult<usize> {
     Ok(run_rope(path, 2))
 }
 
-pub fn task2(path: &[Order]) -> Result<usize> {
+pub fn task2(path: &[Order]) -> AocResult<usize> {
     Ok(run_rope(path, 10))
 }
 

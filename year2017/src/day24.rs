@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<bool>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<bool>>> {
     let input: Vec<(usize, usize)> = input
         .lines()
-        .map(|line| scan_fmt::scan_fmt!(line, "{}/{}", usize, usize))
-        .collect::<std::result::Result<_, _>>()?;
+        .map(|line| Ok(prse::try_parse!(line, "{}/{}")?))
+        .collect::<AocResult<_>>()?;
     let size = input
         .iter()
         .map(|(x, y)| x.max(y))
@@ -33,10 +33,7 @@ fn find_strongest(set: &mut [Vec<bool>], start: usize) -> usize {
     best
 }
 
-fn find_longest_strongest(
-    set: &mut [Vec<bool>],
-    start: usize,
-) -> (usize, usize) {
+fn find_longest_strongest(set: &mut [Vec<bool>], start: usize) -> (usize, usize) {
     let mut best = (0, 0);
     for i in 0..set.len() {
         if set[start][i] {
@@ -51,12 +48,12 @@ fn find_longest_strongest(
     best
 }
 
-pub fn task1(map: &[Vec<bool>]) -> Result<usize> {
+pub fn task1(map: &[Vec<bool>]) -> AocResult<usize> {
     let mut map = map.to_vec();
     Ok(find_strongest(&mut map, 0))
 }
 
-pub fn task2(map: &[Vec<bool>]) -> Result<usize> {
+pub fn task2(map: &[Vec<bool>]) -> AocResult<usize> {
     let mut map = map.to_vec();
     Ok(find_longest_strongest(&mut map, 0).1)
 }

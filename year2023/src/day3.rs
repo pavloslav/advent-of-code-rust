@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<&str>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<&str>> {
     Ok(input.lines().collect())
 }
 
-pub fn task1(input: &[&str]) -> Result<usize> {
+pub fn task1(input: &[&str]) -> AocResult<usize> {
     let mut sum = 0;
 
     for (y, &line) in input.iter().enumerate() {
@@ -37,7 +37,7 @@ pub fn task1(input: &[&str]) -> Result<usize> {
     Ok(sum)
 }
 
-pub fn task2(input: &[&str]) -> Result<usize> {
+pub fn task2(input: &[&str]) -> AocResult<usize> {
     let mut gears = std::collections::HashMap::new();
 
     for (y, &line) in input.iter().enumerate() {

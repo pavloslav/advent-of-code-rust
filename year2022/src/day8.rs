@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
     input
         .lines()
         .map(|line| {
@@ -15,7 +15,7 @@ pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
         .collect()
 }
 
-pub fn task1(trees: &[Vec<i32>]) -> Result<usize> {
+pub fn task1(trees: &[Vec<i32>]) -> AocResult<usize> {
     let mut count = 0;
     for (y, row) in trees.iter().enumerate() {
         for (x, &h) in row.iter().enumerate() {
@@ -31,7 +31,7 @@ pub fn task1(trees: &[Vec<i32>]) -> Result<usize> {
     Ok(count)
 }
 
-pub fn task2(trees: &[Vec<i32>]) -> Result<usize> {
+pub fn task2(trees: &[Vec<i32>]) -> AocResult<usize> {
     let mut best = 0;
 
     for (y, row) in trees.iter().enumerate() {

@@ -8,29 +8,25 @@ pub struct Node {
     avail: i32,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Node>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Node>> {
     input
         .lines()
         .skip(2)
         .map(|line| {
-            let (x, y, size, used, avail) = scan_fmt::scan_fmt!(
-                line,
-                "/dev/grid/node-x{d}-y{d} {d}T {d}T {d}T {*d}%",
-                usize,
-                usize,
-                i32,
-                i32,
-                i32
-            )?;
-            if used+avail != size {
-                Err(aoc_error!("Used={used}, avail={avail}, together {}, but size is {size}!", used+avail))?
+            let (x, y, size, used, avail, _): (usize, usize, i32, i32, i32, i32) =
+                prse::try_parse!(line, "/dev/grid/node-x{}-y{} {}T {}T {}T {}%")?;
+            if used + avail != size {
+                Err(aoc_error!(
+                    "Used={used}, avail={avail}, together {}, but size is {size}!",
+                    used + avail
+                ))?
             }
             Ok(Node { x, y, used, avail })
         })
         .collect()
 }
 
-pub fn task1(nodes: &[Node]) -> Result<usize> {
+pub fn task1(nodes: &[Node]) -> AocResult<usize> {
     let mut nodes: Vec<_> = nodes.to_vec();
     nodes.sort_by_key(|node| node.avail);
     let avails: Vec<_> = nodes.iter().map(|node| node.avail).collect();
@@ -47,7 +43,7 @@ pub fn task1(nodes: &[Node]) -> Result<usize> {
     Ok(pairs)
 }
 
-pub fn task2(nodes: &[Node]) -> Result<String> {
+pub fn task2(nodes: &[Node]) -> AocResult<String> {
     let width = nodes
         .iter()
         .map(|node| node.x)
@@ -81,10 +77,7 @@ pub fn task2(nodes: &[Node]) -> Result<String> {
 
     Ok(map
         .iter()
-        .map(|row| {
-            std::str::from_utf8(row)
-                .map_err(|_| aoc_error!("Impossible, it's ASCII!"))
-        })
-        .collect::<Result<Vec<_>>>()?
+        .map(|row| std::str::from_utf8(row).map_err(|_| aoc_error!("Impossible, it's ASCII!")))
+        .collect::<AocResult<Vec<_>>>()?
         .join("\n"))
 }

@@ -23,6 +23,31 @@ impl Handful {
     }
 }
 
+#[derive(prse::Parse)]
+#[prse = "{number} {color}"]
+struct Cube {
+    number: usize,
+    color: String,
+}
+
+impl<'a> prse::Parse<'a> for Handful {
+    fn from_str(s: &'a str) -> Result<Self, prse::ParseError> {
+        let mut handful = Handful::default();
+        for cube in prse::try_parse!(s, "{:, :}")? {
+            let cube: Cube = cube; //hint for prse::try_parse
+            match cube.color.as_str() {
+                "red" => handful.red = cube.number,
+                "blue" => handful.blue = cube.number,
+                "green" => handful.green = cube.number,
+                other => return Err(prse::ParseError::Other(format!("Unknown color '{other}'"))),
+            }
+        }
+        Ok(handful)
+    }
+}
+
+#[derive(prse::Parse)]
+#[prse = "Game {id}: {grabs:; :}"]
 pub struct Game {
     id: usize,
     grabs: Vec<Handful>,
@@ -37,33 +62,14 @@ impl Game {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Game>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Game>> {
     input
         .lines()
-        .map(|line| {
-            let (id, grabs) = scan_fmt::scan_fmt!(line, "Game {}: {/.*/}{e}", usize, String)?;
-            let grabs = grabs
-                .split("; ")
-                .map(|cubes| {
-                    let mut handful = Handful::default();
-                    for cube in cubes.split(", ") {
-                        let (number, class) = scan_fmt::scan_fmt!(cube, "{} {}", usize, String)?;
-                        match class.as_str() {
-                            "red" => handful.red = number,
-                            "blue" => handful.blue = number,
-                            "green" => handful.green = number,
-                            _ => return Err(aoc_error!("Failed to understand {cube}")),
-                        }
-                    }
-                    Ok(handful)
-                })
-                .collect::<Result<_>>()?;
-            Ok(Game { id, grabs })
-        })
-        .collect::<Result<_>>()
+        .map(|line| Ok(prse::try_parse!(line, "{}")?))
+        .collect::<AocResult<Vec<_>>>()
 }
 
-pub fn task1(input: &[Game]) -> Result<usize> {
+pub fn task1(input: &[Game]) -> AocResult<usize> {
     let max_game = Handful {
         red: 12,
         green: 13,
@@ -81,7 +87,7 @@ pub fn task1(input: &[Game]) -> Result<usize> {
         .sum())
 }
 
-pub fn task2(input: &[Game]) -> Result<usize> {
+pub fn task2(input: &[Game]) -> AocResult<usize> {
     Ok(input.iter().map(|game| game.possible_power()).sum())
 }
 

@@ -1,18 +1,14 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
     let mut names = std::collections::HashMap::new();
     let mut scores = vec![];
     for line in input.lines() {
-        let (first, gain, score, second) = scan_fmt::scan_fmt!(
+        let (first, gain, score, second): (&str, &str, i32, &str) = prse::try_parse!(
             line,
-            "{} would {/gain|lose/} {} happiness units by sitting next to {}.",
-            String,
-            String,
-            i32,
-            String
+            "{} would {} {} happiness units by sitting next to {}."
         )?;
-        let score = match gain.as_str() {
+        let score = match gain {
             "gain" => score,
             "lose" => -score,
             other => return Err(aoc_error!("Units can not be '{other}'")),
@@ -44,7 +40,7 @@ fn score(scores: &[Vec<i32>], perm: &[usize]) -> i32 {
         .sum()
 }
 
-pub fn task1(input: &[Vec<i32>]) -> Result<i32> {
+pub fn task1(input: &[Vec<i32>]) -> AocResult<i32> {
     (0..input.len())
         .permutations(input.len())
         .map(|permutation| {
@@ -59,7 +55,7 @@ pub fn task1(input: &[Vec<i32>]) -> Result<i32> {
         .ok_or_else(|| aoc_error!("No options to consider"))
 }
 
-pub fn task2(input: &[Vec<i32>]) -> Result<i32> {
+pub fn task2(input: &[Vec<i32>]) -> AocResult<i32> {
     (0..input.len())
         .permutations(input.len())
         .map(|permutation| score(input, &permutation))

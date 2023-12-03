@@ -5,7 +5,7 @@ pub struct Data {
     size: usize,
 }
 
-pub fn parse_input(input: &str) -> Result<Data> {
+pub fn parse_input(input: &str) -> AocResult<Data> {
     let mut size = None;
     let numbers = input
         .lines()
@@ -22,12 +22,12 @@ pub fn parse_input(input: &str) -> Result<Data> {
             }
             Ok(usize::from_str_radix(line, 2)?)
         })
-        .collect::<Result<_>>()?;
+        .collect::<AocResult<_>>()?;
     let size = size.ok_or_else(|| aoc_error!("No line length!"))?;
     Ok(Data { numbers, size })
 }
 
-pub fn task1(data: &Data) -> Result<usize> {
+pub fn task1(data: &Data) -> AocResult<usize> {
     let (gamma, epsilon) = (0..data.size)
         .rev()
         .map(|i| data.numbers.iter().filter(|&n| (n >> i) & 1 == 1).count())
@@ -49,20 +49,14 @@ where
         if numbers.len() == 1 {
             break;
         }
-        let more_ones = numbers.iter().filter(|&n| (n >> i) & 1 == 1).count()
-            * 2
-            >= numbers.len();
+        let more_ones = numbers.iter().filter(|&n| (n >> i) & 1 == 1).count() * 2 >= numbers.len();
         numbers.retain(|n| criteria((n >> i) & 1, more_ones));
     }
     numbers[0]
 }
 
-pub fn task2(data: &Data) -> Result<usize> {
-    let oxygen = find_by_bit_criteria(data, |digit, more_ones| {
-        (digit == 1) == more_ones
-    });
-    let co2 = find_by_bit_criteria(data, |digit, more_ones| {
-        (digit == 0) == more_ones
-    });
+pub fn task2(data: &Data) -> AocResult<usize> {
+    let oxygen = find_by_bit_criteria(data, |digit, more_ones| (digit == 1) == more_ones);
+    let co2 = find_by_bit_criteria(data, |digit, more_ones| (digit == 0) == more_ones);
     Ok(oxygen * co2)
 }

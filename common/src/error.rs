@@ -1,5 +1,5 @@
 #[derive(thiserror::Error, Debug)]
-pub enum Error {
+pub enum AocError {
     #[error("{0}")]
     TaskError(String),
     #[error("{0}")]
@@ -24,13 +24,15 @@ pub enum Error {
     WrongTask { year: String, day: String },
     #[error("Convertion error: {0}")]
     Utf8Error(#[from] std::string::FromUtf8Error),
+    #[error("Psre error: {0}")]
+    PsreError(#[from] prse::ParseError),
 }
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type AocResult<T> = std::result::Result<T, AocError>;
 
 #[macro_export]
 macro_rules! aoc_error {
     ($($arg:tt)*) => {
-        Error::TaskError(format!("{}:{}: {}", file!(), line!(), format!($($arg)*)))
+        AocError::TaskError(format!("{}:{}: {}", file!(), line!(), format!($($arg)*)))
     };
 }

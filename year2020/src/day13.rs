@@ -20,7 +20,7 @@ fn get_first_bus(after: i32, periods: &[Option<i32>]) -> i32 {
     (best_time - after) * best_bus
 }
 
-pub fn parse_input(s: &str) -> Result<(i32, Vec<Option<i32>>)> {
+pub fn parse_input(s: &str) -> AocResult<(i32, Vec<Option<i32>>)> {
     let mut lines = s.lines();
     let timestamp = lines
         .next()
@@ -56,11 +56,11 @@ fn get_sequence_time(times: &[Option<i32>]) -> i64 {
     first_time
 }
 
-pub fn task1(data: &(i32, Vec<Option<i32>>)) -> Result<i32> {
+pub fn task1(data: &(i32, Vec<Option<i32>>)) -> AocResult<i32> {
     Ok(get_first_bus(data.0, &data.1))
 }
 
-pub fn task2(data: &(i32, Vec<Option<i32>>)) -> Result<i64> {
+pub fn task2(data: &(i32, Vec<Option<i32>>)) -> AocResult<i64> {
     Ok(get_sequence_time(&data.1))
 }
 

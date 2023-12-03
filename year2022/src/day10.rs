@@ -1,12 +1,12 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Option<i32>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Option<i32>>> {
     input
         .lines()
         .map(|line| {
             if line == "noop" {
                 Ok(None)
-            } else if let Ok(val) = scan_fmt::scan_fmt!(line, "addx {}", i32) {
+            } else if let Ok(val) = prse::try_parse!(line, "addx {}") {
                 Ok(Some(val))
             } else {
                 Err(aoc_error!("Can't parse line '{line}'"))
@@ -45,7 +45,7 @@ impl<'code> Computer<'code> {
     }
 }
 
-pub fn task1(input: &[Option<i32>]) -> Result<i32> {
+pub fn task1(input: &[Option<i32>]) -> AocResult<i32> {
     let mut computer = Computer::new(input);
     let sum = (1..240)
         .filter_map(|cycle| {
@@ -63,7 +63,7 @@ pub fn task1(input: &[Option<i32>]) -> Result<i32> {
 
 use itertools::Itertools;
 
-pub fn task2(input: &[Option<i32>]) -> Result<String> {
+pub fn task2(input: &[Option<i32>]) -> AocResult<String> {
     let mut computer = Computer::new(input);
     let result = (0..6)
         .map(|_row| {

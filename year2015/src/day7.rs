@@ -6,15 +6,17 @@ pub enum Wire {
     Value(u16),
 }
 
-impl Wire {
-    fn new(input: &str) -> Wire {
-        match input.parse() {
+impl<'a> prse::Parse<'a> for Wire {
+    fn from_str(s: &'a str) -> Result<Self, prse::ParseError> {
+        Ok(match s.parse() {
             Ok(value) => Wire::Value(value),
-            Err(_) => Wire::Name(input.to_string()),
-        }
+            Err(_) => Wire::Name(s.to_string()),
+        })
     }
+}
 
-    fn calculate(&self, wires: &mut Wires) -> Result<u16> {
+impl Wire {
+    fn calculate(&self, wires: &mut Wires) -> AocResult<u16> {
         match self {
             Wire::Name(name) => {
                 let value = get_rule(wires, name)?.calculate(wires)?;
@@ -36,57 +38,37 @@ pub enum Rule {
     Direct(Wire),
 }
 
-impl Rule {
-    fn new(s: &str) -> Result<(String, Rule)> {
-        if let Ok((left, op, right, target)) = scan_fmt::scan_fmt!(
-            s,
-            "{} {/AND|OR|LSHIFT|RSHIFT/} {} -> {}",
-            String,
-            String,
-            String,
-            String
-        ) {
-            let left = Wire::new(&left);
-            let right = Wire::new(&right);
-            Ok((
-                target,
-                match op.as_str() {
+impl<'a> prse::Parse<'a> for Rule {
+    fn from_str(s: &str) -> Result<Self, prse::ParseError> {
+        Ok(
+            if let Ok((left, op, right)) = prse::try_parse!(s, "{} {} {}") {
+                match op {
                     "AND" => Rule::And(left, right),
                     "OR" => Rule::Or(left, right),
                     "LSHIFT" => Rule::LShift(left, right),
                     "RSHIFT" => Rule::RShift(left, right),
                     other => {
-                        return Err(aoc_error!(
+                        return Err(prse::ParseError::new(format!(
                             "Incorrect binary operation: {other}"
-                        ))
+                        )))
                     }
-                },
-            ))
-        } else if let Ok((operand, target)) =
-            scan_fmt::scan_fmt!(s, "NOT {} -> {}", String, String)
-        {
-            Ok((target, Rule::Not(Wire::new(&operand))))
-        } else {
-            let (wire, target) =
-                scan_fmt::scan_fmt!(s, "{} -> {}", String, String)?;
-            Ok((target, Rule::Direct(Wire::new(&wire))))
-        }
+                }
+            } else if let Ok(operand) = prse::try_parse!(s, "NOT {}") {
+                Rule::Not(operand)
+            } else {
+                Rule::Direct(prse::try_parse!(s, "{}")?)
+            },
+        )
     }
+}
 
-    fn calculate(&self, wires: &mut Wires) -> Result<u16> {
+impl Rule {
+    fn calculate(&self, wires: &mut Wires) -> AocResult<u16> {
         Ok(match self {
-            Rule::And(left, right) => {
-                left.calculate(wires)? & right.calculate(wires)?
-            }
-            Rule::Or(left, right) => {
-                left.calculate(wires)? | right.calculate(wires)?
-            }
-            Rule::LShift(left, right) => {
-                left.calculate(wires)? << right.calculate(wires)?
-            }
-            Rule::RShift(left, right) => {
-                left.calculate(wires)? >> right.calculate(wires)?
-            }
+            Rule::And(left, right) => left.calculate(wires)? & right.calculate(wires)?,
+            Rule::Or(left, right) => left.calculate(wires)? | right.calculate(wires)?,
+            Rule::LShift(left, right) => left.calculate(wires)? << right.calculate(wires)?,
+            Rule::RShift(left, right) => left.calculate(wires)? >> right.calculate(wires)?,
             Rule::Not(value) => !value.calculate(wires)?,
             Rule::Direct(value) => value.calculate(wires)?,
         })
@@ -95,23 +77,29 @@ impl Rule {
 
 type Wires = std::collections::HashMap<String, Rule>;
 
-fn get_rule(wires: &Wires, name: &str) -> Result<Rule> {
+fn get_rule(wires: &Wires, name: &str) -> AocResult<Rule> {
     wires
         .get(name)
         .ok_or_else(|| aoc_error!("No wire '{name}' found"))
         .map(Clone::clone)
 }
 
-pub fn parse_input(input: &str) -> Result<Wires> {
-    input.lines().map(Rule::new).collect()
+pub fn parse_input(input: &str) -> AocResult<Wires> {
+    input
+        .lines()
+        .map(|l| {
+            let (target, rule) = prse::try_parse!(l, "{1} -> {0}")?;
+            Ok((target, rule))
+        })
+        .collect()
 }
 
-pub fn task1(wires: &Wires) -> Result<u16> {
+pub fn task1(wires: &Wires) -> AocResult<u16> {
     let mut wires = wires.clone();
     get_rule(&wires, "a")?.calculate(&mut wires)
 }
 
-pub fn task2(wires: &Wires) -> Result<u16> {
+pub fn task2(wires: &Wires) -> AocResult<u16> {
     let mut cwires = wires.clone();
     let a = get_rule(&cwires, "a")?.calculate(&mut cwires)?;
     let mut cwires = wires.clone();

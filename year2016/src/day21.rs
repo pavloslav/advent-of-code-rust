@@ -17,46 +17,23 @@ pub enum Command {
 }
 
 impl std::str::FromStr for Command {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        if let Ok((x, y)) = scan_fmt::scan_fmt!(
-            s,
-            "swap position {} with position {}",
-            usize,
-            usize
-        ) {
+        if let Ok((x, y)) = prse::try_parse!(s, "swap position {} with position {}") {
             Ok(Command::SwapPosition(x, y))
-        } else if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(s, "swap letter {} with letter {}", char, char)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "swap letter {} with letter {}") {
+            let (x, y): (char, char) = (x, y); //prse::try_parse hint
             Ok(Command::SwapLetter(x as u8, y as u8))
-        } else if let Ok(r) =
-            scan_fmt::scan_fmt!(s, "rotate left {} steps", usize)
-        {
+        } else if let Ok(r) = prse::try_parse!(s, "rotate left {} steps") {
             Ok(Command::RotateLeft(r))
-        } else if let Ok(r) =
-            scan_fmt::scan_fmt!(s, "rotate right {} steps", usize)
-        {
+        } else if let Ok(r) = prse::try_parse!(s, "rotate right {} steps") {
             Ok(Command::RotateRight(r))
-        } else if let Ok(l) = scan_fmt::scan_fmt!(
-            s,
-            "rotate based on position of letter {}",
-            char
-        ) {
+        } else if let Ok(l) = prse::try_parse!(s, "rotate based on position of letter {}") {
+            let l: char = l; //prse::try_parse hint
             Ok(Command::RotateBased(l as u8))
-        } else if let Ok((x, y)) = scan_fmt::scan_fmt!(
-            s,
-            "reverse positions {} through {}",
-            usize,
-            usize
-        ) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "reverse positions {} through {}") {
             Ok(Command::Reverse(x, y))
-        } else if let Ok((x, y)) = scan_fmt::scan_fmt!(
-            s,
-            "move position {} to position {}",
-            usize,
-            usize
-        ) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "move position {} to position {}") {
             Ok(Command::Move(x, y))
         } else {
             Err(aoc_error!("Can't parse '{s}' into command"))
@@ -64,34 +41,34 @@ impl std::str::FromStr for Command {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Command>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Command>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(input: &[Command]) -> Result<String> {
+pub fn task1(input: &[Command]) -> AocResult<String> {
     let mut password: VecDeque<_> = PASSWORD.bytes().collect();
 
     for command in input {
         match command {
             Command::SwapPosition(x, y) => password.swap(*x, *y),
             Command::SwapLetter(x, y) => {
-                let x =
-                    password.iter().position(|c| c == x).ok_or_else(|| {
-                        aoc_error!("No letter {} in password", *x as char)
-                    })?;
-                let y =
-                    password.iter().position(|c| c == y).ok_or_else(|| {
-                        aoc_error!("No letter {} in password", *y as char)
-                    })?;
+                let x = password
+                    .iter()
+                    .position(|c| c == x)
+                    .ok_or_else(|| aoc_error!("No letter {} in password", *x as char))?;
+                let y = password
+                    .iter()
+                    .position(|c| c == y)
+                    .ok_or_else(|| aoc_error!("No letter {} in password", *y as char))?;
                 password.swap(x, y);
             }
             Command::RotateLeft(r) => password.rotate_left(*r),
             Command::RotateRight(r) => password.rotate_right(*r),
             Command::RotateBased(b) => {
-                let mut b =
-                    password.iter().position(|c| c == b).ok_or_else(|| {
-                        aoc_error!("No letter {} in password", *b as char)
-                    })?;
+                let mut b = password
+                    .iter()
+                    .position(|c| c == b)
+                    .ok_or_else(|| aoc_error!("No letter {} in password", *b as char))?;
                 b += if b >= 4 { 2 } else { 1 };
                 password.rotate_right(b % password.len());
             }
@@ -112,30 +89,30 @@ pub fn task1(input: &[Command]) -> Result<String> {
     Ok(password.iter().map(|&b| b as char).collect())
 }
 
-pub fn task2(input: &[Command]) -> Result<String> {
+pub fn task2(input: &[Command]) -> AocResult<String> {
     let mut password: VecDeque<_> = SCRAMBLED.bytes().collect();
 
     for command in input.iter().rev() {
         match command {
             Command::SwapPosition(x, y) => password.swap(*x, *y),
             Command::SwapLetter(x, y) => {
-                let x =
-                    password.iter().position(|c| c == x).ok_or_else(|| {
-                        aoc_error!("No letter {} in password", *x as char)
-                    })?;
-                let y =
-                    password.iter().position(|c| c == y).ok_or_else(|| {
-                        aoc_error!("No letter {} in password", *y as char)
-                    })?;
+                let x = password
+                    .iter()
+                    .position(|c| c == x)
+                    .ok_or_else(|| aoc_error!("No letter {} in password", *x as char))?;
+                let y = password
+                    .iter()
+                    .position(|c| c == y)
+                    .ok_or_else(|| aoc_error!("No letter {} in password", *y as char))?;
                 password.swap(x, y);
             }
             Command::RotateLeft(r) => password.rotate_right(*r),
             Command::RotateRight(r) => password.rotate_left(*r),
             Command::RotateBased(b) => {
-                let mut b =
-                    password.iter().position(|c| c == b).ok_or_else(|| {
-                        aoc_error!("No letter {} in password", *b as char)
-                    })?;
+                let mut b = password
+                    .iter()
+                    .position(|c| c == b)
+                    .ok_or_else(|| aoc_error!("No letter {} in password", *b as char))?;
                 b = match b {
                     0 => 7,
                     1 => 7,
@@ -145,11 +122,7 @@ pub fn task2(input: &[Command]) -> Result<String> {
                     5 => 5,
                     6 => 0,
                     7 => 4,
-                    other => {
-                        return Err(aoc_error!(
-                            "Letter position {other}! How?"
-                        ))
-                    }
+                    other => return Err(aoc_error!("Letter position {other}! How?")),
                 };
                 password.rotate_right(b);
             }

@@ -25,7 +25,7 @@ impl InvisiblePaper {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<InvisiblePaper> {
+pub fn parse_input(input: &str) -> AocResult<InvisiblePaper> {
     let lines = input.lines();
     let mut dots_done = false;
     let mut data = InvisiblePaper {
@@ -36,17 +36,13 @@ pub fn parse_input(input: &str) -> Result<InvisiblePaper> {
         if line.is_empty() {
             dots_done = true;
         } else if !dots_done {
-            data.dots
-                .insert(scan_fmt::scan_fmt!(line, "{},{}", i32, i32)?);
+            data.dots.insert(prse::try_parse!(line, "{},{}")?);
         } else {
-            let (coord, value) =
-                scan_fmt::scan_fmt!(line, "fold along {1[xy]}={}", char, i32)?;
+            let (coord, value) = prse::try_parse!(line, "fold along {}={}")?;
             let fold = match coord {
                 'x' => Fold::X(value),
                 'y' => Fold::Y(value),
-                other => {
-                    return Err(aoc_error!("Impossible value '{other}'!"))
-                }
+                other => return Err(aoc_error!("Impossible value '{other}'!")),
             };
             data.folds.push(fold);
         }
@@ -54,13 +50,13 @@ pub fn parse_input(input: &str) -> Result<InvisiblePaper> {
     Ok(data)
 }
 
-pub fn task1(data: &InvisiblePaper) -> Result<usize> {
+pub fn task1(data: &InvisiblePaper) -> AocResult<usize> {
     let mut data = data.clone();
     data.do_fold(data.folds[0]);
     Ok(data.dots.len())
 }
 
-pub fn task2(data: &InvisiblePaper) -> Result<String> {
+pub fn task2(data: &InvisiblePaper) -> AocResult<String> {
     let folds = &data.folds;
     let mut data = data.clone();
     for &fold in folds {

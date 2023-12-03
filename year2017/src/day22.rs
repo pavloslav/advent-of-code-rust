@@ -1,7 +1,7 @@
 use crate::*;
 type Map = std::collections::HashMap<(i32, i32), i32>;
 
-pub fn parse_input(input: &str) -> Result<(Map, usize, usize)> {
+pub fn parse_input(input: &str) -> AocResult<(Map, usize, usize)> {
     let mut width = 0;
     let mut height = 0;
     let map = input
@@ -10,9 +10,9 @@ pub fn parse_input(input: &str) -> Result<(Map, usize, usize)> {
         .flat_map(|(y, line)| {
             width = line.len();
             height = y + 1;
-            line.chars().enumerate().map(move |(x, c)| {
-                ((x as i32, y as i32), if c == '#' { 2 } else { 0 })
-            })
+            line.chars()
+                .enumerate()
+                .map(move |(x, c)| ((x as i32, y as i32), if c == '#' { 2 } else { 0 }))
         })
         .collect();
     Ok((map, width, height))
@@ -53,7 +53,7 @@ impl Carrier {
     }
 }
 
-pub fn task1((map, width, height): &(Map, usize, usize)) -> Result<usize> {
+pub fn task1((map, width, height): &(Map, usize, usize)) -> AocResult<usize> {
     let mut map = map.clone();
     let mut carrier = Carrier::new(*width, *height);
     for _step in 0..10_000 {
@@ -62,7 +62,7 @@ pub fn task1((map, width, height): &(Map, usize, usize)) -> Result<usize> {
     Ok(carrier.infected)
 }
 
-pub fn task2((map, width, height): &(Map, usize, usize)) -> Result<usize> {
+pub fn task2((map, width, height): &(Map, usize, usize)) -> AocResult<usize> {
     let mut map = map.clone();
     let mut carrier = Carrier::new(*width, *height);
     for _step in 0..10_000_000 {

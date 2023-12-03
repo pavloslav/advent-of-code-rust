@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 type BagMap = HashMap<String, Vec<(String, usize)>>;
 
-fn create_map(s: &str, reverse: bool) -> Result<BagMap> {
+fn create_map(s: &str, reverse: bool) -> AocResult<BagMap> {
     let mut result = BagMap::new();
     for rule in s.lines() {
         let undotted = &rule[..rule.len() - 1];
@@ -67,16 +67,16 @@ fn count_insides(map: &BagMap, bag: &str) -> usize {
     })
 }
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
-pub fn task1(s: &str) -> Result<usize> {
+pub fn task1(s: &str) -> AocResult<usize> {
     let map = create_map(s, true)?;
     Ok(count_holders(&map, "shiny gold bag"))
 }
 
-pub fn task2(s: &str) -> Result<usize> {
+pub fn task2(s: &str) -> AocResult<usize> {
     let map = create_map(s, false)?;
     Ok(count_insides(&map, "shiny gold bag") - 1)
 }

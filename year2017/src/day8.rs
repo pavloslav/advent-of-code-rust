@@ -9,8 +9,8 @@ pub enum Operation {
 use std::str::FromStr;
 
 impl FromStr for Operation {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Operation> {
+    type Err = AocError;
+    fn from_str(s: &str) -> AocResult<Operation> {
         match s {
             "inc" => Ok(Operation::Inc),
             "dec" => Ok(Operation::Dec),
@@ -30,8 +30,8 @@ pub enum Comparison {
 }
 
 impl FromStr for Comparison {
-    type Err = Error;
-    fn from_str(item: &str) -> Result<Comparison> {
+    type Err = AocError;
+    fn from_str(item: &str) -> AocResult<Comparison> {
         use Comparison::*;
         match item {
             ">" => Ok(Gt),
@@ -68,27 +68,18 @@ pub struct Instruction {
     compare: i32,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
     input
         .lines()
         .map(|line| {
-            let (
-                target_reg,
-                operation,
-                operand,
-                check_reg,
-                comparison,
-                compare,
-            ) = scan_fmt::scan_fmt!(
-                line,
-                "{} {} {} if {} {} {}",
+            let (target_reg, operation, operand, check_reg, comparison, compare): (
                 String,
-                String,
+                &str,
                 i32,
                 String,
-                String,
-                i32
-            )?;
+                &str,
+                i32,
+            ) = prse::try_parse!(line, "{} {} {} if {} {} {}")?;
             Ok(Instruction {
                 target_reg,
                 operation: operation.parse()?,
@@ -101,18 +92,17 @@ pub fn parse_input(input: &str) -> Result<Vec<Instruction>> {
         .collect()
 }
 
-pub fn task1(input: &[Instruction]) -> Result<i32> {
+pub fn task1(input: &[Instruction]) -> AocResult<i32> {
     let mut registers = std::collections::HashMap::<String, i32>::new();
     for instr in input {
         if instr.comparison.exec(
             *registers.get(&instr.check_reg).unwrap_or(&0),
             instr.compare,
         ) {
-            *registers.entry(instr.target_reg.clone()).or_insert(0) +=
-                match instr.operation {
-                    Operation::Inc => instr.operand,
-                    Operation::Dec => -instr.operand,
-                }
+            *registers.entry(instr.target_reg.clone()).or_insert(0) += match instr.operation {
+                Operation::Inc => instr.operand,
+                Operation::Dec => -instr.operand,
+            }
         }
     }
     registers
@@ -122,7 +112,7 @@ pub fn task1(input: &[Instruction]) -> Result<i32> {
         .ok_or_else(|| aoc_error!("No registers present"))
 }
 
-pub fn task2(input: &[Instruction]) -> Result<i32> {
+pub fn task2(input: &[Instruction]) -> AocResult<i32> {
     let mut registers = std::collections::HashMap::<String, i32>::new();
     let mut max = 0;
     for instr in input {
@@ -130,11 +120,10 @@ pub fn task2(input: &[Instruction]) -> Result<i32> {
             *registers.get(&instr.check_reg).unwrap_or(&0),
             instr.compare,
         ) {
-            *registers.entry(instr.target_reg.clone()).or_insert(0) +=
-                match instr.operation {
-                    Operation::Inc => instr.operand,
-                    Operation::Dec => -instr.operand,
-                };
+            *registers.entry(instr.target_reg.clone()).or_insert(0) += match instr.operation {
+                Operation::Inc => instr.operand,
+                Operation::Dec => -instr.operand,
+            };
             max = max.max(registers[&instr.target_reg]);
         }
     }

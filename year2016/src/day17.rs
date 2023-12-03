@@ -2,7 +2,7 @@ use crate::*;
 
 use std::collections::HashSet;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input.trim())
 }
 
@@ -46,7 +46,7 @@ impl Traveler {
     }
 }
 
-pub fn task1(input: &str) -> Result<String> {
+pub fn task1(input: &str) -> AocResult<String> {
     let mut traveler = Traveler::new(input);
     while traveler.solutions.is_empty() && !traveler.locations.is_empty() {
         traveler.step();
@@ -58,7 +58,7 @@ pub fn task1(input: &str) -> Result<String> {
     }
 }
 
-pub fn task2(input: &str) -> Result<usize> {
+pub fn task2(input: &str) -> AocResult<usize> {
     let mut traveler = Traveler::new(input);
     let mut best = 0;
     while !traveler.locations.is_empty() {

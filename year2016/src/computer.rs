@@ -3,11 +3,11 @@ use crate::*;
 type Value = isize;
 type Register = usize;
 
-fn reg_num(input: &str) -> Result<Register> {
+fn reg_num(input: &str) -> Result<Register, prse::ParseError> {
     ["a", "b", "c", "d"]
         .iter()
         .position(|&r| r == input)
-        .ok_or_else(|| aoc_error!("'{input}' is not a register name"))
+        .ok_or_else(|| prse::ParseError::Other(format!("'{input}' is not a register name")))
 }
 
 #[derive(Clone, Copy)]
@@ -16,9 +16,8 @@ pub enum RegValue {
     Value(Value),
 }
 
-impl std::str::FromStr for RegValue {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<RegValue> {
+impl<'a> prse::Parse<'a> for RegValue {
+    fn from_str(s: &str) -> Result<RegValue, prse::ParseError> {
         s.parse()
             .map(RegValue::Value)
             .or_else(|_| Ok(RegValue::Register(reg_num(s)?)))
@@ -45,23 +44,19 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Self> {
-        if let Ok((src, dst)) =
-            scan_fmt::scan_fmt!(s, "cpy {} {}", RegValue, RegValue)
-        {
+    type Err = AocError;
+    fn from_str(s: &str) -> AocResult<Self> {
+        if let Ok((src, dst)) = prse::try_parse!(s, "cpy {} {}") {
             Ok(Instruction::Cpy(src, dst))
-        } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "inc {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "inc {}") {
             Ok(Instruction::Inc(tgt))
-        } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "dec {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "dec {}") {
             Ok(Instruction::Dec(tgt))
-        } else if let Ok((src, tgt)) =
-            scan_fmt::scan_fmt!(s, "jnz {} {}", RegValue, RegValue)
-        {
+        } else if let Ok((src, tgt)) = prse::try_parse!(s, "jnz {} {}") {
             Ok(Instruction::Jnz(src, tgt))
-        } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "tgl {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "tgl {}") {
             Ok(Instruction::Tgl(tgt))
-        } else if let Ok(tgt) = scan_fmt::scan_fmt!(s, "out {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "out {}") {
             Ok(Instruction::Out(tgt))
         } else {
             Err(aoc_error!("Unknown instruction '{}'", s))
@@ -85,7 +80,7 @@ impl Computer {
             out: None,
         }
     }
-    pub fn step(&mut self) -> Result<()> {
+    pub fn step(&mut self) -> AocResult<()> {
         match &self.program[self.ip] {
             Instruction::Inc(RegValue::Register(r)) => {
                 self.registers[*r] += 1;
@@ -99,9 +94,9 @@ impl Computer {
                     let tgt = tgt as usize;
                     self.program[tgt] = match &self.program[tgt] {
                         Instruction::Inc(r) => Instruction::Dec(*r),
-                        Instruction::Dec(r)
-                        | Instruction::Out(r)
-                        | Instruction::Tgl(r) => Instruction::Inc(*r),
+                        Instruction::Dec(r) | Instruction::Out(r) | Instruction::Tgl(r) => {
+                            Instruction::Inc(*r)
+                        }
                         Instruction::Jnz(r1, r2) => Instruction::Cpy(*r1, *r2),
                         Instruction::Cpy(r1, r2) => Instruction::Jnz(*r1, *r2),
                     }
@@ -115,9 +110,7 @@ impl Computer {
                     self.ip = self
                         .ip
                         .checked_add_signed(tgt.get(&self.registers))
-                        .ok_or_else(|| {
-                            aoc_error!("Ip shouldn't be less then 0!")
-                        })?;
+                        .ok_or_else(|| aoc_error!("Ip shouldn't be less then 0!"))?;
                     return Ok(());
                 }
             }
@@ -130,14 +123,14 @@ impl Computer {
         Ok(())
     }
 
-    pub fn run(&mut self) -> Result<Value> {
+    pub fn run(&mut self) -> AocResult<Value> {
         while self.ip < self.program.len() {
             self.step()?;
         }
         Ok(self.registers[0])
     }
 
-    pub fn run_to_output(&mut self) -> Result<Option<Value>> {
+    pub fn run_to_output(&mut self) -> AocResult<Option<Value>> {
         while self.ip < self.program.len() && self.out.is_none() {
             self.step()?;
         }

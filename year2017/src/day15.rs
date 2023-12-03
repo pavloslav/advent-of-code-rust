@@ -1,14 +1,11 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<usize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
     input
         .lines()
         .map(|s| {
-            Ok(scan_fmt::scan_fmt!(
-                s,
-                "Generator {*} starts with {d}",
-                usize
-            )?)
+            let (_, n): (usize, usize) = prse::try_parse!(s, "Generator {} starts with {}")?;
+            Ok(n)
         })
         .collect()
 }
@@ -40,20 +37,17 @@ fn task(input: &[usize], filters: &[usize], limit: usize) -> usize {
         })
         .collect();
     (0..limit)
-        .filter(|_| {
-            generators[0].generate() & 0xFFFF
-                == generators[1].generate() & 0xFFFF
-        })
+        .filter(|_| generators[0].generate() & 0xFFFF == generators[1].generate() & 0xFFFF)
         .count()
 }
 
 const FIRST_LIMIT: usize = 40_000_000;
 const SECOND_LIMIT: usize = 5_000_000;
 
-pub fn task1(input: &[usize]) -> Result<usize> {
+pub fn task1(input: &[usize]) -> AocResult<usize> {
     Ok(task(input, &[1, 1], FIRST_LIMIT))
 }
 
-pub fn task2(input: &[usize]) -> Result<usize> {
+pub fn task2(input: &[usize]) -> AocResult<usize> {
     Ok(task(input, &[4, 8], SECOND_LIMIT))
 }

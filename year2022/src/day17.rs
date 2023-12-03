@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<i32>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
     input
         .trim()
         .bytes()
@@ -144,7 +144,7 @@ impl PartialEq for Tetris<'_> {
 
 const STEPS: usize = 2022;
 
-pub fn task1(input: &[i32]) -> Result<usize> {
+pub fn task1(input: &[i32]) -> AocResult<usize> {
     let mut tetris = Tetris::new(input);
     for _ in 0..STEPS {
         tetris.play();
@@ -156,7 +156,7 @@ use common::floyd_hare_tortoise;
 
 const ELEPHANT_STEPS: usize = 1_000_000_000_000;
 
-pub fn task2(input: &[i32]) -> Result<usize> {
+pub fn task2(input: &[i32]) -> AocResult<usize> {
     let (lambda, mu) = floyd_hare_tortoise(|| Tetris::new(input), |t| t.play());
 
     let mut tetris = Tetris::new(input);

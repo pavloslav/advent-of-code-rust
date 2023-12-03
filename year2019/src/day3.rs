@@ -6,17 +6,15 @@ pub struct Step {
 }
 
 impl std::str::FromStr for Step {
-    type Err = Error;
-    fn from_str(input: &str) -> Result<Step> {
+    type Err = AocError;
+    fn from_str(input: &str) -> AocResult<Step> {
         Ok(Step {
             direction: match input.chars().next() {
                 Some('R') => (1, 0),
                 Some('L') => (-1, 0),
                 Some('U') => (0, 1),
                 Some('D') => (0, -1),
-                Some(other) => {
-                    Err(aoc_error!("Unable to parse direction '{other}'"))?
-                }
+                Some(other) => Err(aoc_error!("Unable to parse direction '{other}'"))?,
                 None => Err(aoc_error!("Unable to parse empty string"))?,
             },
             length: input[1..].parse()?,
@@ -24,11 +22,11 @@ impl std::str::FromStr for Step {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<[Vec<Step>; 2]> {
+pub fn parse_input(input: &str) -> AocResult<[Vec<Step>; 2]> {
     input
         .lines()
         .map(|line| line.split(',').map(|step| step.parse()).collect())
-        .collect::<Result<Vec<_>>>()?
+        .collect::<AocResult<Vec<_>>>()?
         .try_into()
         .map_err(|_| aoc_error!("Wrong size"))
 }
@@ -44,13 +42,12 @@ fn get_set(steps: &[Step]) -> HashSet<(i32, i32)> {
             let shift = step.direction;
             x += step.length * shift.0;
             y += step.length * shift.1;
-            (1..=step.length)
-                .map(move |i| (old_x + i * shift.0, old_y + i * shift.1))
+            (1..=step.length).map(move |i| (old_x + i * shift.0, old_y + i * shift.1))
         })
         .collect()
 }
 
-pub fn task1(input: &[Vec<Step>; 2]) -> Result<usize> {
+pub fn task1(input: &[Vec<Step>; 2]) -> AocResult<usize> {
     let way1 = get_set(&input[0]);
     let way2 = get_set(&input[1]);
     way1.intersection(&way2)
@@ -81,7 +78,7 @@ fn get_map(steps: &[Step]) -> HashMap<(i32, i32), usize> {
         .collect()
 }
 
-pub fn task2(input: &[Vec<Step>; 2]) -> Result<usize> {
+pub fn task2(input: &[Vec<Step>; 2]) -> AocResult<usize> {
     let way1 = get_map(&input[0]);
     let way2 = get_map(&input[1]);
     way1.iter()

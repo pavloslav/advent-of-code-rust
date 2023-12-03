@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
@@ -11,7 +11,7 @@ enum State {
     X2,
 }
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     Ok(input
         .lines()
         .map(|line| {
@@ -27,8 +27,7 @@ pub fn task1(input: &str) -> Result<usize> {
                     }
                     State::Slash => {
                         count += 1;
-                        state =
-                            if ch == 'x' { State::X1 } else { State::Normal };
+                        state = if ch == 'x' { State::X1 } else { State::Normal };
                     }
                     State::X1 => {
                         count += 1;
@@ -45,7 +44,7 @@ pub fn task1(input: &str) -> Result<usize> {
         .sum())
 }
 
-pub fn task2(input: &str) -> Result<usize> {
+pub fn task2(input: &str) -> AocResult<usize> {
     Ok(input
         .lines()
         .map(|line| line.chars().filter(|&c| c == '\\' || c == '"').count() + 2)

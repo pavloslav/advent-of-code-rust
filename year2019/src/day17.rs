@@ -11,7 +11,7 @@ pub enum Cell {
     Left,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<Cell>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<Cell>>> {
     let mut robot = Computer::new(&Computer::prepare_code(input)?);
     robot.run()?;
     let mut map = vec![];
@@ -43,7 +43,7 @@ fn no_neighbors(map: &[Vec<Cell>], x: usize, y: usize, check: Cell) -> bool {
         && (y + 1 == map.len() || map[y + 1][x] != check)
 }
 
-pub fn task1(input: &[Vec<Cell>]) -> Result<usize> {
+pub fn task1(input: &[Vec<Cell>]) -> AocResult<usize> {
     Ok(input
         .iter()
         .enumerate()
@@ -62,6 +62,6 @@ pub fn task1(input: &[Vec<Cell>]) -> Result<usize> {
         .sum())
 }
 
-pub fn task2(_input: &[Vec<Cell>]) -> Result<usize> {
+pub fn task2(_input: &[Vec<Cell>]) -> AocResult<usize> {
     Err(aoc_error!("Todo"))
 }

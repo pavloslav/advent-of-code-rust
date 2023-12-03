@@ -5,7 +5,7 @@ enum Brackets {
     Incorrect(char),
 }
 
-fn check_brackets(line: &str) -> Result<Brackets> {
+fn check_brackets(line: &str) -> AocResult<Brackets> {
     let mut stack = Vec::new();
     for symbol in line.chars() {
         match symbol {
@@ -27,11 +27,11 @@ fn check_brackets(line: &str) -> Result<Brackets> {
     Ok(Brackets::Correct(stack))
 }
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
-pub fn task1(data: &str) -> Result<usize> {
+pub fn task1(data: &str) -> AocResult<usize> {
     data.lines()
         .map(|line| {
             Ok(match check_brackets(line)? {
@@ -42,10 +42,10 @@ pub fn task1(data: &str) -> Result<usize> {
                 _ => 0,
             })
         })
-        .try_fold(0, |acc, x: Result<_>| Ok(acc + x?))
+        .try_fold(0, |acc, x: AocResult<_>| Ok(acc + x?))
 }
 
-pub fn task2(data: &str) -> Result<usize> {
+pub fn task2(data: &str) -> AocResult<usize> {
     let mut scores: Vec<_> = Vec::new();
     for line in data.lines() {
         if let Brackets::Correct(rest) = check_brackets(line)? {
@@ -57,9 +57,7 @@ pub fn task2(data: &str) -> Result<usize> {
                         '}' => 3,
                         '>' => 4,
                         other => {
-                            return Err(aoc_error!(
-                                "Unknown bracket '{other}'"
-                            ));
+                            return Err(aoc_error!("Unknown bracket '{other}'"));
                         }
                     })
             })?)

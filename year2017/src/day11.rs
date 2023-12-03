@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<(i32, i32)>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<(i32, i32)>> {
     input
         .trim()
         .split(',')
@@ -18,28 +18,20 @@ pub fn parse_input(input: &str) -> Result<Vec<(i32, i32)>> {
         .collect()
 }
 
-pub fn task1(input: &[(i32, i32)]) -> Result<i32> {
+pub fn task1(input: &[(i32, i32)]) -> AocResult<i32> {
     let mut position = (0, 0);
     for step in input {
         position = (position.0 + step.0, position.1 + step.1);
     }
-    Ok(
-        (position.0.abs() + position.1.abs() + (position.0 + position.1).abs())
-            / 2,
-    )
+    Ok((position.0.abs() + position.1.abs() + (position.0 + position.1).abs()) / 2)
 }
 
-pub fn task2(input: &[(i32, i32)]) -> Result<i32> {
+pub fn task2(input: &[(i32, i32)]) -> AocResult<i32> {
     let mut position = (0, 0);
     let mut max = 0;
     for step in input {
         position = (position.0 + step.0, position.1 + step.1);
-        max = max.max(
-            (position.0.abs()
-                + position.1.abs()
-                + (position.0 + position.1).abs())
-                / 2,
-        )
+        max = max.max((position.0.abs() + position.1.abs() + (position.0 + position.1).abs()) / 2)
     }
     Ok(max)
 }

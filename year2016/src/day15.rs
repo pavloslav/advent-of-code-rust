@@ -1,12 +1,19 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<(usize, usize)>> {
-    input.lines()
-        .map(|line|Ok(scan_fmt::scan_fmt!(line,"Disc #{*d} has {d} positions; at time=0, it is at position {d}.",usize, usize)?))
+pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize)>> {
+    input
+        .lines()
+        .map(|line| {
+            let (_, time, pos): (usize, usize, usize) = prse::try_parse!(
+                line,
+                "Disc #{} has {} positions; at time=0, it is at position {}."
+            )?;
+            Ok((time, pos))
+        })
         .collect()
 }
 
-pub fn task(input: &[(usize, usize)]) -> Result<usize> {
+pub fn task(input: &[(usize, usize)]) -> AocResult<usize> {
     let period = input.iter().map(|(size, _)| size).product();
     for moment in 0..period {
         if input
@@ -20,11 +27,11 @@ pub fn task(input: &[(usize, usize)]) -> Result<usize> {
     Err(aoc_error!("Solution not found"))
 }
 
-pub fn task1(input: &[(usize, usize)]) -> Result<usize> {
+pub fn task1(input: &[(usize, usize)]) -> AocResult<usize> {
     task(input)
 }
 
-pub fn task2(input: &[(usize, usize)]) -> Result<usize> {
+pub fn task2(input: &[(usize, usize)]) -> AocResult<usize> {
     let input: Vec<_> = input
         .iter()
         .chain(std::iter::once(&(11, 0)))

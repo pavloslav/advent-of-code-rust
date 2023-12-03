@@ -1,21 +1,19 @@
 use crate::*;
 use std::collections::{HashMap, HashSet};
 
-pub fn parse_input(input: &str) -> Result<Vec<(char, char)>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<(char, char)>> {
     input
         .lines()
         .map(|line| {
-            Ok(scan_fmt::scan_fmt!(
+            Ok(prse::try_parse!(
                 line,
-                "Step {} must be finished before step {} can begin.",
-                char,
-                char
+                "Step {} must be finished before step {} can begin."
             )?)
         })
         .collect()
 }
 
-pub fn task1(input: &[(char, char)]) -> Result<String> {
+pub fn task1(input: &[(char, char)]) -> AocResult<String> {
     let mut map: HashMap<char, HashSet<char>> = HashMap::new();
     for &(needed, target) in input {
         map.entry(target)
@@ -42,7 +40,7 @@ pub fn task1(input: &[(char, char)]) -> Result<String> {
     Ok(steps)
 }
 
-pub fn task2(input: &[(char, char)]) -> Result<usize> {
+pub fn task2(input: &[(char, char)]) -> AocResult<usize> {
     let mut steps: HashSet<char> = input
         .iter()
         .flat_map(|(needed, target)| [needed, target])

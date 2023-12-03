@@ -1,12 +1,12 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input)
 }
 
 use std::collections::HashSet;
 
-fn first_different(input: &str, length: usize) -> Result<usize> {
+fn first_different(input: &str, length: usize) -> AocResult<usize> {
     if length == 0 {
         return Err(aoc_error!("Length should be greater then 0"));
     }
@@ -24,10 +24,10 @@ fn first_different(input: &str, length: usize) -> Result<usize> {
     Err(aoc_error!("Set not found!"))
 }
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     first_different(input, 4)
 }
 
-pub fn task2(input: &str) -> Result<usize> {
+pub fn task2(input: &str) -> AocResult<usize> {
     first_different(input, 14)
 }

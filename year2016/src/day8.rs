@@ -1,10 +1,10 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<char>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<char>>> {
     build_lcd(6, 50, input)
 }
 
-fn collect_lcd(lcd: &[Vec<char>]) -> Result<String> {
+fn collect_lcd(lcd: &[Vec<char>]) -> AocResult<String> {
     let mut result = String::from("\n");
     for j in 0..lcd[0].len() {
         for line in lcd {
@@ -15,25 +15,18 @@ fn collect_lcd(lcd: &[Vec<char>]) -> Result<String> {
     Ok(result)
 }
 
-fn build_lcd(
-    rows: usize,
-    columns: usize,
-    commands: &str,
-) -> Result<Vec<Vec<char>>> {
+fn build_lcd(rows: usize, columns: usize, commands: &str) -> AocResult<Vec<Vec<char>>> {
     let mut lcd = Vec::with_capacity(columns);
     for _ in 0..columns {
         lcd.push(std::iter::repeat('.').take(rows).collect::<Vec<_>>());
     }
     for command in commands.lines() {
-        if let Ok((x, y)) =
-            scan_fmt::scan_fmt!(command, "rect {}x{}", usize, usize)
-        {
+        if let Ok((x, y)) = prse::try_parse!(command, "rect {}x{}") {
             for line in &mut lcd[..x] {
                 line[..y].fill('#');
             }
-        } else if let Ok((y, shift)) =
-            scan_fmt::scan_fmt!(command, "rotate row y={} by {}", usize, usize)
-        {
+        } else if let Ok((y, shift)) = prse::try_parse!(command, "rotate row y={} by {}") {
+            let y: usize = y; //prse::try_parse! hint
             for _ in 0..shift {
                 let temp = lcd[columns - 1][y];
                 for j in 1..columns {
@@ -42,12 +35,8 @@ fn build_lcd(
                 }
                 lcd[0][y] = temp;
             }
-        } else if let Ok((x, shift)) = scan_fmt::scan_fmt!(
-            command,
-            "rotate column x={} by {}",
-            usize,
-            usize
-        ) {
+        } else if let Ok((x, shift)) = prse::try_parse!(command, "rotate column x={} by {}") {
+            let x: usize = x; //prse::try_parse! hint
             for _ in 0..shift {
                 let temp = lcd[x][rows - 1];
                 for j in 1..rows {
@@ -63,14 +52,14 @@ fn build_lcd(
     Ok(lcd)
 }
 
-pub fn task1(lcd: &[Vec<char>]) -> Result<usize> {
+pub fn task1(lcd: &[Vec<char>]) -> AocResult<usize> {
     Ok(lcd
         .iter()
         .map(|line| line.iter().filter(|c| **c == '#').count())
         .sum())
 }
 
-pub fn task2(lcd: &[Vec<char>]) -> Result<String> {
+pub fn task2(lcd: &[Vec<char>]) -> AocResult<String> {
     collect_lcd(lcd)
 }
 

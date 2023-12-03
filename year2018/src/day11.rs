@@ -8,7 +8,7 @@ fn power_level(x: usize, y: usize, serial: usize) -> i32 {
     (((rack_id * y + serial) * rack_id) / 100 % 10) as i32 - 5
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<i32>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
     let serial = input.trim().parse()?;
     Ok((1..=SIZE)
         .map(|y| (1..=SIZE).map(|x| power_level(x, y, serial)).collect())
@@ -35,12 +35,12 @@ fn best(map: &[Vec<i32>], dial: usize) -> (usize, usize, i32) {
     (best_x, best_y, best_power)
 }
 
-pub fn task1(map: &[Vec<i32>]) -> Result<String> {
+pub fn task1(map: &[Vec<i32>]) -> AocResult<String> {
     let (best_x, best_y, _) = best(map, SQUARE_SIZE);
     Ok(format!("{best_x},{best_y}"))
 }
 
-pub fn task2(map: &[Vec<i32>]) -> Result<String> {
+pub fn task2(map: &[Vec<i32>]) -> AocResult<String> {
     let (dial, (x, y, _)) = (1..=SIZE)
         .map(|dial| (dial, best(map, dial)))
         .max_by_key(|(_, (_, _, p))| *p)

@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
     Ok(input.lines().map(|line| line.bytes().collect()).collect())
 }
 
@@ -14,12 +14,7 @@ fn value(f: u8) -> u8 {
     }
 }
 
-fn can_move(
-    map: &[Vec<u8>],
-    path: &[Vec<usize>],
-    field: (i32, i32),
-    neighbor: (i32, i32),
-) -> bool {
+fn can_move(map: &[Vec<u8>], path: &[Vec<usize>], field: (i32, i32), neighbor: (i32, i32)) -> bool {
     if neighbor.0 < 0
         || neighbor.0 >= map.len().try_into().unwrap()
         || neighbor.1 < 0
@@ -59,7 +54,7 @@ fn shortest_way(start: (i32, i32), map: &[Vec<u8>]) -> Option<usize> {
     unreachable!()
 }
 
-pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
+pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
     let start = map
         .iter()
         .enumerate()
@@ -72,7 +67,7 @@ pub fn task1(map: &[Vec<u8>]) -> Result<usize> {
     shortest_way(start, map).ok_or_else(|| aoc_error!("Way not found!"))
 }
 
-pub fn task2(map: &[Vec<u8>]) -> Result<usize> {
+pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
     map.iter()
         .enumerate()
         .map(|(i, line)| {

@@ -1,6 +1,6 @@
 use crate::*;
 
-fn seat_id(code: &str) -> Result<usize> {
+fn seat_id(code: &str) -> AocResult<usize> {
     code.chars()
         .map(|c| match c {
             'F' | 'L' => Ok(0),
@@ -10,21 +10,20 @@ fn seat_id(code: &str) -> Result<usize> {
         .try_fold(0, |acc, n| Ok(acc * 2 + n?))
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<usize>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
     input.lines().map(seat_id).collect()
 }
 
-pub fn task1(s: &[usize]) -> Result<usize> {
+pub fn task1(s: &[usize]) -> AocResult<usize> {
     s.iter()
         .max()
         .copied()
         .ok_or_else(|| aoc_error!("Empty input!"))
 }
 
-pub fn task2(s: &[usize]) -> Result<usize> {
-    let (min, max, sum) =
-        s.iter().fold((1024, 0, 0), |(min, max, sum), &id| {
-            (min.min(id), max.max(id), sum + id)
-        });
+pub fn task2(s: &[usize]) -> AocResult<usize> {
+    let (min, max, sum) = s.iter().fold((1024, 0, 0), |(min, max, sum), &id| {
+        (min.min(id), max.max(id), sum + id)
+    });
     Ok((max - min + 1) * (max + min) / 2 - sum)
 }

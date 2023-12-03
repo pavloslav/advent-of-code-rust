@@ -15,16 +15,33 @@ pub struct Game {
     boss_dmg: i32,
 }
 
-pub fn parse_input(input: &str) -> Result<Game> {
-    let (hp, dmg) = scan_fmt::scan_fmt!(
-        input,
-        "Hit Points: {}
-Damage: {}",
-        i32,
-        i32
-    )
-    .map_err(|_| aoc_error!("Wrong input format"))?;
-    Ok(Game::new(hp, dmg))
+impl Default for Game {
+    fn default() -> Self {
+        Game {
+            hp: 50,
+            mp: 500,
+            shield: 0,
+            poison: 0,
+            recharge: 0,
+            mana_spent: 0,
+            boss_hp: 0,
+            boss_dmg: 0,
+        }
+    }
+}
+
+impl<'a> prse::Parse<'a> for Game {
+    fn from_str(s: &'a str) -> Result<Self, prse::ParseError> {
+        let (hp, dmg) = prse::try_parse!(
+            s,
+            "Hit Points: {}
+        Damage: {}"
+        )?;
+        Ok(Game::new(hp, dmg))
+    }
+}
+pub fn parse_input(input: &str) -> AocResult<Game> {
+    Ok(prse::try_parse!(input, "{}")?)
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
@@ -49,14 +66,9 @@ static PRICES: Lazy<HashMap<Spell, i32>> = Lazy::new(|| {
 impl Game {
     fn new(hp: i32, dmg: i32) -> Game {
         Game {
-            hp: 50,
-            mp: 500,
-            shield: 0,
-            poison: 0,
-            recharge: 0,
-            mana_spent: 0,
             boss_hp: hp,
             boss_dmg: dmg,
+            ..Default::default()
         }
     }
     fn effects(&mut self) {
@@ -121,7 +133,7 @@ impl Game {
     }
 }
 
-pub fn task(&game: &Game, hard_mode: bool) -> Result<i32> {
+pub fn task(&game: &Game, hard_mode: bool) -> AocResult<i32> {
     let mut situations = HashSet::from([game]);
     let mut best_mana = None;
     while !situations.is_empty() {
@@ -139,16 +151,13 @@ pub fn task(&game: &Game, hard_mode: bool) -> Result<i32> {
                 if game.player_action(action, hard_mode) {
                     game.effects();
                     if game.win() {
-                        best_mana = Some(best_mana.map_or_else(
-                            || game.mana_spent,
-                            |x: i32| x.min(game.mana_spent),
-                        ));
+                        best_mana = Some(
+                            best_mana
+                                .map_or_else(|| game.mana_spent, |x: i32| x.min(game.mana_spent)),
+                        );
                     }
                     game.boss_action();
-                    if !game.lose()
-                        && best_mana
-                            .map_or_else(|| true, |x| x > game.mana_spent)
-                    {
+                    if !game.lose() && best_mana.map_or_else(|| true, |x| x > game.mana_spent) {
                         new_situations.insert(game);
                     }
                 }
@@ -159,10 +168,10 @@ pub fn task(&game: &Game, hard_mode: bool) -> Result<i32> {
     best_mana.ok_or(aoc_error!("No solution found"))
 }
 
-pub fn task1(game: &Game) -> Result<i32> {
+pub fn task1(game: &Game) -> AocResult<i32> {
     task(game, false)
 }
 
-pub fn task2(game: &Game) -> Result<i32> {
+pub fn task2(game: &Game) -> AocResult<i32> {
     task(game, true)
 }

@@ -9,20 +9,13 @@ pub struct Character {
     armor: i16,
 }
 
-pub fn parse_input(input: &str) -> Result<Character> {
-    let (hp, damage, armor) = scan_fmt::scan_fmt!(
-        input,
-        "Hit Points: {}\nDamage: {}\nArmor: {}",
-        i16,
-        i16,
-        i16
-    )?;
+pub fn parse_input(input: &str) -> AocResult<Character> {
+    let (hp, damage, armor) = prse::try_parse!(input, "Hit Points: {}\nDamage: {}\nArmor: {}")?;
     Ok(Character { hp, damage, armor })
 }
 
 const WEAPONS: &[(usize, i16)] = &[(8, 4), (10, 5), (25, 6), (40, 7), (74, 8)];
-const ARMORS: &[(usize, i16)] =
-    &[(0, 0), (13, 1), (31, 2), (53, 3), (75, 4), (102, 5)];
+const ARMORS: &[(usize, i16)] = &[(0, 0), (13, 1), (31, 2), (53, 3), (75, 4), (102, 5)];
 const RINGS: &[(usize, i16, i16)] = &[
     (25, 1, 0),
     (50, 2, 0),
@@ -51,28 +44,19 @@ impl Character {
     }
 }
 
-fn search(boss: &Character, need_min: bool) -> Result<usize> {
+fn search(boss: &Character, need_min: bool) -> AocResult<usize> {
     let iter = WEAPONS.iter().flat_map(|weapon| {
         ARMORS.iter().flat_map(|armor| {
             (0..=2).flat_map(|count| {
                 RINGS.iter().combinations(count).filter_map(|rings| {
                     let mut you = Character {
                         hp: 100,
-                        damage: weapon.1
-                            + rings.iter().map(|ring| ring.1).sum::<i16>(),
-                        armor: armor.1
-                            + rings.iter().map(|ring| ring.2).sum::<i16>(),
+                        damage: weapon.1 + rings.iter().map(|ring| ring.1).sum::<i16>(),
+                        armor: armor.1 + rings.iter().map(|ring| ring.2).sum::<i16>(),
                     };
 
                     if need_min == you.win(boss) {
-                        Some(
-                            weapon.0
-                                + armor.0
-                                + rings
-                                    .iter()
-                                    .map(|ring| ring.0)
-                                    .sum::<usize>(),
-                        )
+                        Some(weapon.0 + armor.0 + rings.iter().map(|ring| ring.0).sum::<usize>())
                     } else {
                         None
                     }
@@ -87,10 +71,10 @@ fn search(boss: &Character, need_min: bool) -> Result<usize> {
     }
 }
 
-pub fn task1(boss: &Character) -> Result<usize> {
+pub fn task1(boss: &Character) -> AocResult<usize> {
     search(boss, true)
 }
 
-pub fn task2(boss: &Character) -> Result<usize> {
+pub fn task2(boss: &Character) -> AocResult<usize> {
     search(boss, false)
 }

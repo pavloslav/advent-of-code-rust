@@ -2,19 +2,13 @@ use crate::*;
 
 type Tower = std::collections::HashMap<String, (usize, Vec<String>)>;
 
-pub fn parse_input(input: &str) -> Result<Tower> {
+pub fn parse_input(input: &str) -> AocResult<Tower> {
     input
         .lines()
         .map(|line| {
-            if let Ok((name, weight, children)) =
-                scan_fmt::scan_fmt!(line, "{} ({d}) -> {[a-z, ]}", String, usize, String)
-            {
-                Ok((
-                    name,
-                    (weight, children.split(", ").map(|s| s.to_owned()).collect()),
-                ))
-            } else if let Ok((name, weight)) = scan_fmt::scan_fmt!(line, "{} ({d})", String, usize)
-            {
+            if let Ok((name, weight, children)) = prse::try_parse!(line, "{} ({}) -> {:, :}") {
+                Ok((name, (weight, children)))
+            } else if let Ok((name, weight)) = prse::try_parse!(line, "{} ({})") {
                 Ok((name, (weight, vec![])))
             } else {
                 Err(aoc_error!("Failed to parse the line '{line}'"))
@@ -23,7 +17,7 @@ pub fn parse_input(input: &str) -> Result<Tower> {
         .collect()
 }
 
-fn get_root(tower: &Tower) -> Result<String> {
+fn get_root(tower: &Tower) -> AocResult<String> {
     let children: std::collections::HashSet<_> = tower
         .values()
         .flat_map(|(_, children)| children.iter())
@@ -35,7 +29,7 @@ fn get_root(tower: &Tower) -> Result<String> {
         .cloned()
 }
 
-pub fn task1(tower: &Tower) -> Result<String> {
+pub fn task1(tower: &Tower) -> AocResult<String> {
     get_root(tower)
 }
 
@@ -48,7 +42,7 @@ fn get_weight(tower: &Tower, node: &str) -> usize {
             .sum::<usize>()
 }
 
-fn get_correct_weight(tower: &Tower, root: &str) -> Result<usize> {
+fn get_correct_weight(tower: &Tower, root: &str) -> AocResult<usize> {
     let mut weights = std::collections::HashMap::<usize, Vec<String>>::new();
     for child in &tower[root].1 {
         let weight = get_weight(tower, child);
@@ -75,6 +69,6 @@ fn get_correct_weight(tower: &Tower, root: &str) -> Result<usize> {
     }
 }
 
-pub fn task2(tower: &Tower) -> Result<usize> {
+pub fn task2(tower: &Tower) -> AocResult<usize> {
     get_correct_weight(tower, &get_root(tower)?)
 }

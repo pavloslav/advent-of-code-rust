@@ -1,9 +1,9 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<Vec<(i32, i32)>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<(i32, i32)>> {
     input
         .lines()
-        .map(|line| Ok(scan_fmt::scan_fmt!(line, "{}, {}", i32, i32)?))
+        .map(|line| Ok(prse::try_parse!(line, "{}, {}")?))
         .collect()
 }
 
@@ -41,7 +41,7 @@ fn closest(points: &[(i32, i32)], pt: (i32, i32)) -> Option<usize> {
     }
 }
 
-pub fn task1(input: &[(i32, i32)]) -> Result<usize> {
+pub fn task1(input: &[(i32, i32)]) -> AocResult<usize> {
     let min_x = input
         .iter()
         .map(|(x, _)| x)
@@ -85,7 +85,7 @@ pub fn task1(input: &[(i32, i32)]) -> Result<usize> {
         .ok_or(aoc_error!("No suitable solution"))
 }
 
-pub fn task2(input: &[(i32, i32)]) -> Result<usize> {
+pub fn task2(input: &[(i32, i32)]) -> AocResult<usize> {
     let min_x = input
         .iter()
         .map(|(x, _)| x)

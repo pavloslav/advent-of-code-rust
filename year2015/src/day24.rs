@@ -2,11 +2,11 @@ use crate::*;
 
 type Weight = i64;
 
-pub fn parse_input(input: &str) -> Result<Vec<Weight>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Weight>> {
     input
         .lines()
         .map(|s| Ok(s.parse()?))
-        .collect::<Result<Vec<_>>>()
+        .collect::<AocResult<Vec<_>>>()
 }
 
 fn weight(presents: &[&Weight]) -> Weight {
@@ -41,7 +41,7 @@ fn can_be_split_in(presents: &[Weight], n: Weight) -> bool {
 }
 
 /*PREMATURE OPTIMIZATION IS THE ROOT OF ALL EVIL*/
-fn task(presents: &[Weight], parts: Weight) -> Result<Weight> {
+fn task(presents: &[Weight], parts: Weight) -> AocResult<Weight> {
     let mut best = None;
     let mass: Weight = presents.iter().sum();
     if mass % parts != 0 {
@@ -70,11 +70,11 @@ fn task(presents: &[Weight], parts: Weight) -> Result<Weight> {
     best.ok_or_else(|| aoc_error!("Not found"))
 }
 
-pub fn task1(input: &[Weight]) -> Result<Weight> {
+pub fn task1(input: &[Weight]) -> AocResult<Weight> {
     task(input, 3)
 }
 
-pub fn task2(input: &[Weight]) -> Result<Weight> {
+pub fn task2(input: &[Weight]) -> AocResult<Weight> {
     task(input, 4)
 }
 

@@ -28,36 +28,32 @@ fn satisfy2(data: &Map, filter: &Map) -> bool {
     .collect();
     data.iter().all(|(key, data_val)| match filter.get(key) {
         Some(filter_val) => {
-            data_val.cmp(filter_val)
-                == *cmp_filter.get(key).unwrap_or(&std::cmp::Ordering::Equal)
+            data_val.cmp(filter_val) == *cmp_filter.get(key).unwrap_or(&std::cmp::Ordering::Equal)
         }
         _ => true,
     })
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Map>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Map>> {
     input
         .lines()
         .map(|line| {
-            let data =
-                scan_fmt::scan_fmt!(line, "Sue {*d}: {/.*$/}{e}", String)?;
-            data.split(", ")
-                .map(|value| {
-                    Ok(scan_fmt::scan_fmt!(value, "{}: {d}", String, usize)?)
-                })
-                .collect::<Result<Map>>()
+            let (_, list): (usize, Vec<&str>) = prse::try_parse!(line, "Sue {}: {:, :}")?;
+            list.iter()
+                .map(|value| Ok(prse::try_parse!(value, "{}: {}")?))
+                .collect::<AocResult<Map>>()
         })
         .collect()
 }
 
-fn task<F>(input: &[Map], check: &F) -> Result<usize>
+fn task<F>(input: &[Map], check: &F) -> AocResult<usize>
 where
     F: Fn(&Map, &Map) -> bool,
 {
     let filter: Map = FILTER
         .lines()
-        .map(|line| Ok(scan_fmt::scan_fmt!(line, "{}: {}", String, usize)?))
-        .collect::<Result<_>>()?;
+        .map(|line| Ok(prse::try_parse!(line, "{}: {}")?))
+        .collect::<AocResult<_>>()?;
 
     Ok(input
         .iter()
@@ -68,10 +64,10 @@ where
         + 1)
 }
 
-pub fn task1(input: &[Map]) -> Result<usize> {
+pub fn task1(input: &[Map]) -> AocResult<usize> {
     task(input, &satisfy)
 }
 
-pub fn task2(input: &[Map]) -> Result<usize> {
+pub fn task2(input: &[Map]) -> AocResult<usize> {
     task(input, &satisfy2)
 }

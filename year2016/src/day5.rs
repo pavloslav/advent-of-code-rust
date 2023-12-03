@@ -2,11 +2,11 @@ use crate::*;
 
 use common::Md5Hasher;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> Result<String> {
+pub fn task1(input: &str) -> AocResult<String> {
     let mut result = String::with_capacity(8);
     for i in 0.. {
         let mut hasher = Md5Hasher::new_from_str(input);
@@ -20,7 +20,7 @@ pub fn task1(input: &str) -> Result<String> {
     Ok(result)
 }
 
-pub fn task2(input: &str) -> Result<String> {
+pub fn task2(input: &str) -> AocResult<String> {
     let mut result = ['X'; 8];
     let mut count = 0;
     for i in 0.. {

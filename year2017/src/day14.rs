@@ -1,18 +1,16 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<&str> {
+pub fn parse_input(input: &str) -> AocResult<&str> {
     Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> Result<usize> {
+pub fn task1(input: &str) -> AocResult<usize> {
     Ok((0..128)
         .map(|i| {
-            super::knots_hash::dense_hash(
-                format!("{input}-{i}").bytes().map(|c| c.into()),
-            )
-            .iter()
-            .map(|x| x.count_ones() as usize)
-            .sum::<usize>()
+            super::knots_hash::dense_hash(format!("{input}-{i}").bytes().map(|c| c.into()))
+                .iter()
+                .map(|x| x.count_ones() as usize)
+                .sum::<usize>()
         })
         .sum())
 }
@@ -46,15 +44,13 @@ fn floodfill(map: &mut [Vec<bool>], (x, y): (usize, usize)) {
     }
 }
 
-pub fn task2(input: &str) -> Result<usize> {
+pub fn task2(input: &str) -> AocResult<usize> {
     let mut map: Vec<Vec<bool>> = (0..128)
         .map(|i| {
-            super::knots_hash::dense_hash(
-                format!("{input}-{i}").bytes().map(|c| c.into()),
-            )
-            .iter()
-            .flat_map(|&x| (0..8).map(move |i| (x >> (7 - i)) & 1 == 1))
-            .collect()
+            super::knots_hash::dense_hash(format!("{input}-{i}").bytes().map(|c| c.into()))
+                .iter()
+                .flat_map(|&x| (0..8).map(move |i| (x >> (7 - i)) & 1 == 1))
+                .collect()
         })
         .collect();
     for i in 0.. {

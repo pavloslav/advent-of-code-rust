@@ -6,16 +6,13 @@ pub struct Reindeer {
     rest: usize,
 }
 
-pub fn parse_input(input: &str) -> Result<Vec<Reindeer>> {
+pub fn parse_input(input: &str) -> AocResult<Vec<Reindeer>> {
     input
         .lines()
         .map(|line| {
-            let (speed, burst, rest) = scan_fmt::scan_fmt!(
+            let (_, speed, burst, rest): (&str, usize, usize, usize) = prse::try_parse!(
                 line,
-                "{*} can fly {} km/s for {} seconds, but then must rest for {} seconds.",
-                usize,
-                usize,
-                usize
+                "{} can fly {} km/s for {} seconds, but then must rest for {} seconds."
             )?;
             Ok(Reindeer { speed, burst, rest })
         })
@@ -31,7 +28,7 @@ impl Reindeer {
     }
 }
 
-pub fn task1(deers: &[Reindeer]) -> Result<usize> {
+pub fn task1(deers: &[Reindeer]) -> AocResult<usize> {
     deers
         .iter()
         .map(|deer| deer.distance(RACE_TIME))
@@ -39,7 +36,7 @@ pub fn task1(deers: &[Reindeer]) -> Result<usize> {
         .ok_or(aoc_error!("No deers to find the result!"))
 }
 
-pub fn task2(deers: &[Reindeer]) -> Result<usize> {
+pub fn task2(deers: &[Reindeer]) -> AocResult<usize> {
     let mut results = vec![0; deers.len()];
     for t in 1..RACE_TIME {
         let distances: Vec<_> = deers.iter().map(|deer| deer.distance(t)).collect();

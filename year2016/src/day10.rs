@@ -18,7 +18,7 @@ type Robots = HashMap<usize, Robot>;
 type Output = HashMap<usize, usize>;
 
 impl Target {
-    fn new(typ: &str, target: usize) -> Result<Target> {
+    fn new(typ: &str, target: usize) -> AocResult<Target> {
         match typ {
             "bot" => Ok(Target::Bot(target)),
             "output" => Ok(Target::Output(target)),
@@ -39,31 +39,22 @@ impl Target {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<Robots> {
+pub fn parse_input(input: &str) -> AocResult<Robots> {
     let mut robots = HashMap::new();
     for line in input.lines() {
-        if let Ok((value, bot)) =
-            scan_fmt::scan_fmt!(line, "value {d} goes to bot {d}", usize, usize)
-        {
+        if let Ok((value, bot)) = prse::try_parse!(line, "value {} goes to bot {}") {
             robots
                 .entry(bot)
                 .or_insert_with(Robot::new)
                 .hands
                 .push(value);
         } else {
-            let (bot, type_lo, tgt_lo, type_hi, tgt_hi) = scan_fmt::scan_fmt!(
-                line,
-                "bot {} gives low to {} {} and high to {} {}",
-                usize,
-                String,
-                usize,
-                String,
-                usize
-            )?;
+            let (bot, type_lo, tgt_lo, type_hi, tgt_hi) =
+                prse::try_parse!(line, "bot {} gives low to {} {} and high to {} {}")?;
             robots.entry(bot).or_insert_with(Robot::new).target_lo =
-                Some(Target::new(&type_lo, tgt_lo)?);
+                Some(Target::new(type_lo, tgt_lo)?);
             robots.entry(bot).or_insert_with(Robot::new).target_hi =
-                Some(Target::new(&type_hi, tgt_hi)?);
+                Some(Target::new(type_hi, tgt_hi)?);
         }
     }
     Ok(robots)
@@ -79,10 +70,7 @@ impl Robot {
     }
 
     fn can_process(&self, bots: &Robots) -> bool {
-        if self.hands.len() != 2
-            || self.target_lo.is_none()
-            || self.target_hi.is_none()
-        {
+        if self.hands.len() != 2 || self.target_lo.is_none() || self.target_hi.is_none() {
             return false;
         }
         if let Some(Target::Bot(tgt)) = self.target_lo {
@@ -104,11 +92,7 @@ impl Robot {
             && self.hands.iter().max() == Some(&61)
     }
 
-    fn process(
-        &mut self,
-        bots: &mut Robots,
-        output: &mut Output,
-    ) -> Result<()> {
+    fn process(&mut self, bots: &mut Robots, output: &mut Output) -> AocResult<()> {
         self.target_lo
             .as_ref()
             .ok_or_else(|| aoc_error!("Failed to get low target"))?
@@ -138,7 +122,7 @@ impl Robot {
     }
 }
 
-pub fn task1(robots: &Robots) -> Result<usize> {
+pub fn task1(robots: &Robots) -> AocResult<usize> {
     let mut robots = robots.clone();
     let mut output = Output::new();
     let mut changed = true;
@@ -160,7 +144,7 @@ pub fn task1(robots: &Robots) -> Result<usize> {
     Err(aoc_error!("Not found"))
 }
 
-pub fn task2(robots: &Robots) -> Result<usize> {
+pub fn task2(robots: &Robots) -> AocResult<usize> {
     let mut robots = robots.clone();
     let mut output = Output::new();
     let mut changed = true;

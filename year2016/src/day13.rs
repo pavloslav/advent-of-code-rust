@@ -1,6 +1,6 @@
 use crate::*;
 
-pub fn parse_input(input: &str) -> Result<usize> {
+pub fn parse_input(input: &str) -> AocResult<usize> {
     Ok(input.trim().parse()?)
 }
 
@@ -35,11 +35,7 @@ impl LookUp {
         self.open[y][x]
     }
 
-    fn find_way_len(
-        &mut self,
-        from: (usize, usize),
-        to: (usize, usize),
-    ) -> Result<usize> {
+    fn find_way_len(&mut self, from: (usize, usize), to: (usize, usize)) -> AocResult<usize> {
         let mut to_visit = [from].into();
         for step in 0.. {
             let mut to_visit_next = HashSet::new();
@@ -67,11 +63,7 @@ impl LookUp {
         unreachable!()
     }
 
-    fn count_visited(
-        &mut self,
-        steps: usize,
-        start: (usize, usize),
-    ) -> Result<usize> {
+    fn count_visited(&mut self, steps: usize, start: (usize, usize)) -> AocResult<usize> {
         let mut to_visit = [start].into();
         let mut all_visited: HashSet<(usize, usize)> = HashSet::new();
         for _ in 0..=steps {
@@ -99,11 +91,11 @@ impl LookUp {
     }
 }
 
-pub fn task1(&input: &usize) -> Result<usize> {
+pub fn task1(&input: &usize) -> AocResult<usize> {
     LookUp::new(input).find_way_len((1, 1), (31, 39))
 }
 
-pub fn task2(&input: &usize) -> Result<usize> {
+pub fn task2(&input: &usize) -> AocResult<usize> {
     LookUp::new(input).count_visited(50, (1, 1))
 }
 

@@ -1,6 +1,7 @@
 use crate::*;
 
-#[derive(Clone)]
+#[derive(Clone, prse::Parse)]
+#[prse = "position=<{x}, {y}> velocity=<{vx}, {vy}>"]
 pub struct Point {
     x: i32,
     y: i32,
@@ -19,25 +20,15 @@ impl Point {
     }
 }
 
-pub fn parse_input(input: &str) -> Result<(usize, Vec<Point>)> {
+pub fn parse_input(input: &str) -> AocResult<(usize, Vec<Point>)> {
     let pts: Vec<Point> = input
         .lines()
-        .map(|line| {
-            let (x, y, vx, vy) = scan_fmt::scan_fmt!(
-                line,
-                "position=<{}, {}> velocity=<{}, {}>",
-                i32,
-                i32,
-                i32,
-                i32
-            )?;
-            Ok(Point { x, y, vx, vy })
-        })
-        .collect::<Result<_>>()?;
+        .map(|line| Ok(prse::try_parse!(line, "{}")?))
+        .collect::<AocResult<_>>()?;
     find_narrowest(&pts)
 }
 
-fn find_narrowest(input: &[Point]) -> Result<(usize, Vec<Point>)> {
+fn find_narrowest(input: &[Point]) -> AocResult<(usize, Vec<Point>)> {
     let mut points = input.to_vec();
     let mut min_dist = i32::MAX;
     for step in 0.. {
@@ -66,7 +57,7 @@ fn find_narrowest(input: &[Point]) -> Result<(usize, Vec<Point>)> {
     Err(aoc_error!("unreachable"))
 }
 
-pub fn task1((_, points): &(usize, Vec<Point>)) -> Result<String> {
+pub fn task1((_, points): &(usize, Vec<Point>)) -> AocResult<String> {
     let min_x = points
         .iter()
         .map(|pt| pt.x)
@@ -94,12 +85,11 @@ pub fn task1((_, points): &(usize, Vec<Point>)) -> Result<String> {
         result[line * width - 1] = b'\n';
     }
     for pt in points {
-        result[(pt.y - min_y) as usize * width + (pt.x - min_x) as usize] =
-            b'#';
+        result[(pt.y - min_y) as usize * width + (pt.x - min_x) as usize] = b'#';
     }
     Ok(String::from_utf8(result)?)
 }
 
-pub fn task2((steps, _): &(usize, Vec<Point>)) -> Result<usize> {
+pub fn task2((steps, _): &(usize, Vec<Point>)) -> AocResult<usize> {
     Ok(*steps)
 }
