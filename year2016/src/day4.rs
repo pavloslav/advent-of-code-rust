@@ -10,13 +10,17 @@ pub struct Room {
 }
 
 impl std::str::FromStr for Room {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(input: &str) -> AocResult<Room> {
-        let (name, id, check_sum) =
-            prse::try_parse!(input, "{[A-Za-z-]}{d}[{}]", String, usize, String)?;
+        let (name_id, check_sum): (&str, String) = prse::try_parse!(input, "{}[{}]")?;
+        let (name, id) = name_id.split_at(
+            name_id
+                .find(|c: char| c.is_ascii_digit())
+                .ok_or_else(|| aoc_error!("Can't find digits in room name"))?,
+        );
         Ok(Room {
-            name,
-            id,
+            name: name.to_string(),
+            id: id.parse()?,
             check_sum,
         })
     }

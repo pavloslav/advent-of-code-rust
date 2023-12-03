@@ -18,23 +18,23 @@ fn str_to_plant(input: &str) -> AocResult<Vec<bool>> {
 pub fn parse_input(input: &str) -> AocResult<(Vec<bool>, HashSet<Vec<bool>>)> {
     let mut input = input.lines();
     let initial = input.next().ok_or(aoc_error!("No initial state!"))?;
-    let initial = str_to_plant(&prse::try_parse!(initial, "initial state: {}", String)?)?;
+    let initial = str_to_plant(prse::try_parse!(initial, "initial state: {}")?)?;
 
     let rules: HashSet<Vec<bool>> = input
         .skip(1)
         .filter_map(|line| {
-            let (from, to) = match prse::try_parse!(line, "{} => {}", String, char) {
+            let (from, to): (&str, char) = match prse::try_parse!(line, "{} => {}") {
                 Ok(v) => v,
                 Err(e) => return Some(Err(e.into())),
             };
 
             match to.try_into() {
-                Ok(PLANT) => Some(str_to_plant(&from)),
+                Ok(PLANT) => Some(str_to_plant(from)),
                 Ok(EMPTY) => None,
                 _ => Some(Err(aoc_error!("Invalid plant state '{to}'"))),
             }
         })
-        .collect::<Result<_>>()?;
+        .collect::<AocResult<_>>()?;
     if rules.iter().any(|rule| rule.len() != 5) {
         Err(aoc_error!("All rules must be of length 5!"))
     } else if rules.iter().any(|rule| rule.as_slice() == [false; 5]) {

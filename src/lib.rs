@@ -18,7 +18,7 @@ pub fn exec() -> AocResult<()> {
         "2022" => year2022::task as Fun,
         "2023" => year2023::task as Fun,
         year => {
-            return Err(Error::WrongTask {
+            return Err(AocError::WrongTask {
                 year: year.to_owned(),
                 day: args.day.clone(),
             });

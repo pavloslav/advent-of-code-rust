@@ -39,15 +39,17 @@ pub struct Command {
 }
 
 impl std::str::FromStr for Command {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(input: &str) -> AocResult<Command> {
-        let (rot, len) = prse::try_parse!(input, "{1[LR]}{d}", char, i32)?;
-        let rot = match rot {
-            'L' => -1,
-            'R' => 1,
-            other => return Err(aoc_error!("wrong rotation '{other}'")),
+        let rot = match input.chars().next() {
+            Some('L') => -1,
+            Some('R') => 1,
+            _ => return Err(aoc_error!("wrong rotation")),
         };
-        Ok(Command { rot, len })
+        Ok(Command {
+            rot,
+            len: input[1..].parse()?,
+        })
     }
 }
 

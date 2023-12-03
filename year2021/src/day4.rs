@@ -23,7 +23,7 @@ pub struct BingoSettings {
 }
 
 impl std::str::FromStr for BingoSettings {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> AocResult<BingoSettings> {
         let mut s = s.lines();
         let calls = s
@@ -31,7 +31,7 @@ impl std::str::FromStr for BingoSettings {
             .unwrap()
             .split(',')
             .map(|s| Ok(s.parse()?))
-            .collect::<Result<_>>()?;
+            .collect::<AocResult<_>>()?;
         let mut boards = Vec::new();
         let mut idx = 0;
         for line in s {

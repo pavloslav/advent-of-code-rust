@@ -41,7 +41,7 @@ pub fn task2(input: &str) -> AocResult<String> {
             acc.chars()
                 .zip(image.chars())
                 .map(|(a, i)| if a == '-' { decode(i) } else { Ok(a) })
-                .collect::<Result<String>>()
+                .collect::<AocResult<String>>()
         })?;
     Ok((0..HEIGHT)
         .map(|i| result[WIDTH * i..WIDTH * (i + 1)].to_string() + "\n")

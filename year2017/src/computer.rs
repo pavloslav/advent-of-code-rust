@@ -13,15 +13,16 @@ pub enum Operand {
     Val(RegValue),
 }
 
-impl std::str::FromStr for Operand {
-    type Err = Error;
-    fn from_str(s: &str) -> AocResult<Operand> {
+impl<'a> prse::Parse<'a> for Operand {
+    fn from_str(s: &str) -> Result<Operand, prse::ParseError> {
         if let Ok(value) = s.parse() {
             Ok(Operand::Val(value))
         } else {
             match s.chars().next() {
                 Some(c) if s.len() == 1 => Ok(Operand::Reg(c)),
-                _ => Err(aoc_error!("Can't parse operand '{s}'")),
+                _ => Err(prse::ParseError::Other(format!(
+                    "Can't parse operand '{s}'"
+                ))),
             }
         }
     }
@@ -50,25 +51,25 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> AocResult<Instruction> {
-        if let Ok(val) = prse::try_parse!(s, "snd {}", Operand) {
+        if let Ok(val) = prse::try_parse!(s, "snd {}") {
             Ok(Instruction::Snd(val))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "set {} {}", RegName, Operand) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "set {} {}") {
             Ok(Instruction::Set(x, y))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "add {} {}", RegName, Operand) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "add {} {}") {
             Ok(Instruction::Add(x, y))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "mul {} {}", RegName, Operand) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "mul {} {}") {
             Ok(Instruction::Mul(x, y))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "mod {} {}", RegName, Operand) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "mod {} {}") {
             Ok(Instruction::Mod(x, y))
-        } else if let Ok(x) = prse::try_parse!(s, "rcv {}", RegName) {
+        } else if let Ok(x) = prse::try_parse!(s, "rcv {}") {
             Ok(Instruction::Rcv(x))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "jgz {} {}", Operand, Operand) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "jgz {} {}") {
             Ok(Instruction::Jgz(x, y))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "sub {} {}", RegName, Operand) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "sub {} {}") {
             Ok(Instruction::Sub(x, y))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "jnz {} {}", Operand, Operand) {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "jnz {} {}") {
             Ok(Instruction::Jnz(x, y))
         } else {
             Err(aoc_error!("incorrect input: '{s}'"))

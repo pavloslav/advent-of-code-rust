@@ -3,8 +3,7 @@ use crate::*;
 type Rect = ((i32, i32), (i32, i32));
 
 pub fn parse_input(input: &str) -> AocResult<Rect> {
-    let (x1, x2, y1, y2) =
-        prse::try_parse!(input, "target area: x={}..{}, y={}..{}", i32, i32, i32, i32)?;
+    let (x1, x2, y1, y2) = prse::try_parse!(input, "target area: x={}..{}, y={}..{}")?;
     Ok(((x1, y1), (x2, y2)))
 }
 

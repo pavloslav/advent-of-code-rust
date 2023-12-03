@@ -1,6 +1,7 @@
 use crate::*;
 
-#[derive(Clone)]
+#[derive(Clone, prse::Parse)]
+#[prse = "position=<{x}, {y}> velocity=<{vx}, {vy}>"]
 pub struct Point {
     x: i32,
     y: i32,
@@ -22,18 +23,8 @@ impl Point {
 pub fn parse_input(input: &str) -> AocResult<(usize, Vec<Point>)> {
     let pts: Vec<Point> = input
         .lines()
-        .map(|line| {
-            let (x, y, vx, vy) = prse::try_parse!(
-                line,
-                "position=<{}, {}> velocity=<{}, {}>",
-                i32,
-                i32,
-                i32,
-                i32
-            )?;
-            Ok(Point { x, y, vx, vy })
-        })
-        .collect::<Result<_>>()?;
+        .map(|line| Ok(prse::try_parse!(line, "{}")?))
+        .collect::<AocResult<_>>()?;
     find_narrowest(&pts)
 }
 

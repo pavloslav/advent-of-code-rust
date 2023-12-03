@@ -38,7 +38,7 @@ impl Tree {
     }
 }
 
-fn parse_tree(input: &mut impl std::iter::Iterator<Item = Result<i32>>) -> AocResult<Tree> {
+fn parse_tree(input: &mut impl std::iter::Iterator<Item = AocResult<i32>>) -> AocResult<Tree> {
     let mut tree = Tree::new();
     let child_count = input.next().ok_or(aoc_error!("Empty node!"))??;
     let metadata_size = input.next().ok_or(aoc_error!("No metadata size!"))??;

@@ -3,11 +3,11 @@ use crate::*;
 type Value = isize;
 type Register = usize;
 
-fn reg_num(input: &str) -> AocResult<Register> {
+fn reg_num(input: &str) -> Result<Register, prse::ParseError> {
     ["a", "b", "c", "d"]
         .iter()
         .position(|&r| r == input)
-        .ok_or_else(|| aoc_error!("'{input}' is not a register name"))
+        .ok_or_else(|| prse::ParseError::Other(format!("'{input}' is not a register name")))
 }
 
 #[derive(Clone, Copy)]
@@ -16,9 +16,8 @@ pub enum RegValue {
     Value(Value),
 }
 
-impl std::str::FromStr for RegValue {
-    type Err = Error;
-    fn from_str(s: &str) -> AocResult<RegValue> {
+impl<'a> prse::Parse<'a> for RegValue {
+    fn from_str(s: &str) -> Result<RegValue, prse::ParseError> {
         s.parse()
             .map(RegValue::Value)
             .or_else(|_| Ok(RegValue::Register(reg_num(s)?)))
@@ -45,19 +44,19 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> AocResult<Self> {
-        if let Ok((src, dst)) = prse::try_parse!(s, "cpy {} {}", RegValue, RegValue) {
+        if let Ok((src, dst)) = prse::try_parse!(s, "cpy {} {}") {
             Ok(Instruction::Cpy(src, dst))
-        } else if let Ok(tgt) = prse::try_parse!(s, "inc {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "inc {}") {
             Ok(Instruction::Inc(tgt))
-        } else if let Ok(tgt) = prse::try_parse!(s, "dec {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "dec {}") {
             Ok(Instruction::Dec(tgt))
-        } else if let Ok((src, tgt)) = prse::try_parse!(s, "jnz {} {}", RegValue, RegValue) {
+        } else if let Ok((src, tgt)) = prse::try_parse!(s, "jnz {} {}") {
             Ok(Instruction::Jnz(src, tgt))
-        } else if let Ok(tgt) = prse::try_parse!(s, "tgl {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "tgl {}") {
             Ok(Instruction::Tgl(tgt))
-        } else if let Ok(tgt) = prse::try_parse!(s, "out {}", RegValue) {
+        } else if let Ok(tgt) = prse::try_parse!(s, "out {}") {
             Ok(Instruction::Out(tgt))
         } else {
             Err(aoc_error!("Unknown instruction '{}'", s))

@@ -7,12 +7,12 @@ pub enum Command {
 }
 
 impl std::str::FromStr for Command {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(line: &str) -> AocResult<Command> {
-        let (instruction, value) = prse::try_parse!(line, "{} {}", String, i32)?;
+        let (instruction, value) = prse::try_parse!(line, "{} {}")?;
 
         use Command::*;
-        Ok(match instruction.as_str() {
+        Ok(match instruction {
             "forward" => Forward(value),
             "down" => Down(value),
             "up" => Up(value),

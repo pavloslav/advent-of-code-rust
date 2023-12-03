@@ -4,7 +4,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(u8, u8)>> {
     input
         .lines()
         .map(|s| {
-            let (a, b) = prse::try_parse!(s, "{/./} {/./}", char, char)?;
+            let (a, b): (char, char) = prse::try_parse!(s, "{} {}")?;
             Ok(((a as u8 - b'A'), (b as u8 - b'X')))
         })
         .collect()

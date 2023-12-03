@@ -5,10 +5,10 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
         .lines()
         .map(|line| {
             line.split(" -> ")
-                .map(|pair| Ok(prse::try_parse!(pair, "{},{}", i32, i32)?))
-                .collect::<Result<Vec<_>>>()
+                .map(|pair| Ok(prse::try_parse!(pair, "{},{}")?))
+                .collect::<AocResult<Vec<_>>>()
         })
-        .collect::<Result<Vec<_>>>()?;
+        .collect::<AocResult<Vec<_>>>()?;
     let (max_x, max_y) = input
         .iter()
         .flat_map(|line| line.iter())

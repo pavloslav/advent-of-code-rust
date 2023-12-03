@@ -10,13 +10,7 @@ pub struct Character {
 }
 
 pub fn parse_input(input: &str) -> AocResult<Character> {
-    let (hp, damage, armor) = prse::try_parse!(
-        input,
-        "Hit Points: {}\nDamage: {}\nArmor: {}",
-        i16,
-        i16,
-        i16
-    )?;
+    let (hp, damage, armor) = prse::try_parse!(input, "Hit Points: {}\nDamage: {}\nArmor: {}")?;
     Ok(Character { hp, damage, armor })
 }
 

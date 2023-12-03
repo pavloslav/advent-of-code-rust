@@ -1,6 +1,15 @@
 use crate::*;
 
-type Coord = [i64; 3];
+#[derive(prse::Parse, Clone, Copy, Hash, PartialEq, Eq)]
+#[prse = "<{:,:3}>"]
+struct Coord([i64; 3]);
+
+impl std::ops::Index<usize> for Coord {
+    type Output = i64;
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.0[index]
+    }
+}
 
 #[derive(Clone, Copy)]
 pub struct Particle([Coord; 3]);
@@ -13,20 +22,8 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Particle>> {
     input
         .lines()
         .map(|line| {
-            let (px, py, pz, vx, vy, vz, ax, ay, az) = prse::try_parse!(
-                line,
-                "p=<{},{},{}>, v=<{},{},{}>, a=<{},{},{}>,",
-                i64,
-                i64,
-                i64,
-                i64,
-                i64,
-                i64,
-                i64,
-                i64,
-                i64
-            )?;
-            Ok(Particle([[px, py, pz], [vx, vy, vz], [ax, ay, az]]))
+            let (p, v, a) = prse::try_parse!(line, "p={}, v={}, a={}")?;
+            Ok(Particle([p, v, a]))
         })
         .collect()
 }
@@ -35,7 +32,7 @@ pub fn task1(input: &[Particle]) -> AocResult<usize> {
     Ok(input
         .iter()
         .enumerate()
-        .map(|(i, p)| (i, p.0[ACC].iter().map(|i| i.abs()).sum::<i64>()))
+        .map(|(i, p)| (i, p.0[ACC].0.iter().map(|i| i.abs()).sum::<i64>()))
         .min_by_key(|&(_, s)| s)
         .ok_or_else(|| aoc_error!("Input is empty!"))?
         .0)
@@ -49,7 +46,7 @@ pub fn task2(input: &[Particle]) -> AocResult<usize> {
         let mut points = std::collections::HashMap::new();
         let mut collitions = std::collections::HashSet::new();
 
-        let mut extremums = [particles[0]; 2];
+        let mut extremums = [particles[0].0; 2];
 
         for (idx, pt) in particles.iter().enumerate() {
             if let Some(&present) = points.get(&pt.0[POS]) {
@@ -60,10 +57,8 @@ pub fn task2(input: &[Particle]) -> AocResult<usize> {
             }
             for coord in 0..3 {
                 for kind in POS..=ACC {
-                    extremums[0].0[kind][coord] =
-                        extremums[0].0[kind][coord].max(pt.0[kind][coord]);
-                    extremums[1].0[kind][coord] =
-                        extremums[1].0[kind][coord].min(pt.0[kind][coord]);
+                    extremums[0][kind].0[coord] = extremums[0][kind][coord].max(pt.0[kind][coord]);
+                    extremums[1][kind].0[coord] = extremums[1][kind][coord].min(pt.0[kind][coord]);
                 }
             }
         }
@@ -74,19 +69,18 @@ pub fn task2(input: &[Particle]) -> AocResult<usize> {
                 if collitions.contains(&idx) {
                     None
                 } else if (0..6).any(|coord| {
-                    (POS..=ACC).all(|kind| {
-                        extremums[coord % 2].0[kind][coord / 2] == pt.0[kind][coord / 2]
-                    })
+                    (POS..=ACC)
+                        .all(|kind| extremums[coord % 2][kind][coord / 2] == pt.0[kind][coord / 2])
                 }) {
                     survives += 1;
                     None
                 } else {
-                    let mut new_pt = Particle([[0; 3]; 3]);
+                    let mut new_pt = Particle([Coord([0; 3]); 3]);
                     for coord in 0..3 {
-                        new_pt.0[POS][coord] =
+                        new_pt.0[POS].0[coord] =
                             pt.0[POS][coord] + pt.0[VEL][coord] + pt.0[ACC][coord];
-                        new_pt.0[VEL][coord] = pt.0[VEL][coord] + pt.0[ACC][coord];
-                        new_pt.0[ACC][coord] = pt.0[ACC][coord];
+                        new_pt.0[VEL].0[coord] = pt.0[VEL][coord] + pt.0[ACC][coord];
+                        new_pt.0[ACC].0[coord] = pt.0[ACC][coord];
                     }
                     Some(new_pt)
                 }

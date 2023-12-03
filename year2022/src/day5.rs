@@ -20,9 +20,7 @@ pub fn parse_input(input: &str) -> AocResult<Cargo> {
                     }
                 }
             }
-        } else if let Ok((number, from, to)) =
-            prse::try_parse!(line, "move {} from {} to {}", usize, usize, usize)
-        {
+        } else if let Ok((number, from, to)) = prse::try_parse!(line, "move {} from {} to {}") {
             plan.push((number, from, to));
         }
     }

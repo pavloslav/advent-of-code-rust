@@ -17,26 +17,23 @@ pub enum Command {
 }
 
 impl std::str::FromStr for Command {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        if let Ok((x, y)) = prse::try_parse!(s, "swap position {} with position {}", usize, usize) {
+        if let Ok((x, y)) = prse::try_parse!(s, "swap position {} with position {}") {
             Ok(Command::SwapPosition(x, y))
-        } else if let Ok((x, y)) = prse::try_parse!(s, "swap letter {} with letter {}", char, char)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "swap letter {} with letter {}") {
+            let (x, y): (char, char) = (x, y); //prse::try_parse hint
             Ok(Command::SwapLetter(x as u8, y as u8))
-        } else if let Ok(r) = prse::try_parse!(s, "rotate left {} steps", usize) {
+        } else if let Ok(r) = prse::try_parse!(s, "rotate left {} steps") {
             Ok(Command::RotateLeft(r))
-        } else if let Ok(r) = prse::try_parse!(s, "rotate right {} steps", usize) {
+        } else if let Ok(r) = prse::try_parse!(s, "rotate right {} steps") {
             Ok(Command::RotateRight(r))
-        } else if let Ok(l) = prse::try_parse!(s, "rotate based on position of letter {}", char) {
+        } else if let Ok(l) = prse::try_parse!(s, "rotate based on position of letter {}") {
+            let l: char = l; //prse::try_parse hint
             Ok(Command::RotateBased(l as u8))
-        } else if let Ok((x, y)) =
-            prse::try_parse!(s, "reverse positions {} through {}", usize, usize)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "reverse positions {} through {}") {
             Ok(Command::Reverse(x, y))
-        } else if let Ok((x, y)) =
-            prse::try_parse!(s, "move position {} to position {}", usize, usize)
-        {
+        } else if let Ok((x, y)) = prse::try_parse!(s, "move position {} to position {}") {
             Ok(Command::Move(x, y))
         } else {
             Err(aoc_error!("Can't parse '{s}' into command"))

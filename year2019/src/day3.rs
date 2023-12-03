@@ -6,7 +6,7 @@ pub struct Step {
 }
 
 impl std::str::FromStr for Step {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(input: &str) -> AocResult<Step> {
         Ok(Step {
             direction: match input.chars().next() {
@@ -26,7 +26,7 @@ pub fn parse_input(input: &str) -> AocResult<[Vec<Step>; 2]> {
     input
         .lines()
         .map(|line| line.split(',').map(|step| step.parse()).collect())
-        .collect::<Result<Vec<_>>>()?
+        .collect::<AocResult<Vec<_>>>()?
         .try_into()
         .map_err(|_| aoc_error!("Wrong size"))
 }

@@ -28,8 +28,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(Assignment, Assignment)>> {
     input
         .lines()
         .map(|line| {
-            let (l1, r1, l2, r2) =
-                prse::try_parse!(line, "{}-{},{}-{}", usize, usize, usize, usize)?;
+            let (l1, r1, l2, r2) = prse::try_parse!(line, "{}-{},{}-{}")?;
             Ok((Assignment::new(l1, r1), Assignment::new(l2, r2)))
         })
         .collect()

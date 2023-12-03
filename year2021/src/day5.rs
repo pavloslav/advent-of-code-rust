@@ -17,7 +17,7 @@ pub fn parse_input(lines: &str) -> AocResult<Vec<Line>> {
     lines
         .lines()
         .map(|line| {
-            let (x1, y1, x2, y2) = prse::try_parse!(line, "{},{} -> {},{}", i32, i32, i32, i32)?;
+            let (x1, y1, x2, y2) = prse::try_parse!(line, "{},{} -> {},{}")?;
             Ok(Line {
                 pt1: Point { x: x1, y: y1 },
                 pt2: Point { x: x2, y: y2 },

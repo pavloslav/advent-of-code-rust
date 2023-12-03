@@ -11,7 +11,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
                         .ok_or_else(|| aoc_error!("Not a digit: '{digit}'"))?
                         as u8)
                 })
-                .collect::<Result<_>>()
+                .collect::<AocResult<_>>()
         })
         .collect()
 }

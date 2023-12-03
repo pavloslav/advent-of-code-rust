@@ -5,7 +5,7 @@ type Firewall = Vec<(i32, i32)>;
 pub fn parse_input(input: &str) -> AocResult<Firewall> {
     input
         .lines()
-        .map(|line| Ok(prse::try_parse!(line, "{}: {}", i32, i32)?))
+        .map(|line| Ok(prse::try_parse!(line, "{}: {}")?))
         .collect()
 }
 

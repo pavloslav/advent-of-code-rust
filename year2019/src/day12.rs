@@ -36,7 +36,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<[isize; 3]>> {
     input
         .lines()
         .map(|line| {
-            let (x, y, z) = prse::try_parse!(line, "<x={}, y={}, z={}>", isize, isize, isize)?;
+            let (x, y, z) = prse::try_parse!(line, "<x={}, y={}, z={}>")?;
             Ok([x, y, z])
         })
         .collect()

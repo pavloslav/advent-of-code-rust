@@ -8,16 +8,16 @@ pub enum Dance {
 
 use core::str::FromStr;
 impl FromStr for Dance {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> AocResult<Dance> {
         Ok(match s.chars().next() {
             Some('s') => Dance::Spin(s[1..].parse()?),
             Some('x') => {
-                let (first, second) = prse::try_parse!(&s[1..], "{}/{}", usize, usize)?;
+                let (first, second) = prse::try_parse!(&s[1..], "{}/{}")?;
                 Dance::SwapPlace(first, second)
             }
             Some('p') => {
-                let (first, second) = prse::try_parse!(&s[1..], "{}/{}", char, char)?;
+                let (first, second) = prse::try_parse!(&s[1..], "{}/{}")?;
                 Dance::SwapDancer(first, second)
             }
             _ => return Err(aoc_error!("Unknown command {s}")),

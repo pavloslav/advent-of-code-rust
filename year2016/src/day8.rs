@@ -21,13 +21,12 @@ fn build_lcd(rows: usize, columns: usize, commands: &str) -> AocResult<Vec<Vec<c
         lcd.push(std::iter::repeat('.').take(rows).collect::<Vec<_>>());
     }
     for command in commands.lines() {
-        if let Ok((x, y)) = prse::try_parse!(command, "rect {}x{}", usize, usize) {
+        if let Ok((x, y)) = prse::try_parse!(command, "rect {}x{}") {
             for line in &mut lcd[..x] {
                 line[..y].fill('#');
             }
-        } else if let Ok((y, shift)) =
-            prse::try_parse!(command, "rotate row y={} by {}", usize, usize)
-        {
+        } else if let Ok((y, shift)) = prse::try_parse!(command, "rotate row y={} by {}") {
+            let y: usize = y; //prse::try_parse! hint
             for _ in 0..shift {
                 let temp = lcd[columns - 1][y];
                 for j in 1..columns {
@@ -36,9 +35,8 @@ fn build_lcd(rows: usize, columns: usize, commands: &str) -> AocResult<Vec<Vec<c
                 }
                 lcd[0][y] = temp;
             }
-        } else if let Ok((x, shift)) =
-            prse::try_parse!(command, "rotate column x={} by {}", usize, usize)
-        {
+        } else if let Ok((x, shift)) = prse::try_parse!(command, "rotate column x={} by {}") {
+            let x: usize = x; //prse::try_parse! hint
             for _ in 0..shift {
                 let temp = lcd[x][rows - 1];
                 for j in 1..rows {

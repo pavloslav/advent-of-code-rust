@@ -9,7 +9,7 @@ pub enum Operation {
 use std::str::FromStr;
 
 impl FromStr for Operation {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> AocResult<Operation> {
         match s {
             "inc" => Ok(Operation::Inc),
@@ -30,7 +30,7 @@ pub enum Comparison {
 }
 
 impl FromStr for Comparison {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(item: &str) -> AocResult<Comparison> {
         use Comparison::*;
         match item {
@@ -72,16 +72,14 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
     input
         .lines()
         .map(|line| {
-            let (target_reg, operation, operand, check_reg, comparison, compare) = prse::try_parse!(
-                line,
-                "{} {} {} if {} {} {}",
+            let (target_reg, operation, operand, check_reg, comparison, compare): (
                 String,
-                String,
+                &str,
                 i32,
                 String,
-                String,
-                i32
-            )?;
+                &str,
+                i32,
+            ) = prse::try_parse!(line, "{} {} {} if {} {} {}")?;
             Ok(Instruction {
                 target_reg,
                 operation: operation.parse()?,

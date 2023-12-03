@@ -13,15 +13,8 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Node>> {
         .lines()
         .skip(2)
         .map(|line| {
-            let (x, y, size, used, avail) = prse::try_parse!(
-                line,
-                "/dev/grid/node-x{d}-y{d} {d}T {d}T {d}T {*d}%",
-                usize,
-                usize,
-                i32,
-                i32,
-                i32
-            )?;
+            let (x, y, size, used, avail, _): (usize, usize, i32, i32, i32, i32) =
+                prse::try_parse!(line, "/dev/grid/node-x{}-y{} {}T {}T {}T {}%")?;
             if used + avail != size {
                 Err(aoc_error!(
                     "Used={used}, avail={avail}, together {}, but size is {size}!",
@@ -85,6 +78,6 @@ pub fn task2(nodes: &[Node]) -> AocResult<String> {
     Ok(map
         .iter()
         .map(|row| std::str::from_utf8(row).map_err(|_| aoc_error!("Impossible, it's ASCII!")))
-        .collect::<Result<Vec<_>>>()?
+        .collect::<AocResult<Vec<_>>>()?
         .join("\n"))
 }

@@ -21,7 +21,7 @@ pub fn task1(code: &[isize]) -> AocResult<isize> {
             }
             Ok(data)
         })
-        .collect::<Result<Vec<_>>>()?
+        .collect::<AocResult<Vec<_>>>()?
         .into_iter()
         .max()
         .ok_or_else(|| aoc_error!("Should not be empty!"))
@@ -55,7 +55,7 @@ pub fn task2(code: &[isize]) -> AocResult<isize> {
             }
             Ok(last_data)
         })
-        .collect::<Result<Vec<_>>>()?
+        .collect::<AocResult<Vec<_>>>()?
         .iter()
         .max()
         .ok_or_else(|| aoc_error!("Should not be empty!"))

@@ -45,7 +45,7 @@ pub fn parse_input(input: &str) -> AocResult<Data> {
         numbers: input
             .lines()
             .map(|x| Ok(x.parse()?))
-            .collect::<Result<_>>()?,
+            .collect::<AocResult<_>>()?,
     })
 }
 

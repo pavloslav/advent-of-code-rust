@@ -9,11 +9,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<SensorData>> {
         .map(|line| {
             let (x, y, bx, by) = prse::try_parse!(
                 line,
-                "Sensor at x={}, y={}: closest beacon is at x={}, y={}",
-                i32,
-                i32,
-                i32,
-                i32
+                "Sensor at x={}, y={}: closest beacon is at x={}, y={}"
             )?;
             Ok(((x, y), (bx, by)))
         })

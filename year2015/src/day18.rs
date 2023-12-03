@@ -96,9 +96,9 @@ pub fn parse_input(input: &str) -> AocResult<Life> {
                         '#' => Ok(Cell::Enabled),
                         _ => Err(aoc_error!("Unexpected character: {ch}")),
                     })
-                    .collect::<Result<Vec<Cell>>>()
+                    .collect::<AocResult<Vec<Cell>>>()
             })
-            .collect::<Result<_>>()?,
+            .collect::<AocResult<_>>()?,
     })
 }
 

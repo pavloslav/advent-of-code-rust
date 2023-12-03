@@ -3,7 +3,10 @@ use crate::*;
 pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
     input
         .lines()
-        .map(|s| Ok(prse::try_parse!(s, "Generator {*} starts with {d}", usize)?))
+        .map(|s| {
+            let (_, n): (usize, usize) = prse::try_parse!(s, "Generator {} starts with {}")?;
+            Ok(n)
+        })
         .collect()
 }
 

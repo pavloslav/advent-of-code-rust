@@ -6,7 +6,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Weight>> {
     input
         .lines()
         .map(|s| Ok(s.parse()?))
-        .collect::<Result<Vec<_>>>()
+        .collect::<AocResult<Vec<_>>>()
 }
 
 fn weight(presents: &[&Weight]) -> Weight {

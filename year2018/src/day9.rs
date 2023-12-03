@@ -3,9 +3,7 @@ use crate::*;
 pub fn parse_input(input: &str) -> AocResult<(usize, usize)> {
     Ok(prse::try_parse!(
         input,
-        "{} players; last marble is worth {} points",
-        usize,
-        usize
+        "{} players; last marble is worth {} points"
     )?)
 }
 

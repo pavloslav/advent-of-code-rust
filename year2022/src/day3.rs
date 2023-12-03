@@ -28,7 +28,7 @@ pub fn task1(input: &[Vec<u32>]) -> AocResult<u32> {
                 .find(|&item| left.contains(&item))
                 .ok_or_else(|| aoc_error!("Empty badges!"))
         })
-        .try_fold(0, |acc, x: Result<_>| Ok(acc + x?))
+        .try_fold(0, |acc, x: AocResult<_>| Ok(acc + x?))
 }
 
 pub fn task2(input: &[Vec<u32>]) -> AocResult<u32> {

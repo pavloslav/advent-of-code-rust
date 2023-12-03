@@ -9,8 +9,8 @@ pub fn parse_input(input: &str) -> AocResult<(Rules, Molecule)> {
     let rules = lines
         .by_ref()
         .take_while(|line| !line.is_empty())
-        .map(|line| Ok(prse::try_parse!(line, "{} => {}", String, String)?))
-        .collect::<Result<Rules>>()?;
+        .map(|line| Ok(prse::try_parse!(line, "{} => {}")?))
+        .collect::<AocResult<Rules>>()?;
     let molecule = lines
         .next()
         .ok_or(aoc_error!("No molecula for Rudolph"))?

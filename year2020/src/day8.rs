@@ -16,10 +16,10 @@ struct Computer {
 }
 
 impl std::str::FromStr for Operation {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(line: &str) -> AocResult<Operation> {
-        let (operation, value) = prse::try_parse!(line, "{} {}", String, i64)?;
-        match operation.as_str() {
+        let (operation, value) = prse::try_parse!(line, "{} {}")?;
+        match operation {
             "nop" => Ok(Operation::Nop(value)),
             "acc" => Ok(Operation::Acc(value)),
             "jmp" => Ok(Operation::Jmp(value)),

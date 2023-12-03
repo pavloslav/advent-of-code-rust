@@ -3,7 +3,7 @@ use crate::*;
 pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize, usize)>> {
     input
         .lines()
-        .map(|line| Ok(prse::try_parse!(line, "{},{},{}", usize, usize, usize)?))
+        .map(|line| Ok(prse::try_parse!(line, "{},{},{}")?))
         .collect()
 }
 

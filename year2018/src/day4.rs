@@ -21,21 +21,13 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Record>> {
     let mut log: Vec<Record> = input
         .lines()
         .map(|line| {
-            let (month, day, hour, minute, event) = prse::try_parse!(
-                line,
-                "[1518-{d}-{d} {d}:{d}] {/.*/}{e}",
-                usize,
-                usize,
-                usize,
-                usize,
-                String
-            )
-            .map_err(|_| aoc_error!("Can't parse '{line}'"))?;
-            let event = match event.as_str() {
+            let (month, day, hour, minute, event): (usize, usize, usize, usize, &str) =
+                prse::try_parse!(line, "[1518-{}-{} {}:{}] {}")?;
+            let event = match event {
                 "falls asleep" => Event::Sleep,
                 "wakes up" => Event::Awake,
                 other => {
-                    let guard = prse::try_parse!(other, "Guard #{} begins shift", usize)?;
+                    let guard = prse::try_parse!(other, "Guard #{} begins shift")?;
                     Event::BeginsShift(guard)
                 }
             };
@@ -47,7 +39,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Record>> {
                 event,
             })
         })
-        .collect::<Result<_>>()?;
+        .collect::<AocResult<_>>()?;
     log.sort_by_key(minutes);
     Ok(log)
 }

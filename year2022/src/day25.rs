@@ -12,7 +12,7 @@ fn from_snafu(input: &str) -> AocResult<i64> {
                     .ok_or_else(|| aoc_error!("Wrong digit: {c}"))? as i64,
             })
         })
-        .try_fold(0, |acc, d: Result<i64>| Ok(acc * 5 + d?))
+        .try_fold(0, |acc, d: AocResult<i64>| Ok(acc * 5 + d?))
 }
 
 fn to_snafu(input: i64) -> AocResult<String> {

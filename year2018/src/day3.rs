@@ -14,8 +14,8 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Rect>> {
     input
         .lines()
         .map(|line| {
-            let (number, left, top, width, height) =
-                prse::try_parse!(line, "#{} @ {},{}: {}x{}", i32, i32, i32, i32, i32)?;
+            let (number, left, top, width, height): (i32, i32, i32, i32, i32) =
+                prse::try_parse!(line, "#{} @ {},{}: {}x{}")?;
             Ok(Rect {
                 number,
                 left,

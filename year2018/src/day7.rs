@@ -7,9 +7,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(char, char)>> {
         .map(|line| {
             Ok(prse::try_parse!(
                 line,
-                "Step {} must be finished before step {} can begin.",
-                char,
-                char
+                "Step {} must be finished before step {} can begin."
             )?)
         })
         .collect()

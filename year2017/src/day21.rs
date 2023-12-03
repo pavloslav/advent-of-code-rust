@@ -5,7 +5,7 @@ type RuleBook = std::collections::HashMap<String, String>;
 pub fn parse_input(input: &str) -> AocResult<Vec<RuleBook>> {
     let mut rule_books = vec![RuleBook::new(); 2];
     for line in input.lines() {
-        let (left, right) = prse::try_parse!(line, "{} => {}", String, String)?;
+        let (left, right): (&str, &str) = prse::try_parse!(line, "{} => {}")?;
         let pat = left.replace('/', "").as_bytes().to_vec();
         let ench = right.replace('/', "");
         let size = (pat.len() as f64).sqrt().round() as i32; //2 or 3

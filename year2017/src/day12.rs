@@ -6,13 +6,12 @@ pub fn parse_input(input: &str) -> AocResult<Connections> {
     input
         .lines()
         .map(|line| {
-            let (program, connections) = prse::try_parse!(line, "{} <-> {/.*/}{e}", usize, String)?;
+            let (program, connections) = prse::try_parse!(line, "{} <-> {:, :0}")?;
             Ok((
                 program,
                 connections
-                    .split(", ")
-                    .map(|s| Ok(s.parse()?))
-                    .collect::<Result<_>>()?,
+                    .map(|s: Result<&str, _>| Ok(s?.parse()?))
+                    .collect::<AocResult<_>>()?,
             ))
         })
         .collect()

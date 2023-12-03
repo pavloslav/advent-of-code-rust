@@ -4,7 +4,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
     let mut adapters: Vec<usize> = input
         .lines()
         .map(|l| Ok(l.parse()?))
-        .collect::<Result<Vec<usize>>>()?;
+        .collect::<AocResult<Vec<usize>>>()?;
     let max = *adapters.iter().max().unwrap_or(&0);
     adapters.push(0);
     adapters.push(max + 3);
@@ -31,7 +31,6 @@ fn count_arranjements(adapters: &[usize]) -> usize {
     for i in 1..adapters.len() {
         for back in 1..=3 {
             if back <= i && adapters[i] - adapters[i - back] <= 3 {
-                //println!("from {} to {} there are {} ways", adapters[i-back], adapters[i], paths[i-back]);
                 paths[i] += paths[i - back];
             }
         }

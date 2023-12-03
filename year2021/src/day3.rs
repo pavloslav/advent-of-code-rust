@@ -22,7 +22,7 @@ pub fn parse_input(input: &str) -> AocResult<Data> {
             }
             Ok(usize::from_str_radix(line, 2)?)
         })
-        .collect::<Result<_>>()?;
+        .collect::<AocResult<_>>()?;
     let size = size.ok_or_else(|| aoc_error!("No line length!"))?;
     Ok(Data { numbers, size })
 }

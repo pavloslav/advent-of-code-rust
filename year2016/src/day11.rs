@@ -63,12 +63,7 @@ pub fn parse_input(input: &str) -> AocResult<(usize, Position)> {
     let mut position = Position { state: 0 };
     let mut name_map = HashMap::new();
     for line in input.lines() {
-        let (floor, list) = prse::try_parse!(
-            line,
-            "The {/first|second|third|fourth/} floor contains {/[^.]*/}.{e}",
-            String,
-            String
-        )?;
+        let (floor, list): (String, &str) = prse::try_parse!(line, "The {} floor contains {}.")?;
         if list == "nothing relevant" {
             continue;
         }
@@ -81,13 +76,14 @@ pub fn parse_input(input: &str) -> AocResult<(usize, Position)> {
         };
         static SPLIT_REGEX: Lazy<regex::Regex> =
             Lazy::new(|| regex::Regex::new(r"(, and )|(, )|( and )").unwrap());
-        for item in SPLIT_REGEX.split(&list) {
+        for item in SPLIT_REGEX.split(list) {
             let name_map_len = name_map.len();
-            if let Ok(generator) = prse::try_parse!(item, "a {} generator", String) {
+            if let Ok(generator) = prse::try_parse!(item, "a {} generator") {
+                let generator: String = generator;
                 let idx = *name_map.entry(generator).or_insert(name_map_len);
                 position.set_item(2 * idx + 1, floor);
             } else {
-                let microchip = prse::try_parse!(item, "a {}-compatible microchip", String)
+                let microchip = prse::try_parse!(item, "a {}-compatible microchip")
                     .map_err(|_| aoc_error!("List '{list}', item '{item}' fails"))?;
                 let idx = *name_map.entry(microchip).or_insert(name_map_len);
                 position.set_item(2 * idx, floor);

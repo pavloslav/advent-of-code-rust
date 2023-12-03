@@ -2,8 +2,8 @@ use crate::*;
 
 pub fn parse_input(input: &str) -> AocResult<(usize, usize)> {
     Ok(prse::try_parse!(input,
-        "To continue, please consult the code grid in the manual.  Enter the code at row {}, column {}.", 
-        usize, usize)?)
+        "To continue, please consult the code grid in the manual.  Enter the code at row {}, column {}."
+        )?)
 }
 
 const START: usize = 20151125;

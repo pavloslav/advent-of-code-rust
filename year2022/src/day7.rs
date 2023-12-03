@@ -94,7 +94,7 @@ pub fn parse_input(input: &str) -> AocResult<Directory> {
             }
         } else if instruction != "$ ls" {
             //executing ls
-            let (typ, name) = prse::try_parse!(instruction, "{} {}", String, String)?;
+            let (typ, name): (&str, String) = prse::try_parse!(instruction, "{} {}")?;
             path.push(name);
             if typ == "dir" {
                 root.add_dir(&path);

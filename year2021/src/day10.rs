@@ -42,7 +42,7 @@ pub fn task1(data: &str) -> AocResult<usize> {
                 _ => 0,
             })
         })
-        .try_fold(0, |acc, x: Result<_>| Ok(acc + x?))
+        .try_fold(0, |acc, x: AocResult<_>| Ok(acc + x?))
 }
 
 pub fn task2(data: &str) -> AocResult<usize> {

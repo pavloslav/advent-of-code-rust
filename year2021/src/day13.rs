@@ -36,9 +36,9 @@ pub fn parse_input(input: &str) -> AocResult<InvisiblePaper> {
         if line.is_empty() {
             dots_done = true;
         } else if !dots_done {
-            data.dots.insert(prse::try_parse!(line, "{},{}", i32, i32)?);
+            data.dots.insert(prse::try_parse!(line, "{},{}")?);
         } else {
-            let (coord, value) = prse::try_parse!(line, "fold along {1[xy]}={}", char, i32)?;
+            let (coord, value) = prse::try_parse!(line, "fold along {}={}")?;
             let fold = match coord {
                 'x' => Fold::X(value),
                 'y' => Fold::Y(value),

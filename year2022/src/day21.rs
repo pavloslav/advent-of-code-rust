@@ -88,11 +88,9 @@ pub fn parse_input(input: &str) -> AocResult<HashMap<String, Monkey>> {
     input
         .lines()
         .map(|line| {
-            if let Ok((name, yell)) = prse::try_parse!(line, "{}: {} {} {}", String, Yell) {
+            if let Ok((name, yell)) = prse::try_parse!(line, "{}: {}") {
                 Ok((name, Monkey::Value(yell)))
-            } else if let Ok((name, left, op, right)) =
-                prse::try_parse!(line, "{}: {} {} {}", String, String, char, String)
-            {
+            } else if let Ok((name, left, op, right)) = prse::try_parse!(line, "{}: {} {} {}") {
                 let op = match op {
                     '+' => Operation::Add,
                     '-' => Operation::Sub,

@@ -24,20 +24,23 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        if let Ok(reg) = prse::try_parse!(s, "hlf {}", String) {
-            Ok(Instruction::Hlf(reg_num(&reg)?))
-        } else if let Ok(reg) = prse::try_parse!(s, "tpl {}", String) {
-            Ok(Instruction::Tpl(reg_num(&reg)?))
-        } else if let Ok(reg) = prse::try_parse!(s, "inc {}", String) {
-            Ok(Instruction::Inc(reg_num(&reg)?))
-        } else if let Ok(value) = prse::try_parse!(s, "jmp {}", isize) {
-            Ok(Instruction::Jmp(value))
-        } else if let Ok((reg, value)) = prse::try_parse!(s, "jie {}, {}", String, isize) {
-            Ok(Instruction::Jie(reg_num(&reg)?, value))
-        } else if let Ok((reg, value)) = prse::try_parse!(s, "jio {}, {}", String, isize) {
-            Ok(Instruction::Jio(reg_num(&reg)?, value))
+        if let Ok((op, reg, value)) = prse::try_parse!(s, "{} {}, {}") {
+            match op {
+                "jie" => Ok(Instruction::Jie(reg_num(reg)?, value)),
+                "jio" => Ok(Instruction::Jio(reg_num(reg)?, value)),
+                other => Err(aoc_error!("Unknown 2-operand instruction '{other}'")),
+            }
+        } else if let Ok((op, reg)) = prse::try_parse!(s, "{} {}") {
+            let reg: &str = reg; //hint for prse::try_parse
+            match op {
+                "hlf" => Ok(Instruction::Hlf(reg_num(reg)?)),
+                "tpl" => Ok(Instruction::Tpl(reg_num(reg)?)),
+                "inc" => Ok(Instruction::Inc(reg_num(reg)?)),
+                "jmp" => Ok(Instruction::Jmp(reg.parse()?)),
+                other => Err(aoc_error!("Unknown 1-operand instruction '{other}'")),
+            }
         } else {
             Err(aoc_error!("Incorrect instruction '{s}'"))
         }

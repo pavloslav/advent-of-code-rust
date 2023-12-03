@@ -28,7 +28,7 @@ pub fn parse_input(input: &str) -> AocResult<Task> {
             "L" => Ok(Order::Turn(-1)),
             num => Ok(Order::Walk(num.parse()?)),
         })
-        .collect::<Result<_>>()?;
+        .collect::<AocResult<_>>()?;
     Ok(Task { map, path })
 }
 

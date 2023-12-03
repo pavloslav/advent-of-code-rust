@@ -4,12 +4,11 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize)>> {
     input
         .lines()
         .map(|line| {
-            Ok(prse::try_parse!(
+            let (_, time, pos): (usize, usize, usize) = prse::try_parse!(
                 line,
-                "Disc #{*d} has {d} positions; at time=0, it is at position {d}.",
-                usize,
-                usize
-            )?)
+                "Disc #{} has {} positions; at time=0, it is at position {}."
+            )?;
+            Ok((time, pos))
         })
         .collect()
 }

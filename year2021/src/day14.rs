@@ -26,9 +26,11 @@ impl PolymerData {
         };
 
         for line in lines.skip(1) {
-            let (left1, left2, right) =
-                prse::try_parse!(line, "{/./}{/./} -> {/./}", char, char, char)?;
-            polymer_data.rules.insert((left1, left2), right);
+            let (left, right): (&str, char) = prse::try_parse!(line, "{} -> {}")?;
+            polymer_data.rules.insert(
+                (left.chars().next().unwrap(), left.chars().nth(1).unwrap()),
+                right,
+            );
         }
         Ok(polymer_data)
     }

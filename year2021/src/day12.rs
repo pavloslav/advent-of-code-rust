@@ -26,14 +26,14 @@ type CaveMap = std::collections::HashMap<CaveName, CaveNode>;
 pub fn parse_input(input: &str) -> AocResult<CaveMap> {
     let mut map = CaveMap::new();
     for line in input.lines() {
-        let (left, right) = prse::try_parse!(line, "{}-{}", String, String)?;
+        let (left, right): (&str, &str) = prse::try_parse!(line, "{}-{}")?;
 
-        map.entry(left.clone())
-            .and_modify(|node| node.ways_out.push(right.clone()))
-            .or_insert_with(|| CaveNode::new(&left, &right));
-        map.entry(right.clone())
-            .and_modify(|node| node.ways_out.push(left.clone()))
-            .or_insert_with(|| CaveNode::new(&right, &left));
+        map.entry(left.to_owned())
+            .and_modify(|node| node.ways_out.push(right.to_owned()))
+            .or_insert_with(|| CaveNode::new(left, right));
+        map.entry(right.to_owned())
+            .and_modify(|node| node.ways_out.push(left.to_owned()))
+            .or_insert_with(|| CaveNode::new(right, left));
     }
     Ok(map)
 }

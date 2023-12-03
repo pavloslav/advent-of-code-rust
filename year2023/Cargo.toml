@@ -7,5 +7,4 @@ edition = "2021"
 
 [dependencies]
 common = {path = "../common"}
-#scan_fmt = "*"
-prse = "*"
+prse = "1.0"

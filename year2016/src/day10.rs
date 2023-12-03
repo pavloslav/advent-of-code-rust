@@ -42,27 +42,19 @@ impl Target {
 pub fn parse_input(input: &str) -> AocResult<Robots> {
     let mut robots = HashMap::new();
     for line in input.lines() {
-        if let Ok((value, bot)) = prse::try_parse!(line, "value {d} goes to bot {d}", usize, usize)
-        {
+        if let Ok((value, bot)) = prse::try_parse!(line, "value {} goes to bot {}") {
             robots
                 .entry(bot)
                 .or_insert_with(Robot::new)
                 .hands
                 .push(value);
         } else {
-            let (bot, type_lo, tgt_lo, type_hi, tgt_hi) = prse::try_parse!(
-                line,
-                "bot {} gives low to {} {} and high to {} {}",
-                usize,
-                String,
-                usize,
-                String,
-                usize
-            )?;
+            let (bot, type_lo, tgt_lo, type_hi, tgt_hi) =
+                prse::try_parse!(line, "bot {} gives low to {} {} and high to {} {}")?;
             robots.entry(bot).or_insert_with(Robot::new).target_lo =
-                Some(Target::new(&type_lo, tgt_lo)?);
+                Some(Target::new(type_lo, tgt_lo)?);
             robots.entry(bot).or_insert_with(Robot::new).target_hi =
-                Some(Target::new(&type_hi, tgt_hi)?);
+                Some(Target::new(type_hi, tgt_hi)?);
         }
     }
     Ok(robots)

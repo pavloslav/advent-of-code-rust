@@ -2,11 +2,8 @@ use crate::*;
 
 pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize)>> {
     let mut intervals: Vec<(usize, usize)> = Vec::new();
-    for scan in input
-        .lines()
-        .map(|line| prse::try_parse!(line, "{}-{}", usize, usize))
-    {
-        let (left, right) = scan?;
+    for scan in input.lines().map(|line| prse::try_parse!(line, "{}-{}")) {
+        let (left, right): (usize, usize) = scan?;
         if right < left {
             unreachable!();
         }

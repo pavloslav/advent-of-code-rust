@@ -6,7 +6,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Order>> {
     input
         .lines()
         .map(|l| {
-            let (dir, value) = prse::try_parse!(l, "{} {}", char, i32)?;
+            let (dir, value) = prse::try_parse!(l, "{} {}")?;
             let dir = match dir {
                 'L' => (-1, 0),
                 'R' => (1, 0),

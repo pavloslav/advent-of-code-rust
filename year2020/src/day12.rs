@@ -23,21 +23,21 @@ pub struct Order {
 }
 
 impl std::str::FromStr for Order {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> AocResult<Order> {
-        let (typ, par) = prse::try_parse!(s, "{1[EWSNLRF]}{}", char, i32)?;
+        let (typ, par) = s.split_at(1);
         Ok(Order {
             com: match typ {
-                'E' => OrderType::East,
-                'W' => OrderType::West,
-                'S' => OrderType::South,
-                'N' => OrderType::North,
-                'L' => OrderType::Left,
-                'R' => OrderType::Right,
-                'F' => OrderType::Forward,
+                "E" => OrderType::East,
+                "W" => OrderType::West,
+                "S" => OrderType::South,
+                "N" => OrderType::North,
+                "L" => OrderType::Left,
+                "R" => OrderType::Right,
+                "F" => OrderType::Forward,
                 other => Err(aoc_error!("Unknown order: '{other}'"))?,
             },
-            par,
+            par: par.parse()?,
         })
     }
 }

@@ -6,7 +6,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Option<i32>>> {
         .map(|line| {
             if line == "noop" {
                 Ok(None)
-            } else if let Ok(val) = prse::try_parse!(line, "addx {}", i32) {
+            } else if let Ok(val) = prse::try_parse!(line, "addx {}") {
                 Ok(Some(val))
             } else {
                 Err(aoc_error!("Can't parse line '{line}'"))

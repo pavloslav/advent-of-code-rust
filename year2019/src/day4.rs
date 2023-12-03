@@ -2,7 +2,7 @@ use crate::*;
 use std::ops::RangeInclusive;
 
 pub fn parse_input(input: &str) -> AocResult<RangeInclusive<usize>> {
-    let (start, end) = prse::try_parse!(input, "{}-{}", usize, usize)?;
+    let (start, end) = prse::try_parse!(input, "{}-{}")?;
     Ok(start..=end)
 }
 

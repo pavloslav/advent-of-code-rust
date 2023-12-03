@@ -6,14 +6,9 @@ pub fn parse_input(input: &str) -> AocResult<Tower> {
     input
         .lines()
         .map(|line| {
-            if let Ok((name, weight, children)) =
-                prse::try_parse!(line, "{} ({d}) -> {[a-z, ]}", String, usize, String)
-            {
-                Ok((
-                    name,
-                    (weight, children.split(", ").map(|s| s.to_owned()).collect()),
-                ))
-            } else if let Ok((name, weight)) = prse::try_parse!(line, "{} ({d})", String, usize) {
+            if let Ok((name, weight, children)) = prse::try_parse!(line, "{} ({}) -> {:, :}") {
+                Ok((name, (weight, children)))
+            } else if let Ok((name, weight)) = prse::try_parse!(line, "{} ({})") {
                 Ok((name, (weight, vec![])))
             } else {
                 Err(aoc_error!("Failed to parse the line '{line}'"))

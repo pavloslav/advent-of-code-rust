@@ -3,8 +3,8 @@ use crate::*;
 pub fn parse_input(input: &str) -> AocResult<Vec<Vec<bool>>> {
     let input: Vec<(usize, usize)> = input
         .lines()
-        .map(|line| prse::try_parse!(line, "{}/{}", usize, usize))
-        .collect::<std::result::Result<_, _>>()?;
+        .map(|line| Ok(prse::try_parse!(line, "{}/{}")?))
+        .collect::<AocResult<_>>()?;
     let size = input
         .iter()
         .map(|(x, y)| x.max(y))

@@ -8,10 +8,9 @@ pub struct PasswordPolicy {
 }
 
 impl std::str::FromStr for PasswordPolicy {
-    type Err = Error;
+    type Err = AocError;
     fn from_str(s: &str) -> AocResult<PasswordPolicy> {
-        let (a, b, symbol, password) =
-            prse::try_parse!(s, "{}-{} {}: {}", usize, usize, char, String)?;
+        let (a, b, symbol, password) = prse::try_parse!(s, "{}-{} {}: {}")?;
         Ok(PasswordPolicy {
             a,
             b,

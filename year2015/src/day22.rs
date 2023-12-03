@@ -15,16 +15,33 @@ pub struct Game {
     boss_dmg: i32,
 }
 
+impl Default for Game {
+    fn default() -> Self {
+        Game {
+            hp: 50,
+            mp: 500,
+            shield: 0,
+            poison: 0,
+            recharge: 0,
+            mana_spent: 0,
+            boss_hp: 0,
+            boss_dmg: 0,
+        }
+    }
+}
+
+impl<'a> prse::Parse<'a> for Game {
+    fn from_str(s: &'a str) -> Result<Self, prse::ParseError> {
+        let (hp, dmg) = prse::try_parse!(
+            s,
+            "Hit Points: {}
+        Damage: {}"
+        )?;
+        Ok(Game::new(hp, dmg))
+    }
+}
 pub fn parse_input(input: &str) -> AocResult<Game> {
-    let (hp, dmg) = prse::try_parse!(
-        input,
-        "Hit Points: {}
-Damage: {}",
-        i32,
-        i32
-    )
-    .map_err(|_| aoc_error!("Wrong input format"))?;
-    Ok(Game::new(hp, dmg))
+    Ok(prse::try_parse!(input, "{}")?)
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
@@ -49,14 +66,9 @@ static PRICES: Lazy<HashMap<Spell, i32>> = Lazy::new(|| {
 impl Game {
     fn new(hp: i32, dmg: i32) -> Game {
         Game {
-            hp: 50,
-            mp: 500,
-            shield: 0,
-            poison: 0,
-            recharge: 0,
-            mana_spent: 0,
             boss_hp: hp,
             boss_dmg: dmg,
+            ..Default::default()
         }
     }
     fn effects(&mut self) {

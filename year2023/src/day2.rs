@@ -23,6 +23,31 @@ impl Handful {
     }
 }
 
+#[derive(prse::Parse)]
+#[prse = "{number} {color}"]
+struct Cube {
+    number: usize,
+    color: String,
+}
+
+impl<'a> prse::Parse<'a> for Handful {
+    fn from_str(s: &'a str) -> Result<Self, prse::ParseError> {
+        let mut handful = Handful::default();
+        for cube in prse::try_parse!(s, "{:, :}")? {
+            let cube: Cube = cube; //hint for prse::try_parse
+            match cube.color.as_str() {
+                "red" => handful.red = cube.number,
+                "blue" => handful.blue = cube.number,
+                "green" => handful.green = cube.number,
+                other => return Err(prse::ParseError::Other(format!("Unknown color '{other}'"))),
+            }
+        }
+        Ok(handful)
+    }
+}
+
+#[derive(prse::Parse)]
+#[prse = "Game {id}: {grabs:; :}"]
 pub struct Game {
     id: usize,
     grabs: Vec<Handful>,
@@ -37,37 +62,11 @@ impl Game {
     }
 }
 
-#[derive(prse::Parse)]
-#[prse = "{num} {color}"]
-struct Cube<'a> {
-    num: usize,
-    color: &'a str,
-}
-
-#[derive(prse::Parse)]
-#[prse = "Game {id}: {grabs:; :}"]
-struct InputGame<'a> {
-    id: usize,
-    grabs: Vec<Cube<'a>>,
-}
-
 pub fn parse_input(input: &str) -> AocResult<Vec<Game>> {
     input
         .lines()
-        .map(|line| {
-            let g: InputGame = prse::try_parse!(line, "{}").map_err(|_| aoc_error!("aaa"))?;
-            let mut handful = Handful::default();
-            for Cube { color, num } in g.grabs {
-                match color {
-                    "red" => handful.red = num,
-                    "blue" => handful.blue = num,
-                    "green" => handful.green = num,
-                    _ => return Err(aoc_error!("Unknown color '{color}'")),
-                }
-            }
-            Ok(handful)
-        })
-        .collect();
+        .map(|line| Ok(prse::try_parse!(line, "{}")?))
+        .collect::<AocResult<Vec<_>>>()
 }
 
 pub fn task1(input: &[Game]) -> AocResult<usize> {

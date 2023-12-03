@@ -18,9 +18,9 @@ impl Octopuses {
                                 .ok_or_else(|| aoc_error!("Wrong digit {c}"))?
                                 as u8)
                         })
-                        .collect::<Result<Vec<u8>>>()
+                        .collect::<AocResult<Vec<u8>>>()
                 })
-                .collect::<Result<_>>()?,
+                .collect::<AocResult<_>>()?,
             last_flashed: 0,
         })
     }
