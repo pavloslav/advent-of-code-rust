@@ -5,22 +5,17 @@ pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
     input
         .lines()
         .map(|line| {
-            /*let (_num, win, matches): (usize, _, _) =
-            prse::try_parse!(dbg!(line), "Card {}: {: :} | {: :}")?;*/
+            let (_num, win, matches): (&str, _, _) =
+                prse::try_parse!(line, "Card {}: {: :0} | {: :0}")?;
 
-            let mut win = HashSet::new();
-            let mut matches = HashSet::new();
-            let mut line = line.split_whitespace().skip(2);
-
-            while let Some(s) = line.next() {
-                if s == "|" {
-                    break;
-                }
-                win.insert(s.parse::<u8>()?);
-            }
-            for s in line {
-                matches.insert(s.parse()?);
-            }
+            let win: HashSet<usize> = win
+                .filter(|i| i != &Ok(""))
+                .map(|i| Ok(i?.parse()?))
+                .collect::<AocResult<_>>()?;
+            let matches = matches
+                .filter(|i| i != &Ok(""))
+                .map(|i| Ok(i?.parse()?))
+                .collect::<AocResult<_>>()?;
 
             Ok(win.intersection(&matches).count())
         })
@@ -47,7 +42,6 @@ pub fn task2(input: &[usize]) -> AocResult<usize> {
             *j += count;
         }
     }
-    println!("{:?}", card_count);
 
     Ok(card_count.iter().sum())
 }
