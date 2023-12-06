@@ -81,7 +81,7 @@ fn get_rule(wires: &Wires, name: &str) -> AocResult<Rule> {
     wires
         .get(name)
         .ok_or_else(|| aoc_error!("No wire '{name}' found"))
-        .map(Clone::clone)
+        .cloned()
 }
 
 pub fn parse_input(input: &str) -> AocResult<Wires> {
@@ -105,4 +105,29 @@ pub fn task2(wires: &Wires) -> AocResult<u16> {
     let mut cwires = wires.clone();
     cwires.insert("b".to_string(), Rule::Direct(Wire::Value(a)));
     get_rule(&cwires, "a")?.calculate(&mut cwires)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_calculate() {
+        let input = "123 -> x
+456 -> y
+x AND y -> d
+x OR y -> e
+x LSHIFT 2 -> f
+y RSHIFT 2 -> g
+NOT x -> h
+NOT y -> i";
+        let mut wires = parse_input(input).unwrap().clone();
+        assert_eq!(
+            get_rule(&wires, "h")
+                .unwrap()
+                .calculate(&mut wires)
+                .unwrap(),
+            65412
+        );
+    }
 }

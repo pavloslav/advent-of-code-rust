@@ -6,16 +6,22 @@ pub fn parse_input(input: &str) -> AocResult<Password> {
 }
 
 fn is_invalid_symbol(c: u8) -> bool {
-    "iol".chars().any(|wrong| wrong as u8 == c)
+    b"iol".contains(&c)
 }
 
 fn next_string(password: &Password) -> Password {
     let mut arr = password.clone();
-    arr[0] += 1;
     for idx in 0..arr.len() {
         if is_invalid_symbol(arr[idx]) {
             arr[idx] += 1;
+            for letter in &mut arr[0..idx] {
+                *letter = b'a';
+            }
+            return arr;
         }
+    }
+    arr[0] += 1;
+    for idx in 0..arr.len() {
         if arr[idx] > b'z' {
             arr[idx] = b'a';
             if idx + 1 < arr.len() {
@@ -30,10 +36,11 @@ fn next_string(password: &Password) -> Password {
     arr
 }
 
-fn is_valid_password(password: &Password) -> bool {
-    if password
-        .windows(3)
-        .any(|part| part[2] + 1 == part[1] && part[1] + 1 == part[0])
+fn is_valid_password(password: &[u8]) -> bool {
+    if password.iter().all(|&c| !is_invalid_symbol(c))
+        && password
+            .windows(3)
+            .any(|part| part[2] + 1 == part[1] && part[1] + 1 == part[0])
     {
         let mut found: i32 = -1;
         for i in 0..password.len() - 1 {
@@ -49,8 +56,8 @@ fn is_valid_password(password: &Password) -> bool {
     false
 }
 
-fn next_password(password: &Password) -> Password {
-    let mut password = password.clone();
+fn next_password(password: &[u8]) -> Password {
+    let mut password = password.to_vec();
     loop {
         password = next_string(&password);
         if is_valid_password(&password) {
@@ -73,4 +80,21 @@ pub fn task2(password: &Password) -> AocResult<String> {
         .rev()
         .map(|c| c as char)
         .collect())
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_next_password() {
+        assert_eq!(
+            task1(&parse_input("abcdefgh").unwrap()).unwrap(),
+            "abcdffaa"
+        );
+        assert_eq!(
+            task1(&parse_input("ghijklmn").unwrap()).unwrap(),
+            "ghjaabcc"
+        );
+    }
 }

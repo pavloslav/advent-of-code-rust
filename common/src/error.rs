@@ -14,9 +14,9 @@ pub enum AocError {
     ParseInt(#[from] std::num::ParseIntError),
     #[error("Error parsing char: {0}")]
     ParseChar(#[from] std::char::ParseCharError),
-    #[error("Error in ScanFmt: {0}")]
-    ScanFmt(#[from] scan_fmt::parse::ScanError),
     #[error("Serde JSON Error: {0}")]
+    ParseFloat(#[from] std::num::ParseFloatError),
+    #[error("Error parsing float: {0}")]
     SerdeJson(#[from] serde_json::Error),
     #[error("Fancy Regex error: {0}")]
     FancyRegex(#[from] fancy_regex::Error),

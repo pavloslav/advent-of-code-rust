@@ -1,11 +1,14 @@
 use crate::*;
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, prse::Parse)]
+#[prse = "{x},{y}"]
 pub struct Point {
     x: i32,
     y: i32,
 }
 
+#[derive(prse::Parse)]
+#[prse = "{pt1} -> {pt2}"]
 pub struct Line {
     pt1: Point,
     pt2: Point,
@@ -16,13 +19,7 @@ const FIELD_SIZE: usize = 1000;
 pub fn parse_input(lines: &str) -> AocResult<Vec<Line>> {
     lines
         .lines()
-        .map(|line| {
-            let (x1, y1, x2, y2) = prse::try_parse!(line, "{},{} -> {},{}")?;
-            Ok(Line {
-                pt1: Point { x: x1, y: y1 },
-                pt2: Point { x: x2, y: y2 },
-            })
-        })
+        .map(|line| Ok(prse::try_parse!(line, "{}")?))
         .collect()
 }
 
@@ -65,4 +62,28 @@ pub fn task1(vents: &[Line]) -> AocResult<i32> {
 
 pub fn task2(vents: &[Line]) -> AocResult<i32> {
     task(vents, true)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    const INPUT: &str = "0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2";
+    #[test]
+    fn test_task1() {
+        assert_eq!(task1(&parse_input(INPUT).unwrap()).unwrap(), 5);
+    }
+
+    #[test]
+    fn test_task2() {
+        assert_eq!(task2(&parse_input(INPUT).unwrap()).unwrap(), 12);
+    }
 }

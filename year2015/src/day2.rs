@@ -27,3 +27,19 @@ pub fn task1(presents: &[Present]) -> AocResult<usize> {
 pub fn task2(presents: &[Present]) -> AocResult<usize> {
     Ok(presents.iter().map(ribbon).sum())
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_task1() {
+        assert_eq!(task1(&parse_input("2x3x4").unwrap()).unwrap(), 58);
+        assert_eq!(task1(&parse_input("1x1x10").unwrap()).unwrap(), 43);
+    }
+    #[test]
+    fn test_task2() {
+        assert_eq!(task2(&parse_input("2x3x4").unwrap()).unwrap(), 34);
+        assert_eq!(task2(&parse_input("1x1x10").unwrap()).unwrap(), 14);
+    }
+}

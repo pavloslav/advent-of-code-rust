@@ -80,3 +80,25 @@ pub fn task2(instructions: &[Instruction]) -> AocResult<usize> {
     }
     Ok(lights.iter().map(|line| line.iter().sum::<usize>()).sum())
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_task1() {
+        let input = "turn on 0,0 through 999,999
+toggle 0,0 through 999,0
+turn off 499,499 through 500,500";
+        assert_eq!(
+            task1(&parse_input(input).unwrap()).unwrap(),
+            1_000_000 - 1000 - 4
+        );
+    }
+    #[test]
+    fn test_task2() {
+        let input = "turn on 0,0 through 0,0
+toggle 0,0 through 999,999";
+        assert_eq!(task2(&parse_input(input).unwrap()).unwrap(), 1 + 2_000_000);
+    }
+}
