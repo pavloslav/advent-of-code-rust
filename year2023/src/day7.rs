@@ -1,5 +1,19 @@
 use crate::*;
 
+const JOKER: u8 = 1;
+const TEN: u8 = 10;
+const JACK: u8 = 11;
+const QUEEN: u8 = 12;
+const KING: u8 = 13;
+const ACE: u8 = 14;
+
+#[repr(u8)]
+#[derive(PartialEq, Clone, Copy)]
+enum Jokers {
+    Absent = JACK,
+    Present = JOKER,
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
 enum HandKind {
     High,
@@ -12,53 +26,35 @@ enum HandKind {
 }
 
 impl HandKind {
-    fn new(cards: &[u8]) -> Self {
+    fn new(cards: &[u8], with_jokers: Jokers) -> Self {
         let mut cnt = std::collections::HashMap::new();
         for card in cards {
             cnt.entry(card).and_modify(|v| *v += 1).or_insert(1);
         }
-        if cnt.values().any(|&c| c == 5) {
+        if with_jokers == Jokers::Present && cnt.get(&JOKER) != Some(&5) {
+            let jokers = cnt.remove(&JOKER).unwrap_or_default();
+            let max = cnt.values().copied().max().unwrap_or_default();
+            for v in cnt.values_mut() {
+                if *v == max {
+                    *v += jokers;
+                    break;
+                }
+            }
+        }
+        if cnt.values().len() == 1 {
             HandKind::Five
         } else if cnt.values().any(|&c| c == 4) {
             HandKind::Four
+        } else if cnt.len() == 2 {
+            HandKind::FullHouse
         } else {
             let three = cnt.values().any(|&c| c == 3);
             let two = cnt.values().filter(|&&c| c == 2).count();
             if three {
-                if two == 1 {
-                    HandKind::FullHouse
-                } else {
-                    HandKind::Three
-                }
+                HandKind::Three
             } else if two == 2 {
                 HandKind::TwoPair
             } else if two == 1 {
-                HandKind::OnePair
-            } else {
-                HandKind::High
-            }
-        }
-    }
-    fn new_with_jokers(cards: &[u8]) -> Self {
-        let mut cnt = std::collections::HashMap::new();
-        for card in cards {
-            cnt.entry(card).and_modify(|v| *v += 1).or_insert(1);
-        }
-        let jokers = cnt.remove(&JOKER).unwrap_or_default();
-        let max = cnt.values().copied().max().unwrap_or_default();
-        if jokers + max == 5 {
-            HandKind::Five
-        } else if jokers + max == 4 {
-            HandKind::Four
-        } else {
-            let two = cnt.values().filter(|&&c| c == 2).count();
-            if max == 3 && two == 1 || jokers == 1 && two == 2 {
-                HandKind::FullHouse
-            } else if jokers + max == 3 {
-                HandKind::Three
-            } else if two == 2 || jokers == 1 && two == 1 {
-                HandKind::TwoPair
-            } else if two == 1 || jokers == 1 {
                 HandKind::OnePair
             } else {
                 HandKind::High
@@ -74,15 +70,8 @@ pub struct Hand {
     bid: usize,
 }
 
-const JOKER: u8 = 1;
-const TEN: u8 = 10;
-const JACK: u8 = 11;
-const QUEEN: u8 = 12;
-const KING: u8 = 13;
-const ACE: u8 = 14;
-
 impl Hand {
-    fn try_new(cards: &str, bid: usize, with_jokers: bool) -> AocResult<Self> {
+    fn try_new(cards: &str, bid: usize, with_jokers: Jokers) -> AocResult<Self> {
         if cards.len() != 5 {
             return Err(aoc_error!("Invalid number of cards: {}", cards.len()));
         }
@@ -92,13 +81,7 @@ impl Hand {
                 Ok(match i {
                     b'2'..=b'9' => i - b'0',
                     b'T' => TEN,
-                    b'J' => {
-                        if with_jokers {
-                            JOKER
-                        } else {
-                            JACK
-                        }
-                    }
+                    b'J' => with_jokers as u8,
                     b'Q' => QUEEN,
                     b'K' => KING,
                     b'A' => ACE,
@@ -107,11 +90,7 @@ impl Hand {
             })
             .collect::<AocResult<_>>()?;
 
-        let kind = if with_jokers {
-            HandKind::new_with_jokers(&cards)
-        } else {
-            HandKind::new(&cards)
-        };
+        let kind = HandKind::new(&cards, with_jokers);
 
         Ok(Self { cards, bid, kind })
     }
@@ -124,7 +103,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(&str, usize)>> {
         .collect()
 }
 
-fn task(input: &[(&str, usize)], with_jokers: bool) -> AocResult<usize> {
+fn task(input: &[(&str, usize)], with_jokers: Jokers) -> AocResult<usize> {
     let mut hands: Vec<Hand> = input
         .iter()
         .map(|&(cards, bid)| Hand::try_new(cards, bid, with_jokers))
@@ -138,11 +117,11 @@ fn task(input: &[(&str, usize)], with_jokers: bool) -> AocResult<usize> {
 }
 
 pub fn task1(input: &[(&str, usize)]) -> AocResult<usize> {
-    task(input, false)
+    task(input, Jokers::Absent)
 }
 
 pub fn task2(input: &[(&str, usize)]) -> AocResult<usize> {
-    task(input, true)
+    task(input, Jokers::Present)
 }
 
 #[cfg(test)]
@@ -157,7 +136,8 @@ QQQJA 483";
     #[test]
     fn test_task1() {
         assert!(
-            Hand::try_new("33332", 1, false).unwrap() > Hand::try_new("2AAAA", 2, false).unwrap()
+            Hand::try_new("33332", 1, Jokers::Absent).unwrap()
+                > Hand::try_new("2AAAA", 2, Jokers::Absent).unwrap()
         );
         assert_eq!(task1(&parse_input(INPUT).unwrap()).unwrap(), 6440);
     }
@@ -165,7 +145,8 @@ QQQJA 483";
     #[test]
     fn test_task2() {
         assert!(
-            Hand::try_new("QQQQ2", 1, false).unwrap() > Hand::try_new("JKKK2", 2, true).unwrap()
+            Hand::try_new("QQQQ2", 1, Jokers::Present).unwrap()
+                > Hand::try_new("JKKK2", 2, Jokers::Present).unwrap()
         );
         assert_eq!(task2(&parse_input(INPUT).unwrap()).unwrap(), 5905);
     }
