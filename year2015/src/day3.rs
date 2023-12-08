@@ -1,18 +1,16 @@
-use crate::*;
-
 type Move = (i32, i32);
 
-fn parse_move(value: u8) -> AocResult<Move> {
+fn parse_move(value: u8) -> anyhow::Result<Move> {
     Ok(match value {
         b'^' => (0, 1),
         b'v' => (0, -1),
         b'>' => (1, 0),
         b'<' => (-1, 0),
-        other => return Err(aoc_error!("Wrong symbol '{other}' in input")),
+        other => anyhow::bail!("Wrong symbol '{other}' in input"),
     })
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Move>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Move>> {
     input.bytes().map(parse_move).collect()
 }
 
@@ -33,7 +31,7 @@ impl Santa {
     }
 }
 
-pub fn task1(input: &[Move]) -> AocResult<usize> {
+pub fn task1(input: &[Move]) -> anyhow::Result<usize> {
     let mut santa = Santa::new();
     let mut visited = std::collections::HashSet::from([santa.to_pair()]);
     for &dir in input {
@@ -42,7 +40,7 @@ pub fn task1(input: &[Move]) -> AocResult<usize> {
     Ok(visited.len())
 }
 
-pub fn task2(input: &[Move]) -> AocResult<usize> {
+pub fn task2(input: &[Move]) -> anyhow::Result<usize> {
     let mut santas = [Santa::new(); 2];
     let mut visited = std::collections::HashSet::from([santas[0].to_pair()]);
     for (i, &dir) in input.iter().enumerate() {

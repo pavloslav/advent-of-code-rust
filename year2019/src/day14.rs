@@ -1,14 +1,13 @@
-use crate::*;
 use std::collections::HashMap;
 
-fn scan_chem(element: &str) -> AocResult<(String, usize)> {
+fn scan_chem(element: &str) -> anyhow::Result<(String, usize)> {
     let (chemical, amount) = prse::try_parse!(element, "{} {}")?;
     Ok((amount, chemical))
 }
 
 type Formulas = HashMap<String, (usize, HashMap<String, usize>)>;
 
-pub fn parse_input(input: &str) -> AocResult<Formulas> {
+pub fn parse_input(input: &str) -> anyhow::Result<Formulas> {
     input
         .lines()
         .map(|line| {
@@ -16,14 +15,14 @@ pub fn parse_input(input: &str) -> AocResult<Formulas> {
             let formula = formula
                 .split(", ")
                 .map(scan_chem)
-                .collect::<AocResult<HashMap<_, _>>>()?;
+                .collect::<anyhow::Result<HashMap<_, _>>>()?;
             let (chemical, amount) = scan_chem(result)?;
             Result::Ok((chemical, (amount, formula)))
         })
         .collect()
 }
 
-pub fn task1(input: &Formulas) -> AocResult<usize> {
+pub fn task1(input: &Formulas) -> anyhow::Result<usize> {
     let mut formulas = input.clone();
     let mut fuel_formula = formulas.remove("FUEL").unwrap().1;
     while fuel_formula.len() > 1 || !fuel_formula.contains_key("ORE") {
@@ -42,6 +41,6 @@ pub fn task1(input: &Formulas) -> AocResult<usize> {
     Ok(fuel_formula["ORE"])
 }
 
-pub fn task2(_input: &Formulas) -> AocResult<usize> {
+pub fn task2(_input: &Formulas) -> anyhow::Result<usize> {
     todo!();
 }

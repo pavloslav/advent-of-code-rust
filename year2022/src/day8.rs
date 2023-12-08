@@ -1,13 +1,13 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<i32>>> {
     input
         .lines()
         .map(|line| {
             line.chars()
                 .map(|c| {
                     Ok(c.to_digit(10)
-                        .ok_or_else(|| aoc_error!("Wrong digit '{c}'"))?
+                        .with_context(|| format!("Wrong digit '{c}'"))?
                         as i32)
                 })
                 .collect()
@@ -15,7 +15,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
         .collect()
 }
 
-pub fn task1(trees: &[Vec<i32>]) -> AocResult<usize> {
+pub fn task1(trees: &[Vec<i32>]) -> anyhow::Result<usize> {
     let mut count = 0;
     for (y, row) in trees.iter().enumerate() {
         for (x, &h) in row.iter().enumerate() {
@@ -31,7 +31,7 @@ pub fn task1(trees: &[Vec<i32>]) -> AocResult<usize> {
     Ok(count)
 }
 
-pub fn task2(trees: &[Vec<i32>]) -> AocResult<usize> {
+pub fn task2(trees: &[Vec<i32>]) -> anyhow::Result<usize> {
     let mut best = 0;
 
     for (y, row) in trees.iter().enumerate() {

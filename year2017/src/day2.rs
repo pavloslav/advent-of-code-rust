@@ -1,30 +1,24 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u32>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<u32>>> {
     input
         .lines()
         .map(|line| line.split_whitespace().map(|s| Ok(s.parse()?)).collect())
         .collect()
 }
 
-pub fn task1(input: &[Vec<u32>]) -> AocResult<u32> {
+pub fn task1(input: &[Vec<u32>]) -> anyhow::Result<u32> {
     input
         .iter()
         .map(|line| {
-            let max = line
-                .iter()
-                .max()
-                .ok_or_else(|| aoc_error!("Empty data unacceptable!"))?;
-            let min = line
-                .iter()
-                .min()
-                .ok_or_else(|| aoc_error!("Empty data unacceptable!"))?;
+            let max = line.iter().max().context("Empty data unacceptable!")?;
+            let min = line.iter().min().context("Empty data unacceptable!")?;
             Ok(max - min)
         })
         .sum()
 }
 
-pub fn task2(input: &[Vec<u32>]) -> AocResult<u32> {
+pub fn task2(input: &[Vec<u32>]) -> anyhow::Result<u32> {
     Ok(input
         .iter()
         .map(|line| {

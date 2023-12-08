@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(usize, usize)>> {
     input
         .lines()
         .map(|line| {
@@ -13,7 +11,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize)>> {
         .collect()
 }
 
-pub fn task(input: &[(usize, usize)]) -> AocResult<usize> {
+pub fn task(input: &[(usize, usize)]) -> anyhow::Result<usize> {
     let period = input.iter().map(|(size, _)| size).product();
     for moment in 0..period {
         if input
@@ -24,14 +22,14 @@ pub fn task(input: &[(usize, usize)]) -> AocResult<usize> {
             return Ok(moment);
         }
     }
-    Err(aoc_error!("Solution not found"))
+    Err(anyhow::anyhow!("Solution not found"))
 }
 
-pub fn task1(input: &[(usize, usize)]) -> AocResult<usize> {
+pub fn task1(input: &[(usize, usize)]) -> anyhow::Result<usize> {
     task(input)
 }
 
-pub fn task2(input: &[(usize, usize)]) -> AocResult<usize> {
+pub fn task2(input: &[(usize, usize)]) -> anyhow::Result<usize> {
     let input: Vec<_> = input
         .iter()
         .chain(std::iter::once(&(11, 0)))

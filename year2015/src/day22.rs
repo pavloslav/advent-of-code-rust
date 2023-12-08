@@ -1,4 +1,3 @@
-use crate::*;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -40,7 +39,7 @@ impl<'a> prse::Parse<'a> for Game {
         Ok(Game::new(hp, dmg))
     }
 }
-pub fn parse_input(input: &str) -> AocResult<Game> {
+pub fn parse_input(input: &str) -> anyhow::Result<Game> {
     Ok(prse::try_parse!(input, "{}")?)
 }
 
@@ -133,7 +132,7 @@ impl Game {
     }
 }
 
-pub fn task(&game: &Game, hard_mode: bool) -> AocResult<i32> {
+pub fn task(&game: &Game, hard_mode: bool) -> anyhow::Result<i32> {
     let mut situations = HashSet::from([game]);
     let mut best_mana = None;
     while !situations.is_empty() {
@@ -165,13 +164,13 @@ pub fn task(&game: &Game, hard_mode: bool) -> AocResult<i32> {
         }
         situations = new_situations;
     }
-    best_mana.ok_or(aoc_error!("No solution found"))
+    best_mana.ok_or(anyhow::anyhow!("No solution found"))
 }
 
-pub fn task1(game: &Game) -> AocResult<i32> {
+pub fn task1(game: &Game) -> anyhow::Result<i32> {
     task(game, false)
 }
 
-pub fn task2(game: &Game) -> AocResult<i32> {
+pub fn task2(game: &Game) -> anyhow::Result<i32> {
     task(game, true)
 }

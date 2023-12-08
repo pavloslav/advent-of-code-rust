@@ -1,5 +1,3 @@
-use crate::*;
-
 use itertools::Itertools;
 use once_cell::sync::Lazy;
 use std::collections::{HashMap, HashSet};
@@ -59,7 +57,7 @@ impl Position {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<(usize, Position)> {
+pub fn parse_input(input: &str) -> anyhow::Result<(usize, Position)> {
     let mut position = Position { state: 0 };
     let mut name_map = HashMap::new();
     for line in input.lines() {
@@ -72,7 +70,7 @@ pub fn parse_input(input: &str) -> AocResult<(usize, Position)> {
             "second" => 1,
             "third" => 2,
             "fourth" => 3,
-            other => return Err(aoc_error!("Unknown floor '{other}'")),
+            other => anyhow::bail!("Unknown floor '{other}'"),
         };
         static SPLIT_REGEX: Lazy<regex::Regex> =
             Lazy::new(|| regex::Regex::new(r"(, and )|(, )|( and )").unwrap());
@@ -84,7 +82,7 @@ pub fn parse_input(input: &str) -> AocResult<(usize, Position)> {
                 position.set_item(2 * idx + 1, floor);
             } else {
                 let microchip = prse::try_parse!(item, "a {}-compatible microchip")
-                    .map_err(|_| aoc_error!("List '{list}', item '{item}' fails"))?;
+                    .map_err(|_| anyhow::anyhow!("List '{list}', item '{item}' fails"))?;
                 let idx = *name_map.entry(microchip).or_insert(name_map_len);
                 position.set_item(2 * idx, floor);
             }
@@ -93,7 +91,7 @@ pub fn parse_input(input: &str) -> AocResult<(usize, Position)> {
     Ok((name_map.len(), position))
 }
 
-pub fn task(input: &Position, size: usize) -> AocResult<usize> {
+pub fn task(input: &Position, size: usize) -> anyhow::Result<usize> {
     let mut visited = HashSet::new();
     let mut current = HashSet::from([input.clone()]);
     for step in 1.. {
@@ -127,14 +125,14 @@ pub fn task(input: &Position, size: usize) -> AocResult<usize> {
         visited.extend(current);
         current = new;
     }
-    Err(aoc_error!("Solution not found"))
+    Err(anyhow::anyhow!("Solution not found"))
 }
 
-pub fn task1((size, position): &(usize, Position)) -> AocResult<usize> {
+pub fn task1((size, position): &(usize, Position)) -> anyhow::Result<usize> {
     task(position, *size)
 }
 
-pub fn task2((size, position): &(usize, Position)) -> AocResult<usize> {
+pub fn task2((size, position): &(usize, Position)) -> anyhow::Result<usize> {
     task(position, *size + 2)
 }
 

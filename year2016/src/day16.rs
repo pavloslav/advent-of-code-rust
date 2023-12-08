@@ -1,16 +1,14 @@
-use crate::*;
-
 const FIRST_DISK_LEN: usize = 272;
 const SECOND_DISK_LEN: usize = 35651584;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<bool>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<bool>> {
     input
         .trim()
         .chars()
         .map(|c| match c {
             '0' => Ok(false),
             '1' => Ok(true),
-            other => Err(aoc_error!("Unknown byte '{other}'")),
+            other => anyhow::bail!("Unknown byte '{other}'"),
         })
         .collect()
 }
@@ -31,10 +29,10 @@ pub fn task(input: &[bool], size: usize) -> String {
     data.iter().map(|&b| if b { '1' } else { '0' }).collect()
 }
 
-pub fn task1(input: &[bool]) -> AocResult<String> {
+pub fn task1(input: &[bool]) -> anyhow::Result<String> {
     Ok(task(input, FIRST_DISK_LEN))
 }
 
-pub fn task2(input: &[bool]) -> AocResult<String> {
+pub fn task2(input: &[bool]) -> anyhow::Result<String> {
     Ok(task(input, SECOND_DISK_LEN))
 }

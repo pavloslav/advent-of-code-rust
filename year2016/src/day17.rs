@@ -1,8 +1,6 @@
-use crate::*;
-
 use std::collections::HashSet;
 
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input.trim())
 }
 
@@ -46,19 +44,22 @@ impl Traveler {
     }
 }
 
-pub fn task1(input: &str) -> AocResult<String> {
+pub fn task1(input: &str) -> anyhow::Result<String> {
     let mut traveler = Traveler::new(input);
     while traveler.solutions.is_empty() && !traveler.locations.is_empty() {
         traveler.step();
     }
     if traveler.solutions.len() != 1 {
-        Err(aoc_error!("Found {} solutions!", traveler.solutions.len()))
+        Err(anyhow::anyhow!(
+            "Found {} solutions!",
+            traveler.solutions.len()
+        ))
     } else {
         Ok(traveler.solutions[0].clone())
     }
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     let mut traveler = Traveler::new(input);
     let mut best = 0;
     while !traveler.locations.is_empty() {

@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<(i32, i32)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(i32, i32)>> {
     input
         .trim()
         .split(',')
@@ -12,13 +10,13 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(i32, i32)>> {
                 "se" => (1, 0),
                 "s" => (0, 1),
                 "sw" => (-1, 1),
-                other => Err(aoc_error!("Unknown direction: {other}"))?,
+                other => Err(anyhow::anyhow!("Unknown direction: {other}"))?,
             })
         })
         .collect()
 }
 
-pub fn task1(input: &[(i32, i32)]) -> AocResult<i32> {
+pub fn task1(input: &[(i32, i32)]) -> anyhow::Result<i32> {
     let mut position = (0, 0);
     for step in input {
         position = (position.0 + step.0, position.1 + step.1);
@@ -26,7 +24,7 @@ pub fn task1(input: &[(i32, i32)]) -> AocResult<i32> {
     Ok((position.0.abs() + position.1.abs() + (position.0 + position.1).abs()) / 2)
 }
 
-pub fn task2(input: &[(i32, i32)]) -> AocResult<i32> {
+pub fn task2(input: &[(i32, i32)]) -> anyhow::Result<i32> {
     let mut position = (0, 0);
     let mut max = 0;
     for step in input {

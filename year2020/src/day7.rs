@@ -1,10 +1,9 @@
-use crate::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
 type BagMap = HashMap<String, Vec<(String, usize)>>;
 
-fn create_map(s: &str, reverse: bool) -> AocResult<BagMap> {
+fn create_map(s: &str, reverse: bool) -> anyhow::Result<BagMap> {
     let mut result = BagMap::new();
     for rule in s.lines() {
         let undotted = &rule[..rule.len() - 1];
@@ -67,16 +66,16 @@ fn count_insides(map: &BagMap, bag: &str) -> usize {
     })
 }
 
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
-pub fn task1(s: &str) -> AocResult<usize> {
+pub fn task1(s: &str) -> anyhow::Result<usize> {
     let map = create_map(s, true)?;
     Ok(count_holders(&map, "shiny gold bag"))
 }
 
-pub fn task2(s: &str) -> AocResult<usize> {
+pub fn task2(s: &str) -> anyhow::Result<usize> {
     let map = create_map(s, false)?;
     Ok(count_insides(&map, "shiny gold bag") - 1)
 }

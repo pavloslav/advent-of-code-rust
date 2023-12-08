@@ -1,24 +1,23 @@
-use crate::*;
 use std::collections::HashSet;
 
 type Molecule = String;
 type Rules = Vec<(Molecule, Molecule)>;
 
-pub fn parse_input(input: &str) -> AocResult<(Rules, Molecule)> {
+pub fn parse_input(input: &str) -> anyhow::Result<(Rules, Molecule)> {
     let mut lines = input.lines();
     let rules = lines
         .by_ref()
         .take_while(|line| !line.is_empty())
         .map(|line| Ok(prse::try_parse!(line, "{} => {}")?))
-        .collect::<AocResult<Rules>>()?;
+        .collect::<anyhow::Result<Rules>>()?;
     let molecule = lines
         .next()
-        .ok_or(aoc_error!("No molecula for Rudolph"))?
+        .ok_or(anyhow::anyhow!("No molecula for Rudolph"))?
         .to_string();
     Ok((rules, molecule))
 }
 
-pub fn task1((rules, medicine): &(Rules, Molecule)) -> AocResult<usize> {
+pub fn task1((rules, medicine): &(Rules, Molecule)) -> anyhow::Result<usize> {
     let mut molecules = HashSet::new();
     println!("len={}", rules.len());
     for (from, to) in rules {
@@ -34,7 +33,7 @@ pub fn task1((rules, medicine): &(Rules, Molecule)) -> AocResult<usize> {
     Ok(molecules.len())
 }
 
-pub fn task2((_rules, medicine): &(Rules, Molecule)) -> AocResult<usize> {
+pub fn task2((_rules, medicine): &(Rules, Molecule)) -> anyhow::Result<usize> {
     /* Rules have three special elements: Rn, Ar and Y
      *  they are never on the left side and always in a pattern
      *  _ => _ Rn (_ Y)* _ Ar
@@ -47,7 +46,7 @@ pub fn task2((_rules, medicine): &(Rules, Molecule)) -> AocResult<usize> {
     let rn = medicine.matches("Rn").count();
     let ar = medicine.matches("Ar").count();
     if rn != ar {
-        return Err(aoc_error!("Rn and Ar are not in symmetry!"));
+        anyhow::bail!("Rn and Ar are not in symmetry!");
     }
     let elements = medicine.matches(char::is_uppercase).count();
     Ok(elements - 2 * y - rn - ar - 1)

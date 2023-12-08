@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<i32>> {
     input.lines().map(|s| Ok(s.parse()?)).collect()
 }
 
-pub fn task<F>(input: &[i32], f: F) -> AocResult<usize>
+pub fn task<F>(input: &[i32], f: F) -> anyhow::Result<usize>
 where
     F: Fn(i32) -> i32,
 {
@@ -21,10 +19,10 @@ where
     unreachable!()
 }
 
-pub fn task1(input: &[i32]) -> AocResult<usize> {
+pub fn task1(input: &[i32]) -> anyhow::Result<usize> {
     task(input, |_| 1)
 }
 
-pub fn task2(input: &[i32]) -> AocResult<usize> {
+pub fn task2(input: &[i32]) -> anyhow::Result<usize> {
     task(input, |jmp| if jmp < 3 { 1 } else { -1 })
 }

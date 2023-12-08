@@ -1,5 +1,4 @@
-use crate::*;
-
+use anyhow::Context;
 use std::collections::{HashMap, VecDeque};
 
 type Word = isize;
@@ -32,7 +31,7 @@ impl Computer {
         self.memory[&self.ip] == Computer::IN && self.input.is_empty()
     }
 
-    fn step(&mut self) -> AocResult<()> {
+    fn step(&mut self) -> anyhow::Result<()> {
         if self.is_halted() || self.is_input_blocked() {
             return Ok(());
         }
@@ -57,12 +56,8 @@ impl Computer {
                     return Ok(());
                 }
                 let tgt = self.get_target(1)?;
-                self.memory.insert(
-                    tgt,
-                    self.input
-                        .pop_front()
-                        .ok_or_else(|| aoc_error!("Input is empty!"))?,
-                );
+                self.memory
+                    .insert(tgt, self.input.pop_front().context("Input is empty!")?);
                 self.ip += 2;
             }
             Computer::OUT => {
@@ -100,7 +95,7 @@ impl Computer {
                 self.ip += 2;
             }
             Computer::HLT => {}
-            opcode => return Err(aoc_error!("Unknown opcode: {opcode}")),
+            opcode => anyhow::bail!("Unknown opcode: {opcode}"),
         }
         Ok(())
     }
@@ -118,7 +113,7 @@ impl Computer {
         }
     }
 
-    fn get_value(&self, index: Word) -> AocResult<Word> {
+    fn get_value(&self, index: Word) -> anyhow::Result<Word> {
         let mut mode = self.memory[&self.ip] / 100;
         for _ in 1..index {
             mode /= 10;
@@ -133,13 +128,13 @@ impl Computer {
                 .memory
                 .get(&(self.relative_base + self.memory[&(self.ip + index)]))
                 .unwrap_or(&0),
-            other => Err(aoc_error!(
+            other => anyhow::bail!(
                 "Unknown source mode {other} in instruction {}",
                 self.memory[&self.ip]
-            ))?,
+            ),
         })
     }
-    fn get_target(&self, index: Word) -> AocResult<Word> {
+    fn get_target(&self, index: Word) -> anyhow::Result<Word> {
         let mut mode = self.memory[&self.ip] / 100;
         for _ in 1..index {
             mode /= 10;
@@ -147,14 +142,14 @@ impl Computer {
         Ok(match mode % 10 {
             0 => self.memory[&(self.ip + index)],
             2 => self.relative_base + self.memory[&(self.ip + index)],
-            other => Err(aoc_error!(
+            other => anyhow::bail!(
                 "Unknown target mode {other} in instruction {} on ip {}",
                 self.memory[&self.ip],
                 self.ip
-            ))?,
+            ),
         })
     }
-    pub fn run(&mut self) -> AocResult<&mut Self> {
+    pub fn run(&mut self) -> anyhow::Result<&mut Self> {
         while !self.is_halted() && !self.is_input_blocked() {
             self.step()?;
         }
@@ -163,12 +158,10 @@ impl Computer {
     pub fn write(&mut self, value: Word) {
         self.input.push_back(value);
     }
-    pub fn read(&mut self) -> AocResult<Word> {
-        self.output
-            .pop_front()
-            .ok_or_else(|| aoc_error!("Output is empty!"))
+    pub fn read(&mut self) -> anyhow::Result<Word> {
+        self.output.pop_front().context("Output is empty!")
     }
-    pub fn prepare_code(input: &str) -> AocResult<Vec<Word>> {
+    pub fn prepare_code(input: &str) -> anyhow::Result<Vec<Word>> {
         input.trim().split(',').map(|x| Ok(x.parse()?)).collect()
     }
 }

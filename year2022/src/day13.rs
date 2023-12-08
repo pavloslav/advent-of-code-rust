@@ -1,7 +1,7 @@
-use crate::*;
+use anyhow::Context;
 use serde_json::Value;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Value>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Value>> {
     input
         .lines()
         .filter(|line| !line.is_empty())
@@ -32,7 +32,7 @@ fn cmp(left: &Value, right: &Value) -> std::cmp::Ordering {
     }
 }
 
-pub fn task1(input: &[Value]) -> AocResult<usize> {
+pub fn task1(input: &[Value]) -> anyhow::Result<usize> {
     let sum = input
         .chunks(2)
         .enumerate()
@@ -47,7 +47,7 @@ pub fn task1(input: &[Value]) -> AocResult<usize> {
     Ok(sum)
 }
 
-pub fn task2(input: &[Value]) -> AocResult<usize> {
+pub fn task2(input: &[Value]) -> anyhow::Result<usize> {
     let mut packets = input.to_vec();
     let start: Value = serde_json::from_str("[[2]]")?;
     let end: Value = serde_json::from_str("[[6]]")?;
@@ -57,12 +57,12 @@ pub fn task2(input: &[Value]) -> AocResult<usize> {
     let start = packets
         .iter()
         .position(|v| v == &start)
-        .ok_or_else(|| aoc_error!("start not found"))?
+        .context("start not found")?
         + 1;
     let end = packets
         .iter()
         .position(|v| v == &end)
-        .ok_or_else(|| aoc_error!("end not found"))?
+        .context("end not found")?
         + 1;
     Ok(start * end)
 }

@@ -1,5 +1,3 @@
-use crate::*;
-
 #[derive(Debug, Clone, Copy)]
 struct Direction {
     dir: i8,
@@ -39,12 +37,12 @@ pub struct Command {
 }
 
 impl std::str::FromStr for Command {
-    type Err = AocError;
-    fn from_str(input: &str) -> AocResult<Command> {
+    type Err = anyhow::Error;
+    fn from_str(input: &str) -> anyhow::Result<Command> {
         let rot = match input.chars().next() {
             Some('L') => -1,
             Some('R') => 1,
-            _ => return Err(aoc_error!("wrong rotation")),
+            _ => anyhow::bail!("wrong rotation"),
         };
         Ok(Command {
             rot,
@@ -53,11 +51,11 @@ impl std::str::FromStr for Command {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Command>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Command>> {
     input.split(", ").map(|step| step.parse()).collect()
 }
 
-pub fn task1(way: &[Command]) -> AocResult<i32> {
+pub fn task1(way: &[Command]) -> anyhow::Result<i32> {
     let mut position = Pos { x: 0, y: 0 };
     let mut dir = Direction::NORTH;
     for step in way {
@@ -69,7 +67,7 @@ pub fn task1(way: &[Command]) -> AocResult<i32> {
 
 use std::collections::HashSet;
 
-pub fn task2(way: &[Command]) -> AocResult<i32> {
+pub fn task2(way: &[Command]) -> anyhow::Result<i32> {
     let mut position = Pos { x: 0, y: 0 };
     let mut dir = Direction::NORTH;
     let mut visited: HashSet<Pos> = HashSet::new();

@@ -1,5 +1,3 @@
-use crate::*;
-
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, prse::Parse)]
 #[prse = "{x},{y}"]
 pub struct Point {
@@ -16,7 +14,7 @@ pub struct Line {
 
 const FIELD_SIZE: usize = 1000;
 
-pub fn parse_input(lines: &str) -> AocResult<Vec<Line>> {
+pub fn parse_input(lines: &str) -> anyhow::Result<Vec<Line>> {
     lines
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{}")?))
@@ -27,7 +25,7 @@ fn is_diagonal(line: &Line) -> bool {
     line.pt1.x != line.pt2.x && line.pt1.y != line.pt2.y
 }
 
-fn task(vents: &[Line], is_diagonals_needed: bool) -> AocResult<i32> {
+fn task(vents: &[Line], is_diagonals_needed: bool) -> anyhow::Result<i32> {
     let mut field: Vec<Vec<i32>> =
         std::iter::repeat(std::iter::repeat(0).take(FIELD_SIZE).collect())
             .take(FIELD_SIZE)
@@ -38,7 +36,7 @@ fn task(vents: &[Line], is_diagonals_needed: bool) -> AocResult<i32> {
             let (dx, dy) = ((vent.pt2.x - pt.x).signum(), (vent.pt2.y - pt.y).signum());
             loop {
                 if pt.x < 0 || pt.y < 0 {
-                    return Err(aoc_error!("Point {pt:?} is negative"));
+                    anyhow::bail!("Point {pt:?} is negative");
                 }
                 field[pt.x as usize][pt.y as usize] += 1;
                 if pt == vent.pt2 {
@@ -56,11 +54,11 @@ fn task(vents: &[Line], is_diagonals_needed: bool) -> AocResult<i32> {
     Ok(sum)
 }
 
-pub fn task1(vents: &[Line]) -> AocResult<i32> {
+pub fn task1(vents: &[Line]) -> anyhow::Result<i32> {
     task(vents, false)
 }
 
-pub fn task2(vents: &[Line]) -> AocResult<i32> {
+pub fn task2(vents: &[Line]) -> anyhow::Result<i32> {
     task(vents, true)
 }
 

@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
@@ -18,7 +16,7 @@ fn has_abba(ip: &str) -> bool {
     parts.0.iter().any(|x| x.1) && parts.1.iter().all(|x| !x.1)
 }
 
-pub fn task1(lines: &str) -> AocResult<usize> {
+pub fn task1(lines: &str) -> anyhow::Result<usize> {
     Ok(lines.lines().filter(|line| has_abba(line)).count())
 }
 
@@ -58,7 +56,7 @@ fn has_aba(ip: &str) -> bool {
     !abs.is_disjoint(&bas)
 }
 
-pub fn task2(lines: &str) -> AocResult<usize> {
+pub fn task2(lines: &str) -> anyhow::Result<usize> {
     Ok(lines.lines().filter(|line| has_aba(line)).count())
 }
 

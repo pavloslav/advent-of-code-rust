@@ -1,5 +1,3 @@
-use crate::*;
-
 type CaveName = String;
 
 #[derive(Clone)]
@@ -23,7 +21,7 @@ impl CaveNode {
 
 type CaveMap = std::collections::HashMap<CaveName, CaveNode>;
 
-pub fn parse_input(input: &str) -> AocResult<CaveMap> {
+pub fn parse_input(input: &str) -> anyhow::Result<CaveMap> {
     let mut map = CaveMap::new();
     for line in input.lines() {
         let (left, right): (&str, &str) = prse::try_parse!(line, "{}-{}")?;
@@ -63,7 +61,7 @@ fn count_ways(map: &mut CaveMap, start: &str, end: &str) -> usize {
     result
 }
 
-pub fn task1(map: &CaveMap) -> AocResult<usize> {
+pub fn task1(map: &CaveMap) -> anyhow::Result<usize> {
     let mut map = map.clone();
     Ok(count_ways(&mut map, "start", "end"))
 }
@@ -109,7 +107,7 @@ fn count_ways2(
     result
 }
 
-pub fn task2(map: &CaveMap) -> AocResult<usize> {
+pub fn task2(map: &CaveMap) -> anyhow::Result<usize> {
     let mut map = map.clone();
     Ok(count_ways2(&mut map, "start", "end", false, false))
 }

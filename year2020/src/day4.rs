@@ -1,10 +1,9 @@
-use crate::*;
 use once_cell::sync::Lazy;
 use std::collections::HashMap;
 
 type Passport<'a> = HashMap<&'a str, &'a str>;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Passport>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Passport>> {
     let mut passports = Vec::new();
     let mut passport = Passport::new();
     for line in input.lines() {
@@ -32,7 +31,7 @@ fn is_valid1(passport: &Passport) -> bool {
         .all(|field| passport.contains_key(field))
 }
 
-pub fn task1(pass: &[Passport]) -> AocResult<usize> {
+pub fn task1(pass: &[Passport]) -> anyhow::Result<usize> {
     Ok(pass.iter().filter(|p| is_valid1(p)).count())
 }
 
@@ -82,6 +81,6 @@ fn is_valid2(passport: &Passport) -> bool {
         && regex_check("pid", &PID_REGEX)
 }
 
-pub fn task2(pass: &[Passport]) -> AocResult<usize> {
+pub fn task2(pass: &[Passport]) -> anyhow::Result<usize> {
     Ok(pass.iter().filter(|p| is_valid2(p)).count())
 }

@@ -1,5 +1,3 @@
-use crate::*;
-
 pub struct Tree {
     children: Vec<Tree>,
     metadata: Vec<i32>,
@@ -38,31 +36,36 @@ impl Tree {
     }
 }
 
-fn parse_tree(input: &mut impl std::iter::Iterator<Item = AocResult<i32>>) -> AocResult<Tree> {
+fn parse_tree(
+    input: &mut impl std::iter::Iterator<Item = anyhow::Result<i32>>,
+) -> anyhow::Result<Tree> {
     let mut tree = Tree::new();
-    let child_count = input.next().ok_or(aoc_error!("Empty node!"))??;
-    let metadata_size = input.next().ok_or(aoc_error!("No metadata size!"))??;
+    let child_count = input.next().ok_or(anyhow::anyhow!("Empty node!"))??;
+    let metadata_size = input.next().ok_or(anyhow::anyhow!("No metadata size!"))??;
     for _ in 0..child_count {
         tree.children.push(parse_tree(input)?);
     }
     for _ in 0..metadata_size {
-        tree.metadata
-            .push(input.next().ok_or(aoc_error!("Not enough metadata!"))??);
+        tree.metadata.push(
+            input
+                .next()
+                .ok_or(anyhow::anyhow!("Not enough metadata!"))??,
+        );
     }
     Ok(tree)
 }
 
-pub fn parse_input(input: &str) -> AocResult<Tree> {
+pub fn parse_input(input: &str) -> anyhow::Result<Tree> {
     let mut iter = input
         .split_whitespace()
-        .map(|s| s.parse().map_err(|_| aoc_error!("Not a number!")));
+        .map(|s| s.parse().map_err(|_| anyhow::anyhow!("Not a number!")));
     parse_tree(&mut iter)
 }
 
-pub fn task1(input: &Tree) -> AocResult<i32> {
+pub fn task1(input: &Tree) -> anyhow::Result<i32> {
     Ok(input.metadata_sum())
 }
 
-pub fn task2(input: &Tree) -> AocResult<i32> {
+pub fn task2(input: &Tree) -> anyhow::Result<i32> {
     Ok(input.value())
 }

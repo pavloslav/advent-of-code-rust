@@ -1,7 +1,6 @@
-use crate::*;
 type Map = std::collections::HashMap<(i32, i32), i32>;
 
-pub fn parse_input(input: &str) -> AocResult<(Map, usize, usize)> {
+pub fn parse_input(input: &str) -> anyhow::Result<(Map, usize, usize)> {
     let mut width = 0;
     let mut height = 0;
     let map = input
@@ -53,7 +52,7 @@ impl Carrier {
     }
 }
 
-pub fn task1((map, width, height): &(Map, usize, usize)) -> AocResult<usize> {
+pub fn task1((map, width, height): &(Map, usize, usize)) -> anyhow::Result<usize> {
     let mut map = map.clone();
     let mut carrier = Carrier::new(*width, *height);
     for _step in 0..10_000 {
@@ -62,7 +61,7 @@ pub fn task1((map, width, height): &(Map, usize, usize)) -> AocResult<usize> {
     Ok(carrier.infected)
 }
 
-pub fn task2((map, width, height): &(Map, usize, usize)) -> AocResult<usize> {
+pub fn task2((map, width, height): &(Map, usize, usize)) -> anyhow::Result<usize> {
     let mut map = map.clone();
     let mut carrier = Carrier::new(*width, *height);
     for _step in 0..10_000_000 {

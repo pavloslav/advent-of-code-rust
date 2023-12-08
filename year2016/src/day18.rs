@@ -1,9 +1,7 @@
-use crate::*;
-
 const FIRST_ITERATIONS: usize = 40;
 const SECOND_ITERATIONS: usize = 400_000;
 
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input.trim())
 }
 
@@ -27,7 +25,7 @@ fn get_next_line(line: &[u8]) -> Vec<u8> {
         .collect()
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     let mut count = 0;
     let mut line: Vec<_> = input.bytes().collect();
     for _ in 0..FIRST_ITERATIONS {
@@ -37,7 +35,7 @@ pub fn task1(input: &str) -> AocResult<usize> {
     Ok(count)
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     let mut count = 0;
     let mut line: Vec<_> = input.bytes().collect();
     for _ in 0..SECOND_ITERATIONS {
@@ -47,7 +45,7 @@ pub fn task2(input: &str) -> AocResult<usize> {
     Ok(count)
 }
 
-/*pub fn task2(input: &str) -> AocResult<usize> {
+/*pub fn task2(input: &str) -> anyhow::Result<usize> {
     let (lambda, mu) = crate::common::floyd_hare_tortoise(
         || input.bytes().collect::<Vec<u8>>(),
         |l| {

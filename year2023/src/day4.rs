@@ -1,7 +1,6 @@
-use crate::*;
 use std::collections::HashSet;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<usize>> {
     input
         .lines()
         .map(|line| {
@@ -11,11 +10,11 @@ pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
             let win: HashSet<usize> = win
                 .filter(|i| i != &Ok(""))
                 .map(|i| Ok(i?.parse()?))
-                .collect::<AocResult<_>>()?;
+                .collect::<anyhow::Result<_>>()?;
             let matches = matches
                 .filter(|i| i != &Ok(""))
                 .map(|i| Ok(i?.parse()?))
-                .collect::<AocResult<_>>()?;
+                .collect::<anyhow::Result<_>>()?;
 
             Ok(win.intersection(&matches).count())
         })
@@ -30,11 +29,11 @@ fn win(&matches: &usize) -> usize {
     }
 }
 
-pub fn task1(input: &[usize]) -> AocResult<usize> {
+pub fn task1(input: &[usize]) -> anyhow::Result<usize> {
     Ok(input.iter().map(win).sum())
 }
 
-pub fn task2(input: &[usize]) -> AocResult<usize> {
+pub fn task2(input: &[usize]) -> anyhow::Result<usize> {
     let mut card_count = vec![1; input.len()];
     for (i, matches) in input.iter().enumerate() {
         let count = card_count[i];

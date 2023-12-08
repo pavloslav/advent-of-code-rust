@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(Clone)]
 pub struct Node {
@@ -8,7 +8,7 @@ pub struct Node {
     avail: i32,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Node>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Node>> {
     input
         .lines()
         .skip(2)
@@ -16,7 +16,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Node>> {
             let (x, y, size, used, avail, _): (usize, usize, i32, i32, i32, i32) =
                 prse::try_parse!(line, "/dev/grid/node-x{}-y{} {}T {}T {}T {}%")?;
             if used + avail != size {
-                Err(aoc_error!(
+                Err(anyhow::anyhow!(
                     "Used={used}, avail={avail}, together {}, but size is {size}!",
                     used + avail
                 ))?
@@ -26,7 +26,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Node>> {
         .collect()
 }
 
-pub fn task1(nodes: &[Node]) -> AocResult<usize> {
+pub fn task1(nodes: &[Node]) -> anyhow::Result<usize> {
     let mut nodes: Vec<_> = nodes.to_vec();
     nodes.sort_by_key(|node| node.avail);
     let avails: Vec<_> = nodes.iter().map(|node| node.avail).collect();
@@ -43,18 +43,18 @@ pub fn task1(nodes: &[Node]) -> AocResult<usize> {
     Ok(pairs)
 }
 
-pub fn task2(nodes: &[Node]) -> AocResult<String> {
+pub fn task2(nodes: &[Node]) -> anyhow::Result<String> {
     let width = nodes
         .iter()
         .map(|node| node.x)
         .max()
-        .ok_or_else(|| aoc_error!("No nodes!!!1111"))?
+        .context("No nodes!!!1111")?
         + 1;
     let height = nodes
         .iter()
         .map(|node| node.y)
         .max()
-        .ok_or_else(|| aoc_error!("No nodes!!!1111"))?
+        .context("No nodes!!!1111")?
         + 1;
     let mut map = vec![vec![b'X'; width]; height];
     for node in nodes {
@@ -65,19 +65,19 @@ pub fn task2(nodes: &[Node]) -> AocResult<String> {
         };
     }
     if map[0][0] != b'.' || map[0][width - 1] != b'.' {
-        return Err(aoc_error!(
+        anyhow::bail!(
             "Node 0,0 is {}, node 0,{} is {}!",
             map[0][0],
             width - 1,
             map[0][width - 1]
-        ));
+        );
     }
     map[0][0] = b'E';
     map[0][width - 1] = b'<';
 
     Ok(map
         .iter()
-        .map(|row| std::str::from_utf8(row).map_err(|_| aoc_error!("Impossible, it's ASCII!")))
-        .collect::<AocResult<Vec<_>>>()?
+        .map(|row| std::str::from_utf8(row).context("Impossible, it's ASCII!"))
+        .collect::<anyhow::Result<Vec<_>>>()?
         .join("\n"))
 }

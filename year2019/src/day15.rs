@@ -1,8 +1,8 @@
 use super::computer::Computer;
-use crate::*;
+
 use std::collections::{HashMap, HashSet};
 
-pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
@@ -17,13 +17,13 @@ const OXYGEN: isize = 2;
 
 type Position = (isize, isize);
 
-fn neighbor((x, y): Position, dir: isize) -> AocResult<Position> {
+fn neighbor((x, y): Position, dir: isize) -> anyhow::Result<Position> {
     Ok(match dir {
         NORTH => (x, y + 1),
         SOUTH => (x, y - 1),
         WEST => (x + 1, y),
         EAST => (x - 1, y),
-        other => return Err(aoc_error!("Unknown direction: {other}")),
+        other => anyhow::bail!("Unknown direction: {other}"),
     })
 }
 
@@ -44,7 +44,7 @@ impl MapSearcher {
             map: HashMap::from([((0, 0), Computer::new(input))]),
         }
     }
-    fn fill(&mut self) -> AocResult<Answer> {
+    fn fill(&mut self) -> anyhow::Result<Answer> {
         //359 - too high
         let mut visited: HashSet<Position> = HashSet::from_iter(self.positions.iter().cloned());
         for step in 1.. {
@@ -69,9 +69,7 @@ impl MapSearcher {
                                 return Ok(Answer::Oxygen(step));
                             }
                             other => {
-                                return Err(aoc_error!(
-                                    "unknown signal {other} on position {pos:?}"
-                                ))
+                                anyhow::bail!("unknown signal {other} on position {pos:?}")
                             }
                         }
                     }
@@ -82,26 +80,26 @@ impl MapSearcher {
             }
             self.positions = new_positions;
         }
-        Err(aoc_error!("Unreachable!"))
+        Err(anyhow::anyhow!("Unreachable!"))
     }
 }
 
-pub fn task1(input: &[isize]) -> AocResult<usize> {
+pub fn task1(input: &[isize]) -> anyhow::Result<usize> {
     let mut searcher = MapSearcher::new(input);
     match searcher.fill()? {
         Answer::Oxygen(step) => Ok(step),
-        _ => Err(aoc_error!("Can't find oxygen!")),
+        _ => Err(anyhow::anyhow!("Can't find oxygen!")),
     }
 }
 
-pub fn task2(input: &[isize]) -> AocResult<usize> {
+pub fn task2(input: &[isize]) -> anyhow::Result<usize> {
     let mut searcher = MapSearcher::new(input);
     if let Answer::Oxygen(_) = searcher.fill()? {
         match searcher.fill()? {
-            Answer::Oxygen(_) => Err(aoc_error!("Second oxygen found!")),
+            Answer::Oxygen(_) => Err(anyhow::anyhow!("Second oxygen found!")),
             Answer::Filled(step) => Ok(step),
         }
     } else {
-        Err(aoc_error!("Can't find oxygen!"))
+        Err(anyhow::anyhow!("Can't find oxygen!"))
     }
 }

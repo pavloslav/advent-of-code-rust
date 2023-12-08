@@ -1,23 +1,22 @@
-use crate::*;
 use std::collections::HashSet;
 
 const EMPTY: u8 = b'.';
 const PLANT: u8 = b'#';
 
-fn str_to_plant(input: &str) -> AocResult<Vec<bool>> {
+fn str_to_plant(input: &str) -> anyhow::Result<Vec<bool>> {
     input
         .bytes()
         .map(|c| match c {
             PLANT => Ok(true),
             EMPTY => Ok(false),
-            _ => Err(aoc_error!("Invalid plant state '{}'", c as char)),
+            _ => Err(anyhow::anyhow!("Invalid plant state '{}'", c as char)),
         })
         .collect()
 }
 
-pub fn parse_input(input: &str) -> AocResult<(Vec<bool>, HashSet<Vec<bool>>)> {
+pub fn parse_input(input: &str) -> anyhow::Result<(Vec<bool>, HashSet<Vec<bool>>)> {
     let mut input = input.lines();
-    let initial = input.next().ok_or(aoc_error!("No initial state!"))?;
+    let initial = input.next().ok_or(anyhow::anyhow!("No initial state!"))?;
     let initial = str_to_plant(prse::try_parse!(initial, "initial state: {}")?)?;
 
     let rules: HashSet<Vec<bool>> = input
@@ -31,20 +30,20 @@ pub fn parse_input(input: &str) -> AocResult<(Vec<bool>, HashSet<Vec<bool>>)> {
             match to.try_into() {
                 Ok(PLANT) => Some(str_to_plant(from)),
                 Ok(EMPTY) => None,
-                _ => Some(Err(aoc_error!("Invalid plant state '{to}'"))),
+                _ => Some(Err(anyhow::anyhow!("Invalid plant state '{to}'"))),
             }
         })
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
     if rules.iter().any(|rule| rule.len() != 5) {
-        Err(aoc_error!("All rules must be of length 5!"))
+        Err(anyhow::anyhow!("All rules must be of length 5!"))
     } else if rules.iter().any(|rule| rule.as_slice() == [false; 5]) {
-        Err(aoc_error!("Empty rule leads to chaos!"))
+        Err(anyhow::anyhow!("Empty rule leads to chaos!"))
     } else {
         Ok((initial, rules))
     }
 }
 
-pub fn task1((initial, rules): &(Vec<bool>, HashSet<Vec<bool>>)) -> AocResult<isize> {
+pub fn task1((initial, rules): &(Vec<bool>, HashSet<Vec<bool>>)) -> anyhow::Result<isize> {
     let loops = 20;
     let mut state: Vec<bool> = vec![false; 5];
     state.extend_from_slice(initial);
@@ -68,6 +67,6 @@ pub fn task1((initial, rules): &(Vec<bool>, HashSet<Vec<bool>>)) -> AocResult<is
         .sum())
 }
 
-pub fn task2((_initial, _rules): &(Vec<bool>, HashSet<Vec<bool>>)) -> AocResult<usize> {
-    Err(aoc_error!("Todo"))
+pub fn task2((_initial, _rules): &(Vec<bool>, HashSet<Vec<bool>>)) -> anyhow::Result<usize> {
+    Err(anyhow::anyhow!("Todo"))
 }

@@ -1,14 +1,14 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<u32>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<u32>> {
     input
         .lines()
         .find(|s| !s.starts_with("//") && !s.is_empty())
-        .ok_or_else(|| aoc_error!("There should be non-comment and non-empty line"))?
+        .context("There should be non-comment and non-empty line")?
         .chars()
         .map(|c| {
             c.to_digit(10)
-                .ok_or_else(|| aoc_error!("Can't parse digit '{c}'"))
+                .with_context(|| format!("Can't parse digit '{c}'"))
         })
         .collect()
 }
@@ -21,10 +21,10 @@ fn solve(input: &[u32], step: usize) -> u32 {
         .sum()
 }
 
-pub fn task1(input: &[u32]) -> AocResult<u32> {
+pub fn task1(input: &[u32]) -> anyhow::Result<u32> {
     Ok(solve(input, 1))
 }
 
-pub fn task2(input: &[u32]) -> AocResult<u32> {
+pub fn task2(input: &[u32]) -> anyhow::Result<u32> {
     Ok(solve(input, input.len() / 2))
 }

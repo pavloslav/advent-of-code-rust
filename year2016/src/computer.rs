@@ -1,5 +1,4 @@
-use crate::*;
-
+use anyhow::Context;
 type Value = isize;
 type Register = usize;
 
@@ -44,8 +43,8 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = AocError;
-    fn from_str(s: &str) -> AocResult<Self> {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> anyhow::Result<Self> {
         if let Ok((src, dst)) = prse::try_parse!(s, "cpy {} {}") {
             Ok(Instruction::Cpy(src, dst))
         } else if let Ok(tgt) = prse::try_parse!(s, "inc {}") {
@@ -59,7 +58,7 @@ impl std::str::FromStr for Instruction {
         } else if let Ok(tgt) = prse::try_parse!(s, "out {}") {
             Ok(Instruction::Out(tgt))
         } else {
-            Err(aoc_error!("Unknown instruction '{}'", s))
+            anyhow::bail!("Unknown instruction '{}'", s)
         }
     }
 }
@@ -80,7 +79,7 @@ impl Computer {
             out: None,
         }
     }
-    pub fn step(&mut self) -> AocResult<()> {
+    pub fn step(&mut self) -> anyhow::Result<()> {
         match &self.program[self.ip] {
             Instruction::Inc(RegValue::Register(r)) => {
                 self.registers[*r] += 1;
@@ -110,7 +109,7 @@ impl Computer {
                     self.ip = self
                         .ip
                         .checked_add_signed(tgt.get(&self.registers))
-                        .ok_or_else(|| aoc_error!("Ip shouldn't be less then 0!"))?;
+                        .context("Ip shouldn't be less then 0!")?;
                     return Ok(());
                 }
             }
@@ -123,14 +122,14 @@ impl Computer {
         Ok(())
     }
 
-    pub fn run(&mut self) -> AocResult<Value> {
+    pub fn run(&mut self) -> anyhow::Result<Value> {
         while self.ip < self.program.len() {
             self.step()?;
         }
         Ok(self.registers[0])
     }
 
-    pub fn run_to_output(&mut self) -> AocResult<Option<Value>> {
+    pub fn run_to_output(&mut self) -> anyhow::Result<Option<Value>> {
         while self.ip < self.program.len() && self.out.is_none() {
             self.step()?;
         }

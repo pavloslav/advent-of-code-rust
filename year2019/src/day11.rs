@@ -1,5 +1,5 @@
 use super::computer::Computer;
-use crate::*;
+
 use std::collections::HashMap;
 
 struct Robot {
@@ -35,7 +35,7 @@ impl Robot {
     fn paint(&mut self, color: u8) {
         self.painted.insert((self.x, self.y), color);
     }
-    fn work(&mut self) -> AocResult<()> {
+    fn work(&mut self) -> anyhow::Result<()> {
         while !self.brain.is_halted() {
             self.brain
                 .write(*self.painted.get(&(self.x, self.y)).unwrap_or(&0) as isize);
@@ -74,17 +74,17 @@ impl Robot {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
-pub fn task1(code: &[isize]) -> AocResult<usize> {
+pub fn task1(code: &[isize]) -> anyhow::Result<usize> {
     let mut robot = Robot::new(code);
     robot.work()?;
     Ok(robot.painted.len())
 }
 
-pub fn task2(code: &[isize]) -> AocResult<String> {
+pub fn task2(code: &[isize]) -> anyhow::Result<String> {
     let mut robot = Robot::new(code);
     robot.painted.insert((0, 0), 1);
     robot.work()?;

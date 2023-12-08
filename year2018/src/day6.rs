@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<(i32, i32)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(i32, i32)>> {
     input
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{}, {}")?))
@@ -41,30 +39,30 @@ fn closest(points: &[(i32, i32)], pt: (i32, i32)) -> Option<usize> {
     }
 }
 
-pub fn task1(input: &[(i32, i32)]) -> AocResult<usize> {
+pub fn task1(input: &[(i32, i32)]) -> anyhow::Result<usize> {
     let min_x = input
         .iter()
         .map(|(x, _)| x)
         .min()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         - 1;
     let max_x = input
         .iter()
         .map(|(x, _)| x)
         .max()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         + 1;
     let min_y = input
         .iter()
         .map(|(_, y)| y)
         .min()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         - 1;
     let max_y = input
         .iter()
         .map(|(_, y)| y)
         .max()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         + 1;
     let mut counter = vec![Some(0); input.len()];
     for x in min_x..=max_x {
@@ -82,33 +80,33 @@ pub fn task1(input: &[(i32, i32)]) -> AocResult<usize> {
         .iter()
         .filter_map(|&x| x)
         .max()
-        .ok_or(aoc_error!("No suitable solution"))
+        .ok_or(anyhow::anyhow!("No suitable solution"))
 }
 
-pub fn task2(input: &[(i32, i32)]) -> AocResult<usize> {
+pub fn task2(input: &[(i32, i32)]) -> anyhow::Result<usize> {
     let min_x = input
         .iter()
         .map(|(x, _)| x)
         .min()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         - 1;
     let max_x = input
         .iter()
         .map(|(x, _)| x)
         .max()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         + 1;
     let min_y = input
         .iter()
         .map(|(_, y)| y)
         .min()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         - 1;
     let max_y = input
         .iter()
         .map(|(_, y)| y)
         .max()
-        .ok_or(aoc_error!("Empty input!"))?
+        .ok_or(anyhow::anyhow!("Empty input!"))?
         + 1;
     let mut counter = 0;
     for x in min_x..=max_x {

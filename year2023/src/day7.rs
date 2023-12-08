@@ -1,5 +1,3 @@
-use crate::*;
-
 const JOKER: u8 = 1;
 const TEN: u8 = 10;
 const JACK: u8 = 11;
@@ -71,9 +69,9 @@ pub struct Hand {
 }
 
 impl Hand {
-    fn try_new(cards: &str, bid: usize, with_jokers: Jokers) -> AocResult<Self> {
+    fn try_new(cards: &str, bid: usize, with_jokers: Jokers) -> anyhow::Result<Self> {
         if cards.len() != 5 {
-            return Err(aoc_error!("Invalid number of cards: {}", cards.len()));
+            anyhow::bail!("Invalid number of cards: {}", cards.len());
         }
         let cards: Vec<u8> = cards
             .bytes()
@@ -85,10 +83,10 @@ impl Hand {
                     b'Q' => QUEEN,
                     b'K' => KING,
                     b'A' => ACE,
-                    other => return Err(aoc_error!("Invalid card: {}", other as char)),
+                    other => anyhow::bail!("Invalid card: {}", other as char),
                 })
             })
-            .collect::<AocResult<_>>()?;
+            .collect::<anyhow::Result<_>>()?;
 
         let kind = HandKind::new(&cards, with_jokers);
 
@@ -96,18 +94,18 @@ impl Hand {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<(&str, usize)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(&str, usize)>> {
     input
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{} {}")?))
         .collect()
 }
 
-fn task(input: &[(&str, usize)], with_jokers: Jokers) -> AocResult<usize> {
+fn task(input: &[(&str, usize)], with_jokers: Jokers) -> anyhow::Result<usize> {
     let mut hands: Vec<Hand> = input
         .iter()
         .map(|&(cards, bid)| Hand::try_new(cards, bid, with_jokers))
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
     hands.sort();
     Ok(hands
         .iter()
@@ -116,11 +114,11 @@ fn task(input: &[(&str, usize)], with_jokers: Jokers) -> AocResult<usize> {
         .sum())
 }
 
-pub fn task1(input: &[(&str, usize)]) -> AocResult<usize> {
+pub fn task1(input: &[(&str, usize)]) -> anyhow::Result<usize> {
     task(input, Jokers::Absent)
 }
 
-pub fn task2(input: &[(&str, usize)]) -> AocResult<usize> {
+pub fn task2(input: &[(&str, usize)]) -> anyhow::Result<usize> {
     task(input, Jokers::Present)
 }
 

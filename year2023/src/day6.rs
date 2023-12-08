@@ -1,16 +1,10 @@
-use crate::*;
+use anyhow::Context;
 use itertools::Itertools;
 
-pub fn parse_input(input: &str) -> AocResult<(&str, &str)> {
+pub fn parse_input(input: &str) -> anyhow::Result<(&str, &str)> {
     let mut input = input.lines();
-    let times = prse::try_parse!(
-        input.next().ok_or_else(|| aoc_error!("Empty times"))?,
-        "Time: {}"
-    )?;
-    let distances = prse::try_parse!(
-        input.next().ok_or_else(|| aoc_error!("Empty distances"))?,
-        "Distance: {}"
-    )?;
+    let times = prse::try_parse!(input.next().context("Empty times")?, "Time: {}")?;
+    let distances = prse::try_parse!(input.next().context("Empty distances")?, "Distance: {}")?;
     Ok((times, distances))
 }
 
@@ -32,16 +26,16 @@ fn inequation(time: f64, dist: f64) -> i32 {
     }
 }
 
-pub fn task1((times, distances): &(&str, &str)) -> AocResult<i32> {
+pub fn task1((times, distances): &(&str, &str)) -> anyhow::Result<i32> {
     times
         .split_whitespace()
         .map(|t| t.parse())
         .zip(distances.split_whitespace().map(|d| d.parse()))
         .map(|(time, dist)| Ok(inequation(time?, dist?)))
-        .try_fold(1, |acc, r: AocResult<_>| Ok(acc * r?))
+        .try_fold(1, |acc, r: anyhow::Result<_>| Ok(acc * r?))
 }
 
-pub fn task2((time, distance): &(&str, &str)) -> AocResult<i32> {
+pub fn task2((time, distance): &(&str, &str)) -> anyhow::Result<i32> {
     let time = time.split_whitespace().join("").parse()?;
     let distance = distance.split_whitespace().join("").parse()?;
     Ok(inequation(time, distance))

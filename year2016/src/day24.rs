@@ -1,4 +1,3 @@
-use crate::*;
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
@@ -6,7 +5,7 @@ const FREE: u8 = b'.';
 const WALL: u8 = b'#';
 const ZERO: u8 = b'0';
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<u8>>> {
     Ok(input.lines().map(|line| line.as_bytes().to_vec()).collect())
 }
 
@@ -52,7 +51,7 @@ fn find_distances(map: &[Vec<u8>], locations: &HashMap<u8, (i32, i32)>) -> HashM
     distances
 }
 
-pub fn task1(map: &[Vec<u8>]) -> AocResult<i32> {
+pub fn task1(map: &[Vec<u8>]) -> anyhow::Result<i32> {
     let locations = find_locations(map);
     let distances = find_distances(map, &locations);
     let mut best = i32::MAX;
@@ -72,7 +71,7 @@ pub fn task1(map: &[Vec<u8>]) -> AocResult<i32> {
     Ok(best)
 }
 
-pub fn task2(map: &[Vec<u8>]) -> AocResult<i32> {
+pub fn task2(map: &[Vec<u8>]) -> anyhow::Result<i32> {
     let locations = find_locations(map);
     let distances = find_distances(map, &locations);
     let mut best = i32::MAX;

@@ -1,5 +1,3 @@
-use crate::*;
-
 use std::collections::HashMap;
 
 fn memory_game(input: &[usize], turn: usize) -> usize {
@@ -18,17 +16,17 @@ fn memory_game(input: &[usize], turn: usize) -> usize {
     last_spoken
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<usize>> {
     input.trim().split(',').map(|s| Ok(s.parse()?)).collect()
 }
 
 const NUMBER1: usize = 2020;
 const NUMBER2: usize = 30_000_000;
 
-pub fn task1(input: &[usize]) -> AocResult<usize> {
+pub fn task1(input: &[usize]) -> anyhow::Result<usize> {
     Ok(memory_game(input, NUMBER1))
 }
 
-pub fn task2(input: &[usize]) -> AocResult<usize> {
+pub fn task2(input: &[usize]) -> anyhow::Result<usize> {
     Ok(memory_game(input, NUMBER2))
 }

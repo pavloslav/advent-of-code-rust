@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(Clone, Debug)]
 pub enum Wire {
@@ -16,7 +16,7 @@ impl<'a> prse::Parse<'a> for Wire {
 }
 
 impl Wire {
-    fn calculate(&self, wires: &mut Wires) -> AocResult<u16> {
+    fn calculate(&self, wires: &mut Wires) -> anyhow::Result<u16> {
         match self {
             Wire::Name(name) => {
                 let value = get_rule(wires, name)?.calculate(wires)?;
@@ -63,7 +63,7 @@ impl<'a> prse::Parse<'a> for Rule {
 }
 
 impl Rule {
-    fn calculate(&self, wires: &mut Wires) -> AocResult<u16> {
+    fn calculate(&self, wires: &mut Wires) -> anyhow::Result<u16> {
         Ok(match self {
             Rule::And(left, right) => left.calculate(wires)? & right.calculate(wires)?,
             Rule::Or(left, right) => left.calculate(wires)? | right.calculate(wires)?,
@@ -77,29 +77,26 @@ impl Rule {
 
 type Wires = std::collections::HashMap<String, Rule>;
 
-fn get_rule(wires: &Wires, name: &str) -> AocResult<Rule> {
+fn get_rule(wires: &Wires, name: &str) -> anyhow::Result<Rule> {
     wires
         .get(name)
-        .ok_or_else(|| aoc_error!("No wire '{name}' found"))
+        .with_context(|| format!("No wire '{name}' found"))
         .cloned()
 }
 
-pub fn parse_input(input: &str) -> AocResult<Wires> {
+pub fn parse_input(input: &str) -> anyhow::Result<Wires> {
     input
         .lines()
-        .map(|l| {
-            let (target, rule) = prse::try_parse!(l, "{1} -> {0}")?;
-            Ok((target, rule))
-        })
+        .map(|l| Ok(prse::try_parse!(l, "{1} -> {0}")?))
         .collect()
 }
 
-pub fn task1(wires: &Wires) -> AocResult<u16> {
+pub fn task1(wires: &Wires) -> anyhow::Result<u16> {
     let mut wires = wires.clone();
     get_rule(&wires, "a")?.calculate(&mut wires)
 }
 
-pub fn task2(wires: &Wires) -> AocResult<u16> {
+pub fn task2(wires: &Wires) -> anyhow::Result<u16> {
     let mut cwires = wires.clone();
     let a = get_rule(&cwires, "a")?.calculate(&mut cwires)?;
     let mut cwires = wires.clone();

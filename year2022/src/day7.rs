@@ -1,5 +1,3 @@
-use crate::*;
-
 pub enum FsRecord {
     File(usize),
     Dir(Box<Directory>),
@@ -75,7 +73,7 @@ impl Directory {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Directory> {
+pub fn parse_input(input: &str) -> anyhow::Result<Directory> {
     let mut root = Directory::new();
     let mut path = vec![];
     for instruction in input.lines() {
@@ -107,13 +105,13 @@ pub fn parse_input(input: &str) -> AocResult<Directory> {
     Ok(root)
 }
 
-pub fn task1(root: &Directory) -> AocResult<usize> {
+pub fn task1(root: &Directory) -> anyhow::Result<usize> {
     Ok(root
         .get_sizes(|size| if size <= 100_000 { size } else { 0 })
         .1)
 }
 
-pub fn task2(root: &Directory) -> AocResult<usize> {
+pub fn task2(root: &Directory) -> anyhow::Result<usize> {
     let current_size = root.get_sizes(|_| 0).0;
     let unused = 70_000_000 - current_size;
     let needed = 30_000_000 - unused;

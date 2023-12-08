@@ -1,5 +1,3 @@
-use crate::*;
-
 use itertools::Itertools;
 
 #[derive(Clone, Copy)]
@@ -9,7 +7,7 @@ pub struct Character {
     armor: i16,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Character> {
+pub fn parse_input(input: &str) -> anyhow::Result<Character> {
     let (hp, damage, armor) = prse::try_parse!(input, "Hit Points: {}\nDamage: {}\nArmor: {}")?;
     Ok(Character { hp, damage, armor })
 }
@@ -44,7 +42,7 @@ impl Character {
     }
 }
 
-fn search(boss: &Character, need_min: bool) -> AocResult<usize> {
+fn search(boss: &Character, need_min: bool) -> anyhow::Result<usize> {
     let iter = WEAPONS.iter().flat_map(|weapon| {
         ARMORS.iter().flat_map(|armor| {
             (0..=2).flat_map(|count| {
@@ -65,16 +63,16 @@ fn search(boss: &Character, need_min: bool) -> AocResult<usize> {
         })
     });
     if need_min {
-        iter.min().ok_or(aoc_error!("Empty iterator on min"))
+        iter.min().ok_or(anyhow::anyhow!("Empty iterator on min"))
     } else {
-        iter.max().ok_or(aoc_error!("Empty iterator on min"))
+        iter.max().ok_or(anyhow::anyhow!("Empty iterator on min"))
     }
 }
 
-pub fn task1(boss: &Character) -> AocResult<usize> {
+pub fn task1(boss: &Character) -> anyhow::Result<usize> {
     search(boss, true)
 }
 
-pub fn task2(boss: &Character) -> AocResult<usize> {
+pub fn task2(boss: &Character) -> anyhow::Result<usize> {
     search(boss, false)
 }

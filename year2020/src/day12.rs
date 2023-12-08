@@ -1,5 +1,3 @@
-use crate::*;
-
 #[derive(Debug)]
 struct Ship {
     lon: i32,
@@ -23,8 +21,8 @@ pub struct Order {
 }
 
 impl std::str::FromStr for Order {
-    type Err = AocError;
-    fn from_str(s: &str) -> AocResult<Order> {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> anyhow::Result<Order> {
         let (typ, par) = s.split_at(1);
         Ok(Order {
             com: match typ {
@@ -35,7 +33,7 @@ impl std::str::FromStr for Order {
                 "L" => OrderType::Left,
                 "R" => OrderType::Right,
                 "F" => OrderType::Forward,
-                other => Err(aoc_error!("Unknown order: '{other}'"))?,
+                other => Err(anyhow::anyhow!("Unknown order: '{other}'"))?,
             },
             par: par.parse()?,
         })
@@ -84,7 +82,7 @@ struct ShipWaypoint {
 }
 
 impl ShipWaypoint {
-    fn step(&mut self, action: &Order) -> AocResult<()> {
+    fn step(&mut self, action: &Order) -> anyhow::Result<()> {
         match action.com {
             OrderType::East => self.waypt_lon += action.par,
             OrderType::West => self.waypt_lon -= action.par,
@@ -110,13 +108,13 @@ impl ShipWaypoint {
     fn distance(&self) -> i32 {
         self.lon.abs() + self.lat.abs()
     }
-    fn travel(&mut self, orders: &[Order]) -> AocResult<()> {
+    fn travel(&mut self, orders: &[Order]) -> anyhow::Result<()> {
         for order in orders {
             self.step(order)?;
         }
         Ok(())
     }
-    fn turn(&mut self, angle: i32) -> AocResult<()> {
+    fn turn(&mut self, angle: i32) -> anyhow::Result<()> {
         match angle.rem_euclid(360) {
             0 => {}
             90 => {
@@ -134,24 +132,24 @@ impl ShipWaypoint {
                 self.waypt_lat = -t;
             }
             other => {
-                return Err(aoc_error!("Angle {other} is not supported"));
+                anyhow::bail!("Angle {other} is not supported");
             }
         }
         Ok(())
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Order>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Order>> {
     input.trim().lines().map(|s| s.parse()).collect()
 }
 
-pub fn task1(orders: &[Order]) -> AocResult<i32> {
+pub fn task1(orders: &[Order]) -> anyhow::Result<i32> {
     let mut ship = Ship::new();
     ship.travel(orders);
     Ok(ship.distance())
 }
 
-pub fn task2(orders: &[Order]) -> AocResult<i32> {
+pub fn task2(orders: &[Order]) -> anyhow::Result<i32> {
     let mut ship = ShipWaypoint::new();
     ship.travel(orders)?;
     Ok(ship.distance())

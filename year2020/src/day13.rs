@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 fn get_first_bus(after: i32, periods: &[Option<i32>]) -> i32 {
     let mut best_time = i32::MAX;
@@ -20,15 +20,12 @@ fn get_first_bus(after: i32, periods: &[Option<i32>]) -> i32 {
     (best_time - after) * best_bus
 }
 
-pub fn parse_input(s: &str) -> AocResult<(i32, Vec<Option<i32>>)> {
+pub fn parse_input(s: &str) -> anyhow::Result<(i32, Vec<Option<i32>>)> {
     let mut lines = s.lines();
-    let timestamp = lines
-        .next()
-        .ok_or_else(|| aoc_error!("Empty input!"))?
-        .parse()?;
+    let timestamp = lines.next().context("Empty input!")?.parse()?;
     let times = lines
         .next()
-        .ok_or_else(|| aoc_error!("Empty input!"))?
+        .context("Empty input!")?
         .split(',')
         .map(|part| part.parse().ok())
         .collect();
@@ -56,11 +53,11 @@ fn get_sequence_time(times: &[Option<i32>]) -> i64 {
     first_time
 }
 
-pub fn task1(data: &(i32, Vec<Option<i32>>)) -> AocResult<i32> {
+pub fn task1(data: &(i32, Vec<Option<i32>>)) -> anyhow::Result<i32> {
     Ok(get_first_bus(data.0, &data.1))
 }
 
-pub fn task2(data: &(i32, Vec<Option<i32>>)) -> AocResult<i64> {
+pub fn task2(data: &(i32, Vec<Option<i32>>)) -> anyhow::Result<i64> {
     Ok(get_sequence_time(&data.1))
 }
 

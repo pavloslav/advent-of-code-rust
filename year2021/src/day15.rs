@@ -1,8 +1,8 @@
-use crate::*;
+use anyhow::Context;
 
 type Cave = Vec<Vec<usize>>;
 
-pub fn parse_input(input: &str) -> AocResult<Cave> {
+pub fn parse_input(input: &str) -> anyhow::Result<Cave> {
     input
         .lines()
         .map(|line| {
@@ -10,7 +10,7 @@ pub fn parse_input(input: &str) -> AocResult<Cave> {
                 .map(|risk| {
                     Ok(risk
                         .to_digit(10)
-                        .ok_or_else(|| aoc_error!("Wrong digit {risk}"))?
+                        .with_context(|| format!("Wrong digit {risk}"))?
                         as usize)
                 })
                 .collect()
@@ -54,11 +54,11 @@ pub fn dijkstra(cave: &Cave) -> usize {
     len_cave[size - 1][size - 1].unwrap() - len_cave[0][0].unwrap()
 }
 
-pub fn task1(cave: &Cave) -> AocResult<usize> {
+pub fn task1(cave: &Cave) -> anyhow::Result<usize> {
     Ok(dijkstra(cave))
 }
 
-pub fn task2(cave: &Cave) -> AocResult<usize> {
+pub fn task2(cave: &Cave) -> anyhow::Result<usize> {
     let size = cave.len();
     let mut real_cave = vec![vec![0; size * 5]; size * 5];
     for i_mult in 0..5 {

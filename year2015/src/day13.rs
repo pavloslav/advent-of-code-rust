@@ -1,6 +1,6 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<i32>>> {
     let mut names = std::collections::HashMap::new();
     let mut scores = vec![];
     for line in input.lines() {
@@ -11,7 +11,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
         let score = match gain {
             "gain" => score,
             "lose" => -score,
-            other => return Err(aoc_error!("Units can not be '{other}'")),
+            other => anyhow::bail!("Units can not be '{other}'"),
         };
 
         let names_size = names.len();
@@ -40,7 +40,7 @@ fn score(scores: &[Vec<i32>], perm: &[usize]) -> i32 {
         .sum()
 }
 
-pub fn task1(input: &[Vec<i32>]) -> AocResult<i32> {
+pub fn task1(input: &[Vec<i32>]) -> anyhow::Result<i32> {
     (0..input.len())
         .permutations(input.len())
         .map(|permutation| {
@@ -52,13 +52,13 @@ pub fn task1(input: &[Vec<i32>]) -> AocResult<i32> {
             score(input, &perm)
         })
         .max()
-        .ok_or_else(|| aoc_error!("No options to consider"))
+        .context("No options to consider")
 }
 
-pub fn task2(input: &[Vec<i32>]) -> AocResult<i32> {
+pub fn task2(input: &[Vec<i32>]) -> anyhow::Result<i32> {
     (0..input.len())
         .permutations(input.len())
         .map(|permutation| score(input, &permutation))
         .max()
-        .ok_or_else(|| aoc_error!("No options to consider"))
+        .context("No options to consider")
 }

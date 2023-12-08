@@ -1,5 +1,3 @@
-use crate::*;
-
 use std::collections::HashSet;
 
 pub struct Rect {
@@ -10,7 +8,7 @@ pub struct Rect {
     bottom: i32,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Rect>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Rect>> {
     input
         .lines()
         .map(|line| {
@@ -27,7 +25,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Rect>> {
         .collect()
 }
 
-pub fn task1(input: &[Rect]) -> AocResult<usize> {
+pub fn task1(input: &[Rect]) -> anyhow::Result<usize> {
     let mut multiclaimed = HashSet::new();
     for (i, r1) in input.iter().enumerate() {
         for r2 in &input[i + 1..] {
@@ -41,7 +39,7 @@ pub fn task1(input: &[Rect]) -> AocResult<usize> {
     Ok(multiclaimed.len())
 }
 
-pub fn task2(input: &[Rect]) -> AocResult<i32> {
+pub fn task2(input: &[Rect]) -> anyhow::Result<i32> {
     let mut not_overlapped: HashSet<_> = input.iter().map(|r| r.number).collect();
     for (i, r1) in input.iter().enumerate() {
         for r2 in &input[i + 1..] {
@@ -55,7 +53,7 @@ pub fn task2(input: &[Rect]) -> AocResult<i32> {
     }
 
     if not_overlapped.len() != 1 {
-        Err(aoc_error!("{} results found", not_overlapped.len()))
+        Err(anyhow::anyhow!("{} results found", not_overlapped.len()))
     } else {
         Ok(*not_overlapped.iter().next().unwrap())
     }

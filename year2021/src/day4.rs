@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 const BINGO_SIZE: usize = 5;
 
@@ -23,15 +23,15 @@ pub struct BingoSettings {
 }
 
 impl std::str::FromStr for BingoSettings {
-    type Err = AocError;
-    fn from_str(s: &str) -> AocResult<BingoSettings> {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> anyhow::Result<BingoSettings> {
         let mut s = s.lines();
         let calls = s
             .next()
             .unwrap()
             .split(',')
             .map(|s| Ok(s.parse()?))
-            .collect::<AocResult<_>>()?;
+            .collect::<anyhow::Result<_>>()?;
         let mut boards = Vec::new();
         let mut idx = 0;
         for line in s {
@@ -45,9 +45,7 @@ impl std::str::FromStr for BingoSettings {
                 ]));
                 idx = 0;
             } else {
-                let board = boards
-                    .last_mut()
-                    .ok_or_else(|| aoc_error!("board is empty!"))?;
+                let board = boards.last_mut().context("board is empty!")?;
                 for (i, n) in line.split_whitespace().enumerate() {
                     board.0[idx][i] = n.parse()?;
                 }
@@ -83,7 +81,7 @@ impl Bingo<'_> {
         }
     }
 
-    fn task(&mut self, nwinner: usize) -> AocResult<usize> {
+    fn task(&mut self, nwinner: usize) -> anyhow::Result<usize> {
         for &call in &self.settings.calls {
             self.strikeout(call);
             if self.winners.len() == nwinner {
@@ -123,24 +121,24 @@ impl Bingo<'_> {
         }
     }
 
-    fn last_winner_score(&self) -> AocResult<usize> {
+    fn last_winner_score(&self) -> anyhow::Result<usize> {
         if let Some(last) = self.winners.last() {
             Ok(last.1)
         } else {
-            Err(aoc_error!("No winners"))
+            Err(anyhow::anyhow!("No winners"))
         }
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<BingoSettings> {
+pub fn parse_input(input: &str) -> anyhow::Result<BingoSettings> {
     input.parse()
 }
 
-pub fn task1(bingo: &BingoSettings) -> AocResult<usize> {
+pub fn task1(bingo: &BingoSettings) -> anyhow::Result<usize> {
     Bingo::new(bingo).task(1)
 }
 
-pub fn task2(bingo: &BingoSettings) -> AocResult<usize> {
+pub fn task2(bingo: &BingoSettings) -> anyhow::Result<usize> {
     Bingo::new(bingo).task(bingo.boards.len())
 }
 

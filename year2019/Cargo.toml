@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 common = {path = "../common"}
-itertools = "*"
-prse = "*"
-once_cell = "*"
+itertools = "0.12"
+prse = "1.1"
+once_cell = "1.19"
+anyhow = "1.0"

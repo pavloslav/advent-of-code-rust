@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 fn value(c: char) -> u32 {
     if c.is_uppercase() {
@@ -8,7 +8,7 @@ fn value(c: char) -> u32 {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u32>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<u32>>> {
     Ok(input
         .lines()
         .map(|line| line.chars().map(value).collect())
@@ -17,7 +17,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u32>>> {
 
 use std::collections::HashSet;
 
-pub fn task1(input: &[Vec<u32>]) -> AocResult<u32> {
+pub fn task1(input: &[Vec<u32>]) -> anyhow::Result<u32> {
     input
         .iter()
         .map(|backpack| {
@@ -26,12 +26,12 @@ pub fn task1(input: &[Vec<u32>]) -> AocResult<u32> {
             right
                 .iter()
                 .find(|&item| left.contains(&item))
-                .ok_or_else(|| aoc_error!("Empty badges!"))
+                .context("Empty badges!")
         })
-        .try_fold(0, |acc, x: AocResult<_>| Ok(acc + x?))
+        .try_fold(0, |acc, x: anyhow::Result<_>| Ok(acc + x?))
 }
 
-pub fn task2(input: &[Vec<u32>]) -> AocResult<u32> {
+pub fn task2(input: &[Vec<u32>]) -> anyhow::Result<u32> {
     let mut result = 0;
     for group in input.chunks(3) {
         let mut badges: HashSet<_> = group[0].iter().collect();
@@ -41,10 +41,7 @@ pub fn task2(input: &[Vec<u32>]) -> AocResult<u32> {
                 .copied()
                 .collect();
         }
-        result += *badges
-            .iter()
-            .next()
-            .ok_or_else(|| aoc_error!("Empty badges!"))?;
+        result += *badges.iter().next().context("Empty badges!")?;
     }
     Ok(result)
 }

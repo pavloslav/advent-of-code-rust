@@ -1,14 +1,13 @@
-use crate::*;
-
 use super::computer::Computer;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
 use itertools::Itertools;
 
-pub fn task1(code: &[isize]) -> AocResult<isize> {
+pub fn task1(code: &[isize]) -> anyhow::Result<isize> {
     (0..5)
         .permutations(5)
         .map(|perm| {
@@ -21,13 +20,13 @@ pub fn task1(code: &[isize]) -> AocResult<isize> {
             }
             Ok(data)
         })
-        .collect::<AocResult<Vec<_>>>()?
+        .collect::<anyhow::Result<Vec<_>>>()?
         .into_iter()
         .max()
-        .ok_or_else(|| aoc_error!("Should not be empty!"))
+        .context("Should not be empty!")
 }
 
-pub fn task2(code: &[isize]) -> AocResult<isize> {
+pub fn task2(code: &[isize]) -> anyhow::Result<isize> {
     (5..10)
         .permutations(5)
         .map(|perm| {
@@ -55,9 +54,9 @@ pub fn task2(code: &[isize]) -> AocResult<isize> {
             }
             Ok(last_data)
         })
-        .collect::<AocResult<Vec<_>>>()?
+        .collect::<anyhow::Result<Vec<_>>>()?
         .iter()
         .max()
-        .ok_or_else(|| aoc_error!("Should not be empty!"))
         .copied()
+        .context("Should not be empty!")
 }

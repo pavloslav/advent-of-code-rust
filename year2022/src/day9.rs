@@ -1,8 +1,6 @@
-use crate::*;
-
 type Order = ((i32, i32), i32);
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Order>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Order>> {
     input
         .lines()
         .map(|l| {
@@ -13,7 +11,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Order>> {
                 'U' => (0, 1),
                 'D' => (0, -1),
                 other => {
-                    return Err(aoc_error!("Unknown direction '{other}'"));
+                    anyhow::bail!("Unknown direction '{other}'");
                 }
             };
             Ok((dir, value))
@@ -54,11 +52,11 @@ fn run_rope(path: &[Order], len: usize) -> usize {
     visited.len()
 }
 
-pub fn task1(path: &[Order]) -> AocResult<usize> {
+pub fn task1(path: &[Order]) -> anyhow::Result<usize> {
     Ok(run_rope(path, 2))
 }
 
-pub fn task2(path: &[Order]) -> AocResult<usize> {
+pub fn task2(path: &[Order]) -> anyhow::Result<usize> {
     Ok(run_rope(path, 10))
 }
 

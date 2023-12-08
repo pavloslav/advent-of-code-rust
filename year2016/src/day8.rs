@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<char>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<char>>> {
     build_lcd(6, 50, input)
 }
 
-fn collect_lcd(lcd: &[Vec<char>]) -> AocResult<String> {
+fn collect_lcd(lcd: &[Vec<char>]) -> anyhow::Result<String> {
     let mut result = String::from("\n");
     for j in 0..lcd[0].len() {
         for line in lcd {
@@ -15,7 +13,7 @@ fn collect_lcd(lcd: &[Vec<char>]) -> AocResult<String> {
     Ok(result)
 }
 
-fn build_lcd(rows: usize, columns: usize, commands: &str) -> AocResult<Vec<Vec<char>>> {
+fn build_lcd(rows: usize, columns: usize, commands: &str) -> anyhow::Result<Vec<Vec<char>>> {
     let mut lcd = Vec::with_capacity(columns);
     for _ in 0..columns {
         lcd.push(std::iter::repeat('.').take(rows).collect::<Vec<_>>());
@@ -46,20 +44,20 @@ fn build_lcd(rows: usize, columns: usize, commands: &str) -> AocResult<Vec<Vec<c
                 lcd[x][0] = temp;
             }
         } else {
-            return Err(aoc_error!("Can't find all data in command {command}"));
+            anyhow::bail!("Can't find all data in command {command}");
         }
     }
     Ok(lcd)
 }
 
-pub fn task1(lcd: &[Vec<char>]) -> AocResult<usize> {
+pub fn task1(lcd: &[Vec<char>]) -> anyhow::Result<usize> {
     Ok(lcd
         .iter()
         .map(|line| line.iter().filter(|c| **c == '#').count())
         .sum())
 }
 
-pub fn task2(lcd: &[Vec<char>]) -> AocResult<String> {
+pub fn task2(lcd: &[Vec<char>]) -> anyhow::Result<String> {
     collect_lcd(lcd)
 }
 

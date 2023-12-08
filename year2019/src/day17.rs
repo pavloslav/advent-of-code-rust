@@ -1,5 +1,4 @@
 use super::computer::Computer;
-use crate::*;
 
 #[derive(PartialEq)]
 pub enum Cell {
@@ -11,14 +10,14 @@ pub enum Cell {
     Left,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<Cell>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<Cell>>> {
     let mut robot = Computer::new(&Computer::prepare_code(input)?);
     robot.run()?;
     let mut map = vec![];
     let mut line = vec![];
     while let Ok(data) = robot.read() {
         use Cell::*;
-        match u8::try_from(data).map_err(|_| aoc_error!("Invalid code '{data}'"))? {
+        match u8::try_from(data).map_err(|_| anyhow::anyhow!("Invalid code '{data}'"))? {
             b'.' => line.push(Empty),
             b'#' => line.push(Scaffold),
             b'^' => line.push(Up),
@@ -30,7 +29,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<Cell>>> {
                 tail.append(&mut line);
                 map.push(tail);
             }
-            _ => return Err(aoc_error!("Invalid code '{data}'")),
+            _ => anyhow::bail!("Invalid code '{data}'"),
         }
     }
     Ok(map)
@@ -43,7 +42,7 @@ fn no_neighbors(map: &[Vec<Cell>], x: usize, y: usize, check: Cell) -> bool {
         && (y + 1 == map.len() || map[y + 1][x] != check)
 }
 
-pub fn task1(input: &[Vec<Cell>]) -> AocResult<usize> {
+pub fn task1(input: &[Vec<Cell>]) -> anyhow::Result<usize> {
     Ok(input
         .iter()
         .enumerate()
@@ -62,6 +61,6 @@ pub fn task1(input: &[Vec<Cell>]) -> AocResult<usize> {
         .sum())
 }
 
-pub fn task2(_input: &[Vec<Cell>]) -> AocResult<usize> {
-    Err(aoc_error!("Todo"))
+pub fn task2(_input: &[Vec<Cell>]) -> anyhow::Result<usize> {
+    Err(anyhow::anyhow!("Todo"))
 }

@@ -1,9 +1,7 @@
-use crate::*;
-
 type Point = (i32, i32);
 type SensorData = (Point, Point);
 
-pub fn parse_input(input: &str) -> AocResult<Vec<SensorData>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<SensorData>> {
     input
         .lines()
         .map(|line| {
@@ -42,7 +40,7 @@ fn generate_row(sensors: &[SensorData], row_y: i32) -> Vec<(i32, i32)> {
     list
 }
 
-pub fn task1(sensors: &[SensorData]) -> AocResult<i32> {
+pub fn task1(sensors: &[SensorData]) -> anyhow::Result<i32> {
     const ROW_Y: i32 = 2_000_000;
     let list = generate_row(sensors, ROW_Y);
 
@@ -60,7 +58,7 @@ pub fn task1(sensors: &[SensorData]) -> AocResult<i32> {
         - beacons.len() as i32)
 }
 
-pub fn task2(sensors: &[SensorData]) -> AocResult<usize> {
+pub fn task2(sensors: &[SensorData]) -> anyhow::Result<usize> {
     const SIZE: i32 = 4_000_000;
     for row_y in 0..=SIZE {
         let mut list = generate_row(sensors, row_y);
@@ -95,7 +93,7 @@ pub fn task2(sensors: &[SensorData]) -> AocResult<usize> {
             return Ok((list[0].1 as usize + 1) * SIZE as usize + row_y as usize);
         }
     }
-    Err(aoc_error!("Not found"))
+    Err(anyhow::anyhow!("Not found"))
 }
 
 #[cfg(test)]

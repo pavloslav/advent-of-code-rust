@@ -1,7 +1,6 @@
-use crate::*;
 use std::collections::{HashMap, HashSet};
 
-pub fn parse_input(input: &str) -> AocResult<Vec<(char, char)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(char, char)>> {
     input
         .lines()
         .map(|line| {
@@ -13,7 +12,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<(char, char)>> {
         .collect()
 }
 
-pub fn task1(input: &[(char, char)]) -> AocResult<String> {
+pub fn task1(input: &[(char, char)]) -> anyhow::Result<String> {
     let mut map: HashMap<char, HashSet<char>> = HashMap::new();
     for &(needed, target) in input {
         map.entry(target)
@@ -30,7 +29,7 @@ pub fn task1(input: &[(char, char)]) -> AocResult<String> {
             .filter(|(_, v)| v.is_empty())
             .map(|(&k, _)| k)
             .min()
-            .ok_or(aoc_error!("No suitable action found!"))?;
+            .ok_or(anyhow::anyhow!("No suitable action found!"))?;
         steps.push(next_step);
         for v in map.values_mut() {
             v.remove(&next_step);
@@ -40,7 +39,7 @@ pub fn task1(input: &[(char, char)]) -> AocResult<String> {
     Ok(steps)
 }
 
-pub fn task2(input: &[(char, char)]) -> AocResult<usize> {
+pub fn task2(input: &[(char, char)]) -> anyhow::Result<usize> {
     let mut steps: HashSet<char> = input
         .iter()
         .flat_map(|(needed, target)| [needed, target])

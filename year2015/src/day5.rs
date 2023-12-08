@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
@@ -12,11 +10,11 @@ static PAIRS: Lazy<fancy_regex::Regex> =
     Lazy::new(|| fancy_regex::Regex::new(r"(..).*\1").unwrap());
 static MIDDLE: Lazy<fancy_regex::Regex> = Lazy::new(|| fancy_regex::Regex::new(r"(.).\1").unwrap());
 
-fn nice1(line: &str) -> AocResult<bool> {
+fn nice1(line: &str) -> anyhow::Result<bool> {
     Ok(BAD.find(line).is_none() && PAIR.is_match(line)? && VOWELS.find_iter(line).count() >= 3)
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     input
         .lines()
         .filter_map(|line| match nice1(line) {
@@ -27,11 +25,11 @@ pub fn task1(input: &str) -> AocResult<usize> {
         .sum()
 }
 
-fn nice2(line: &str) -> AocResult<bool> {
+fn nice2(line: &str) -> anyhow::Result<bool> {
     Ok(PAIRS.is_match(line)? && MIDDLE.is_match(line)?)
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     input
         .lines()
         .filter_map(|line| match nice2(line) {

@@ -1,8 +1,6 @@
-use crate::*;
-
 use serde_json::Value;
 
-pub fn parse_input(input: &str) -> AocResult<Value> {
+pub fn parse_input(input: &str) -> anyhow::Result<Value> {
     Ok(serde_json::from_str(input)?)
 }
 
@@ -15,7 +13,7 @@ fn sum_all(json: &Value) -> i64 {
     }
 }
 
-pub fn task1(json: &Value) -> AocResult<i64> {
+pub fn task1(json: &Value) -> anyhow::Result<i64> {
     Ok(sum_all(json))
 }
 
@@ -33,6 +31,6 @@ fn sum_no_red(json: &Value) -> i64 {
     }
 }
 
-pub fn task2(json: &Value) -> AocResult<i64> {
+pub fn task2(json: &Value) -> anyhow::Result<i64> {
     Ok(sum_no_red(json))
 }

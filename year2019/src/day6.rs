@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<[String; 2]>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<[String; 2]>> {
     input
         .lines()
         .map(|line| {
@@ -8,7 +6,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<[String; 2]>> {
                 .map(|s| s.to_string())
                 .collect::<Vec<_>>()
                 .try_into()
-                .map_err(|_| aoc_error!("Wrong number of elements in input!"))
+                .map_err(|_| anyhow::anyhow!("Wrong number of elements in input!"))
         })
         .collect()
 }
@@ -19,7 +17,7 @@ const CENTER_OF_MASS: &str = "COM";
 const YOU: &str = "YOU";
 const SANTA: &str = "SAN";
 
-pub fn task1(input: &[[String; 2]]) -> AocResult<usize> {
+pub fn task1(input: &[[String; 2]]) -> anyhow::Result<usize> {
     let mut orbits = HashMap::<&str, Vec<&str>>::new();
     for [center, satelite] in input {
         orbits.entry(center).or_default().push(satelite);
@@ -44,7 +42,7 @@ pub fn task1(input: &[[String; 2]]) -> AocResult<usize> {
 
 use std::collections::HashSet;
 
-pub fn task2(input: &[[String; 2]]) -> AocResult<usize> {
+pub fn task2(input: &[[String; 2]]) -> anyhow::Result<usize> {
     let mut orbits = HashMap::<&str, Vec<&str>>::new();
     let mut back_orbits = HashMap::<&str, &str>::new();
     let mut visited = HashSet::<&str>::new();

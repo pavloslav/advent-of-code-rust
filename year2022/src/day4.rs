@@ -1,5 +1,3 @@
-use crate::*;
-
 pub struct Assignment {
     left: usize,
     right: usize,
@@ -24,7 +22,7 @@ impl Assignment {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<(Assignment, Assignment)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(Assignment, Assignment)>> {
     input
         .lines()
         .map(|line| {
@@ -41,13 +39,13 @@ where
     assignments.iter().filter(f).count()
 }
 
-pub fn task1(assignments: &[(Assignment, Assignment)]) -> AocResult<usize> {
+pub fn task1(assignments: &[(Assignment, Assignment)]) -> anyhow::Result<usize> {
     Ok(filter_count(assignments, |&(left, right)| {
         left.contains(right) || right.contains(left)
     }))
 }
 
-pub fn task2(assignments: &[(Assignment, Assignment)]) -> AocResult<usize> {
+pub fn task2(assignments: &[(Assignment, Assignment)]) -> anyhow::Result<usize> {
     Ok(filter_count(assignments, |&(left, right)| {
         left.overlaps(right)
     }))

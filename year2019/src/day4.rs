@@ -1,12 +1,11 @@
-use crate::*;
 use std::ops::RangeInclusive;
 
-pub fn parse_input(input: &str) -> AocResult<RangeInclusive<usize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<RangeInclusive<usize>> {
     let (start, end) = prse::try_parse!(input, "{}-{}")?;
     Ok(start..=end)
 }
 
-pub fn task1(input: &RangeInclusive<usize>) -> AocResult<usize> {
+pub fn task1(input: &RangeInclusive<usize>) -> anyhow::Result<usize> {
     Ok(input
         .clone()
         .filter(|&x| {
@@ -29,7 +28,7 @@ pub fn task1(input: &RangeInclusive<usize>) -> AocResult<usize> {
         .count())
 }
 
-pub fn task2(input: &RangeInclusive<usize>) -> AocResult<usize> {
+pub fn task2(input: &RangeInclusive<usize>) -> anyhow::Result<usize> {
     Ok(input
         .clone()
         .filter(|&x| {

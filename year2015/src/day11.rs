@@ -1,7 +1,6 @@
-use crate::*;
 type Password = Vec<u8>;
 
-pub fn parse_input(input: &str) -> AocResult<Password> {
+pub fn parse_input(input: &str) -> anyhow::Result<Password> {
     Ok(input.trim().chars().map(|c| c as u8).rev().collect())
 }
 
@@ -66,7 +65,7 @@ fn next_password(password: &[u8]) -> Password {
     }
 }
 
-pub fn task1(password: &Password) -> AocResult<String> {
+pub fn task1(password: &Password) -> anyhow::Result<String> {
     Ok(next_password(password)
         .into_iter()
         .rev()
@@ -74,7 +73,7 @@ pub fn task1(password: &Password) -> AocResult<String> {
         .collect())
 }
 
-pub fn task2(password: &Password) -> AocResult<String> {
+pub fn task2(password: &Password) -> anyhow::Result<String> {
     Ok(next_password(&next_password(password))
         .into_iter()
         .rev()

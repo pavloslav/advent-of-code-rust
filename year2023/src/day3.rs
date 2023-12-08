@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<&str>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<&str>> {
     Ok(input.lines().collect())
 }
 
-pub fn task1(input: &[&str]) -> AocResult<usize> {
+pub fn task1(input: &[&str]) -> anyhow::Result<usize> {
     let mut sum = 0;
 
     for (y, &line) in input.iter().enumerate() {
@@ -25,7 +23,7 @@ pub fn task1(input: &[&str]) -> AocResult<usize> {
                 .any(|c| c != '.' && !c.is_ascii_digit());
             if has_symbol {
                 sum += line[x..x_last].parse::<usize>().map_err(|e| {
-                    aoc_error!("Can't parse the number '{}': {}", &line[x..x_last], e)
+                    anyhow::anyhow!("Can't parse the number '{}': {}", &line[x..x_last], e)
                 })?;
             }
             x = x_last
@@ -37,7 +35,7 @@ pub fn task1(input: &[&str]) -> AocResult<usize> {
     Ok(sum)
 }
 
-pub fn task2(input: &[&str]) -> AocResult<usize> {
+pub fn task2(input: &[&str]) -> anyhow::Result<usize> {
     let mut gears = std::collections::HashMap::new();
 
     for (y, &line) in input.iter().enumerate() {
@@ -52,9 +50,9 @@ pub fn task2(input: &[&str]) -> AocResult<usize> {
             let right = (x_last + 1).min(line.len());
             let top = y.saturating_sub(1);
             let bottom = (y + 2).min(input.len());
-            let value = line[x..x_last]
-                .parse::<usize>()
-                .map_err(|e| aoc_error!("Can't parse the number '{}': {}", &line[x..x_last], e))?;
+            let value = line[x..x_last].parse::<usize>().map_err(|e| {
+                anyhow::anyhow!("Can't parse the number '{}': {}", &line[x..x_last], e)
+            })?;
             for (dy, line) in input[top..bottom].iter().enumerate() {
                 for (dx, c) in line[left..right].chars().enumerate() {
                     if c == '*' {

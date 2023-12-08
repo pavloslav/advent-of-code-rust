@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
@@ -15,11 +13,11 @@ fn slide_the_toboggan(s: &str, xshift: usize, yshift: usize) -> usize {
         .count()
 }
 
-pub fn task1(s: &str) -> AocResult<usize> {
+pub fn task1(s: &str) -> anyhow::Result<usize> {
     Ok(slide_the_toboggan(s, 3, 1))
 }
 
-pub fn task2(s: &str) -> AocResult<usize> {
+pub fn task2(s: &str) -> anyhow::Result<usize> {
     Ok(slide_the_toboggan(s, 1, 1)
         * slide_the_toboggan(s, 3, 1)
         * slide_the_toboggan(s, 5, 1)

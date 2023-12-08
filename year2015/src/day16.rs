@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 type Map = std::collections::HashMap<String, usize>;
 
@@ -34,40 +34,40 @@ fn satisfy2(data: &Map, filter: &Map) -> bool {
     })
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Map>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Map>> {
     input
         .lines()
         .map(|line| {
             let (_, list): (usize, Vec<&str>) = prse::try_parse!(line, "Sue {}: {:, :}")?;
             list.iter()
                 .map(|value| Ok(prse::try_parse!(value, "{}: {}")?))
-                .collect::<AocResult<Map>>()
+                .collect::<anyhow::Result<Map>>()
         })
         .collect()
 }
 
-fn task<F>(input: &[Map], check: &F) -> AocResult<usize>
+fn task<F>(input: &[Map], check: &F) -> anyhow::Result<usize>
 where
     F: Fn(&Map, &Map) -> bool,
 {
     let filter: Map = FILTER
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{}: {}")?))
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
 
     Ok(input
         .iter()
         .enumerate()
         .find(|(_i, data)| check(data, &filter))
-        .ok_or_else(|| aoc_error!("No suitable answer"))?
+        .context("No suitable answer")?
         .0
         + 1)
 }
 
-pub fn task1(input: &[Map]) -> AocResult<usize> {
+pub fn task1(input: &[Map]) -> anyhow::Result<usize> {
     task(input, &satisfy)
 }
 
-pub fn task2(input: &[Map]) -> AocResult<usize> {
+pub fn task2(input: &[Map]) -> anyhow::Result<usize> {
     task(input, &satisfy2)
 }

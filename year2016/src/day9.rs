@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input.trim())
 }
 
@@ -64,12 +62,12 @@ fn decode(input: &str) -> String {
     res
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     let res = decode(input);
     Ok(res.len())
 }
 
-pub fn task2(input: &str) -> AocResult<u64> {
+pub fn task2(input: &str) -> anyhow::Result<u64> {
     Ok(decode2_len(input))
 }
 

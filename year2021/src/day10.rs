@@ -1,11 +1,11 @@
-use crate::*;
+use anyhow::Context;
 
 enum Brackets {
     Correct(Vec<char>),
     Incorrect(char),
 }
 
-fn check_brackets(line: &str) -> AocResult<Brackets> {
+fn check_brackets(line: &str) -> anyhow::Result<Brackets> {
     let mut stack = Vec::new();
     for symbol in line.chars() {
         match symbol {
@@ -14,11 +14,7 @@ fn check_brackets(line: &str) -> AocResult<Brackets> {
             '{' => stack.push('}'),
             '<' => stack.push('>'),
             closing => {
-                if symbol
-                    != stack
-                        .pop()
-                        .ok_or_else(|| aoc_error!("No brackets to pop"))?
-                {
+                if symbol != stack.pop().context("No brackets to pop")? {
                     return Ok(Brackets::Incorrect(closing));
                 }
             }
@@ -27,11 +23,11 @@ fn check_brackets(line: &str) -> AocResult<Brackets> {
     Ok(Brackets::Correct(stack))
 }
 
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
-pub fn task1(data: &str) -> AocResult<usize> {
+pub fn task1(data: &str) -> anyhow::Result<usize> {
     data.lines()
         .map(|line| {
             Ok(match check_brackets(line)? {
@@ -42,10 +38,10 @@ pub fn task1(data: &str) -> AocResult<usize> {
                 _ => 0,
             })
         })
-        .try_fold(0, |acc, x: AocResult<_>| Ok(acc + x?))
+        .try_fold(0, |acc, x: anyhow::Result<_>| Ok(acc + x?))
 }
 
-pub fn task2(data: &str) -> AocResult<usize> {
+pub fn task2(data: &str) -> anyhow::Result<usize> {
     let mut scores: Vec<_> = Vec::new();
     for line in data.lines() {
         if let Brackets::Correct(rest) = check_brackets(line)? {
@@ -57,7 +53,7 @@ pub fn task2(data: &str) -> AocResult<usize> {
                         '}' => 3,
                         '>' => 4,
                         other => {
-                            return Err(aoc_error!("Unknown bracket '{other}'"));
+                            anyhow::bail!("Unknown bracket '{other}'");
                         }
                     })
             })?)

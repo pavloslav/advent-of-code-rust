@@ -1,4 +1,5 @@
-use crate::*;
+use anyhow::Context;
+
 use std::collections::HashMap;
 
 #[derive(Clone)]
@@ -17,7 +18,7 @@ pub struct Record {
     event: Event,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Record>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Record>> {
     let mut log: Vec<Record> = input
         .lines()
         .map(|line| {
@@ -39,7 +40,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Record>> {
                 event,
             })
         })
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
     log.sort_by_key(minutes);
     Ok(log)
 }
@@ -66,7 +67,7 @@ fn minutes(record: &Record) -> usize {
         + record.minute
 }
 
-pub fn task1(log: &[Record]) -> AocResult<usize> {
+pub fn task1(log: &[Record]) -> anyhow::Result<usize> {
     let mut sleep_map = HashMap::new();
     let mut current_guard = None;
     let mut sleep_start = 0;
@@ -87,17 +88,17 @@ pub fn task1(log: &[Record]) -> AocResult<usize> {
         .iter()
         .max_by_key(|(_, minutes)| minutes.iter().sum::<usize>())
         .map(|(&guard, _)| guard)
-        .ok_or_else(|| aoc_error!("No log entries!"))?;
+        .context("No log entries!")?;
     let best_minute = sleep_map[&most_sleeping_guard]
         .iter()
         .enumerate()
         .max_by_key(|&(_, m)| m)
         .map(|(i, _)| i)
-        .ok_or_else(|| aoc_error!("No minutes!"))?;
+        .context("No minutes!")?;
     Ok(most_sleeping_guard * best_minute)
 }
 
-pub fn task2(log: &[Record]) -> AocResult<usize> {
+pub fn task2(log: &[Record]) -> anyhow::Result<usize> {
     let mut sleep_map = HashMap::new();
     let mut current_guard = None;
     let mut sleep_start = 0;
@@ -118,6 +119,6 @@ pub fn task2(log: &[Record]) -> AocResult<usize> {
         .iter()
         .max_by_key(|&(_, &sleep)| sleep)
         .map(|(key, _)| key)
-        .ok_or_else(|| aoc_error!("No log entries!"))?;
+        .context("No log entries!")?;
     Ok(guard * minute)
 }

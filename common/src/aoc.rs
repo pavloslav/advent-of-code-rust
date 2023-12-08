@@ -1,4 +1,4 @@
-use super::error::AocResult;
+use anyhow::Result;
 use std::time::Duration;
 use std::time::SystemTime;
 
@@ -21,7 +21,7 @@ macro_rules! log {
     )
 }
 
-pub fn get_input_with_mod(mod_year: &str, mod_day: &str) -> AocResult<String> {
+pub fn get_input_with_mod(mod_year: &str, mod_day: &str) -> Result<String> {
     get_input(&mod_year[4..], &mod_day[3..])
 }
 
@@ -29,9 +29,9 @@ fn cache_file_name(year: &str, day: &str) -> String {
     format!("cache/cache{}_{}.txt", year, day)
 }
 
-pub fn get_input(year: &str, day: &str) -> AocResult<String> {
+pub fn get_input(year: &str, day: &str) -> Result<String> {
     let filename = cache_file_name(year, day);
-    std::fs::read_to_string(&filename).or_else(|file_error| -> AocResult<String> {
+    std::fs::read_to_string(&filename).or_else(|file_error| -> Result<String> {
         log!("Cache not found ({})", file_error);
         let settings = settings::read_setting()?;
         let url = settings.format_url(year, day);
@@ -59,13 +59,14 @@ where
 #[macro_export]
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
-        use common::aoc_error;
-        use common::AocError;
-        use common::AocResult;
+        //use common::aoc_error;
+        //use common::AocError;
+        //use common::AocResult;
+        use anyhow::*;
 
         $(pub mod $day;)*
 
-        pub fn task(day: &str) -> AocResult<()> {
+        pub fn task(day: &str) -> Result<()> {
             let year_str = stringify!($year);
             match day {
                 $(stringify!($day) => {
@@ -85,7 +86,7 @@ macro_rules! mod_list {
                 Ok(())
 
                 })*
-                _ => {Err(AocError::WrongTask{year:stringify!($year).to_string(), day:day.to_string()})}
+                _ => bail!("Incorrect task: year '{}', day '{}'", stringify!($year), day)
             }
         }
     }

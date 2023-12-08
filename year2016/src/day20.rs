@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(usize, usize)>> {
     let mut intervals: Vec<(usize, usize)> = Vec::new();
     for scan in input.lines().map(|line| prse::try_parse!(line, "{}-{}")) {
         let (left, right): (usize, usize) = scan?;
@@ -39,11 +37,11 @@ fn join(int1: (usize, usize), int2: (usize, usize)) -> Option<(usize, usize)> {
     }
 }
 
-pub fn task1(intervals: &[(usize, usize)]) -> AocResult<usize> {
+pub fn task1(intervals: &[(usize, usize)]) -> anyhow::Result<usize> {
     Ok(intervals[0].1 + 1)
 }
 
-pub fn task2(intervals: &[(usize, usize)]) -> AocResult<usize> {
+pub fn task2(intervals: &[(usize, usize)]) -> anyhow::Result<usize> {
     let mut allowed = u32::MAX as usize;
     for &(left, right) in intervals.iter().rev() {
         allowed -= right + 1 - left;

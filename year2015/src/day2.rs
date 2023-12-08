@@ -1,8 +1,6 @@
-use crate::*;
-
 type Present = (usize, usize, usize);
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Present>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Present>> {
     input
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{}x{}x{}")?))
@@ -20,11 +18,11 @@ fn ribbon((x, y, z): &(usize, usize, usize)) -> usize {
     2 * (x + y + z - x.max(y).max(z)) + x * y * z
 }
 
-pub fn task1(presents: &[Present]) -> AocResult<usize> {
+pub fn task1(presents: &[Present]) -> anyhow::Result<usize> {
     Ok(presents.iter().map(wrapping_paper).sum())
 }
 
-pub fn task2(presents: &[Present]) -> AocResult<usize> {
+pub fn task2(presents: &[Present]) -> anyhow::Result<usize> {
     Ok(presents.iter().map(ribbon).sum())
 }
 

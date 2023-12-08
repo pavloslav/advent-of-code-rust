@@ -1,6 +1,6 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<u8>>> {
     Ok(input.lines().map(|line| line.bytes().collect()).collect())
 }
 
@@ -54,7 +54,7 @@ fn shortest_way(start: (i32, i32), map: &[Vec<u8>]) -> Option<usize> {
     unreachable!()
 }
 
-pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
+pub fn task1(map: &[Vec<u8>]) -> anyhow::Result<usize> {
     let start = map
         .iter()
         .enumerate()
@@ -63,11 +63,11 @@ pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
                 .position(|&symbol| symbol == b'S')
                 .map(|j| (i as i32, j as i32))
         })
-        .ok_or_else(|| aoc_error!("Empty input!"))?;
-    shortest_way(start, map).ok_or_else(|| aoc_error!("Way not found!"))
+        .context("Empty input!")?;
+    shortest_way(start, map).context("Way not found!")
 }
 
-pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
+pub fn task2(map: &[Vec<u8>]) -> anyhow::Result<usize> {
     map.iter()
         .enumerate()
         .map(|(i, line)| {
@@ -83,6 +83,6 @@ pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
                 .min()
         })
         .min()
-        .ok_or_else(|| aoc_error!("Empty table!"))?
-        .ok_or_else(|| aoc_error!("Empty line!"))
+        .context("Empty table!")?
+        .context("Empty line!")
 }

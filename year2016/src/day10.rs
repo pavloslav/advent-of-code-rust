@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(Copy, Clone)]
 pub enum Target {
@@ -18,11 +18,11 @@ type Robots = HashMap<usize, Robot>;
 type Output = HashMap<usize, usize>;
 
 impl Target {
-    fn new(typ: &str, target: usize) -> AocResult<Target> {
+    fn new(typ: &str, target: usize) -> anyhow::Result<Target> {
         match typ {
             "bot" => Ok(Target::Bot(target)),
             "output" => Ok(Target::Output(target)),
-            other => Err(aoc_error!("Unknown target type '{other}'")),
+            other => Err(anyhow::anyhow!("Unknown target type '{other}'")),
         }
     }
     fn give(&self, value: usize, bots: &mut Robots, output: &mut Output) {
@@ -39,7 +39,7 @@ impl Target {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Robots> {
+pub fn parse_input(input: &str) -> anyhow::Result<Robots> {
     let mut robots = HashMap::new();
     for line in input.lines() {
         if let Ok((value, bot)) = prse::try_parse!(line, "value {} goes to bot {}") {
@@ -92,28 +92,20 @@ impl Robot {
             && self.hands.iter().max() == Some(&61)
     }
 
-    fn process(&mut self, bots: &mut Robots, output: &mut Output) -> AocResult<()> {
+    fn process(&mut self, bots: &mut Robots, output: &mut Output) -> anyhow::Result<()> {
         self.target_lo
             .as_ref()
-            .ok_or_else(|| aoc_error!("Failed to get low target"))?
+            .context("Failed to get low target")?
             .give(
-                *self
-                    .hands
-                    .iter()
-                    .min()
-                    .ok_or_else(|| aoc_error!("Hands can't be empty!"))?,
+                *self.hands.iter().min().context("Hands can't be empty!")?,
                 bots,
                 output,
             );
         self.target_hi
             .as_ref()
-            .ok_or_else(|| aoc_error!("Failed to get hi target"))?
+            .context("Failed to get hi target")?
             .give(
-                *self
-                    .hands
-                    .iter()
-                    .max()
-                    .ok_or_else(|| aoc_error!("Hands can't be empty!"))?,
+                *self.hands.iter().max().context("Hands can't be empty!")?,
                 bots,
                 output,
             );
@@ -122,7 +114,7 @@ impl Robot {
     }
 }
 
-pub fn task1(robots: &Robots) -> AocResult<usize> {
+pub fn task1(robots: &Robots) -> anyhow::Result<usize> {
     let mut robots = robots.clone();
     let mut output = Output::new();
     let mut changed = true;
@@ -141,10 +133,10 @@ pub fn task1(robots: &Robots) -> AocResult<usize> {
             }
         }
     }
-    Err(aoc_error!("Not found"))
+    Err(anyhow::anyhow!("Not found"))
 }
 
-pub fn task2(robots: &Robots) -> AocResult<usize> {
+pub fn task2(robots: &Robots) -> anyhow::Result<usize> {
     let mut robots = robots.clone();
     let mut output = Output::new();
     let mut changed = true;

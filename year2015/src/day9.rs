@@ -1,6 +1,6 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<usize>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<usize>>> {
     let mut dist = Vec::new();
     let mut name_map: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
     for line in input.lines() {
@@ -36,21 +36,17 @@ fn task(distances: &[Vec<usize>]) -> impl Iterator<Item = usize> + '_ {
                     if let &[i, j] = pair {
                         distances[i][j]
                     } else {
-                        unreachable!()
+                        unreachable!("Pair should be always 2 elements")
                     }
                 })
                 .sum()
         })
 }
 
-pub fn task1(distances: &[Vec<usize>]) -> AocResult<usize> {
-    task(distances)
-        .min()
-        .ok_or_else(|| aoc_error!("No distances provided!"))
+pub fn task1(distances: &[Vec<usize>]) -> anyhow::Result<usize> {
+    task(distances).min().context("No distances provided!")
 }
 
-pub fn task2(distances: &[Vec<usize>]) -> AocResult<usize> {
-    task(distances)
-        .max()
-        .ok_or_else(|| aoc_error!("No distances provided!"))
+pub fn task2(distances: &[Vec<usize>]) -> anyhow::Result<usize> {
+    task(distances).max().context("No distances provided!")
 }

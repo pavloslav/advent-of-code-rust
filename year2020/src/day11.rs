@@ -1,5 +1,3 @@
-use crate::*;
-
 mod ferry {
     enum ModelKind {
         Close,
@@ -179,16 +177,16 @@ mod ferry {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
-pub fn task1(s: &str) -> AocResult<usize> {
+pub fn task1(s: &str) -> anyhow::Result<usize> {
     let mut model = ferry::Model::close(s);
     Ok(model.get_stable_count())
 }
 
-pub fn task2(s: &str) -> AocResult<usize> {
+pub fn task2(s: &str) -> anyhow::Result<usize> {
     let mut model = ferry::Model::distant(s);
     Ok(model.get_stable_count())
 }

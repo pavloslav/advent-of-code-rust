@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<usize>> {
     input
         .lines()
         .map(|s| {
@@ -44,10 +42,10 @@ fn task(input: &[usize], filters: &[usize], limit: usize) -> usize {
 const FIRST_LIMIT: usize = 40_000_000;
 const SECOND_LIMIT: usize = 5_000_000;
 
-pub fn task1(input: &[usize]) -> AocResult<usize> {
+pub fn task1(input: &[usize]) -> anyhow::Result<usize> {
     Ok(task(input, &[1, 1], FIRST_LIMIT))
 }
 
-pub fn task2(input: &[usize]) -> AocResult<usize> {
+pub fn task2(input: &[usize]) -> anyhow::Result<usize> {
     Ok(task(input, &[4, 8], SECOND_LIMIT))
 }

@@ -1,15 +1,15 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<bool>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<bool>>> {
     let input: Vec<(usize, usize)> = input
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{}/{}")?))
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
     let size = input
         .iter()
         .map(|(x, y)| x.max(y))
         .max()
-        .ok_or_else(|| aoc_error!("Empty input"))?
+        .context("Empty input")?
         + 1;
     let mut map = vec![vec![false; size]; size];
     for (a, b) in input {
@@ -48,12 +48,12 @@ fn find_longest_strongest(set: &mut [Vec<bool>], start: usize) -> (usize, usize)
     best
 }
 
-pub fn task1(map: &[Vec<bool>]) -> AocResult<usize> {
+pub fn task1(map: &[Vec<bool>]) -> anyhow::Result<usize> {
     let mut map = map.to_vec();
     Ok(find_strongest(&mut map, 0))
 }
 
-pub fn task2(map: &[Vec<bool>]) -> AocResult<usize> {
+pub fn task2(map: &[Vec<bool>]) -> anyhow::Result<usize> {
     let mut map = map.to_vec();
     Ok(find_longest_strongest(&mut map, 0).1)
 }

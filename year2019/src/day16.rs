@@ -1,12 +1,12 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<i32>> {
     input
         .trim()
         .chars()
         .map(|c| match c.to_digit(10) {
             Some(d) => Ok(d as i32),
-            None => Err(aoc_error!("Wrong digit: '{c}'")),
+            None => Err(anyhow::anyhow!("Wrong digit: '{c}'")),
         })
         .collect()
 }
@@ -14,7 +14,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
 const PHASES: usize = 100;
 const PATTERN: [i32; 4] = [0, 1, 0, -1];
 
-pub fn task1(input: &[i32]) -> AocResult<String> {
+pub fn task1(input: &[i32]) -> anyhow::Result<String> {
     let mut signal = input.to_vec();
     for _ in 0..PHASES {
         signal = (1..=signal.len())
@@ -32,10 +32,10 @@ pub fn task1(input: &[i32]) -> AocResult<String> {
     signal
         .iter()
         .take(8)
-        .map(|&d| char::from_digit(d as u32, 10).ok_or_else(|| aoc_error!("Incorrect digit: {d}")))
+        .map(|&d| char::from_digit(d as u32, 10).with_context(|| format!("Incorrect digit: {d}")))
         .collect()
 }
 
-pub fn task2(_input: &[i32]) -> AocResult<usize> {
-    Err(aoc_error!("Todo"))
+pub fn task2(_input: &[i32]) -> anyhow::Result<usize> {
+    Err(anyhow::anyhow!("Todo"))
 }

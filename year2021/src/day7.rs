@@ -1,13 +1,12 @@
-use crate::*;
+use anyhow::Context;
 
-fn task<F>(crabs: &[i32], fuel: F) -> AocResult<i32>
+fn task<F>(crabs: &[i32], fuel: F) -> anyhow::Result<i32>
 where
     F: Fn(i32, i32) -> i32,
 {
     let total = |pos| crabs.iter().map(|&crab| fuel(crab, pos)).sum();
-    let mut pos = (crabs.last().ok_or_else(|| aoc_error!("Empty list!"))?
-        - crabs.first().ok_or_else(|| aoc_error!("Empty list!"))?)
-        / 2;
+    let mut pos =
+        (crabs.last().context("Empty list!")? - crabs.first().context("Empty list!")?) / 2;
     let mut step = pos / 2;
     loop {
         let dist = total(pos);
@@ -24,15 +23,15 @@ where
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<i32>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<i32>> {
     input.split(',').map(|x| Ok(x.parse()?)).collect()
 }
 
-pub fn task1(crabs: &[i32]) -> AocResult<i32> {
+pub fn task1(crabs: &[i32]) -> anyhow::Result<i32> {
     task(crabs, |crab, pos| (pos - crab).abs())
 }
 
-pub fn task2(crabs: &[i32]) -> AocResult<i32> {
+pub fn task2(crabs: &[i32]) -> anyhow::Result<i32> {
     task(crabs, |crab, pos| {
         (pos - crab).abs() * ((pos - crab).abs() + 1) / 2
     })

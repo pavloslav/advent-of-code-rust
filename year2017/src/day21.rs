@@ -1,8 +1,6 @@
-use crate::*;
-
 type RuleBook = std::collections::HashMap<String, String>;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<RuleBook>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<RuleBook>> {
     let mut rule_books = vec![RuleBook::new(); 2];
     for line in input.lines() {
         let (left, right): (&str, &str) = prse::try_parse!(line, "{} => {}")?;
@@ -10,11 +8,11 @@ pub fn parse_input(input: &str) -> AocResult<Vec<RuleBook>> {
         let ench = right.replace('/', "");
         let size = (pat.len() as f64).sqrt().round() as i32; //2 or 3
         if (size + 1).pow(2) as usize != ench.len() {
-            return Err(aoc_error!(
+            anyhow::bail!(
                 "invalid pattern size: left {}, right {}",
                 pat.len(),
                 ench.len()
-            ));
+            );
         };
         for (x, h) in [(0, 1), (size - 1, -1)] {
             for (y, v) in [(0, 1), (size - 1, -1)] {
@@ -47,7 +45,7 @@ const START_PATTERN: &str = ".#.
 ..#
 ###";
 
-fn iterate_and_count(rule_books: &[RuleBook], count: usize) -> AocResult<usize> {
+fn iterate_and_count(rule_books: &[RuleBook], count: usize) -> anyhow::Result<usize> {
     let mut pattern: Vec<String> = START_PATTERN.lines().map(|line| line.to_owned()).collect();
     for _step in 0..count {
         for size in 2..=3 {
@@ -77,10 +75,10 @@ fn iterate_and_count(rule_books: &[RuleBook], count: usize) -> AocResult<usize> 
         .sum())
 }
 
-pub fn task1(rule_books: &[RuleBook]) -> AocResult<usize> {
+pub fn task1(rule_books: &[RuleBook]) -> anyhow::Result<usize> {
     iterate_and_count(rule_books, 5)
 }
 
-pub fn task2(rule_books: &[RuleBook]) -> AocResult<usize> {
+pub fn task2(rule_books: &[RuleBook]) -> anyhow::Result<usize> {
     iterate_and_count(rule_books, 18)
 }

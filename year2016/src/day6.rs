@@ -1,8 +1,7 @@
-use crate::*;
-
+use anyhow::Context;
 use std::collections::HashMap;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<HashMap<char, u32>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<HashMap<char, u32>>> {
     let mut statistics: Vec<HashMap<char, u32>> = Vec::new();
     for line in input.lines() {
         if statistics.is_empty() {
@@ -16,7 +15,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<HashMap<char, u32>>> {
     Ok(statistics)
 }
 
-pub fn task1(statistics: &[HashMap<char, u32>]) -> AocResult<String> {
+pub fn task1(statistics: &[HashMap<char, u32>]) -> anyhow::Result<String> {
     statistics
         .iter()
         .map(|hashmap| {
@@ -24,12 +23,12 @@ pub fn task1(statistics: &[HashMap<char, u32>]) -> AocResult<String> {
                 .iter()
                 .max_by_key(|tuple| tuple.1)
                 .map(|tuple| *tuple.0)
-                .ok_or_else(|| aoc_error!("No elements in statistics"))
+                .context("No elements in statistics")
         })
         .collect()
 }
 
-pub fn task2(statistics: &[HashMap<char, u32>]) -> AocResult<String> {
+pub fn task2(statistics: &[HashMap<char, u32>]) -> anyhow::Result<String> {
     statistics
         .iter()
         .map(|hashmap| {
@@ -37,7 +36,7 @@ pub fn task2(statistics: &[HashMap<char, u32>]) -> AocResult<String> {
                 .iter()
                 .min_by_key(|tuple| tuple.1)
                 .map(|tuple| *tuple.0)
-                .ok_or_else(|| aoc_error!("No elements in statistics"))
+                .context("No elements in statistics")
         })
         .collect()
 }

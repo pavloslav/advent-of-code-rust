@@ -1,5 +1,4 @@
-use crate::*;
-
+use anyhow::Context;
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
@@ -51,8 +50,8 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = AocError;
-    fn from_str(s: &str) -> AocResult<Instruction> {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> anyhow::Result<Instruction> {
         if let Ok(val) = prse::try_parse!(s, "snd {}") {
             Ok(Instruction::Snd(val))
         } else if let Ok((x, y)) = prse::try_parse!(s, "set {} {}") {
@@ -72,7 +71,7 @@ impl std::str::FromStr for Instruction {
         } else if let Ok((x, y)) = prse::try_parse!(s, "jnz {} {}") {
             Ok(Instruction::Jnz(x, y))
         } else {
-            Err(aoc_error!("incorrect input: '{s}'"))
+            anyhow::bail!("incorrect input: '{s}'")
         }
     }
 }
@@ -95,11 +94,11 @@ pub struct Computer {
 }
 
 impl Computer {
-    pub fn step(&mut self) -> AocResult<bool> {
+    pub fn step(&mut self) -> anyhow::Result<bool> {
         let instr = self
             .program
             .get(self.ip as usize)
-            .ok_or_else(|| aoc_error!("Wrong IP {}, stopping execution", self.ip))?;
+            .with_context(|| format!("Wrong IP {}, stopping execution", self.ip))?;
         match instr {
             Instruction::Snd(val) => {
                 self.output.borrow_mut().push_back(val.get(&self.registers));
@@ -159,12 +158,12 @@ impl Computer {
         Ok(true)
     }
 
-    pub fn last_sound(&self) -> AocResult<RegValue> {
+    pub fn last_sound(&self) -> anyhow::Result<RegValue> {
         self.output
             .borrow_mut()
             .back()
             .copied()
-            .ok_or_else(|| aoc_error!("No last sound played"))
+            .context("No last sound played")
     }
 
     pub fn new(program: &[Instruction], kind: ComputerKind) -> Computer {
@@ -183,10 +182,10 @@ impl Computer {
     pub fn set_register(&mut self, reg: RegName, val: RegValue) {
         self.registers.insert(reg, val);
     }
-    pub fn get_register(&mut self, reg: RegName) -> AocResult<RegValue> {
+    pub fn get_register(&mut self, reg: RegName) -> anyhow::Result<RegValue> {
         self.registers
             .get(&reg)
             .copied()
-            .ok_or_else(|| aoc_error!("Register {reg} not found"))
+            .with_context(|| format!("Register {reg} not found"))
     }
 }

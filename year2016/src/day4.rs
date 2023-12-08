@@ -1,5 +1,4 @@
-use crate::*;
-
+use anyhow::Context;
 use std::collections::HashMap;
 use std::iter::FromIterator;
 
@@ -10,13 +9,13 @@ pub struct Room {
 }
 
 impl std::str::FromStr for Room {
-    type Err = AocError;
-    fn from_str(input: &str) -> AocResult<Room> {
+    type Err = anyhow::Error;
+    fn from_str(input: &str) -> anyhow::Result<Room> {
         let (name_id, check_sum): (&str, String) = prse::try_parse!(input, "{}[{}]")?;
         let (name, id) = name_id.split_at(
             name_id
                 .find(|c: char| c.is_ascii_digit())
-                .ok_or_else(|| aoc_error!("Can't find digits in room name"))?,
+                .context("Can't find digits in room name")?,
         );
         Ok(Room {
             name: name.to_string(),
@@ -48,25 +47,25 @@ impl Room {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Room>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Room>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(input: &[Room]) -> AocResult<usize> {
+pub fn task1(input: &[Room]) -> anyhow::Result<usize> {
     Ok(input
         .iter()
         .filter_map(|r| Some(r.id).filter(|_| r.verify_checksum()))
         .sum())
 }
 
-pub fn task2(input: &[Room]) -> AocResult<usize> {
+pub fn task2(input: &[Room]) -> anyhow::Result<usize> {
     input
         .iter()
         .find_map(|room| {
             Some(room.id)
                 .filter(|_| room.verify_checksum() && room.decrypt().contains("northpole object"))
         })
-        .ok_or_else(|| aoc_error!("No room found"))
+        .context("No room found")
 }
 
 #[cfg(test)]

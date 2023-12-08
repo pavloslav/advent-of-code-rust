@@ -1,17 +1,15 @@
-use crate::*;
-
 fn can_be_triangle(a: i32, b: i32, c: i32) -> bool {
     a + b > c && (a - b).abs() < c
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<i32>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<i32>>> {
     input
         .lines()
         .map(|line| line.split_whitespace().map(|s| Ok(s.parse()?)).collect())
         .collect()
 }
 
-pub fn task1(input: &[Vec<i32>]) -> AocResult<i32> {
+pub fn task1(input: &[Vec<i32>]) -> anyhow::Result<i32> {
     let mut sum = 0;
     for nums in input {
         if can_be_triangle(nums[0], nums[1], nums[2]) {
@@ -21,7 +19,7 @@ pub fn task1(input: &[Vec<i32>]) -> AocResult<i32> {
     Ok(sum)
 }
 
-pub fn task2(input: &[Vec<i32>]) -> AocResult<i32> {
+pub fn task2(input: &[Vec<i32>]) -> anyhow::Result<i32> {
     let mut sum = 0;
     for i in 0..input.len() / 3 {
         for j in 0..3 {

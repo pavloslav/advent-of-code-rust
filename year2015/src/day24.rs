@@ -1,12 +1,12 @@
-use crate::*;
+use anyhow::Context;
 
 type Weight = i64;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Weight>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Weight>> {
     input
         .lines()
         .map(|s| Ok(s.parse()?))
-        .collect::<AocResult<Vec<_>>>()
+        .collect::<anyhow::Result<Vec<_>>>()
 }
 
 fn weight(presents: &[&Weight]) -> Weight {
@@ -41,11 +41,11 @@ fn can_be_split_in(presents: &[Weight], n: Weight) -> bool {
 }
 
 /*PREMATURE OPTIMIZATION IS THE ROOT OF ALL EVIL*/
-fn task(presents: &[Weight], parts: Weight) -> AocResult<Weight> {
+fn task(presents: &[Weight], parts: Weight) -> anyhow::Result<Weight> {
     let mut best = None;
     let mass: Weight = presents.iter().sum();
     if mass % parts != 0 {
-        return Err(aoc_error!("Can't divide {mass} by {parts}!"));
+        anyhow::bail!("Can't divide {mass} by {parts}!");
     }
     let target = mass / parts;
     for len in 0..presents.len() {
@@ -67,14 +67,14 @@ fn task(presents: &[Weight], parts: Weight) -> AocResult<Weight> {
             }
         }
     }
-    best.ok_or_else(|| aoc_error!("Not found"))
+    best.context("Not found")
 }
 
-pub fn task1(input: &[Weight]) -> AocResult<Weight> {
+pub fn task1(input: &[Weight]) -> anyhow::Result<Weight> {
     task(input, 3)
 }
 
-pub fn task2(input: &[Weight]) -> AocResult<Weight> {
+pub fn task2(input: &[Weight]) -> anyhow::Result<Weight> {
     task(input, 4)
 }
 

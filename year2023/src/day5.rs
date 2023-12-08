@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(Debug)]
 struct Line {
@@ -47,12 +47,10 @@ impl Almonac {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Almonac> {
+pub fn parse_input(input: &str) -> anyhow::Result<Almonac> {
     let mut lines = input.lines();
     let mut almonac = Almonac::new_with_seeds(prse::try_parse!(
-        lines
-            .next()
-            .ok_or_else(|| aoc_error!("Failed to parse seeds"))?,
+        lines.next().context("Failed to parse seeds")?,
         "seeds: {: :}"
     )?);
     for line in lines {
@@ -69,19 +67,15 @@ pub fn parse_input(input: &str) -> AocResult<Almonac> {
     Ok(almonac)
 }
 
-pub fn task1(input: &Almonac) -> AocResult<usize> {
+pub fn task1(input: &Almonac) -> anyhow::Result<usize> {
     let mut values = input.seeds.clone();
     for map in &input.maps {
         values = values.iter().map(|&v| map.transform(v)).collect();
     }
-    values
-        .iter()
-        .min()
-        .copied()
-        .ok_or_else(|| aoc_error!("Empty values vec!"))
+    values.iter().min().copied().context("Empty values vec!")
 }
 
-pub fn task2(input: &Almonac) -> AocResult<usize> {
+pub fn task2(input: &Almonac) -> anyhow::Result<usize> {
     let mut values: Vec<_> = input
         .seeds
         .chunks(2)
@@ -89,10 +83,10 @@ pub fn task2(input: &Almonac) -> AocResult<usize> {
             if let &[a, b] = sub {
                 Ok((a, b))
             } else {
-                Err(aoc_error!("Incorrect number of seeds"))
+                Err(anyhow::anyhow!("Incorrect number of seeds"))
             }
         })
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
     for map in &input.maps {
         let mut new_values = vec![]; //std::collections::HashSet::new();
         while let Some((mut src, mut len)) = values.pop() {
@@ -121,7 +115,7 @@ pub fn task2(input: &Almonac) -> AocResult<usize> {
         .map(|(a, _)| a)
         .min()
         .copied()
-        .ok_or_else(|| aoc_error!("Empty values vec!"))
+        .context("Empty values vec!")
 }
 
 #[cfg(test)]

@@ -1,6 +1,6 @@
-use crate::*;
+use anyhow::Context;
 
-fn from_snafu(input: &str) -> AocResult<i64> {
+fn from_snafu(input: &str) -> anyhow::Result<i64> {
     input
         .chars()
         .map(|c| {
@@ -9,21 +9,20 @@ fn from_snafu(input: &str) -> AocResult<i64> {
                 '-' => -1,
                 c => c
                     .to_digit(10)
-                    .ok_or_else(|| aoc_error!("Wrong digit: {c}"))? as i64,
+                    .with_context(|| format!("Wrong digit: {c}"))? as i64,
             })
         })
-        .try_fold(0, |acc, d: AocResult<i64>| Ok(acc * 5 + d?))
+        .try_fold(0, |acc, d: anyhow::Result<i64>| Ok(acc * 5 + d?))
 }
 
-fn to_snafu(input: i64) -> AocResult<String> {
+fn to_snafu(input: i64) -> anyhow::Result<String> {
     let mut n = input;
     let mut result = vec![];
     while n != 0 {
         let d = n % 5;
         if d <= 2 {
-            result.push(
-                char::from_digit(d as u32, 10).ok_or_else(|| aoc_error!("Wrong digit: {d}"))?,
-            );
+            result
+                .push(char::from_digit(d as u32, 10).with_context(|| format!("Wrong digit: {d}"))?);
             n /= 5;
         } else {
             result.push(if d == 3 { '=' } else { '-' });
@@ -34,15 +33,15 @@ fn to_snafu(input: i64) -> AocResult<String> {
     Ok(result.iter().rev().collect())
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<i64>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<i64>> {
     input.lines().map(from_snafu).collect()
 }
 
-pub fn task1(input: &[i64]) -> AocResult<String> {
+pub fn task1(input: &[i64]) -> anyhow::Result<String> {
     to_snafu(input.iter().sum())
 }
 
-pub fn task2(_input: &[i64]) -> AocResult<usize> {
+pub fn task2(_input: &[i64]) -> anyhow::Result<usize> {
     todo!();
 }
 

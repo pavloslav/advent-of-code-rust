@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<&str>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<&str>> {
     Ok(input.lines().collect())
 }
 
-pub fn task1(input: &[&str]) -> AocResult<usize> {
+pub fn task1(input: &[&str]) -> anyhow::Result<usize> {
     let mut two = 0;
     let mut three = 0;
     for code in input {
@@ -13,7 +11,7 @@ pub fn task1(input: &[&str]) -> AocResult<usize> {
             if letter.is_ascii_lowercase() {
                 counter[(letter - b'a') as usize] += 1;
             } else {
-                return Err(aoc_error!("Incorrect letter '{letter}'"));
+                anyhow::bail!("Incorrect letter '{letter}'");
             }
         }
         if counter.contains(&2) {
@@ -26,7 +24,7 @@ pub fn task1(input: &[&str]) -> AocResult<usize> {
     Ok(two * three)
 }
 
-pub fn task2(input: &[&str]) -> AocResult<String> {
+pub fn task2(input: &[&str]) -> anyhow::Result<String> {
     for (i, line1) in input.iter().enumerate() {
         for line2 in &input[i..] {
             if line1
@@ -45,5 +43,5 @@ pub fn task2(input: &[&str]) -> AocResult<String> {
             }
         }
     }
-    Err(aoc_error!("Not found"))
+    anyhow::bail!("Not found")
 }

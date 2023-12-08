@@ -1,5 +1,3 @@
-use crate::*;
-
 type Yell = u64;
 
 pub enum Operation {
@@ -84,7 +82,7 @@ impl Monkey {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<HashMap<String, Monkey>> {
+pub fn parse_input(input: &str) -> anyhow::Result<HashMap<String, Monkey>> {
     input
         .lines()
         .map(|line| {
@@ -97,22 +95,22 @@ pub fn parse_input(input: &str) -> AocResult<HashMap<String, Monkey>> {
                     '*' => Operation::Mul,
                     '/' => Operation::Div,
                     other => {
-                        return Err(aoc_error!("Unknown operation '{other}'"));
+                        anyhow::bail!("Unknown operation '{other}'");
                     }
                 };
                 Ok((name, Monkey::Operation(left, op, right)))
             } else {
-                Err(aoc_error!("Unknown monkey format: '{line}'"))
+                Err(anyhow::anyhow!("Unknown monkey format: '{line}'"))
             }
         })
         .collect()
 }
 
-pub fn task1(map: &HashMap<String, Monkey>) -> AocResult<Yell> {
+pub fn task1(map: &HashMap<String, Monkey>) -> anyhow::Result<Yell> {
     Ok(map[&"root".to_owned()].yell(map))
 }
 
-pub fn task2(map: &HashMap<String, Monkey>) -> AocResult<Yell> {
+pub fn task2(map: &HashMap<String, Monkey>) -> anyhow::Result<Yell> {
     if let Monkey::Operation(left, _, right) = &map["root"] {
         if map[left].has_humn(map) {
             Ok(map[left].find_humn(map, map[right].yell(map)))
@@ -120,7 +118,7 @@ pub fn task2(map: &HashMap<String, Monkey>) -> AocResult<Yell> {
             Ok(map[right].find_humn(map, map[left].yell(map)))
         }
     } else {
-        Err(aoc_error!("No root monkey!"))
+        Err(anyhow::anyhow!("No root monkey!"))
     }
 }
 

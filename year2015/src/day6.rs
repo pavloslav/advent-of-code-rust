@@ -1,5 +1,3 @@
-use crate::*;
-
 struct Point {
     x: usize,
     y: usize,
@@ -18,8 +16,8 @@ pub struct Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = AocError;
-    fn from_str(mut s: &str) -> std::result::Result<Self, Self::Err> {
+    type Err = anyhow::Error;
+    fn from_str(mut s: &str) -> anyhow::Result<Self> {
         if s.starts_with("turn ") {
             s = &s[5..];
         }
@@ -29,7 +27,7 @@ impl std::str::FromStr for Instruction {
             "on" => Command::On,
             "off" => Command::Off,
             "toggle" => Command::Toggle,
-            other => return Err(aoc_error!("Wrong command: '{other}'")),
+            other => anyhow::bail!("Wrong command: '{other}'"),
         };
         Ok(Instruction {
             command,
@@ -42,11 +40,11 @@ impl std::str::FromStr for Instruction {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Instruction>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(instructions: &[Instruction]) -> AocResult<usize> {
+pub fn task1(instructions: &[Instruction]) -> anyhow::Result<usize> {
     let mut lights = vec![vec![false; 1000]; 1000];
     for instr in instructions {
         for line in &mut lights[instr.top_left.y..instr.bottom_right.y + 1] {
@@ -65,7 +63,7 @@ pub fn task1(instructions: &[Instruction]) -> AocResult<usize> {
         .sum())
 }
 
-pub fn task2(instructions: &[Instruction]) -> AocResult<usize> {
+pub fn task2(instructions: &[Instruction]) -> anyhow::Result<usize> {
     let mut lights = vec![vec![0usize; 1000]; 1000];
     for instr in instructions {
         for line in &mut lights[instr.top_left.y..instr.bottom_right.y + 1] {

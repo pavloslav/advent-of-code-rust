@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(Debug)]
 pub enum Operation {
@@ -9,12 +9,12 @@ pub enum Operation {
 use std::str::FromStr;
 
 impl FromStr for Operation {
-    type Err = AocError;
-    fn from_str(s: &str) -> AocResult<Operation> {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> anyhow::Result<Operation> {
         match s {
             "inc" => Ok(Operation::Inc),
             "dec" => Ok(Operation::Dec),
-            other => Err(aoc_error!("Parsing operation '{other}' failed")),
+            other => Err(anyhow::anyhow!("Parsing operation '{other}' failed")),
         }
     }
 }
@@ -30,8 +30,8 @@ pub enum Comparison {
 }
 
 impl FromStr for Comparison {
-    type Err = AocError;
-    fn from_str(item: &str) -> AocResult<Comparison> {
+    type Err = anyhow::Error;
+    fn from_str(item: &str) -> anyhow::Result<Comparison> {
         use Comparison::*;
         match item {
             ">" => Ok(Gt),
@@ -40,7 +40,7 @@ impl FromStr for Comparison {
             "<=" => Ok(Le),
             "==" => Ok(Eq),
             "!=" => Ok(Ne),
-            other => Err(aoc_error!("Parsing comparison '{other}' failed")),
+            other => Err(anyhow::anyhow!("Parsing comparison '{other}' failed")),
         }
     }
 }
@@ -68,7 +68,7 @@ pub struct Instruction {
     compare: i32,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Instruction>> {
     input
         .lines()
         .map(|line| {
@@ -92,7 +92,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
         .collect()
 }
 
-pub fn task1(input: &[Instruction]) -> AocResult<i32> {
+pub fn task1(input: &[Instruction]) -> anyhow::Result<i32> {
     let mut registers = std::collections::HashMap::<String, i32>::new();
     for instr in input {
         if instr.comparison.exec(
@@ -109,10 +109,10 @@ pub fn task1(input: &[Instruction]) -> AocResult<i32> {
         .values()
         .max()
         .copied()
-        .ok_or_else(|| aoc_error!("No registers present"))
+        .context("No registers present")
 }
 
-pub fn task2(input: &[Instruction]) -> AocResult<i32> {
+pub fn task2(input: &[Instruction]) -> anyhow::Result<i32> {
     let mut registers = std::collections::HashMap::<String, i32>::new();
     let mut max = 0;
     for instr in input {

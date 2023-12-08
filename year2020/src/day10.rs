@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<usize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<usize>> {
     let mut adapters: Vec<usize> = input
         .lines()
         .map(|l| Ok(l.parse()?))
-        .collect::<AocResult<Vec<usize>>>()?;
+        .collect::<anyhow::Result<Vec<usize>>>()?;
     let max = *adapters.iter().max().unwrap_or(&0);
     adapters.push(0);
     adapters.push(max + 3);
@@ -20,7 +18,7 @@ fn count_differences_in_sorted(adapters: &[usize]) -> [usize; 3] {
     result
 }
 
-pub fn task1(data: &[usize]) -> AocResult<usize> {
+pub fn task1(data: &[usize]) -> anyhow::Result<usize> {
     let [diff1, _, diff3] = count_differences_in_sorted(data);
     Ok(diff1 * diff3)
 }
@@ -38,7 +36,7 @@ fn count_arranjements(adapters: &[usize]) -> usize {
     paths[adapters.len() - 1]
 }
 
-pub fn task2(data: &[usize]) -> AocResult<usize> {
+pub fn task2(data: &[usize]) -> anyhow::Result<usize> {
     Ok(count_arranjements(data))
 }
 

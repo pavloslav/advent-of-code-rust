@@ -1,5 +1,3 @@
-use crate::*;
-
 pub enum Command {
     Forward(i32),
     Down(i32),
@@ -7,8 +5,8 @@ pub enum Command {
 }
 
 impl std::str::FromStr for Command {
-    type Err = AocError;
-    fn from_str(line: &str) -> AocResult<Command> {
+    type Err = anyhow::Error;
+    fn from_str(line: &str) -> anyhow::Result<Command> {
         let (instruction, value) = prse::try_parse!(line, "{} {}")?;
 
         use Command::*;
@@ -16,16 +14,16 @@ impl std::str::FromStr for Command {
             "forward" => Forward(value),
             "down" => Down(value),
             "up" => Up(value),
-            other => return Err(aoc_error!("Unknown instruction '{other}'")),
+            other => anyhow::bail!("Unknown instruction '{other}'"),
         })
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Command>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Command>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(commands: &[Command]) -> AocResult<i32> {
+pub fn task1(commands: &[Command]) -> anyhow::Result<i32> {
     use Command::*;
     let (x, y) = commands
         .iter()
@@ -37,7 +35,7 @@ pub fn task1(commands: &[Command]) -> AocResult<i32> {
     Ok(x * y)
 }
 
-pub fn task2(commands: &[Command]) -> AocResult<i32> {
+pub fn task2(commands: &[Command]) -> anyhow::Result<i32> {
     use Command::*;
     let (x, y, _) = commands
         .iter()

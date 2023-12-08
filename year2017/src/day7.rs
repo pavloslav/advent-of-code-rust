@@ -1,8 +1,8 @@
-use crate::*;
+use anyhow::Context;
 
 type Tower = std::collections::HashMap<String, (usize, Vec<String>)>;
 
-pub fn parse_input(input: &str) -> AocResult<Tower> {
+pub fn parse_input(input: &str) -> anyhow::Result<Tower> {
     input
         .lines()
         .map(|line| {
@@ -11,13 +11,13 @@ pub fn parse_input(input: &str) -> AocResult<Tower> {
             } else if let Ok((name, weight)) = prse::try_parse!(line, "{} ({})") {
                 Ok((name, (weight, vec![])))
             } else {
-                Err(aoc_error!("Failed to parse the line '{line}'"))
+                Err(anyhow::anyhow!("Failed to parse the line '{line}'"))
             }
         })
         .collect()
 }
 
-fn get_root(tower: &Tower) -> AocResult<String> {
+fn get_root(tower: &Tower) -> anyhow::Result<String> {
     let children: std::collections::HashSet<_> = tower
         .values()
         .flat_map(|(_, children)| children.iter())
@@ -25,11 +25,11 @@ fn get_root(tower: &Tower) -> AocResult<String> {
     tower
         .keys()
         .find(|k| !children.contains(k))
-        .ok_or_else(|| aoc_error!("No root found!"))
+        .context("No root found!")
         .cloned()
 }
 
-pub fn task1(tower: &Tower) -> AocResult<String> {
+pub fn task1(tower: &Tower) -> anyhow::Result<String> {
     get_root(tower)
 }
 
@@ -42,7 +42,7 @@ fn get_weight(tower: &Tower, node: &str) -> usize {
             .sum::<usize>()
 }
 
-fn get_correct_weight(tower: &Tower, root: &str) -> AocResult<usize> {
+fn get_correct_weight(tower: &Tower, root: &str) -> anyhow::Result<usize> {
     let mut weights = std::collections::HashMap::<usize, Vec<String>>::new();
     for child in &tower[root].1 {
         let weight = get_weight(tower, child);
@@ -65,10 +65,10 @@ fn get_correct_weight(tower: &Tower, root: &str) -> AocResult<usize> {
         get_correct_weight(tower, &weights[&wrong][0])
             .or_else(|_| Ok(tower[&weights[&wrong][0]].0 + correct - wrong))
     } else {
-        Err(aoc_error!("Can't find answer"))
+        Err(anyhow::anyhow!("Can't find answer"))
     }
 }
 
-pub fn task2(tower: &Tower) -> AocResult<usize> {
+pub fn task2(tower: &Tower) -> anyhow::Result<usize> {
     get_correct_weight(tower, &get_root(tower)?)
 }

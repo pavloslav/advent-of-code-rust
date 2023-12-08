@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<(usize, usize, usize)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(usize, usize, usize)>> {
     input
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{},{},{}")?))
@@ -88,12 +86,12 @@ impl Space {
     }
 }
 
-pub fn task1(lava: &[(usize, usize, usize)]) -> AocResult<usize> {
+pub fn task1(lava: &[(usize, usize, usize)]) -> anyhow::Result<usize> {
     let space = Space::from_lava(lava);
     Ok(space.count_lava_neighbors(State::Empty))
 }
 
-pub fn task2(lava: &[(usize, usize, usize)]) -> AocResult<usize> {
+pub fn task2(lava: &[(usize, usize, usize)]) -> anyhow::Result<usize> {
     let mut space = Space::from_lava(lava);
     space.floodfill();
     Ok(space.count_lava_neighbors(State::Outer))

@@ -1,6 +1,6 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<(i16, i16)>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<(i16, i16)>> {
     Ok(input
         .lines()
         .enumerate()
@@ -37,15 +37,15 @@ fn visible_from(station: (i16, i16), asteroids: &[(i16, i16)]) -> usize {
         .len()
 }
 
-fn station_position(asteroids: &[(i16, i16)]) -> AocResult<(i16, i16)> {
+fn station_position(asteroids: &[(i16, i16)]) -> anyhow::Result<(i16, i16)> {
     asteroids
         .iter()
         .max_by_key(|&&station| visible_from(station, asteroids))
         .copied()
-        .ok_or_else(|| aoc_error!("Asteroids shouldn't be empty!"))
+        .context("Asteroids shouldn't be empty!")
 }
 
-pub fn task1(asteroids: &[(i16, i16)]) -> AocResult<usize> {
+pub fn task1(asteroids: &[(i16, i16)]) -> anyhow::Result<usize> {
     Ok(visible_from(station_position(asteroids)?, asteroids))
 }
 
@@ -55,11 +55,9 @@ fn atan((x, y): (i16, i16)) -> f64 {
 
 const ASTEROID_NEEDED: usize = 200;
 
-pub fn task2(asteroids: &[(i16, i16)]) -> AocResult<i16> {
+pub fn task2(asteroids: &[(i16, i16)]) -> anyhow::Result<i16> {
     if asteroids.len() <= ASTEROID_NEEDED {
-        return Err(aoc_error!(
-            "There should be at least {ASTEROID_NEEDED} asteroids!"
-        ));
+        anyhow::bail!("There should be at least {ASTEROID_NEEDED} asteroids!");
     }
     let station = station_position(asteroids)?;
     let mut asteroids: Vec<_> = asteroids

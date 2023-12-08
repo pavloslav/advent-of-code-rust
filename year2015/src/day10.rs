@@ -1,7 +1,5 @@
 use itertools::Itertools;
 
-use crate::*;
-
 fn look_and_say(input: &str) -> String {
     use std::fmt::Write;
     input.trim().chars().group_by(|&c| c).into_iter().fold(
@@ -13,7 +11,7 @@ fn look_and_say(input: &str) -> String {
     )
 }
 
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
@@ -23,10 +21,10 @@ fn task(input: &str, count: usize) -> usize {
         .len()
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     Ok(task(input, 40))
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     Ok(task(input, 50))
 }

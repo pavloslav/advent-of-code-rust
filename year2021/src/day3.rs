@@ -1,33 +1,33 @@
-use crate::*;
+use anyhow::Context;
 
 pub struct Data {
     numbers: Vec<usize>,
     size: usize,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Data> {
+pub fn parse_input(input: &str) -> anyhow::Result<Data> {
     let mut size = None;
     let numbers = input
         .lines()
         .map(|line| {
             if let Some(s) = size {
                 if s != line.len() {
-                    return Err(aoc_error!(
+                    anyhow::bail!(
                         "All lines should be same length {}, but one is {s}",
                         line.len()
-                    ));
+                    );
                 }
             } else {
                 size = Some(line.len());
             }
             Ok(usize::from_str_radix(line, 2)?)
         })
-        .collect::<AocResult<_>>()?;
-    let size = size.ok_or_else(|| aoc_error!("No line length!"))?;
+        .collect::<anyhow::Result<_>>()?;
+    let size = size.context("No line length!")?;
     Ok(Data { numbers, size })
 }
 
-pub fn task1(data: &Data) -> AocResult<usize> {
+pub fn task1(data: &Data) -> anyhow::Result<usize> {
     let (gamma, epsilon) = (0..data.size)
         .rev()
         .map(|i| data.numbers.iter().filter(|&n| (n >> i) & 1 == 1).count())
@@ -55,7 +55,7 @@ where
     numbers[0]
 }
 
-pub fn task2(data: &Data) -> AocResult<usize> {
+pub fn task2(data: &Data) -> anyhow::Result<usize> {
     let oxygen = find_by_bit_criteria(data, |digit, more_ones| (digit == 1) == more_ones);
     let co2 = find_by_bit_criteria(data, |digit, more_ones| (digit == 0) == more_ones);
     Ok(oxygen * co2)

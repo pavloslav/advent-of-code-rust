@@ -1,5 +1,3 @@
-use crate::*;
-
 #[derive(Clone, prse::Parse)]
 #[prse = "position=<{x}, {y}> velocity=<{vx}, {vy}>"]
 pub struct Point {
@@ -20,15 +18,15 @@ impl Point {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<(usize, Vec<Point>)> {
+pub fn parse_input(input: &str) -> anyhow::Result<(usize, Vec<Point>)> {
     let pts: Vec<Point> = input
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{}")?))
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
     find_narrowest(&pts)
 }
 
-fn find_narrowest(input: &[Point]) -> AocResult<(usize, Vec<Point>)> {
+fn find_narrowest(input: &[Point]) -> anyhow::Result<(usize, Vec<Point>)> {
     let mut points = input.to_vec();
     let mut min_dist = i32::MAX;
     for step in 0.. {
@@ -39,12 +37,12 @@ fn find_narrowest(input: &[Point]) -> AocResult<(usize, Vec<Point>)> {
             .iter()
             .map(|pt| pt.x)
             .min()
-            .ok_or(aoc_error!("No points!"))?;
+            .ok_or(anyhow::anyhow!("No points!"))?;
         let max_x = points
             .iter()
             .map(|pt| pt.x)
             .max()
-            .ok_or(aoc_error!("No points!"))?;
+            .ok_or(anyhow::anyhow!("No points!"))?;
         if min_dist > max_x - min_x {
             min_dist = max_x - min_x;
         } else {
@@ -54,30 +52,30 @@ fn find_narrowest(input: &[Point]) -> AocResult<(usize, Vec<Point>)> {
             return Ok((step, points));
         }
     }
-    Err(aoc_error!("unreachable"))
+    Err(anyhow::anyhow!("unreachable"))
 }
 
-pub fn task1((_, points): &(usize, Vec<Point>)) -> AocResult<String> {
+pub fn task1((_, points): &(usize, Vec<Point>)) -> anyhow::Result<String> {
     let min_x = points
         .iter()
         .map(|pt| pt.x)
         .min()
-        .ok_or(aoc_error!("No points!"))?;
+        .ok_or(anyhow::anyhow!("No points!"))?;
     let max_x = points
         .iter()
         .map(|pt| pt.x)
         .max()
-        .ok_or(aoc_error!("No points!"))?;
+        .ok_or(anyhow::anyhow!("No points!"))?;
     let min_y = points
         .iter()
         .map(|pt| pt.y)
         .min()
-        .ok_or(aoc_error!("No points!"))?;
+        .ok_or(anyhow::anyhow!("No points!"))?;
     let max_y = points
         .iter()
         .map(|pt| pt.y)
         .max()
-        .ok_or(aoc_error!("No points!"))?;
+        .ok_or(anyhow::anyhow!("No points!"))?;
     let width = (max_x - min_x + 2) as usize;
     let height = (max_y - min_y + 1) as usize;
     let mut result = vec![b'.'; width * height];
@@ -90,6 +88,6 @@ pub fn task1((_, points): &(usize, Vec<Point>)) -> AocResult<String> {
     Ok(String::from_utf8(result)?)
 }
 
-pub fn task2((steps, _): &(usize, Vec<Point>)) -> AocResult<usize> {
+pub fn task2((steps, _): &(usize, Vec<Point>)) -> anyhow::Result<usize> {
     Ok(*steps)
 }

@@ -1,11 +1,10 @@
 use super::computer::Computer;
-use crate::*;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
-pub fn task1(code: &[isize]) -> AocResult<isize> {
+pub fn task1(code: &[isize]) -> anyhow::Result<isize> {
     let mut computer = Computer::new(code);
     computer.write(1);
     computer.run()?;
@@ -17,7 +16,7 @@ pub fn task1(code: &[isize]) -> AocResult<isize> {
     }
 }
 
-pub fn task2(code: &[isize]) -> AocResult<isize> {
+pub fn task2(code: &[isize]) -> anyhow::Result<isize> {
     let mut computer = Computer::new(code);
     computer.write(5);
     computer.run()?.read()

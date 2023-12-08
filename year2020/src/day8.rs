@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(Debug, Clone)]
 pub enum Operation {
@@ -16,14 +16,14 @@ struct Computer {
 }
 
 impl std::str::FromStr for Operation {
-    type Err = AocError;
-    fn from_str(line: &str) -> AocResult<Operation> {
+    type Err = anyhow::Error;
+    fn from_str(line: &str) -> anyhow::Result<Operation> {
         let (operation, value) = prse::try_parse!(line, "{} {}")?;
         match operation {
             "nop" => Ok(Operation::Nop(value)),
             "acc" => Ok(Operation::Acc(value)),
             "jmp" => Ok(Operation::Jmp(value)),
-            _ => Err(aoc_error!("Can't parse operation '{line}'")),
+            _ => anyhow::bail!("Can't parse operation '{line}'"),
         }
     }
 }
@@ -36,18 +36,15 @@ impl Computer {
             program,
         }
     }
-    fn tick(&mut self) -> AocResult<()> {
+    fn tick(&mut self) -> anyhow::Result<()> {
         match self.program[self.instruction] {
             Operation::Jmp(offset) => {
                 self.instruction = if offset.is_negative() {
-                    self.instruction
-                        .checked_sub(offset.unsigned_abs() as usize)
-                        .ok_or_else(|| aoc_error!("Wrong instruction address"))?
+                    self.instruction.checked_sub(offset.unsigned_abs() as usize)
                 } else {
-                    self.instruction
-                        .checked_add(offset as usize)
-                        .ok_or_else(|| aoc_error!("Wrong instruction address"))?
+                    self.instruction.checked_add(offset as usize)
                 }
+                .context("Wrong instruction address")?;
             }
             Operation::Acc(increment) => {
                 self.accumulator += increment;
@@ -65,11 +62,11 @@ impl Computer {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Program> {
+pub fn parse_input(input: &str) -> anyhow::Result<Program> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(program: &Program) -> AocResult<i64> {
+pub fn task1(program: &Program) -> anyhow::Result<i64> {
     let mut computer = Computer::with_program(program.clone());
     let mut visited = vec![false; computer.program.len()];
     while !visited[computer.instruction] {
@@ -79,7 +76,7 @@ pub fn task1(program: &Program) -> AocResult<i64> {
     Ok(computer.accumulator)
 }
 
-pub fn task2(program: &Program) -> AocResult<i64> {
+pub fn task2(program: &Program) -> anyhow::Result<i64> {
     let mut computer = Computer::with_program(program.clone());
     for i in 0..computer.program.len() {
         let mut visited = vec![false; computer.program.len()];
@@ -105,7 +102,7 @@ pub fn task2(program: &Program) -> AocResult<i64> {
     if computer.exited() {
         Ok(computer.accumulator)
     } else {
-        Err(aoc_error!("Failed to calculate"))
+        anyhow::bail!("Failed to calculate")
     }
 }
 

@@ -1,7 +1,7 @@
 use super::computer::Computer;
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
@@ -13,7 +13,7 @@ const BLOCK: isize = 2;
 const _PADDLE: isize = 3;
 const _BALL: isize = 4;
 
-pub fn task1(code: &[isize]) -> AocResult<usize> {
+pub fn task1(code: &[isize]) -> anyhow::Result<usize> {
     let mut computer = Computer::new(code);
     computer.run()?;
     let mut grid = HashMap::new();
@@ -23,7 +23,7 @@ pub fn task1(code: &[isize]) -> AocResult<usize> {
     Ok(grid.values().filter(|&&v| v == BLOCK).count())
 }
 
-pub fn task2(code: &[isize]) -> AocResult<isize> {
+pub fn task2(code: &[isize]) -> anyhow::Result<isize> {
     //pre-run to calculate parameters of field
     let mut computer = Computer::new(code);
     computer.run()?;
@@ -46,7 +46,7 @@ pub fn task2(code: &[isize]) -> AocResult<isize> {
                 last
             }
         })
-        .ok_or_else(|| aoc_error!("Impossible!"))?;
+        .context("Impossible!")?;
     let mut blocks: HashMap<_, _> = grid.iter().filter(|(_, &t)| t == BLOCK).collect();
 
     let mut code = code.to_vec();

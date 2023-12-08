@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<u32> {
+pub fn parse_input(input: &str) -> anyhow::Result<u32> {
     Ok(input.trim().parse()?)
 }
 
-pub fn task1(&input: &u32) -> AocResult<u32> {
+pub fn task1(&input: &u32) -> anyhow::Result<u32> {
     let inner = (((input - 1) as f64).sqrt() as i32 + 1) / 2;
     let start = (2 * inner - 1).pow(2);
     let step = 2 * inner;
@@ -12,7 +10,7 @@ pub fn task1(&input: &u32) -> AocResult<u32> {
     Ok((inner + (1 + location_in_side - inner).abs()) as u32)
 }
 
-pub fn task2(&input: &u32) -> AocResult<u32> {
+pub fn task2(&input: &u32) -> anyhow::Result<u32> {
     let mut values = std::collections::HashMap::<(i32, i32), u32>::from([((0, 0), 1)]);
     #[rustfmt::skip]
     let neighbors = [(-1, -1), (0, -1), (1, -1),
@@ -43,7 +41,7 @@ pub fn task2(&input: &u32) -> AocResult<u32> {
             }
         }
     }
-    Err(aoc_error!("Failed to find the answer"))
+    Err(anyhow::anyhow!("Failed to find the answer"))
 }
 
 #[cfg(test)]

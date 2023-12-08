@@ -1,5 +1,3 @@
-use crate::*;
-
 const STEPS: usize = 100;
 
 #[rustfmt::skip]
@@ -85,7 +83,7 @@ impl Life {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Life> {
+pub fn parse_input(input: &str) -> anyhow::Result<Life> {
     Ok(Life {
         field: input
             .lines()
@@ -94,11 +92,11 @@ pub fn parse_input(input: &str) -> AocResult<Life> {
                     .map(|ch| match ch {
                         '.' => Ok(Cell::Disabled),
                         '#' => Ok(Cell::Enabled),
-                        _ => Err(aoc_error!("Unexpected character: {ch}")),
+                        _ => Err(anyhow::anyhow!("Unexpected character: {ch}")),
                     })
-                    .collect::<AocResult<Vec<Cell>>>()
+                    .collect::<anyhow::Result<Vec<Cell>>>()
             })
-            .collect::<AocResult<_>>()?,
+            .collect::<anyhow::Result<_>>()?,
     })
 }
 
@@ -110,11 +108,11 @@ fn task(life: &Life, steps: usize, light_corners: bool) -> usize {
     life.count_on()
 }
 
-pub fn task1(life: &Life) -> AocResult<usize> {
+pub fn task1(life: &Life) -> anyhow::Result<usize> {
     Ok(task(life, STEPS, false))
 }
 
-pub fn task2(life: &Life) -> AocResult<usize> {
+pub fn task2(life: &Life) -> anyhow::Result<usize> {
     Ok(task(life, STEPS, true))
 }
 

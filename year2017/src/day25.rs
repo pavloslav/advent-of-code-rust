@@ -1,5 +1,3 @@
-use crate::*;
-
 #[derive(Clone)]
 pub struct TuringMachine {
     tape_pos: Vec<u8>,
@@ -10,19 +8,19 @@ pub struct TuringMachine {
     steps: usize,
 }
 
-fn name_to_state(name: char) -> AocResult<usize> {
+fn name_to_state(name: char) -> anyhow::Result<usize> {
     if name.is_ascii_uppercase() {
         Ok((name as u32 - b'A' as u32) as usize)
     } else {
-        Err(aoc_error!("Incorrect state: '{name}'"))
+        Err(anyhow::anyhow!("Incorrect state: '{name}'"))
     }
 }
 
-fn dir_to_isize(dir: &str) -> AocResult<isize> {
+fn dir_to_isize(dir: &str) -> anyhow::Result<isize> {
     match dir {
         "left" => Ok(-1),
         "right" => Ok(1),
-        other => Err(aoc_error!("Incorrect tape direction: '{other}'")),
+        other => Err(anyhow::anyhow!("Incorrect tape direction: '{other}'")),
     }
 }
 
@@ -69,7 +67,7 @@ impl TuringMachine {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<TuringMachine> {
+pub fn parse_input(input: &str) -> anyhow::Result<TuringMachine> {
     let mut state = 0;
     let mut steps = 0;
     let mut states = Vec::new();
@@ -119,7 +117,7 @@ Perform a diagnostic checksum after {} steps."
     })
 }
 
-pub fn task1(input: &TuringMachine) -> AocResult<usize> {
+pub fn task1(input: &TuringMachine) -> anyhow::Result<usize> {
     let mut machine = input.clone();
     for _step in 0..machine.steps {
         machine.step();
@@ -127,7 +125,7 @@ pub fn task1(input: &TuringMachine) -> AocResult<usize> {
     Ok(machine.checksum())
 }
 
-pub fn task2(_input: &TuringMachine) -> AocResult<&'static str> {
+pub fn task2(_input: &TuringMachine) -> anyhow::Result<&'static str> {
     Ok("Success!")
 }
 

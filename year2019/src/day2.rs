@@ -1,11 +1,10 @@
 use super::computer::Computer;
-use crate::*;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<isize>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<isize>> {
     Computer::prepare_code(input)
 }
 
-pub fn task1(input: &[isize]) -> AocResult<isize> {
+pub fn task1(input: &[isize]) -> anyhow::Result<isize> {
     let mut computer = Computer::new(input);
     computer.memory.insert(1, 12);
     computer.memory.insert(2, 2);
@@ -15,7 +14,7 @@ pub fn task1(input: &[isize]) -> AocResult<isize> {
 
 const NEEDED: isize = 19690720;
 
-pub fn task2(input: &[isize]) -> AocResult<isize> {
+pub fn task2(input: &[isize]) -> anyhow::Result<isize> {
     for noun in 0..99 {
         for verb in 0..99 {
             let mut computer = Computer::new(input);
@@ -27,5 +26,5 @@ pub fn task2(input: &[isize]) -> AocResult<isize> {
             }
         }
     }
-    Err(aoc_error!("Answer not found!"))
+    anyhow::bail!("Answer not found!")
 }

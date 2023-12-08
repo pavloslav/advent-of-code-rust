@@ -1,6 +1,6 @@
-use crate::*;
+use anyhow::Context;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<u8>>> {
     input
         .lines()
         .map(|line| {
@@ -8,15 +8,15 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
                 .map(|digit| {
                     Ok(digit
                         .to_digit(10)
-                        .ok_or_else(|| aoc_error!("Not a digit: '{digit}'"))?
+                        .with_context(|| format!("Not a digit: '{digit}'"))?
                         as u8)
                 })
-                .collect::<AocResult<_>>()
+                .collect::<anyhow::Result<_>>()
         })
         .collect()
 }
 
-pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
+pub fn task1(map: &[Vec<u8>]) -> anyhow::Result<usize> {
     Ok(map
         .iter()
         .enumerate()
@@ -56,7 +56,7 @@ fn floodfill(map: &mut Vec<Vec<u8>>, i: i32, j: i32) -> usize {
     }
 }
 
-pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
+pub fn task2(map: &[Vec<u8>]) -> anyhow::Result<usize> {
     let mut map = map.to_owned();
     let mut result = Vec::new();
     for i in 0..map.len() {

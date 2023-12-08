@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 pub enum Direction {
     Down,
@@ -65,13 +65,13 @@ impl Packet {
         self.step(field)
     }
 
-    fn new(field: &[Vec<u8>]) -> AocResult<Packet> {
+    fn new(field: &[Vec<u8>]) -> anyhow::Result<Packet> {
         Ok(Packet {
             x: field[0]
                 .iter()
                 .enumerate()
                 .find(|&(_, &b)| b == b'|')
-                .ok_or_else(|| aoc_error!("First line should contain '|'!"))?
+                .context("First line should contain '|'!")?
                 .0,
             y: 0,
             dir: Direction::Down,
@@ -79,14 +79,14 @@ impl Packet {
             distance: 1,
         })
     }
-    fn travel(field: &[Vec<u8>]) -> AocResult<Packet> {
+    fn travel(field: &[Vec<u8>]) -> anyhow::Result<Packet> {
         let mut packet = Packet::new(field)?;
         while packet.step(field) || packet.turn(field) {}
         Ok(packet)
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Packet> {
+pub fn parse_input(input: &str) -> anyhow::Result<Packet> {
     Packet::travel(
         &input
             .lines()
@@ -95,11 +95,11 @@ pub fn parse_input(input: &str) -> AocResult<Packet> {
     )
 }
 
-pub fn task1(input: &Packet) -> AocResult<String> {
+pub fn task1(input: &Packet) -> anyhow::Result<String> {
     Ok(input.letters.clone())
 }
 
-pub fn task2(input: &Packet) -> AocResult<usize> {
+pub fn task2(input: &Packet) -> anyhow::Result<usize> {
     Ok(input.distance)
 }
 

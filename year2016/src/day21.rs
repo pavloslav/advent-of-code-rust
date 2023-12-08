@@ -1,5 +1,4 @@
-use crate::*;
-
+use anyhow::Context;
 use std::collections::VecDeque;
 
 const PASSWORD: &str = "abcdefgh";
@@ -17,7 +16,7 @@ pub enum Command {
 }
 
 impl std::str::FromStr for Command {
-    type Err = AocError;
+    type Err = anyhow::Error;
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
         if let Ok((x, y)) = prse::try_parse!(s, "swap position {} with position {}") {
             Ok(Command::SwapPosition(x, y))
@@ -36,16 +35,16 @@ impl std::str::FromStr for Command {
         } else if let Ok((x, y)) = prse::try_parse!(s, "move position {} to position {}") {
             Ok(Command::Move(x, y))
         } else {
-            Err(aoc_error!("Can't parse '{s}' into command"))
+            Err(anyhow::anyhow!("Can't parse '{s}' into command"))
         }
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Command>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Command>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(input: &[Command]) -> AocResult<String> {
+pub fn task1(input: &[Command]) -> anyhow::Result<String> {
     let mut password: VecDeque<_> = PASSWORD.bytes().collect();
 
     for command in input {
@@ -55,11 +54,11 @@ pub fn task1(input: &[Command]) -> AocResult<String> {
                 let x = password
                     .iter()
                     .position(|c| c == x)
-                    .ok_or_else(|| aoc_error!("No letter {} in password", *x as char))?;
+                    .with_context(|| format!("No letter {} in password", *x as char))?;
                 let y = password
                     .iter()
                     .position(|c| c == y)
-                    .ok_or_else(|| aoc_error!("No letter {} in password", *y as char))?;
+                    .with_context(|| format!("No letter {} in password", *y as char))?;
                 password.swap(x, y);
             }
             Command::RotateLeft(r) => password.rotate_left(*r),
@@ -68,7 +67,7 @@ pub fn task1(input: &[Command]) -> AocResult<String> {
                 let mut b = password
                     .iter()
                     .position(|c| c == b)
-                    .ok_or_else(|| aoc_error!("No letter {} in password", *b as char))?;
+                    .with_context(|| format!("No letter {} in password", *b as char))?;
                 b += if b >= 4 { 2 } else { 1 };
                 password.rotate_right(b % password.len());
             }
@@ -80,7 +79,7 @@ pub fn task1(input: &[Command]) -> AocResult<String> {
             Command::Move(x, y) => {
                 let letter = password
                     .remove(*x)
-                    .ok_or_else(|| aoc_error!("Index {x} out of bounds"))?;
+                    .with_context(|| format!("Index {x} out of bounds"))?;
                 password.insert(*y, letter);
             }
         }
@@ -89,7 +88,7 @@ pub fn task1(input: &[Command]) -> AocResult<String> {
     Ok(password.iter().map(|&b| b as char).collect())
 }
 
-pub fn task2(input: &[Command]) -> AocResult<String> {
+pub fn task2(input: &[Command]) -> anyhow::Result<String> {
     let mut password: VecDeque<_> = SCRAMBLED.bytes().collect();
 
     for command in input.iter().rev() {
@@ -99,11 +98,11 @@ pub fn task2(input: &[Command]) -> AocResult<String> {
                 let x = password
                     .iter()
                     .position(|c| c == x)
-                    .ok_or_else(|| aoc_error!("No letter {} in password", *x as char))?;
+                    .with_context(|| format!("No letter {} in password", *x as char))?;
                 let y = password
                     .iter()
                     .position(|c| c == y)
-                    .ok_or_else(|| aoc_error!("No letter {} in password", *y as char))?;
+                    .with_context(|| format!("No letter {} in password", *y as char))?;
                 password.swap(x, y);
             }
             Command::RotateLeft(r) => password.rotate_right(*r),
@@ -112,7 +111,7 @@ pub fn task2(input: &[Command]) -> AocResult<String> {
                 let mut b = password
                     .iter()
                     .position(|c| c == b)
-                    .ok_or_else(|| aoc_error!("No letter {} in password", *b as char))?;
+                    .with_context(|| format!("No letter {} in password", *b as char))?;
                 b = match b {
                     0 => 7,
                     1 => 7,
@@ -122,7 +121,7 @@ pub fn task2(input: &[Command]) -> AocResult<String> {
                     5 => 5,
                     6 => 0,
                     7 => 4,
-                    other => return Err(aoc_error!("Letter position {other}! How?")),
+                    other => anyhow::bail!("Letter position {other}! How?"),
                 };
                 password.rotate_right(b);
             }
@@ -134,7 +133,7 @@ pub fn task2(input: &[Command]) -> AocResult<String> {
             Command::Move(x, y) => {
                 let letter = password
                     .remove(*y)
-                    .ok_or_else(|| aoc_error!("Index {x} out of bounds"))?;
+                    .with_context(|| format!("Index {x} out of bounds"))?;
                 password.insert(*x, letter);
             }
         }

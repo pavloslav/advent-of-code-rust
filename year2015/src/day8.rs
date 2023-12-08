@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
@@ -11,7 +9,7 @@ enum State {
     X2,
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     Ok(input
         .lines()
         .map(|line| {
@@ -44,7 +42,7 @@ pub fn task1(input: &str) -> AocResult<usize> {
         .sum())
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     Ok(input
         .lines()
         .map(|line| line.chars().filter(|&c| c == '\\' || c == '"').count() + 2)

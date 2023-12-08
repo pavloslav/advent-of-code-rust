@@ -1,5 +1,3 @@
-use crate::*;
-
 const TOTAL_SPOONS: usize = 100;
 const TOTAL_CALORIES: i32 = 500;
 
@@ -9,7 +7,7 @@ pub struct Ingridient {
 }
 
 impl std::str::FromStr for Ingridient {
-    type Err = AocError;
+    type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         //Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8
 
@@ -29,9 +27,12 @@ pub struct IngridientList {
     ingridients: Vec<Ingridient>,
 }
 
-pub fn parse_input(input: &str) -> AocResult<IngridientList> {
+pub fn parse_input(input: &str) -> anyhow::Result<IngridientList> {
     Ok(IngridientList {
-        ingridients: (input.lines().map(|l| l.parse()).collect::<AocResult<_>>())?,
+        ingridients: (input
+            .lines()
+            .map(|l| l.parse())
+            .collect::<anyhow::Result<_>>())?,
     })
 }
 
@@ -60,7 +61,7 @@ impl IngridientList {
     }
 }
 
-pub fn task1(ingridients: &IngridientList) -> AocResult<i32> {
+pub fn task1(ingridients: &IngridientList) -> anyhow::Result<i32> {
     let mut stack: Vec<usize> = vec![];
     let mut max = 0;
     'search: loop {
@@ -87,7 +88,7 @@ pub fn task1(ingridients: &IngridientList) -> AocResult<i32> {
     Ok(max)
 }
 
-pub fn task2(ingridients: &IngridientList) -> AocResult<i32> {
+pub fn task2(ingridients: &IngridientList) -> anyhow::Result<i32> {
     let mut stack: Vec<usize> = vec![];
     let mut max = 0;
     'search: loop {

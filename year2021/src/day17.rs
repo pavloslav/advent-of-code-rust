@@ -1,17 +1,15 @@
-use crate::*;
-
 type Rect = ((i32, i32), (i32, i32));
 
-pub fn parse_input(input: &str) -> AocResult<Rect> {
+pub fn parse_input(input: &str) -> anyhow::Result<Rect> {
     let (x1, x2, y1, y2) = prse::try_parse!(input, "target area: x={}..{}, y={}..{}")?;
     Ok(((x1, y1), (x2, y2)))
 }
 
-pub fn task1(input: &Rect) -> AocResult<i32> {
+pub fn task1(input: &Rect) -> anyhow::Result<i32> {
     let &((x1, y1), (x2, _y2)) = input;
     let vx = (((1 + 8 * x2) as f64).sqrt() as i32 - 1) / 2;
     if vx * (vx + 1) / 2 < x1 {
-        return Err(aoc_error!("Probe don't stop, vx={vx}"));
+        anyhow::bail!("Probe don't stop, vx={vx}");
     }
     let vy = (y1 + 1).abs();
     Ok(vy * (vy + 1) / 2)
@@ -44,7 +42,7 @@ fn get_all_velocities(input: &Rect) -> std::collections::HashSet<(i32, i32)> {
     result
 }
 
-pub fn task2(input: &Rect) -> AocResult<usize> {
+pub fn task2(input: &Rect) -> anyhow::Result<usize> {
     Ok(get_all_velocities(input).len())
 }
 

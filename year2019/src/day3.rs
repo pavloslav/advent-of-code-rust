@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 pub struct Step {
     direction: (i32, i32),
@@ -6,29 +6,29 @@ pub struct Step {
 }
 
 impl std::str::FromStr for Step {
-    type Err = AocError;
-    fn from_str(input: &str) -> AocResult<Step> {
+    type Err = anyhow::Error;
+    fn from_str(input: &str) -> anyhow::Result<Step> {
         Ok(Step {
             direction: match input.chars().next() {
                 Some('R') => (1, 0),
                 Some('L') => (-1, 0),
                 Some('U') => (0, 1),
                 Some('D') => (0, -1),
-                Some(other) => Err(aoc_error!("Unable to parse direction '{other}'"))?,
-                None => Err(aoc_error!("Unable to parse empty string"))?,
+                Some(other) => Err(anyhow::anyhow!("Unable to parse direction '{other}'"))?,
+                None => Err(anyhow::anyhow!("Unable to parse empty string"))?,
             },
             length: input[1..].parse()?,
         })
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<[Vec<Step>; 2]> {
+pub fn parse_input(input: &str) -> anyhow::Result<[Vec<Step>; 2]> {
     input
         .lines()
         .map(|line| line.split(',').map(|step| step.parse()).collect())
-        .collect::<AocResult<Vec<_>>>()?
+        .collect::<anyhow::Result<Vec<_>>>()?
         .try_into()
-        .map_err(|_| aoc_error!("Wrong size"))
+        .map_err(|_| anyhow::anyhow!("Wrong size"))
 }
 
 use std::collections::HashSet;
@@ -47,13 +47,13 @@ fn get_set(steps: &[Step]) -> HashSet<(i32, i32)> {
         .collect()
 }
 
-pub fn task1(input: &[Vec<Step>; 2]) -> AocResult<usize> {
+pub fn task1(input: &[Vec<Step>; 2]) -> anyhow::Result<usize> {
     let way1 = get_set(&input[0]);
     let way2 = get_set(&input[1]);
     way1.intersection(&way2)
         .map(|(x, y)| (x.abs() + y.abs()) as usize)
         .min()
-        .ok_or_else(|| aoc_error!("Way is empty!"))
+        .context("Way is empty!")
 }
 
 use std::collections::HashMap;
@@ -78,12 +78,12 @@ fn get_map(steps: &[Step]) -> HashMap<(i32, i32), usize> {
         .collect()
 }
 
-pub fn task2(input: &[Vec<Step>; 2]) -> AocResult<usize> {
+pub fn task2(input: &[Vec<Step>; 2]) -> anyhow::Result<usize> {
     let way1 = get_map(&input[0]);
     let way2 = get_map(&input[1]);
     way1.iter()
         .filter(|(key, _)| way2.contains_key(key))
         .map(|(_, &length)| length)
         .min()
-        .ok_or_else(|| aoc_error!("Way is empty!"))
+        .context("Way is empty!")
 }

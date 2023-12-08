@@ -1,14 +1,12 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<u8>>> {
     let input: Vec<Vec<(i32, i32)>> = input
         .lines()
         .map(|line| {
             line.split(" -> ")
                 .map(|pair| Ok(prse::try_parse!(pair, "{},{}")?))
-                .collect::<AocResult<Vec<_>>>()
+                .collect::<anyhow::Result<Vec<_>>>()
         })
-        .collect::<AocResult<Vec<_>>>()?;
+        .collect::<anyhow::Result<Vec<_>>>()?;
     let (max_x, max_y) = input
         .iter()
         .flat_map(|line| line.iter())
@@ -44,7 +42,7 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Vec<u8>>> {
     Ok(map)
 }
 
-pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
+pub fn task1(map: &[Vec<u8>]) -> anyhow::Result<usize> {
     let mut map = map.to_vec();
     for sandgrain in 0.. {
         assert_eq!(map[0][500], b' ');
@@ -64,10 +62,10 @@ pub fn task1(map: &[Vec<u8>]) -> AocResult<usize> {
             y += 1;
         }
     }
-    Err(aoc_error!("unreachable"))
+    Err(anyhow::anyhow!("unreachable"))
 }
 
-pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
+pub fn task2(map: &[Vec<u8>]) -> anyhow::Result<usize> {
     let mut map = map.to_vec();
     map.push(vec![b' '; map[0].len()]);
     for sandgrain in 0.. {
@@ -91,5 +89,5 @@ pub fn task2(map: &[Vec<u8>]) -> AocResult<usize> {
             y += 1;
         }
     }
-    Err(aoc_error!("unreachable!"))
+    Err(anyhow::anyhow!("unreachable!"))
 }

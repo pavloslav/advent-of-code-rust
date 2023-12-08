@@ -1,15 +1,15 @@
-use crate::*;
+use anyhow::Context;
 
 const REG_A: usize = 0;
 const REG_B: usize = 1;
 
 type Register = usize;
 
-fn reg_num(input: &str) -> AocResult<Register> {
+fn reg_num(input: &str) -> anyhow::Result<Register> {
     match input {
         "a" => Ok(REG_A),
         "b" => Ok(REG_B),
-        other => Err(aoc_error!("Wrong register '{other}'")),
+        other => Err(anyhow::anyhow!("Wrong register '{other}'")),
     }
 }
 
@@ -24,13 +24,13 @@ pub enum Instruction {
 }
 
 impl std::str::FromStr for Instruction {
-    type Err = AocError;
+    type Err = anyhow::Error;
     fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
         if let Ok((op, reg, value)) = prse::try_parse!(s, "{} {}, {}") {
             match op {
                 "jie" => Ok(Instruction::Jie(reg_num(reg)?, value)),
                 "jio" => Ok(Instruction::Jio(reg_num(reg)?, value)),
-                other => Err(aoc_error!("Unknown 2-operand instruction '{other}'")),
+                other => Err(anyhow::anyhow!("Unknown 2-operand instruction '{other}'")),
             }
         } else if let Ok((op, reg)) = prse::try_parse!(s, "{} {}") {
             let reg: &str = reg; //hint for prse::try_parse
@@ -39,10 +39,10 @@ impl std::str::FromStr for Instruction {
                 "tpl" => Ok(Instruction::Tpl(reg_num(reg)?)),
                 "inc" => Ok(Instruction::Inc(reg_num(reg)?)),
                 "jmp" => Ok(Instruction::Jmp(reg.parse()?)),
-                other => Err(aoc_error!("Unknown 1-operand instruction '{other}'")),
+                other => Err(anyhow::anyhow!("Unknown 1-operand instruction '{other}'")),
             }
         } else {
-            Err(aoc_error!("Incorrect instruction '{s}'"))
+            Err(anyhow::anyhow!("Incorrect instruction '{s}'"))
         }
     }
 }
@@ -53,7 +53,7 @@ struct Computer {
     program: Vec<Instruction>,
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Instruction>> {
     input.lines().map(|s| s.parse()).collect()
 }
 
@@ -75,17 +75,17 @@ impl Computer {
         }
     }
 
-    fn get_reg(&mut self, reg: Register) -> AocResult<&mut usize> {
+    fn get_reg(&mut self, reg: Register) -> anyhow::Result<&mut usize> {
         self.regs
             .get_mut(reg)
-            .ok_or_else(|| aoc_error!("Incorrect register {reg}"))
+            .with_context(|| format!("Incorrect register {reg}"))
     }
 
-    fn step(&mut self) -> AocResult<bool> {
+    fn step(&mut self) -> anyhow::Result<bool> {
         let instr = self
             .program
             .get(self.ip)
-            .ok_or_else(|| aoc_error!("Incorrect ip: {}", self.ip))?
+            .with_context(|| format!("Incorrect ip: {}", self.ip))?
             .clone();
         match instr {
             Instruction::Hlf(tgt) => {
@@ -115,19 +115,19 @@ impl Computer {
         Ok(self.ip < self.program.len())
     }
 
-    fn run(&mut self) -> AocResult<()> {
+    fn run(&mut self) -> anyhow::Result<()> {
         while self.step()? {}
         Ok(())
     }
 }
 
-pub fn task1(input: &[Instruction]) -> AocResult<usize> {
+pub fn task1(input: &[Instruction]) -> anyhow::Result<usize> {
     let mut computer = Computer::new(0, input);
     computer.run()?;
     Ok(computer.regs[1])
 }
 
-pub fn task2(input: &[Instruction]) -> AocResult<usize> {
+pub fn task2(input: &[Instruction]) -> anyhow::Result<usize> {
     let mut computer = Computer::new(1, input);
     computer.run()?;
     Ok(computer.regs[1])

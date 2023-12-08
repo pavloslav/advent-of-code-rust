@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<usize> {
+pub fn parse_input(input: &str) -> anyhow::Result<usize> {
     Ok(input.trim().parse()?)
 }
 
-pub fn task1(input: &usize) -> AocResult<usize> {
+pub fn task1(input: &usize) -> anyhow::Result<usize> {
     const SIZE: usize = 2018;
     let mut buffer = Vec::with_capacity(SIZE);
     buffer.push(0);
@@ -17,7 +15,7 @@ pub fn task1(input: &usize) -> AocResult<usize> {
     Ok(buffer[(position + 1) % buffer.len()])
 }
 
-pub fn task2(input: &usize) -> AocResult<usize> {
+pub fn task2(input: &usize) -> anyhow::Result<usize> {
     const SIZE: usize = 50_000_000;
     let mut zero_position = 0;
     let mut value_after_zero = 0;

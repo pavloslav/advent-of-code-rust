@@ -1,18 +1,18 @@
 use super::computer::*;
-use crate::*;
+
 use std::rc::Rc;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Instruction>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Instruction>> {
     input.lines().map(|line| line.parse()).collect()
 }
 
-pub fn task1(input: &[Instruction]) -> AocResult<RegValue> {
+pub fn task1(input: &[Instruction]) -> anyhow::Result<RegValue> {
     let mut computer = Computer::new(input, ComputerKind::SoundRecover);
     while computer.step()? {}
     computer.last_sound()
 }
 
-pub fn task2(input: &[Instruction]) -> AocResult<usize> {
+pub fn task2(input: &[Instruction]) -> anyhow::Result<usize> {
     let mut computer0 = Computer::new(input, ComputerKind::SendRecieve);
     computer0.set_register('p', 0);
     let mut computer1 = Computer::new(input, ComputerKind::SendRecieve);

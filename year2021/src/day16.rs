@@ -26,7 +26,7 @@ fn get_number(input: &[u8]) -> usize {
     number
 }
 
-fn parse_packet(input: &[u8]) -> AocResult<(Packet, &[u8]), Error> {
+fn parse_packet(input: &[u8]) -> anyhow::Result<(Packet, &[u8]), Error> {
     if input.len() < 7 {
         return Err(Error::UnexpectedEndOfStream);
     }

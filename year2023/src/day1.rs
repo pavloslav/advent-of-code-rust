@@ -1,27 +1,25 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<Vec<String>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<String>> {
     Ok(input.lines().map(|l| l.to_owned()).collect())
 }
 
-pub fn task1(input: &[String]) -> AocResult<u32> {
+pub fn task1(input: &[String]) -> anyhow::Result<u32> {
     let mut s = 0;
     for l in input {
         let first = l
             .chars()
             .find_map(|d| d.to_digit(10))
-            .ok_or(aoc_error!("No digits in line!"))?;
+            .ok_or(anyhow::anyhow!("No digits in line!"))?;
         let last = l
             .chars()
             .rev()
             .find_map(|d| d.to_digit(10))
-            .ok_or(aoc_error!("No digits in line!"))?;
+            .ok_or(anyhow::anyhow!("No digits in line!"))?;
         s += 10 * first + last;
     }
     Ok(s)
 }
 
-pub fn task2(input: &[String]) -> AocResult<u32> {
+pub fn task2(input: &[String]) -> anyhow::Result<u32> {
     let mut sum = 0;
     for l in input {
         let mut s = l.as_str();
@@ -51,7 +49,7 @@ pub fn task2(input: &[String]) -> AocResult<u32> {
                 last = d;
             }
         }
-        sum += 10 * first.ok_or(aoc_error!("No digits in line!"))? + last;
+        sum += 10 * first.ok_or(anyhow::anyhow!("No digits in line!"))? + last;
     }
     Ok(sum)
 }

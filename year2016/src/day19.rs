@@ -1,17 +1,16 @@
-use crate::*;
-
+use anyhow::Context;
 use std::collections::VecDeque;
 
-pub fn parse_input(input: &str) -> AocResult<usize> {
+pub fn parse_input(input: &str) -> anyhow::Result<usize> {
     Ok(input.trim().parse()?)
 }
 
-pub fn task1(input: &usize) -> AocResult<usize> {
+pub fn task1(input: &usize) -> anyhow::Result<usize> {
     let l = input.ilog2();
     Ok(((input - (1 << l)) << 1) + 1)
 }
 
-pub fn task2(&input: &usize) -> AocResult<usize> {
+pub fn task2(&input: &usize) -> anyhow::Result<usize> {
     let mut left: VecDeque<_> = (1..=(input + 1) / 2).collect();
     let mut right: VecDeque<_> = ((input + 3) / 2..=input).collect();
     while !right.is_empty() {
@@ -27,7 +26,5 @@ pub fn task2(&input: &usize) -> AocResult<usize> {
             right.pop_front();
         }
     }
-    left.front()
-        .copied()
-        .ok_or_else(|| aoc_error!("Solution not found"))
+    left.front().copied().context("Solution not found")
 }

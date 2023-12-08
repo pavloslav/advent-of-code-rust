@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 type Counter = std::collections::HashMap<char, usize>;
 
@@ -13,14 +13,10 @@ pub struct PolymerData {
 }
 
 impl PolymerData {
-    fn from_str(input: &str) -> AocResult<PolymerData> {
+    fn from_str(input: &str) -> anyhow::Result<PolymerData> {
         let mut lines = input.lines();
         let mut polymer_data = PolymerData {
-            polymer: lines
-                .next()
-                .ok_or_else(|| aoc_error!("Empty input!"))?
-                .chars()
-                .collect(),
+            polymer: lines.next().context("Empty input!")?.chars().collect(),
             rules: std::collections::HashMap::new(),
             counters: std::collections::HashMap::new(),
         };
@@ -35,7 +31,11 @@ impl PolymerData {
         Ok(polymer_data)
     }
 
-    fn composition_recursive(&mut self, polymer: (char, char), steps: usize) -> AocResult<Counter> {
+    fn composition_recursive(
+        &mut self,
+        polymer: (char, char),
+        steps: usize,
+    ) -> anyhow::Result<Counter> {
         let (left, right) = polymer;
 
         #[allow(clippy::map_entry)]
@@ -59,11 +59,11 @@ impl PolymerData {
         Ok(self
             .counters
             .get(&(left, right, steps))
-            .ok_or_else(|| aoc_error!("Empty counters!"))?
+            .context("Empty counters!")?
             .clone())
     }
 
-    fn composition(&mut self, steps: usize) -> AocResult<usize> {
+    fn composition(&mut self, steps: usize) -> anyhow::Result<usize> {
         let mut counter: Counter = [(self.polymer[0], 1)].into();
         for i in 0..self.polymer.len() - 1 {
             for (element, count) in
@@ -73,32 +73,26 @@ impl PolymerData {
             }
         }
 
-        let min = counter
-            .values()
-            .min()
-            .ok_or_else(|| aoc_error!("Empty counter!"))?;
-        let max = counter
-            .values()
-            .max()
-            .ok_or_else(|| aoc_error!("Empty counter!"))?;
+        let min = counter.values().min().context("Empty counter!")?;
+        let max = counter.values().max().context("Empty counter!")?;
         Ok(max - min)
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<PolymerData> {
+pub fn parse_input(input: &str) -> anyhow::Result<PolymerData> {
     PolymerData::from_str(input)
 }
 
-fn task(data: &PolymerData, steps: usize) -> AocResult<usize> {
+fn task(data: &PolymerData, steps: usize) -> anyhow::Result<usize> {
     let mut data = data.clone();
     data.composition(steps)
 }
 
-pub fn task1(data: &PolymerData) -> AocResult<usize> {
+pub fn task1(data: &PolymerData) -> anyhow::Result<usize> {
     task(data, 10)
 }
 
-pub fn task2(data: &PolymerData) -> AocResult<usize> {
+pub fn task2(data: &PolymerData) -> anyhow::Result<usize> {
     task(data, 40)
 }
 

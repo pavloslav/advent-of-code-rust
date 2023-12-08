@@ -1,4 +1,3 @@
-use crate::*;
 use common::floyd_hare_tortoise_with_cmp;
 
 #[derive(Clone, PartialEq, Eq)]
@@ -32,7 +31,7 @@ impl Moon {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<[isize; 3]>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<[isize; 3]>> {
     input
         .lines()
         .map(|line| {
@@ -63,7 +62,7 @@ fn step_model_coord(moons: &mut Vec<Moon>, coord: usize) {
     }
 }
 
-pub fn task1(input: &[[isize; 3]]) -> AocResult<isize> {
+pub fn task1(input: &[[isize; 3]]) -> anyhow::Result<isize> {
     let mut moons: Vec<Moon> = input.iter().map(Moon::new).collect();
     for _ in 0..1000 {
         step_model(&mut moons);
@@ -71,7 +70,7 @@ pub fn task1(input: &[[isize; 3]]) -> AocResult<isize> {
     Ok(moons.iter().map(Moon::energy).sum())
 }
 
-pub fn task2(input: &[[isize; 3]]) -> AocResult<usize> {
+pub fn task2(input: &[[isize; 3]]) -> anyhow::Result<usize> {
     Ok((0..3)
         .map(|i| {
             let (lambda, mu) = floyd_hare_tortoise_with_cmp(

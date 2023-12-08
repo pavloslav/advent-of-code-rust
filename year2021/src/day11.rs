@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(Clone)]
 pub struct Octopuses {
@@ -7,20 +7,18 @@ pub struct Octopuses {
 }
 
 impl Octopuses {
-    fn new(input: &str) -> AocResult<Octopuses> {
+    fn new(input: &str) -> anyhow::Result<Octopuses> {
         Ok(Octopuses {
             map: input
                 .lines()
                 .map(|line| {
                     line.chars()
                         .map(|c| {
-                            Ok(c.to_digit(10)
-                                .ok_or_else(|| aoc_error!("Wrong digit {c}"))?
-                                as u8)
+                            Ok(c.to_digit(10).with_context(|| format!("Wrong digit {c}"))? as u8)
                         })
-                        .collect::<AocResult<Vec<u8>>>()
+                        .collect::<anyhow::Result<Vec<u8>>>()
                 })
-                .collect::<AocResult<_>>()?,
+                .collect::<anyhow::Result<_>>()?,
             last_flashed: 0,
         })
     }
@@ -72,16 +70,16 @@ impl Octopuses {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Octopuses> {
+pub fn parse_input(input: &str) -> anyhow::Result<Octopuses> {
     Octopuses::new(input)
 }
 
-pub fn task1(octopuses: &Octopuses) -> AocResult<usize> {
+pub fn task1(octopuses: &Octopuses) -> anyhow::Result<usize> {
     let mut octopuses = octopuses.clone();
     Ok((0..100).map(|_| octopuses.step()).sum())
 }
 
-pub fn task2(octopuses: &Octopuses) -> AocResult<usize> {
+pub fn task2(octopuses: &Octopuses) -> anyhow::Result<usize> {
     let mut octopuses = octopuses.clone();
     let area = octopuses.area();
     Ok((0..).take_while(|_| octopuses.step() != area).count() + 1)

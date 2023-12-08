@@ -1,13 +1,11 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<(usize, usize)> {
+pub fn parse_input(input: &str) -> anyhow::Result<(usize, usize)> {
     Ok(prse::try_parse!(
         input,
         "{} players; last marble is worth {} points"
     )?)
 }
 
-fn marble_game(players: usize, marbles: usize) -> AocResult<usize> {
+fn marble_game(players: usize, marbles: usize) -> anyhow::Result<usize> {
     use std::collections::VecDeque;
     let mut circle = VecDeque::from([0]);
     let mut players = vec![0; players];
@@ -19,7 +17,7 @@ fn marble_game(players: usize, marbles: usize) -> AocResult<usize> {
             let player_idx = marble % players.len();
             players[player_idx] += marble;
             circle.rotate_right(7);
-            players[player_idx] += circle.pop_back().ok_or(aoc_error!("Empry circle!"))?;
+            players[player_idx] += circle.pop_back().ok_or(anyhow::anyhow!("Empry circle!"))?;
             circle.rotate_left(1);
         }
     }
@@ -28,14 +26,14 @@ fn marble_game(players: usize, marbles: usize) -> AocResult<usize> {
         .iter()
         .max()
         .copied()
-        .ok_or(aoc_error!("No players!"))
+        .ok_or(anyhow::anyhow!("No players!"))
 }
 
-pub fn task1(&(players, marbles): &(usize, usize)) -> AocResult<usize> {
+pub fn task1(&(players, marbles): &(usize, usize)) -> anyhow::Result<usize> {
     marble_game(players, marbles)
 }
 
-pub fn task2(&(players, marbles): &(usize, usize)) -> AocResult<usize> {
+pub fn task2(&(players, marbles): &(usize, usize)) -> anyhow::Result<usize> {
     marble_game(players, 100 * marbles)
 }
 

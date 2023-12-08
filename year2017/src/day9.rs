@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
@@ -10,7 +8,7 @@ enum State {
     Escape,
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     let mut state = State::Normal;
     let mut level = 0;
     let mut sum = 0;
@@ -39,7 +37,7 @@ pub fn task1(input: &str) -> AocResult<usize> {
     Ok(sum)
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     let mut state = State::Normal;
     let mut garbage = 0;
     for c in input.chars() {

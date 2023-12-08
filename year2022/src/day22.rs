@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 pub enum Order {
     Walk(i16),
@@ -12,7 +12,7 @@ pub struct Task {
 
 use once_cell::sync::Lazy;
 
-pub fn parse_input(input: &str) -> AocResult<Task> {
+pub fn parse_input(input: &str) -> anyhow::Result<Task> {
     let mut lines = input.lines();
     let map = lines
         .by_ref()
@@ -28,11 +28,11 @@ pub fn parse_input(input: &str) -> AocResult<Task> {
             "L" => Ok(Order::Turn(-1)),
             num => Ok(Order::Walk(num.parse()?)),
         })
-        .collect::<AocResult<_>>()?;
+        .collect::<anyhow::Result<_>>()?;
     Ok(Task { map, path })
 }
 
-pub fn task1(input: &Task) -> AocResult<usize> {
+pub fn task1(input: &Task) -> anyhow::Result<usize> {
     let mut dir = 0;
     let mut x = 0;
     let mut y = 0;
@@ -40,62 +40,67 @@ pub fn task1(input: &Task) -> AocResult<usize> {
         match order {
             Order::Walk(len) => {
                 for _ in 0..*len {
-                    let (nx, ny) = match dir {
-                        0 => (
-                            if x + 1 < input.map[y].len() && input.map[y][x + 1] != b' ' {
-                                x + 1
-                            } else {
-                                input.map[y]
-                                    .iter()
-                                    .position(|&c| c != b' ')
-                                    .ok_or_else(|| {
-                                        aoc_error!("Empty string, x = {x}, y = {y}, dir = {dir}!")
-                                    })?
-                            },
-                            y,
-                        ),
+                    let (nx, ny) =
+                        match dir {
+                            0 => (
+                                if x + 1 < input.map[y].len() && input.map[y][x + 1] != b' ' {
+                                    x + 1
+                                } else {
+                                    input.map[y].iter().position(|&c| c != b' ').with_context(
+                                        || format!("Empty string, x = {x}, y = {y}, dir = {dir}!"),
+                                    )?
+                                },
+                                y,
+                            ),
 
-                        1 => (
-                            x,
-                            if y < input.map.len() - 1
-                                && input.map[y + 1].get(x).unwrap_or(&b' ') != &b' '
-                            {
-                                y + 1
-                            } else {
-                                input.map.iter().position(|row| row[x] != b' ').ok_or_else(
-                                    || aoc_error!("Empty string, x = {x}, y = {y}, dir = {dir}!"),
-                                )?
-                            },
-                        ),
-                        2 => (
-                            if x > 0 && input.map[y][x - 1] != b' ' {
-                                x - 1
-                            } else {
-                                input.map[y]
-                                    .iter()
-                                    .rposition(|&c| c != b' ')
-                                    .ok_or_else(|| {
-                                        aoc_error!("Empty string, x = {x}, y = {y}, dir = {dir}!")
-                                    })?
-                            },
-                            y,
-                        ),
-                        3 => (
-                            x,
-                            if y > 0 && input.map[y - 1].get(x).unwrap_or(&b' ') != &b' ' {
-                                y - 1
-                            } else {
-                                input
-                                    .map
-                                    .iter()
-                                    .rposition(|row| row.len() > x && row[x] != b' ')
-                                    .ok_or_else(|| {
-                                        aoc_error!("Empty string, x = {x}, y = {y}, dir = {dir}!")
-                                    })?
-                            },
-                        ),
-                        _ => return Err(aoc_error!("Direction can't be {dir}!")),
-                    };
+                            1 => (
+                                x,
+                                if y < input.map.len() - 1
+                                    && input.map[y + 1].get(x).unwrap_or(&b' ') != &b' '
+                                {
+                                    y + 1
+                                } else {
+                                    input.map.iter().position(|row| row[x] != b' ').ok_or_else(
+                                        || {
+                                            anyhow::anyhow!(
+                                                "Empty string, x = {x}, y = {y}, dir = {dir}!"
+                                            )
+                                        },
+                                    )?
+                                },
+                            ),
+                            2 => (
+                                if x > 0 && input.map[y][x - 1] != b' ' {
+                                    x - 1
+                                } else {
+                                    input.map[y].iter().rposition(|&c| c != b' ').ok_or_else(
+                                        || {
+                                            anyhow::anyhow!(
+                                                "Empty string, x = {x}, y = {y}, dir = {dir}!"
+                                            )
+                                        },
+                                    )?
+                                },
+                                y,
+                            ),
+                            3 => (
+                                x,
+                                if y > 0 && input.map[y - 1].get(x).unwrap_or(&b' ') != &b' ' {
+                                    y - 1
+                                } else {
+                                    input
+                                        .map
+                                        .iter()
+                                        .rposition(|row| row.len() > x && row[x] != b' ')
+                                        .ok_or_else(|| {
+                                            anyhow::anyhow!(
+                                                "Empty string, x = {x}, y = {y}, dir = {dir}!"
+                                            )
+                                        })?
+                                },
+                            ),
+                            _ => anyhow::bail!("Direction can't be {dir}!"),
+                        };
                     if input.map[ny][nx] == b'.' {
                         (x, y) = (nx, ny);
                     }
@@ -107,6 +112,6 @@ pub fn task1(input: &Task) -> AocResult<usize> {
     Ok(1000 * (y + 1) + 4 * (x + 1) + dir as usize)
 }
 
-pub fn task2(_input: &Task) -> AocResult<usize> {
+pub fn task2(_input: &Task) -> anyhow::Result<usize> {
     todo!();
 }

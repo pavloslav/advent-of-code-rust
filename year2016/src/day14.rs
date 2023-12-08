@@ -1,5 +1,3 @@
-use crate::*;
-
 use itertools::Itertools;
 
 fn successive(s: &str, n: usize) -> Vec<char> {
@@ -44,14 +42,14 @@ fn find_key(init: &str, n: usize, hash_deep: usize) -> usize {
     unreachable!()
 }
 
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     Ok(find_key(input, 64, 0))
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     Ok(find_key(input, 64, 2016))
 }

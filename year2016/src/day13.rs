@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<usize> {
+pub fn parse_input(input: &str) -> anyhow::Result<usize> {
     Ok(input.trim().parse()?)
 }
 
@@ -35,7 +33,7 @@ impl LookUp {
         self.open[y][x]
     }
 
-    fn find_way_len(&mut self, from: (usize, usize), to: (usize, usize)) -> AocResult<usize> {
+    fn find_way_len(&mut self, from: (usize, usize), to: (usize, usize)) -> anyhow::Result<usize> {
         let mut to_visit = [from].into();
         for step in 0.. {
             let mut to_visit_next = HashSet::new();
@@ -56,14 +54,14 @@ impl LookUp {
                 }
             }
             if to_visit_next.is_empty() {
-                return Err(aoc_error!("No way!"));
+                anyhow::bail!("No way!");
             }
             to_visit = to_visit_next;
         }
         unreachable!()
     }
 
-    fn count_visited(&mut self, steps: usize, start: (usize, usize)) -> AocResult<usize> {
+    fn count_visited(&mut self, steps: usize, start: (usize, usize)) -> anyhow::Result<usize> {
         let mut to_visit = [start].into();
         let mut all_visited: HashSet<(usize, usize)> = HashSet::new();
         for _ in 0..=steps {
@@ -83,7 +81,7 @@ impl LookUp {
                 }
             }
             if to_visit_next.is_empty() {
-                return Err(aoc_error!("No way!"));
+                anyhow::bail!("No way!");
             }
             to_visit = to_visit_next;
         }
@@ -91,11 +89,11 @@ impl LookUp {
     }
 }
 
-pub fn task1(&input: &usize) -> AocResult<usize> {
+pub fn task1(&input: &usize) -> anyhow::Result<usize> {
     LookUp::new(input).find_way_len((1, 1), (31, 39))
 }
 
-pub fn task2(&input: &usize) -> AocResult<usize> {
+pub fn task2(&input: &usize) -> anyhow::Result<usize> {
     LookUp::new(input).count_visited(50, (1, 1))
 }
 

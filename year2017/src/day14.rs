@@ -1,10 +1,8 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input.trim())
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     Ok((0..128)
         .map(|i| {
             super::knots_hash::dense_hash(format!("{input}-{i}").bytes().map(|c| c.into()))
@@ -44,7 +42,7 @@ fn floodfill(map: &mut [Vec<bool>], (x, y): (usize, usize)) {
     }
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     let mut map: Vec<Vec<bool>> = (0..128)
         .map(|i| {
             super::knots_hash::dense_hash(format!("{input}-{i}").bytes().map(|c| c.into()))
@@ -60,5 +58,5 @@ pub fn task2(input: &str) -> AocResult<usize> {
             return Ok(i);
         }
     }
-    Err(aoc_error!("unreachable"))
+    Err(anyhow::anyhow!("unreachable"))
 }

@@ -1,4 +1,4 @@
-use crate::*;
+use anyhow::Context;
 
 #[derive(prse::Parse, Clone, Copy, Hash, PartialEq, Eq)]
 #[prse = "<{:,:3}>"]
@@ -18,7 +18,7 @@ const POS: usize = 0;
 const VEL: usize = 1;
 const ACC: usize = 2;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Particle>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Particle>> {
     input
         .lines()
         .map(|line| {
@@ -28,17 +28,17 @@ pub fn parse_input(input: &str) -> AocResult<Vec<Particle>> {
         .collect()
 }
 
-pub fn task1(input: &[Particle]) -> AocResult<usize> {
+pub fn task1(input: &[Particle]) -> anyhow::Result<usize> {
     Ok(input
         .iter()
         .enumerate()
         .map(|(i, p)| (i, p.0[ACC].0.iter().map(|i| i.abs()).sum::<i64>()))
         .min_by_key(|&(_, s)| s)
-        .ok_or_else(|| aoc_error!("Input is empty!"))?
+        .context("Input is empty!")?
         .0)
 }
 
-pub fn task2(input: &[Particle]) -> AocResult<usize> {
+pub fn task2(input: &[Particle]) -> anyhow::Result<usize> {
     let mut survives = 0;
     let mut particles = input.to_vec();
 
@@ -90,5 +90,5 @@ pub fn task2(input: &[Particle]) -> AocResult<usize> {
             return Ok(survives);
         }
     }
-    Err(aoc_error!("unreachable"))
+    Err(anyhow::anyhow!("unreachable"))
 }

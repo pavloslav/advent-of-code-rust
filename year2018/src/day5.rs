@@ -1,6 +1,4 @@
-use crate::*;
-
-pub fn parse_input(input: &str) -> AocResult<&str> {
+pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input.trim())
 }
 
@@ -33,11 +31,11 @@ fn reduce(polymer: Vec<u8>) -> usize {
     polymer.len()
 }
 
-pub fn task1(input: &str) -> AocResult<usize> {
+pub fn task1(input: &str) -> anyhow::Result<usize> {
     Ok(reduce(input.as_bytes().to_vec()))
 }
 
-pub fn task2(input: &str) -> AocResult<usize> {
+pub fn task2(input: &str) -> anyhow::Result<usize> {
     (b'a'..=b'z')
         .map(|out| {
             reduce(
@@ -48,5 +46,5 @@ pub fn task2(input: &str) -> AocResult<usize> {
             )
         })
         .min()
-        .ok_or(aoc_error!("Empty polymer!"))
+        .ok_or(anyhow::anyhow!("Empty polymer!"))
 }

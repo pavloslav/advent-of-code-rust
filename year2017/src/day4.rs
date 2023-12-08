@@ -1,14 +1,13 @@
-use crate::*;
 use std::collections::HashSet;
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Vec<&str>>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<&str>>> {
     Ok(input
         .lines()
         .map(|line| line.split_whitespace().collect())
         .collect())
 }
 
-pub fn task1(input: &[Vec<&str>]) -> AocResult<usize> {
+pub fn task1(input: &[Vec<&str>]) -> anyhow::Result<usize> {
     Ok(input
         .iter()
         .filter(|passphrase| HashSet::<_>::from_iter(passphrase.iter()).len() == passphrase.len())
@@ -21,7 +20,7 @@ fn sorted_str(&s: &&str) -> String {
     chars.iter().collect()
 }
 
-pub fn task2(input: &[Vec<&str>]) -> AocResult<usize> {
+pub fn task2(input: &[Vec<&str>]) -> anyhow::Result<usize> {
     Ok(input
         .iter()
         .filter(|passphrase| {

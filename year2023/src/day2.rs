@@ -1,5 +1,3 @@
-use crate::*;
-
 #[derive(Default)]
 struct Handful {
     red: usize,
@@ -62,14 +60,14 @@ impl Game {
     }
 }
 
-pub fn parse_input(input: &str) -> AocResult<Vec<Game>> {
+pub fn parse_input(input: &str) -> anyhow::Result<Vec<Game>> {
     input
         .lines()
         .map(|line| Ok(prse::try_parse!(line, "{}")?))
-        .collect::<AocResult<Vec<_>>>()
+        .collect::<anyhow::Result<Vec<_>>>()
 }
 
-pub fn task1(input: &[Game]) -> AocResult<usize> {
+pub fn task1(input: &[Game]) -> anyhow::Result<usize> {
     let max_game = Handful {
         red: 12,
         green: 13,
@@ -87,7 +85,7 @@ pub fn task1(input: &[Game]) -> AocResult<usize> {
         .sum())
 }
 
-pub fn task2(input: &[Game]) -> AocResult<usize> {
+pub fn task2(input: &[Game]) -> anyhow::Result<usize> {
     Ok(input.iter().map(|game| game.possible_power()).sum())
 }
 

@@ -1,5 +1,3 @@
-use crate::*;
-
 pub struct Data {
     preamble: usize,
     numbers: Vec<i64>,
@@ -22,7 +20,7 @@ fn find_first_wrong(data: &Data) -> i64 {
     -1
 }
 
-fn find_span_adding(data: &Data, target: i64) -> AocResult<&[i64]> {
+fn find_span_adding(data: &Data, target: i64) -> anyhow::Result<&[i64]> {
     let numbers = &data.numbers;
     let mut start = 0;
     let mut sum = numbers[0];
@@ -36,32 +34,32 @@ fn find_span_adding(data: &Data, target: i64) -> AocResult<&[i64]> {
             return Ok(&numbers[start..end]);
         }
     }
-    Err(aoc_error!("Not found!"))
+    Err(anyhow::anyhow!("Not found!"))
 }
 
-pub fn parse_input(input: &str) -> AocResult<Data> {
+pub fn parse_input(input: &str) -> anyhow::Result<Data> {
     Ok(Data {
         preamble: 25,
         numbers: input
             .lines()
             .map(|x| Ok(x.parse()?))
-            .collect::<AocResult<_>>()?,
+            .collect::<anyhow::Result<_>>()?,
     })
 }
 
-pub fn task1(data: &Data) -> AocResult<i64> {
+pub fn task1(data: &Data) -> anyhow::Result<i64> {
     Ok(find_first_wrong(data))
 }
 
 //145997291 - low
 //2984417418 - high
-pub fn task2(data: &Data) -> AocResult<i64> {
+pub fn task2(data: &Data) -> anyhow::Result<i64> {
     let weakness = find_first_wrong(data);
     let arr = find_span_adding(data, weakness)?;
     if let (Some(min), Some(max)) = (arr.iter().min(), arr.iter().max()) {
         Ok(min + max)
     } else {
-        Err(aoc_error!("Should be not empty!"))
+        Err(anyhow::anyhow!("Should be not empty!"))
     }
 }
 
