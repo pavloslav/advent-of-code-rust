@@ -59,9 +59,6 @@ where
 #[macro_export]
 macro_rules! mod_list {
     ($year: ident, $($day: ident),+) => {
-        //use common::aoc_error;
-        //use common::AocError;
-        //use common::AocResult;
         use anyhow::*;
 
         $(pub mod $day;)*
