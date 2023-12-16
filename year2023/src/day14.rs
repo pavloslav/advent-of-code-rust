@@ -120,6 +120,15 @@ fn cycle_rocks(rocks: &mut Vec<Vec<u8>>) {
 
 const CYCLES: usize = 1_000_000_000;
 
+fn load(input: &[Vec<u8>]) -> usize {
+    let height = input.len();
+    input
+        .iter()
+        .enumerate()
+        .map(|(y, line)| line.iter().filter(|&&c| c == b'O').count() * (height - y))
+        .sum()
+}
+
 pub fn task2(input: &[Vec<u8>]) -> anyhow::Result<usize> {
     let (lambda, mu) = common::floyd_hare_tortoise(|| input.to_vec(), cycle_rocks);
     let mut rocks = input.to_vec();
@@ -128,7 +137,7 @@ pub fn task2(input: &[Vec<u8>]) -> anyhow::Result<usize> {
     for _ in 0..x {
         cycle_rocks(&mut rocks);
     }
-    Ok(north_load(&rocks)) //107002 - too high
+    Ok(load(&rocks))
 }
 
 #[cfg(test)]
