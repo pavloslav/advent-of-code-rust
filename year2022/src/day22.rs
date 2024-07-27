@@ -1,4 +1,5 @@
 use anyhow::Context;
+use std::sync::LazyLock;
 
 pub enum Order {
     Walk(i16),
@@ -10,8 +11,6 @@ pub struct Task {
     path: Vec<Order>,
 }
 
-use once_cell::sync::Lazy;
-
 pub fn parse_input(input: &str) -> anyhow::Result<Task> {
     let mut lines = input.lines();
     let map = lines
@@ -19,7 +18,8 @@ pub fn parse_input(input: &str) -> anyhow::Result<Task> {
         .take_while(|line| !line.is_empty())
         .map(|line| line.as_bytes().to_vec())
         .collect();
-    static PATH_REGEX: Lazy<regex::Regex> = Lazy::new(|| regex::Regex::new(r"\d+|[RL]").unwrap());
+    static PATH_REGEX: LazyLock<regex::Regex> =
+        LazyLock::new(|| regex::Regex::new(r"\d+|[RL]").unwrap());
 
     let path = PATH_REGEX
         .find_iter(lines.next().unwrap())

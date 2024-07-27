@@ -1,6 +1,6 @@
 use itertools::Itertools;
-use once_cell::sync::Lazy;
 use std::collections::{HashMap, HashSet};
+use std::sync::LazyLock;
 
 #[derive(Clone, Hash, PartialEq, Eq, Debug)]
 pub struct Position {
@@ -72,8 +72,8 @@ pub fn parse_input(input: &str) -> anyhow::Result<(usize, Position)> {
             "fourth" => 3,
             other => anyhow::bail!("Unknown floor '{other}'"),
         };
-        static SPLIT_REGEX: Lazy<regex::Regex> =
-            Lazy::new(|| regex::Regex::new(r"(, and )|(, )|( and )").unwrap());
+        static SPLIT_REGEX: LazyLock<regex::Regex> =
+            LazyLock::new(|| regex::Regex::new(r"(, and )|(, )|( and )").unwrap());
         for item in SPLIT_REGEX.split(list) {
             let name_map_len = name_map.len();
             if let Ok(generator) = prse::try_parse!(item, "a {} generator") {

@@ -8,6 +8,5 @@ edition = "2021"
 [dependencies]
 common = {path = "../common"}
 prse = "1.1"
-once_cell = "1.19"
 regex = "1.10"
 anyhow = "1.0"

@@ -31,9 +31,9 @@ pub fn task2(input: &[String]) -> anyhow::Result<usize> {
                 .iter()
                 .position(|(lens_label, _)| lens_label == &label)
             {
-                hash_map[idx][lens_idx] = (&label, focal_length);
+                hash_map[idx][lens_idx] = (label, focal_length);
             } else {
-                hash_map[idx].push((&label, focal_length));
+                hash_map[idx].push((label, focal_length));
             }
         }
     }

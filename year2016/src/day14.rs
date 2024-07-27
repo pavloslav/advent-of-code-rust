@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 fn successive(s: &str, n: usize) -> Vec<char> {
     s.chars()
-        .group_by(|&c| c)
+        .chunk_by(|&c| c)
         .into_iter()
         .filter_map(|(k, g)| if g.count() >= n { Some(k) } else { None })
         .collect()

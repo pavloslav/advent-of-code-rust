@@ -1,6 +1,6 @@
-use once_cell::sync::Lazy;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::sync::LazyLock;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Game {
@@ -52,7 +52,7 @@ enum Spell {
     Recharge,
 }
 
-static PRICES: Lazy<HashMap<Spell, i32>> = Lazy::new(|| {
+static PRICES: LazyLock<HashMap<Spell, i32>> = LazyLock::new(|| {
     HashMap::from([
         (Spell::MagicMissile, 53),
         (Spell::Drain, 73),

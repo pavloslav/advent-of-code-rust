@@ -1,5 +1,5 @@
-use once_cell::sync::Lazy;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 type Passport<'a> = HashMap<&'a str, &'a str>;
 
@@ -35,13 +35,13 @@ pub fn task1(pass: &[Passport]) -> anyhow::Result<usize> {
     Ok(pass.iter().filter(|p| is_valid1(p)).count())
 }
 
-static HCL_REGEX: Lazy<regex::Regex> =
-    Lazy::new(|| regex::Regex::new(r"^#[[:xdigit:]]{6}$").unwrap());
+static HCL_REGEX: LazyLock<regex::Regex> =
+    LazyLock::new(|| regex::Regex::new(r"^#[[:xdigit:]]{6}$").unwrap());
 
-static ECL_REGEX: Lazy<regex::Regex> =
-    Lazy::new(|| regex::Regex::new(r"^amb|blu|brn|gry|grn|hzl|oth$").unwrap());
+static ECL_REGEX: LazyLock<regex::Regex> =
+    LazyLock::new(|| regex::Regex::new(r"^amb|blu|brn|gry|grn|hzl|oth$").unwrap());
 
-static PID_REGEX: Lazy<regex::Regex> = Lazy::new(|| regex::Regex::new(r"^\d{9}$").unwrap());
+static PID_REGEX: LazyLock<regex::Regex> = LazyLock::new(|| regex::Regex::new(r"^\d{9}$").unwrap());
 
 fn is_valid2(passport: &Passport) -> bool {
     let bounded_field = |field, range: std::ops::RangeInclusive<usize>| -> bool {
@@ -68,7 +68,7 @@ fn is_valid2(passport: &Passport) -> bool {
         )
     };
 
-    let regex_check = |field, regex: &Lazy<regex::Regex>| {
+    let regex_check = |field, regex: &LazyLock<regex::Regex>| {
         passport.get(&field).map(|value| regex.is_match(value)) == Some(true)
     };
 

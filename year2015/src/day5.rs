@@ -2,13 +2,15 @@ pub fn parse_input(input: &str) -> anyhow::Result<&str> {
     Ok(input)
 }
 
-use once_cell::sync::Lazy;
-static BAD: Lazy<regex::Regex> = Lazy::new(|| regex::Regex::new(r"ab|cd|pq|xy").unwrap());
-static PAIR: Lazy<fancy_regex::Regex> = Lazy::new(|| fancy_regex::Regex::new(r"(.)\1").unwrap());
-static VOWELS: Lazy<regex::Regex> = Lazy::new(|| regex::Regex::new(r"[aeiou]").unwrap());
-static PAIRS: Lazy<fancy_regex::Regex> =
-    Lazy::new(|| fancy_regex::Regex::new(r"(..).*\1").unwrap());
-static MIDDLE: Lazy<fancy_regex::Regex> = Lazy::new(|| fancy_regex::Regex::new(r"(.).\1").unwrap());
+use std::sync::LazyLock;
+static BAD: LazyLock<regex::Regex> = LazyLock::new(|| regex::Regex::new(r"ab|cd|pq|xy").unwrap());
+static PAIR: LazyLock<fancy_regex::Regex> =
+    LazyLock::new(|| fancy_regex::Regex::new(r"(.)\1").unwrap());
+static VOWELS: LazyLock<regex::Regex> = LazyLock::new(|| regex::Regex::new(r"[aeiou]").unwrap());
+static PAIRS: LazyLock<fancy_regex::Regex> =
+    LazyLock::new(|| fancy_regex::Regex::new(r"(..).*\1").unwrap());
+static MIDDLE: LazyLock<fancy_regex::Regex> =
+    LazyLock::new(|| fancy_regex::Regex::new(r"(.).\1").unwrap());
 
 fn nice1(line: &str) -> anyhow::Result<bool> {
     Ok(BAD.find(line).is_none() && PAIR.is_match(line)? && VOWELS.find_iter(line).count() >= 3)

@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 fn look_and_say(input: &str) -> String {
     use std::fmt::Write;
-    input.trim().chars().group_by(|&c| c).into_iter().fold(
+    input.trim().chars().chunk_by(|&c| c).into_iter().fold(
         String::new(),
         |mut output, (c, group)| {
             let _ = write!(output, "{}{}", group.count(), c);
