@@ -16,7 +16,7 @@ fn collect_lcd(lcd: &[Vec<char>]) -> anyhow::Result<String> {
 fn build_lcd(rows: usize, columns: usize, commands: &str) -> anyhow::Result<Vec<Vec<char>>> {
     let mut lcd = Vec::with_capacity(columns);
     for _ in 0..columns {
-        lcd.push(std::iter::repeat('.').take(rows).collect::<Vec<_>>());
+        lcd.push(std::iter::repeat_n('.', rows).collect::<Vec<_>>());
     }
     for command in commands.lines() {
         if let Ok((x, y)) = prse::try_parse!(command, "rect {}x{}") {

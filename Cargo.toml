@@ -8,12 +8,12 @@ members = ['common',
 'year2020',
 'year2021',
 'year2022',
-'year2023']
+'year2023', "year2024"]
 
 [package]
 name = "advent_of_code"
 version = "0.9.6"
-edition = "2021"
+edition = "2024"
 
 [features]
 verbose = []
@@ -33,6 +33,7 @@ year2020 = {path = "year2020"}
 year2021 = {path = "year2021"}
 year2022 = {path = "year2022"}
 year2023 = {path = "year2023"}
+year2024 = {path = "year2024"}
 
 serde_json = { version = "1.0"}                     # 2015/12, 2022/13
 clap = { version = "4.2", features = ["derive"] }   # arguments parser

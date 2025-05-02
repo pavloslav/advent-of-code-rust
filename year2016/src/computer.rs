@@ -15,7 +15,7 @@ pub enum RegValue {
     Value(Value),
 }
 
-impl<'a> prse::Parse<'a> for RegValue {
+impl prse::Parse<'_> for RegValue {
     fn from_str(s: &str) -> Result<RegValue, prse::ParseError> {
         s.parse()
             .map(RegValue::Value)

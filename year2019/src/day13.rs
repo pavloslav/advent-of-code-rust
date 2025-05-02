@@ -47,7 +47,7 @@ pub fn task2(code: &[isize]) -> anyhow::Result<isize> {
             }
         })
         .context("Impossible!")?;
-    let mut blocks: HashMap<_, _> = grid.iter().filter(|(_, &t)| t == BLOCK).collect();
+    let mut blocks: HashMap<_, _> = grid.iter().filter(move |&(_, &t)| t == BLOCK).collect();
 
     let mut code = code.to_vec();
     code[0] = 2;

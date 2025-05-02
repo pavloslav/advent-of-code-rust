@@ -11,7 +11,7 @@ pub fn task1(input: &usize) -> anyhow::Result<usize> {
 }
 
 pub fn task2(&input: &usize) -> anyhow::Result<usize> {
-    let mut left: VecDeque<_> = (1..=(input + 1) / 2).collect();
+    let mut left: VecDeque<_> = (1..=input.div_ceil(2)).collect();
     let mut right: VecDeque<_> = ((input + 3) / 2..=input).collect();
     while !right.is_empty() {
         if left.len() == right.len() {

@@ -72,7 +72,7 @@ pub fn task1(input: &[Command]) -> anyhow::Result<String> {
                 password.rotate_right(b % password.len());
             }
             Command::Reverse(x, y) => {
-                for i in 0..(y - x + 1) / 2 {
+                for i in 0..(y - x).div_ceil(2) {
                     password.swap(x + i, y - i);
                 }
             }
@@ -126,7 +126,7 @@ pub fn task2(input: &[Command]) -> anyhow::Result<String> {
                 password.rotate_right(b);
             }
             Command::Reverse(x, y) => {
-                for i in 0..(y - x + 1) / 2 {
+                for i in 0..(y - x).div_ceil(2) {
                     password.swap(x + i, y - i);
                 }
             }

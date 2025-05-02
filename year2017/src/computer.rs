@@ -12,7 +12,7 @@ pub enum Operand {
     Val(RegValue),
 }
 
-impl<'a> prse::Parse<'a> for Operand {
+impl prse::Parse<'_> for Operand {
     fn from_str(s: &str) -> Result<Operand, prse::ParseError> {
         if let Ok(value) = s.parse() {
             Ok(Operand::Val(value))

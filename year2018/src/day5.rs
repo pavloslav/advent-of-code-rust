@@ -9,8 +9,7 @@ fn reduce(polymer: Vec<u8>) -> usize {
         let mut skip = false;
         for i in 0..polymer.len() - 1 {
             if !skip {
-                if polymer[i].to_ascii_lowercase() == polymer[i + 1].to_ascii_lowercase()
-                    && polymer[i].is_ascii_lowercase() != polymer[i + 1].is_ascii_lowercase()
+                if polymer[i].eq_ignore_ascii_case(&polymer[i + 1]) && polymer[i] != polymer[i + 1]
                 {
                     skip = true;
                 } else {

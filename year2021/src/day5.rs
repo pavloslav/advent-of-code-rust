@@ -26,10 +26,7 @@ fn is_diagonal(line: &Line) -> bool {
 }
 
 fn task(vents: &[Line], is_diagonals_needed: bool) -> anyhow::Result<i32> {
-    let mut field: Vec<Vec<i32>> =
-        std::iter::repeat(std::iter::repeat(0).take(FIELD_SIZE).collect())
-            .take(FIELD_SIZE)
-            .collect();
+    let mut field: Vec<Vec<i32>> = vec![vec![0; FIELD_SIZE]; FIELD_SIZE];
     for vent in vents {
         if is_diagonals_needed || !is_diagonal(vent) {
             let mut pt = vent.pt1;

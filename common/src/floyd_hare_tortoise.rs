@@ -8,17 +8,13 @@
  * lambda - length of cycle
  * mu - index of the first element in cycle
  */
-
-pub fn floyd_hare_tortoise<Type, Gen, Step>(
-    gen: Gen,
-    step: Step,
-) -> (usize, usize)
+pub fn floyd_hare_tortoise<Type, Gen, Step>(gen_func: Gen, step: Step) -> (usize, usize)
 where
     Gen: Fn() -> Type,
     Step: Fn(&mut Type),
     Type: PartialEq + Clone,
 {
-    floyd_hare_tortoise_with_cmp(gen, step, |a, b| a == b)
+    floyd_hare_tortoise_with_cmp(gen_func, step, |a, b| a == b)
 }
 
 /**
@@ -32,9 +28,8 @@ where
  * lambda - length of cycle
  * mu - index of the first element in cycle
  */
-
 pub fn floyd_hare_tortoise_with_cmp<Type, Gen, Step, Eq>(
-    gen: Gen,
+    gen_func: Gen,
     step: Step,
     eq: Eq,
 ) -> (usize, usize)
@@ -44,7 +39,7 @@ where
     Step: Fn(&mut Type),
     Eq: Fn(&Type, &Type) -> bool,
 {
-    let mut hare = gen();
+    let mut hare = gen_func();
     let mut tortoise = hare.clone();
     loop {
         step(&mut hare);
@@ -55,7 +50,7 @@ where
         }
     }
     let mut mu = 0;
-    let mut tortoise = gen();
+    let mut tortoise = gen_func();
     while !eq(&hare, &tortoise) {
         step(&mut hare);
         step(&mut tortoise);

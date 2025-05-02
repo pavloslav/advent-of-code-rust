@@ -38,7 +38,7 @@ pub enum Rule {
     Direct(Wire),
 }
 
-impl<'a> prse::Parse<'a> for Rule {
+impl prse::Parse<'_> for Rule {
     fn from_str(s: &str) -> Result<Self, prse::ParseError> {
         Ok(
             if let Ok((left, op, right)) = prse::try_parse!(s, "{} {} {}") {

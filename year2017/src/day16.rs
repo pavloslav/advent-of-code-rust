@@ -62,12 +62,12 @@ pub fn task1(input: &[Dance]) -> anyhow::Result<String> {
 const DANCES_COUNT: usize = 1_000_000_000;
 
 pub fn task2(input: &[Dance]) -> anyhow::Result<String> {
-    let gen = || -> String { ('a'..='p').collect() };
+    let gen_func = || -> String { ('a'..='p').collect() };
     let step = |s: &mut String| *s = make_dance(s.chars(), input);
 
-    let (lam, mu) = common::floyd_hare_tortoise(gen, step);
+    let (lam, mu) = common::floyd_hare_tortoise(gen_func, step);
     let index = mu + (DANCES_COUNT - mu) % lam;
-    let mut s = gen();
+    let mut s = gen_func();
     for _ in 0..index {
         step(&mut s);
     }

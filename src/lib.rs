@@ -14,6 +14,7 @@ pub fn exec() -> anyhow::Result<()> {
         "2021" => year2021::task as Fun,
         "2022" => year2022::task as Fun,
         "2023" => year2023::task as Fun,
+        "2024" => year2024::task as Fun,
         year => anyhow::bail!("Incorrect task: year '{year}'"),
     })(&format!("day{}", args.day))
 }

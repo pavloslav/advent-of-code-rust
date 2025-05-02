@@ -38,11 +38,10 @@ pub fn get_input(year: &str, day: &str) -> Result<String> {
         log!("Trying url '{}'", url);
 
         Ok(
-            network::get_input_from_url(&url, &settings.session).map(|s| {
-                if let Err(e) = std::fs::write(filename, &s) {
+            network::get_input_from_url(&url, &settings.session).inspect(|s| {
+                if let Err(e) = std::fs::write(filename, s) {
                     log!("{:?}", e);
                 }
-                s
             })?,
         )
     })

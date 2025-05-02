@@ -45,7 +45,7 @@ struct Tetris<'commands> {
 }
 
 impl<'commands> Tetris<'commands> {
-    fn new(commands: &'commands [i32]) -> Tetris {
+    fn new(commands: &'commands [i32]) -> Self {
         Tetris {
             tube: std::collections::VecDeque::new(),
             figure_idx: 0,

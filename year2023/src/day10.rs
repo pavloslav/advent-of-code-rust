@@ -131,7 +131,7 @@ const NONE_FILL: [[Field; 3]; 3] = [
     [Field::Unknown, Field::Unknown, Field::Unknown],
 ];
 
-fn floodfill(fillmap: &mut Vec<Vec<Field>>, to_fill: Vec<(i32, i32)>, filler: Field) -> bool {
+fn floodfill(fillmap: &mut [Vec<Field>], to_fill: Vec<(i32, i32)>, filler: Field) -> bool {
     let width = fillmap.len() as i32;
     let height = fillmap.len() as i32;
     let mut to_fill = to_fill;

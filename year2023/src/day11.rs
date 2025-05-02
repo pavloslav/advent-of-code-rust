@@ -47,24 +47,14 @@ fn task(digest: &MapDigest, multiplier: usize) -> anyhow::Result<usize> {
                     * digest
                         .empty_y
                         .binary_search(&g[0].1)
-                        .map_or_else(|e| e, |o| o)
-                        .abs_diff(
-                            digest
-                                .empty_y
-                                .binary_search(&g[1].1)
-                                .map_or_else(|e| e, |o| o),
-                        )
+                        .unwrap_or_else(|o| o)
+                        .abs_diff(digest.empty_y.binary_search(&g[1].1).unwrap_or_else(|o| o))
                 + (multiplier - 1)
                     * digest
                         .empty_x
                         .binary_search(&g[0].0)
-                        .map_or_else(|e| e, |o| o)
-                        .abs_diff(
-                            digest
-                                .empty_x
-                                .binary_search(&g[1].0)
-                                .map_or_else(|e| e, |o| o),
-                        )
+                        .unwrap_or_else(|o| o)
+                        .abs_diff(digest.empty_x.binary_search(&g[1].0).unwrap_or_else(|o| o))
         })
         .sum())
 }

@@ -77,9 +77,8 @@ pub fn task2(input: &[Line]) -> anyhow::Result<usize> {
         .iter()
         .map(|line| {
             println!("{}", line.springs);
-            let springs = std::iter::repeat(line.springs).take(5).join("?");
-            let groups: Vec<_> = std::iter::repeat(&line.groups)
-                .take(5)
+            let springs = std::iter::repeat_n(line.springs, 5).join("?");
+            let groups: Vec<_> = std::iter::repeat_n(&line.groups, 5)
                 .flatten()
                 .copied()
                 .collect();

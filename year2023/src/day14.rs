@@ -27,7 +27,7 @@ pub fn task1(input: &[Vec<u8>]) -> anyhow::Result<usize> {
     Ok(north_load(input))
 }
 
-#[allow(clippy::needless_range_loop)]
+#[allow(clippy::needless_range_loop, clippy::ptr_arg)]
 fn cycle_rocks(rocks: &mut Vec<Vec<u8>>) {
     {
         let height = rocks.len();
@@ -130,7 +130,7 @@ fn load(input: &[Vec<u8>]) -> usize {
 }
 
 pub fn task2(input: &[Vec<u8>]) -> anyhow::Result<usize> {
-    let (lambda, mu) = common::floyd_hare_tortoise(|| input.to_vec(), cycle_rocks);
+    let (lambda, mu) = common::floyd_hare_tortoise(|| -> Vec<_> { input.to_vec() }, cycle_rocks);
     let mut rocks = input.to_vec();
     //CYCLES = mu + n*lambda + x
     let x = mu + (CYCLES - mu) % lambda;

@@ -33,8 +33,8 @@ pub fn task1(input: &Formulas) -> anyhow::Result<usize> {
             .unwrap()
             .to_owned();
         let (to_produce, chem_formula) = &formulas[&chem];
-        for (item, count) in chem_formula.iter() {
-            *fuel_formula.entry(item.to_string()).or_insert(0) += (to_produce + count - 1) / count;
+        for (item, &count) in chem_formula.iter() {
+            *fuel_formula.entry(item.to_string()).or_insert(0) += to_produce.div_ceil(count);
         }
         fuel_formula.remove(&chem);
     }

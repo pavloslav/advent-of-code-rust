@@ -69,15 +69,7 @@ impl Bingo<'_> {
         Bingo {
             settings,
             winners: Vec::new(),
-            striked: std::iter::repeat([
-                [false, false, false, false, false],
-                [false, false, false, false, false],
-                [false, false, false, false, false],
-                [false, false, false, false, false],
-                [false, false, false, false, false],
-            ])
-            .take(settings.boards.len())
-            .collect(),
+            striked: std::iter::repeat_n([[false; 5]; 5], settings.boards.len()).collect(),
         }
     }
 
@@ -102,12 +94,8 @@ impl Bingo<'_> {
 
     fn check_winner(&mut self, board_idx: usize, row_idx: usize, col_idx: usize, call: usize) {
         if !self.winners.iter().any(|&(board, _)| board == board_idx)
-            && ((0..BINGO_SIZE)
-                .map(|i| self.striked[board_idx][row_idx][i])
-                .all(|striked| striked)
-                || (0..BINGO_SIZE)
-                    .map(|i| self.striked[board_idx][i][col_idx])
-                    .all(|striked| striked))
+            && ((0..BINGO_SIZE).all(|i| self.striked[board_idx][row_idx][i])
+                || (0..BINGO_SIZE).all(|i| self.striked[board_idx][i][col_idx]))
         {
             let mut score = 0;
             for row in 0..BINGO_SIZE {
