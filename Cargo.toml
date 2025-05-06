@@ -8,7 +8,8 @@ members = ['common',
 'year2020',
 'year2021',
 'year2022',
-'year2023', "year2024"]
+'year2023', 
+"year2024"]
 
 [package]
 name = "advent_of_code"
