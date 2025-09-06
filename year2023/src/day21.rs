@@ -2,7 +2,7 @@ use anyhow::anyhow;
 
 type Map<'a> = (Vec<&'a [u8]>, (usize, usize));
 
-pub fn parse_input(input: &str) -> anyhow::Result<Map> {
+pub fn parse_input<'a>(input: &'a str) -> anyhow::Result<Map<'a>> {
     let map: Vec<_> = input.lines().map(|line| line.as_bytes()).collect();
     for (y, line) in map.iter().enumerate() {
         for (x, &c) in line.iter().enumerate() {

@@ -64,8 +64,8 @@ struct Bingo<'a> {
     striked: Vec<StrikeBoard>,
 }
 
-impl Bingo<'_> {
-    fn new(settings: &BingoSettings) -> Bingo {
+impl<'a> Bingo<'a> {
+    fn new<'b>(settings: &'b BingoSettings) -> Bingo<'b> {
         Bingo {
             settings,
             winners: Vec::new(),

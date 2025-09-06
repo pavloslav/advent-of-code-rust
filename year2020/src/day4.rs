@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 
 type Passport<'a> = HashMap<&'a str, &'a str>;
 
-pub fn parse_input(input: &str) -> anyhow::Result<Vec<Passport>> {
+pub fn parse_input<'a>(input: &'a str) -> anyhow::Result<Vec<Passport<'a>>> {
     let mut passports = Vec::new();
     let mut passport = Passport::new();
     for line in input.lines() {

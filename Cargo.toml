@@ -37,5 +37,5 @@ year2023 = {path = "year2023"}
 year2024 = {path = "year2024"}
 
 serde_json = { version = "1.0"}                     # 2015/12, 2022/13
-clap = { version = "4.2", features = ["derive"] }   # arguments parser
+clap = { version = "4.5", features = ["derive"] }   # arguments parser
 anyhow = "1.0"

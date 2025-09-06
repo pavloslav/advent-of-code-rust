@@ -143,7 +143,7 @@ mod ferry {
             writeln!(f, "Cells:----------------")?;
             for row in self.seats.iter() {
                 for ch in row.iter() {
-                    write!(f, "{}", ch)?;
+                    write!(f, "{ch}")?;
                 }
                 writeln!(f)?;
             }

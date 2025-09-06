@@ -73,15 +73,15 @@ impl Robot {
         if self.hands.len() != 2 || self.target_lo.is_none() || self.target_hi.is_none() {
             return false;
         }
-        if let Some(Target::Bot(tgt)) = self.target_lo {
-            if bots[&tgt].hands.len() > 1 {
-                return false;
-            }
+        if let Some(Target::Bot(tgt)) = self.target_lo
+            && bots[&tgt].hands.len() > 1
+        {
+            return false;
         }
-        if let Some(Target::Bot(tgt)) = self.target_hi {
-            if bots[&tgt].hands.len() > 1 {
-                return false;
-            }
+        if let Some(Target::Bot(tgt)) = self.target_hi
+            && bots[&tgt].hands.len() > 1
+        {
+            return false;
         }
         true
     }

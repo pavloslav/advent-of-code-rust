@@ -122,10 +122,10 @@ impl Computer {
             }
             Instruction::Rcv(reg) => match self.kind {
                 ComputerKind::SoundRecover => {
-                    if let Some(&x) = self.registers.get(reg) {
-                        if x != 0 {
-                            return Ok(false);
-                        }
+                    if let Some(&x) = self.registers.get(reg)
+                        && x != 0
+                    {
+                        return Ok(false);
                     }
                 }
                 ComputerKind::SendRecieve => {

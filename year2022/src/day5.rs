@@ -12,10 +12,10 @@ pub fn parse_input(input: &str) -> anyhow::Result<Cargo> {
                 stacks.resize(line.len() / 4 + 1, Vec::new());
             }
             for (i, stack) in stacks.iter_mut().enumerate() {
-                if let Some(crat) = line.chars().nth(i * 4 + 1) {
-                    if crat != ' ' {
-                        stack.push(crat);
-                    }
+                if let Some(crat) = line.chars().nth(i * 4 + 1)
+                    && crat != ' '
+                {
+                    stack.push(crat);
                 }
             }
         } else if let Ok((number, from, to)) = prse::try_parse!(line, "move {} from {} to {}") {

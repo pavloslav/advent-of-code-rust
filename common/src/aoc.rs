@@ -26,7 +26,7 @@ pub fn get_input_with_mod(mod_year: &str, mod_day: &str) -> Result<String> {
 }
 
 fn cache_file_name(year: &str, day: &str) -> String {
-    format!("cache/cache{}_{}.txt", year, day)
+    format!("cache/cache{year}_{day}.txt")
 }
 
 pub fn get_input(year: &str, day: &str) -> Result<String> {

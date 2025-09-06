@@ -90,11 +90,11 @@ mod test {
         if result != expected {
             let extra: Vec<_> = result.difference(&expected).collect();
             if !extra.is_empty() {
-                println!("Extra values: {:?}", extra);
+                println!("Extra values: {extra:?}");
             }
             let lost: Vec<_> = expected.difference(&result).collect();
             if !lost.is_empty() {
-                println!("Lost values: {:?}", lost);
+                println!("Lost values: {lost:?}");
             }
             panic!();
         }

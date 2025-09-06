@@ -8,7 +8,7 @@ pub struct Line<'a> {
     groups: Vec<usize>,
 }
 
-pub fn parse_input(input: &str) -> anyhow::Result<Vec<Line>> {
+pub fn parse_input<'a>(input: &'a str) -> anyhow::Result<Vec<Line<'a>>> {
     Ok(input
         .lines()
         .map(Line::from_str)

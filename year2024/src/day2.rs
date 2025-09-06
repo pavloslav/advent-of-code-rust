@@ -7,46 +7,47 @@ pub fn parse_input(input: &str) -> anyhow::Result<Vec<Vec<i32>>> {
         .collect()
 }
 
-fn is_safe(levels: &[i32], has_dampner: bool) -> bool {
-    let mut dir_counter = std::collections::HashMap::new();
-    for w in levels.windows(2).take(5) {
-        dir_counter
-            .entry(w[0].cmp(&w[1]))
-            .and_modify(|e| *e += 1)
-            .or_insert(1);
-    }
-    let sign = if let Some(sign) = dir_counter.iter().find(move |&(_, &v)| v >= 3) {
-        *sign.0
-    } else {
-        return false;
-    };
-
-    let tolerate = |a: i32, b: i32| a.cmp(&b) == sign && (a - b).abs() <= 3;
-    let mut skipped = levels.len();
-
-    for i in 0..levels.len() - 1 {
-        if i != skipped && !tolerate(levels[i], levels[i + 1]) {
-            if skipped != levels.len() || !has_dampner {
-                return false;
-            }
-            skipped = if i != 0 && tolerate(levels[i - 1], levels[i + 1]) {
-                i
-            } else if i < levels.len() - 2 && tolerate(levels[i], levels[i + 2]) {
-                i + 1
-            } else {
-                return false;
-            }
+fn first_fail(levels: &[i32], increase: bool, skip: Option<usize>) -> Option<usize> {
+    let mut prev = None;
+    for (i, &x) in levels.iter().enumerate() {
+        if Some(i) == skip {
+            continue;
         }
+        if let Some(prev) = prev
+            && (increase != (x > prev) || x == prev || x.abs_diff(prev) > 3)
+        {
+            return Some(i);
+        }
+        prev = Some(x);
     }
-    true
+    None
 }
 
 pub fn task1(input: &[Vec<i32>]) -> anyhow::Result<usize> {
-    Ok(input.iter().filter(|report| is_safe(report, false)).count())
+    Ok(input
+        .iter()
+        .filter(|report| {
+            [true, false]
+                .iter()
+                .any(|&increase| first_fail(report, increase, None).is_none())
+        })
+        .count())
 }
 
 //468 - hi
 //463 - low
 pub fn task2(input: &[Vec<i32>]) -> anyhow::Result<usize> {
-    Ok(input.iter().filter(|report| is_safe(report, true)).count())
+    Ok(input
+        .iter()
+        .filter(|report| {
+            [true, false].iter().any(|&increase| {
+                if let Some(fail) = first_fail(report, increase, None) {
+                    (fail.max(1) - 1..fail + 1)
+                        .any(|f| first_fail(report, increase, Some(f)).is_none())
+                } else {
+                    true
+                }
+            })
+        })
+        .count())
 }

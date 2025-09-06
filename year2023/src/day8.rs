@@ -4,7 +4,7 @@ use std::collections::HashMap;
 type Instructions = Vec<usize>;
 type Map<'a> = HashMap<&'a str, [&'a str; 2]>;
 
-pub fn parse_input(input: &str) -> anyhow::Result<(Instructions, Map)> {
+pub fn parse_input<'a>(input: &'a str) -> anyhow::Result<(Instructions, Map<'a>)> {
     let mut input = input.lines();
     let instruction = input
         .next()

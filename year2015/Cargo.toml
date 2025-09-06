@@ -11,5 +11,5 @@ itertools = "0.14"
 prse = "1.2"
 serde_json = { version = "1.0"}
 regex = "1.11.1"
-fancy-regex = "0.14.0"
+fancy-regex = "0.16.1"
 anyhow = "1.0"
