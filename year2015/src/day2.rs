@@ -28,7 +28,7 @@ pub fn task2(presents: &[Present]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
 
     #[test]
     fn test_task1() {

@@ -43,7 +43,7 @@ pub fn task2(statistics: &[HashMap<char, u32>]) -> anyhow::Result<String> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
 
     #[test]
     fn test_correct_by_most() {

@@ -70,7 +70,7 @@ pub fn task2(input: &[Room]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{Room, parse_input, task1};
 
     #[test]
     fn test_sum_rooms() {

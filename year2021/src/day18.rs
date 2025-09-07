@@ -202,7 +202,7 @@ pub fn task2(input: &[SnailfishNumber]) -> u32 {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
     #[test]
     fn test_reduce() {
         let data = "[[[[[9,8],1],2],3],4]

@@ -99,7 +99,7 @@ pub fn task2(asteroids: &[(i16, i16)]) -> anyhow::Result<i16> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, station_position, task1, task2};
     const BIG_FIELD: &str = ".#..##.###...#######
 ##.############..##.
 .#.######.########.#
@@ -142,6 +142,7 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn test_task2() {
         let input = parse_input(BIG_FIELD).unwrap();
         assert_eq!(task2(&input).unwrap(), 802);

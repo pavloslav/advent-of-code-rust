@@ -82,7 +82,7 @@ pub fn task2(s: &str) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::task2;
     #[test]
     fn test_task2() {
         let input1 = "light red bags contain 1 bright white bag, 2 muted yellow bags.

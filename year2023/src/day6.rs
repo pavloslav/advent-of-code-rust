@@ -43,7 +43,7 @@ pub fn task2((time, distance): &(&str, &str)) -> anyhow::Result<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
     const INPUT: &str = "Time:      7  15   30
 Distance:  9  40  200";
     #[test]

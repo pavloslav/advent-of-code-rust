@@ -69,11 +69,7 @@ pub fn task2(input: &[Option<i32>]) -> anyhow::Result<String> {
                 .map(|pixel| {
                     let lit = (computer.x - pixel).abs() <= 1;
                     computer.clock();
-                    if lit {
-                        '#'
-                    } else {
-                        ' '
-                    }
+                    if lit { '#' } else { ' ' }
                 })
                 .collect::<String>()
         })
@@ -83,7 +79,7 @@ pub fn task2(input: &[Option<i32>]) -> anyhow::Result<String> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1};
 
     #[test]
     fn test_task1() {

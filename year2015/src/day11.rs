@@ -83,7 +83,7 @@ pub fn task2(password: &Password) -> anyhow::Result<String> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1};
 
     #[test]
     fn test_next_password() {

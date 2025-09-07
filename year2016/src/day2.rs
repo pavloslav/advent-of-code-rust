@@ -63,7 +63,7 @@ pub fn task2(input: &str) -> anyhow::Result<String> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{BIG_MAP, SMALL_MAP, code};
 
     #[test]
     fn test_code() {

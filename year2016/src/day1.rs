@@ -86,7 +86,7 @@ pub fn task2(way: &[Command]) -> anyhow::Result<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
     #[test]
     fn test_path_length() {
         assert_eq!(task1(&parse_input("R2, L3").unwrap()).unwrap(), 5);

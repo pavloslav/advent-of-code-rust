@@ -124,7 +124,7 @@ pub fn task2(input: &[(&str, usize)]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{Hand, Jokers, parse_input, task1, task2};
 
     const INPUT: &str = "32T3K 765
 T55J5 684

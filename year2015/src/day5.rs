@@ -44,7 +44,7 @@ pub fn task2(input: &str) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{BAD, PAIR, VOWELS};
 
     #[test]
     fn test_has_bad() {

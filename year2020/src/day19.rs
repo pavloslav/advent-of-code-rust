@@ -108,7 +108,7 @@ impl Rules {
 
 #[cfg(test)]
 mod m {
-    use super::*;
+    use super::{parse_input, task1, task2};
     #[test]
     fn test_task1() {
         assert_eq!(

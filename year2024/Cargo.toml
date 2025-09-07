@@ -8,3 +8,4 @@ common = {path = "../common"}
 prse = "1.2"
 itertools = "0.14"
 anyhow = "1.0"
+regex = "*"

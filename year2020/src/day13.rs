@@ -63,7 +63,7 @@ pub fn task2(data: &(i32, Vec<Option<i32>>)) -> anyhow::Result<i64> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task2};
     #[test]
     fn test_task2() {
         let data = parse_input(

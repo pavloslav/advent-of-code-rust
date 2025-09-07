@@ -176,7 +176,7 @@ pub fn task2(input: &[i32]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1};
 
     const EXAMPLE: &str = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
     #[test]

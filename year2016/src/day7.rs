@@ -62,7 +62,7 @@ pub fn task2(lines: &str) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{has_aba, has_abba};
 
     #[test]
     fn test_has_abba() {

@@ -135,7 +135,7 @@ pub fn task2(input: &[Instruction]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{Computer, parse_input};
 
     #[test]
     fn test_computer() {

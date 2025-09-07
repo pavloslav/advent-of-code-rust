@@ -41,7 +41,7 @@ pub fn task2(input: &str) -> anyhow::Result<String> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{task1, task2};
 
     #[test]
     #[ignore]

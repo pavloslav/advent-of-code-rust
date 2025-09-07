@@ -47,7 +47,7 @@ pub fn task2(_input: &[i64]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{from_snafu, parse_input, task1, to_snafu};
 
     const EXAMPLE: &str = "1=-0-2
 12111

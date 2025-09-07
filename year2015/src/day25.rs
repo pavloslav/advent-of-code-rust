@@ -1,7 +1,8 @@
 pub fn parse_input(input: &str) -> anyhow::Result<(usize, usize)> {
-    Ok(prse::try_parse!(input,
+    Ok(prse::try_parse!(
+        input,
         "To continue, please consult the code grid in the manual.  Enter the code at row {}, column {}."
-        )?)
+    )?)
 }
 
 const START: usize = 20151125;
@@ -25,7 +26,7 @@ pub fn task2((_row, _col): &(usize, usize)) -> anyhow::Result<&'static str> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{START, task1};
 
     #[test]
     fn test_task1() {

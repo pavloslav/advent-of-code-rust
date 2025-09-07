@@ -80,7 +80,7 @@ pub fn task2(input: &[Weight]) -> anyhow::Result<Weight> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::task1;
 
     #[test]
     fn test_task1() {

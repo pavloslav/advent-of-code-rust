@@ -157,7 +157,7 @@ pub fn task2(s: &str) -> u64 {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
     #[test]
     fn test_task2() {
         let input = "mask = 000000000000000000000000000000X1001X

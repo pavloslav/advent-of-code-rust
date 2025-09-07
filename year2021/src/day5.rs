@@ -61,7 +61,7 @@ pub fn task2(vents: &[Line]) -> anyhow::Result<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
     const INPUT: &str = "0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4

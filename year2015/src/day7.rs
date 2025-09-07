@@ -50,7 +50,7 @@ impl prse::Parse<'_> for Rule {
                     other => {
                         return Err(prse::ParseError::new(format!(
                             "Incorrect binary operation: {other}"
-                        )))
+                        )));
                     }
                 }
             } else if let Ok(operand) = prse::try_parse!(s, "NOT {}") {
@@ -106,7 +106,7 @@ pub fn task2(wires: &Wires) -> anyhow::Result<u16> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{get_rule, parse_input};
 
     #[test]
     fn test_calculate() {

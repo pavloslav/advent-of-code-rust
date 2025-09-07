@@ -51,7 +51,7 @@ pub fn task2(input: &str) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{task1, task2};
 
     const EXAMPLE: &str = r#""
 "abc"

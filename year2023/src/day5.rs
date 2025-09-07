@@ -120,7 +120,7 @@ pub fn task2(input: &Almonac) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
     const INPUT: &str = "seeds: 79 14 55 13
 
 seed-to-soil map:

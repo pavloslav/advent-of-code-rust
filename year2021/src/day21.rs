@@ -138,7 +138,7 @@ pub fn task2(input: &Vec<usize>) -> u128 {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
 
     #[test]
     fn test_task1() {

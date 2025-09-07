@@ -101,11 +101,7 @@ pub fn task1((parts, workflows): &(Parts, Workflows)) -> anyhow::Result<i64> {
                     }
                 }
             }
-            if name == "A" {
-                part.rating()
-            } else {
-                0
-            }
+            if name == "A" { part.rating() } else { 0 }
         })
         .sum())
 }
@@ -139,60 +135,58 @@ pub fn task2((_, workflows): &(Parts, Workflows)) -> anyhow::Result<i64> {
     while let Some(part_range) = stack.pop() {
         if part_range.name == "A" {
             result += part_range.rating();
-        } else if let Some(workflow) = workflows.get(&part_range.name) {
-            if let Some(rule) = workflow.get(part_range.rule) {
-                match rule {
-                    Rule::Less {
-                        rate_idx,
-                        value,
-                        target,
-                    } => {
-                        let range = part_range.ratings[rate_idx.0].clone();
-                        if range.start() < value {
-                            let mut lower_range = part_range.clone();
-                            lower_range.name = target.clone();
-                            lower_range.rule = 0;
-                            lower_range.ratings[rate_idx.0] =
-                                *range.start()..=*range.end().min(value) - 1;
-                            stack.push(lower_range);
-                        }
-                        if range.end() > value {
-                            let mut upper_range = part_range.clone();
-                            upper_range.rule += 1;
-                            upper_range.ratings[rate_idx.0] =
-                                *range.start().max(value)..=*range.end();
-                            stack.push(upper_range);
-                        }
+        } else if let Some(workflow) = workflows.get(&part_range.name)
+            && let Some(rule) = workflow.get(part_range.rule)
+        {
+            match rule {
+                Rule::Less {
+                    rate_idx,
+                    value,
+                    target,
+                } => {
+                    let range = part_range.ratings[rate_idx.0].clone();
+                    if range.start() < value {
+                        let mut lower_range = part_range.clone();
+                        lower_range.name = target.clone();
+                        lower_range.rule = 0;
+                        lower_range.ratings[rate_idx.0] =
+                            *range.start()..=*range.end().min(value) - 1;
+                        stack.push(lower_range);
                     }
-                    Rule::Greater {
-                        rate_idx,
-                        value,
-                        target,
-                    } => {
-                        let range = part_range.ratings[rate_idx.0].clone();
-                        if range.start() <= value {
-                            let mut lower_range = part_range.clone();
-                            lower_range.rule += 1;
-                            lower_range.ratings[rate_idx.0] =
-                                *range.start()..=*range.end().min(value);
-                            stack.push(lower_range);
-                        }
-                        if range.end() > value {
-                            let mut upper_range = part_range.clone();
-                            upper_range.name = target.clone();
-                            upper_range.rule = 0;
-                            upper_range.ratings[rate_idx.0] =
-                                *range.start().max(value) + 1..=*range.end();
-                            stack.push(upper_range);
-                        }
+                    if range.end() > value {
+                        let mut upper_range = part_range.clone();
+                        upper_range.rule += 1;
+                        upper_range.ratings[rate_idx.0] = *range.start().max(value)..=*range.end();
+                        stack.push(upper_range);
                     }
-                    Rule::Always { target } => {
-                        if target != "R" {
-                            let mut range = part_range.clone();
-                            range.name = target.clone();
-                            range.rule = 0;
-                            stack.push(range);
-                        }
+                }
+                Rule::Greater {
+                    rate_idx,
+                    value,
+                    target,
+                } => {
+                    let range = part_range.ratings[rate_idx.0].clone();
+                    if range.start() <= value {
+                        let mut lower_range = part_range.clone();
+                        lower_range.rule += 1;
+                        lower_range.ratings[rate_idx.0] = *range.start()..=*range.end().min(value);
+                        stack.push(lower_range);
+                    }
+                    if range.end() > value {
+                        let mut upper_range = part_range.clone();
+                        upper_range.name = target.clone();
+                        upper_range.rule = 0;
+                        upper_range.ratings[rate_idx.0] =
+                            *range.start().max(value) + 1..=*range.end();
+                        stack.push(upper_range);
+                    }
+                }
+                Rule::Always { target } => {
+                    if target != "R" {
+                        let mut range = part_range.clone();
+                        range.name = target.clone();
+                        range.rule = 0;
+                        stack.push(range);
                     }
                 }
             }
@@ -204,7 +198,7 @@ pub fn task2((_, workflows): &(Parts, Workflows)) -> anyhow::Result<i64> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
 
     const INPUT: &str = "px{a<2006:qkq,m>2090:A,rfg}
 pv{a>1716:R,A}

@@ -48,7 +48,7 @@ pub fn task2(input: &Rect) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{get_all_velocities, task1, task2};
 
     #[test]
     fn test_task1() {

@@ -99,7 +99,7 @@ pub fn task2(&input: &usize) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::LookUp;
 
     #[test]
     fn test_task1() {

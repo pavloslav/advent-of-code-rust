@@ -152,7 +152,7 @@ mod ferry {
     }
     #[cfg(test)]
     mod test {
-        use super::*;
+        use super::Model;
 
         #[test]
         fn test_neighbors() {
@@ -194,7 +194,7 @@ pub fn task2(s: &str) -> anyhow::Result<usize> {
 #[cfg(test)]
 mod tests {
 
-    use super::*;
+    use super::{task1, task2};
     #[test]
     fn test_tasks() {
         let input1 = "L.LL.LL.LL

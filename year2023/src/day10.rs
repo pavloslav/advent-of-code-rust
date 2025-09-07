@@ -251,7 +251,7 @@ pub fn task2(input: &[&[u8]]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1};
     const INPUT: &str = "..F7.
 .FJ|.
 SJ.L7

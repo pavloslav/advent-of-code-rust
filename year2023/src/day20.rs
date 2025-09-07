@@ -160,7 +160,7 @@ pub fn task2(_input: &Modules) -> anyhow::Result<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
 
     const FIRST: &str = "broadcaster -> a, b, c
 %a -> b

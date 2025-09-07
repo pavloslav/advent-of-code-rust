@@ -73,7 +73,7 @@ pub fn task2(input: &str) -> anyhow::Result<u64> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{decode, decode2_len};
 
     #[test]
     fn test_decode() {

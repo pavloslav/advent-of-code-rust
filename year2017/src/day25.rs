@@ -131,7 +131,7 @@ pub fn task2(_input: &TuringMachine) -> anyhow::Result<&'static str> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1};
 
     #[test]
     fn test_task1() {

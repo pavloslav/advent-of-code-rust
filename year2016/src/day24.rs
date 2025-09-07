@@ -95,7 +95,7 @@ pub fn task2(map: &[Vec<u8>]) -> anyhow::Result<i32> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1};
 
     #[test]
     fn test_task1() {

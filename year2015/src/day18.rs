@@ -118,7 +118,7 @@ pub fn task2(life: &Life) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task};
 
     #[test]
     fn test_task1() {

@@ -124,7 +124,7 @@ pub fn task2(map: &HashMap<String, Monkey>) -> anyhow::Result<Yell> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
     const INPUT: &str = "root: pppw + sjmn
 dbpl: 5
 cczh: sllz + lgvd

@@ -42,7 +42,7 @@ pub fn task2(data: &[usize]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{parse_input, task1, task2};
 
     #[test]
     fn test_tasks() {

@@ -63,7 +63,7 @@ pub fn task2(lcd: &[Vec<char>]) -> anyhow::Result<String> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::build_lcd;
     #[test]
     fn test_pixels() {
         let px = [".#..#.#", "#.#....", ".#....."];

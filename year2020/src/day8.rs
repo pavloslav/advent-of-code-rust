@@ -108,7 +108,7 @@ pub fn task2(program: &Program) -> anyhow::Result<i64> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{parse_input, task2};
     #[test]
     fn test_task2() {
         let input1 = "nop +0

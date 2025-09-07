@@ -98,7 +98,7 @@ pub fn task2(sensors: &[SensorData]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::task1;
 
     #[test]
     fn test_task1() {

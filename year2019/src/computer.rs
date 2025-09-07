@@ -168,7 +168,7 @@ impl Computer {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{Computer, Word};
 
     fn test_memory(before: &[Word], after: &[Word]) {
         let mut comp = Computer::new(before);

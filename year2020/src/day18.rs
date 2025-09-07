@@ -64,7 +64,7 @@ pub fn task2(s: &str) -> anyhow::Result<u64> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{task1, task2};
     #[test]
     fn test_task1() {
         assert_eq!(task1("1 + 2 * 3 + 4 * 5 + 6").unwrap(), 71);

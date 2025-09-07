@@ -142,7 +142,7 @@ pub fn task2(input: &[Vec<u8>]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{cycle_rocks, parse_input, task1, task2};
 
     const INPUT: &str = "O....#....
 O.OO#....#

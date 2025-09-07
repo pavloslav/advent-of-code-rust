@@ -29,7 +29,7 @@ pub fn task2(_input: &[i32]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::task1;
 
     #[test]
     fn test_task1() {

@@ -65,7 +65,7 @@ pub fn task2(data: &Data) -> anyhow::Result<i64> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{Data, task2};
     #[test]
     fn test_task2() {
         let input1 = "35

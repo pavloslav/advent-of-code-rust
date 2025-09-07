@@ -19,11 +19,7 @@ pub fn task2(instructions: &[i32]) -> anyhow::Result<usize> {
         .iter()
         .scan(0, |floor, change| {
             *floor += change;
-            if *floor >= 0 {
-                Some(*floor)
-            } else {
-                None
-            }
+            if *floor >= 0 { Some(*floor) } else { None }
         })
         .count();
     Ok(not_in_basement + 1)
@@ -31,7 +27,7 @@ pub fn task2(instructions: &[i32]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1, task2};
 
     #[test]
     fn test_task1() {

@@ -91,7 +91,7 @@ pub fn task2(input: &[Game]) -> anyhow::Result<usize> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{parse_input, task1};
 
     #[test]
     fn test_task1() {

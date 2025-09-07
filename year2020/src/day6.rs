@@ -43,7 +43,7 @@ pub fn task2(s: &str) -> anyhow::Result<u32> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::task2;
     #[test]
     fn test_task2() {
         let input = "abc
